@@ -42,4 +42,8 @@ uploads/
 
 # Database backups
 *.sql.backup
-*.dumpnode_modules
+*.dump
+
+# Temporary files
+*.tmp
+*.temp

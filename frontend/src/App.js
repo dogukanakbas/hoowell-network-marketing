@@ -10,6 +10,7 @@ import Payment from './components/Payment';
 import Education from './components/Education';
 import AdminPanel from './components/AdminPanel';
 import AccessRestricted from './components/AccessRestricted';
+import PartnerRegistration from './components/PartnerRegistration';
 
 // Context
 import { AuthProvider } from './context/AuthContext';
@@ -25,6 +26,7 @@ function App() {
               <Route index element={<Dashboard />} />
               <Route path="payment" element={<Payment />} />
               <Route path="education" element={<Education />} />
+              <Route path="partner-registration" element={<PartnerRegistration />} />
               <Route path="admin/*" element={<AdminPanel />} />
               
               {/* Restricted Pages */}

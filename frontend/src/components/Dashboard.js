@@ -9,24 +9,12 @@ const Dashboard = () => {
     baskanlikHavuzu: 8000,
     karPaylasimHavuzu: 5000
   });
-  // const [news, setNews] = useState([]);
-  // const [videos, setVideos] = useState([]);
 
   const fetchDashboardData = useCallback(async () => {
     try {
       // Fetch dashboard statistics
       const statsResponse = await axios.get('/api/dashboard/stats');
       setStats(statsResponse.data);
-
-      // Fetch news
-      // const newsResponse = await axios.get('/api/news');
-      // setNews(newsResponse.data);
-
-      // Fetch videos if user has access
-      // if (user.payment_confirmed) {
-      //   const videosResponse = await axios.get('/api/videos');
-      //   setVideos(videosResponse.data);
-      // }
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
     }
@@ -36,154 +24,262 @@ const Dashboard = () => {
     fetchDashboardData();
   }, [fetchDashboardData]);
 
-  const getStatusMessage = () => {
-    if (!user.payment_confirmed) {
-      return {
-        title: "Ödeme Bekleniyor",
-        message: "Eğitimlere başlamak için ödemenizi yapmanız gerekmektedir.",
-        action: "Ödeme Yap",
-        link: "/payment"
-      };
-    } else if (!user.education_completed) {
-      return {
-        title: "Eğitim Süreci",
-        message: "Backoffice erişimi için eğitimlerinizi tamamlamanız gerekmektedir.",
-        action: "Eğitimlere Git",
-        link: "/education"
-      };
-    } else {
-      return {
-        title: "Hoş Geldiniz!",
-        message: "Tüm sistemlere erişiminiz bulunmaktadır.",
-        action: null,
-        link: null
-      };
-    }
-  };
-
-  const status = getStatusMessage();
-
   return (
-    <div>
-      {/* Sponsor ID Kartı */}
-      <div className="dashboard-card" style={{ marginBottom: '20px', backgroundColor: '#f8f9fa', border: '2px solid #007bff' }}>
-        <div style={{ textAlign: 'center', padding: '20px' }}>
-          <h3 style={{ color: '#007bff', marginBottom: '10px' }}>Sponsor ID'niz</h3>
+    <div style={{ padding: '0' }}>
+      {/* Üst Butonlar */}
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center',
+        marginBottom: '30px',
+        gap: '20px'
+      }}>
+        <button style={{
+          backgroundColor: 'var(--card-gray)',
+          border: 'none',
+          borderRadius: '15px',
+          padding: '15px 25px',
+          fontSize: '16px',
+          fontWeight: 'bold',
+          color: 'var(--text-dark)',
+          cursor: 'pointer',
+          boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
+          transition: 'transform 0.3s',
+          height: '60px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          Müşteri Sipariş Paneli
+        </button>
+        
+        <div style={{
+          backgroundColor: 'var(--primary-dark)',
+          borderRadius: '15px',
+          padding: '20px 40px',
+          textAlign: 'center',
+          minWidth: '200px',
+          height: '60px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          <div style={{ color: 'var(--accent-gold)', fontSize: '24px', fontWeight: 'bold' }}>
+            HOOWELL
+          </div>
+          <div style={{ color: 'var(--white)', fontSize: '10px', marginTop: '2px' }}>
+            INNOVATE YOUR LIFE
+          </div>
+        </div>
+        
+        <a 
+          href="/partner-registration"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'var(--card-gray)',
+            border: 'none',
+            borderRadius: '15px',
+            padding: '15px 25px',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            color: 'var(--text-dark)',
+            cursor: 'pointer',
+            boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
+            transition: 'transform 0.3s',
+            textDecoration: 'none',
+            textAlign: 'center',
+            height: '60px'
+          }}
+        >
+          İş Ortağı Kayıt Paneli
+        </a>
+      </div>
+
+      {/* Ana Havuz Kartları */}
+      <div style={{ 
+        display: 'grid', 
+        gridTemplateColumns: 'repeat(3, 1fr)', 
+        gap: '20px', 
+        marginBottom: '30px' 
+      }}>
+        <div style={{
+          backgroundColor: 'var(--card-gray)',
+          borderRadius: '15px',
+          padding: '25px',
+          textAlign: 'center',
+          boxShadow: '0 4px 15px rgba(0,0,0,0.1)'
+        }}>
+          <h3 style={{ color: 'var(--text-dark)', marginBottom: '10px', fontSize: '18px' }}>
+            LİDERLİK HAVUZU
+          </h3>
+          <p style={{ color: 'var(--text-light)', fontSize: '14px', marginBottom: '15px' }}>
+            Bitiş Tarihi: 31.03.2025
+          </p>
           <div style={{ 
             fontSize: '32px', 
             fontWeight: 'bold', 
-            color: '#007bff',
-            fontFamily: 'monospace',
-            letterSpacing: '2px',
-            padding: '15px',
-            backgroundColor: 'white',
-            borderRadius: '10px',
-            border: '2px dashed #007bff'
+            color: 'var(--text-dark)' 
           }}>
-            {user.sponsor_id || 'Henüz Atanmamış'}
+            ₺{stats.liderlikHavuzu?.toLocaleString()}
           </div>
-          <p style={{ marginTop: '10px', color: '#666', fontSize: '14px' }}>
-            Bu ID'yi referans olarak kullanabilirsiniz
+        </div>
+
+        <div style={{
+          backgroundColor: 'var(--card-gray)',
+          borderRadius: '15px',
+          padding: '25px',
+          textAlign: 'center',
+          boxShadow: '0 4px 15px rgba(0,0,0,0.1)'
+        }}>
+          <h3 style={{ color: 'var(--text-dark)', marginBottom: '10px', fontSize: '18px' }}>
+            BAŞKANLIK HAVUZU
+          </h3>
+          <p style={{ color: 'var(--text-light)', fontSize: '14px', marginBottom: '15px' }}>
+            Bitiş Tarihi: 31.03.2025
           </p>
+          <div style={{ 
+            fontSize: '32px', 
+            fontWeight: 'bold', 
+            color: 'var(--text-dark)' 
+          }}>
+            ₺{stats.baskanlikHavuzu?.toLocaleString()}
+          </div>
+        </div>
+
+        <div style={{
+          backgroundColor: 'var(--card-gray)',
+          borderRadius: '15px',
+          padding: '25px',
+          textAlign: 'center',
+          boxShadow: '0 4px 15px rgba(0,0,0,0.1)'
+        }}>
+          <h3 style={{ color: 'var(--text-dark)', marginBottom: '10px', fontSize: '18px' }}>
+            KAR PAYLAŞIMI HAVUZU
+          </h3>
+          <p style={{ color: 'var(--text-light)', fontSize: '14px', marginBottom: '15px' }}>
+            Bitiş Tarihi: 31.03.2025
+          </p>
+          <div style={{ 
+            fontSize: '32px', 
+            fontWeight: 'bold', 
+            color: 'var(--text-dark)' 
+          }}>
+            ₺{stats.karPaylasimHavuzu?.toLocaleString()}
+          </div>
         </div>
       </div>
 
-      {/* Status Card */}
-      <div className="dashboard-card" style={{ marginBottom: '30px', textAlign: 'left' }}>
-        <h3>{status.title}</h3>
-        <p style={{ margin: '15px 0', color: '#666' }}>{status.message}</p>
-        {status.action && (
-          <a href={status.link} className="btn btn-primary">
-            {status.action}
-          </a>
-        )}
-      </div>
-
-      {/* Statistics Cards */}
-      <div className="dashboard-grid">
-        <div className="dashboard-card">
-          <h3>LİDERLİK HAVUZU</h3>
-          <div className="date">Bitiş Tarihi: 31.03.2025</div>
-          <div className="amount">₺{stats.liderlikHavuzu?.toLocaleString()}</div>
-        </div>
-        
-        <div className="dashboard-card">
-          <h3>BAŞKANLIK HAVUZU</h3>
-          <div className="date">Bitiş Tarihi: 31.03.2025</div>
-          <div className="amount">₺{stats.baskanlikHavuzu?.toLocaleString()}</div>
-        </div>
-        
-        <div className="dashboard-card">
-          <h3>KAR PAYLAŞIMI HAVUZU</h3>
-          <div className="date">Bitiş Tarihi: 31.03.2025</div>
-          <div className="amount">₺{stats.karPaylasimHavuzu?.toLocaleString()}</div>
-        </div>
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
-        {/* News Section */}
-        <div className="dashboard-card" style={{ textAlign: 'left' }}>
-          <h3>HABERLER</h3>
-          <div style={{ marginTop: '20px' }}>
-            <h4>Yeni Dönem Başladı!</h4>
-            <p style={{ color: '#666', fontSize: '14px', marginBottom: '15px' }}>
+      {/* Alt İçerik Alanları */}
+      <div style={{ 
+        display: 'grid', 
+        gridTemplateColumns: '1fr 1fr 1fr', 
+        gap: '20px' 
+      }}>
+        {/* Haberler */}
+        <div style={{
+          backgroundColor: 'var(--card-gray)',
+          borderRadius: '15px',
+          padding: '25px',
+          minHeight: '300px',
+          boxShadow: '0 4px 15px rgba(0,0,0,0.1)'
+        }}>
+          <h3 style={{ color: 'var(--text-dark)', marginBottom: '20px' }}>HABERLER</h3>
+          <div style={{ marginBottom: '20px' }}>
+            <h4 style={{ color: 'var(--text-dark)', fontSize: '16px', marginBottom: '10px' }}>
+              Yeni Dönem Başladı!
+            </h4>
+            <p style={{ color: 'var(--text-light)', fontSize: '14px', lineHeight: '1.5' }}>
               Mart ayı itibariyle yeni dönem başladı.
             </p>
-            
-            <h4>Sistem Güncellemesi</h4>
-            <p style={{ color: '#666', fontSize: '14px' }}>
+          </div>
+          <div>
+            <h4 style={{ color: 'var(--text-dark)', fontSize: '16px', marginBottom: '10px' }}>
+              Sistem Güncellemesi
+            </h4>
+            <p style={{ color: 'var(--text-light)', fontSize: '14px', lineHeight: '1.5' }}>
               Platformda performans iyileştirmeleri yapıldı.
             </p>
           </div>
         </div>
 
-        {/* Videos Section */}
-        <div className="dashboard-card" style={{ textAlign: 'left' }}>
-          {user.payment_confirmed ? (
-            <>
-              <h3>ÇALIŞIRKEN KULLANILACAK VİDEOLAR</h3>
-              <div style={{ marginTop: '20px' }}>
-                <h4>İş Tanıtım Programı</h4>
-                <p style={{ color: '#666', fontSize: '14px', marginBottom: '15px' }}>
-                  Bu video, işin genel tanıtımını ve temel prensiplerini anlatır.
-                </p>
-                
-                <div style={{ 
-                  backgroundColor: '#1a4a3a', 
-                  color: 'white', 
-                  padding: '40px', 
-                  borderRadius: '10px',
-                  textAlign: 'center',
-                  marginBottom: '15px'
-                }}>
-                  <div style={{ fontSize: '48px', color: '#FFD700', marginBottom: '10px' }}>⚙️</div>
-                  <h4 style={{ color: '#FFD700' }}>HOOWELL</h4>
-                  <p style={{ fontSize: '12px' }}>İŞ TANITIM PROGRAMI</p>
-                  <p style={{ fontSize: '10px', marginTop: '10px' }}>INNOVATE YOUR LIFE</p>
-                </div>
+        {/* Video Alanı */}
+        <div style={{
+          backgroundColor: 'var(--card-gray)',
+          borderRadius: '15px',
+          padding: '25px',
+          minHeight: '300px',
+          boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
+          textAlign: 'center'
+        }}>
+          <h3 style={{ color: 'var(--text-dark)', marginBottom: '15px' }}>
+            ÇALIŞIRKEN KULLANILACAK VİDEOLAR
+          </h3>
+          <div style={{ marginBottom: '15px' }}>
+            <h4 style={{ color: 'var(--text-dark)', fontSize: '16px', marginBottom: '10px' }}>
+              İş Tanıtım Programı
+            </h4>
+            <p style={{ color: 'var(--text-light)', fontSize: '14px', marginBottom: '15px' }}>
+              Bu video, işin genel tanıtımı ve temel prensiplerini anlatır.
+            </p>
+          </div>
+          
+          {/* Video Placeholder */}
+          <div style={{
+            backgroundColor: 'var(--primary-dark)',
+            borderRadius: '10px',
+            padding: '40px 20px',
+            marginBottom: '15px',
+            position: 'relative'
+          }}>
+            <div style={{ color: 'var(--accent-gold)', fontSize: '24px', fontWeight: 'bold' }}>
+              HOOWELL
+            </div>
+            <div style={{ color: 'var(--white)', fontSize: '14px', marginTop: '5px' }}>
+              İŞ TANITIM PROGRAMI
+            </div>
+            <div style={{ color: 'var(--white)', fontSize: '12px', marginTop: '10px' }}>
+              INNOVATE YOUR LIFE
+            </div>
+          </div>
+          
+          <div>
+            <h4 style={{ color: 'var(--text-dark)', fontSize: '16px', marginBottom: '10px' }}>
+              Kazanç ve Pazarlama Planı
+            </h4>
+            <p style={{ color: 'var(--text-light)', fontSize: '14px' }}>
+              Bu video, kazanç ve pazarlama planının detaylarını açıklar.
+            </p>
+          </div>
+        </div>
 
-                <h4>Kazanç ve Pazarlama Planı</h4>
-                <p style={{ color: '#666', fontSize: '14px' }}>
-                  Bu video, kazanç modellerinin planlarının detaylarını açıklar.
-                </p>
-              </div>
-            </>
-          ) : (
-            <>
-              <h3>PROMOSYONLAR</h3>
-              <div style={{ marginTop: '20px' }}>
-                <h4>Mart Ayı Promosyonu</h4>
-                <p style={{ color: '#666', fontSize: '14px', marginBottom: '15px' }}>
-                  Mart ayında %10 ek kazanç fırsatı!
-                </p>
-                
-                <h4>Yeni Üye Bonusu</h4>
-                <p style={{ color: '#666', fontSize: '14px' }}>
-                  Her yeni üye için ekstra bonus!
-                </p>
-              </div>
-            </>
-          )}
+        {/* Promosyonlar */}
+        <div style={{
+          backgroundColor: 'var(--card-gray)',
+          borderRadius: '15px',
+          padding: '25px',
+          minHeight: '300px',
+          boxShadow: '0 4px 15px rgba(0,0,0,0.1)'
+        }}>
+          <h3 style={{ color: 'var(--text-dark)', marginBottom: '20px' }}>PROMOSYONLAR</h3>
+          <div style={{ marginBottom: '20px' }}>
+            <h4 style={{ color: 'var(--text-dark)', fontSize: '16px', marginBottom: '10px' }}>
+              Mart Ayı Promosyonu
+            </h4>
+            <p style={{ color: 'var(--text-light)', fontSize: '14px', lineHeight: '1.5' }}>
+              Mart ayında %10 ek kazanç fırsatı!
+            </p>
+          </div>
+          <div>
+            <h4 style={{ color: 'var(--text-dark)', fontSize: '16px', marginBottom: '10px' }}>
+              Yeni Üye Bonusu
+            </h4>
+            <p style={{ color: 'var(--text-light)', fontSize: '14px', lineHeight: '1.5' }}>
+              Her yeni üye için ekstra bonus!
+            </p>
+          </div>
         </div>
       </div>
     </div>

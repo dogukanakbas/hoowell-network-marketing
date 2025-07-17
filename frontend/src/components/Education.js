@@ -325,8 +325,7 @@ const Education = () => {
                 
                 <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
                   <button 
-                    className="btn"
-                    style={{ backgroundColor: '#6c757d', color: 'white' }}
+                    className="btn btn-secondary"
                     onClick={() => {
                       setShowExam(false);
                       setAnswers({});

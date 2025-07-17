@@ -55,9 +55,10 @@ CREATE TABLE users (
 );
 
 -- Insert default admin users
-INSERT INTO users (username, email, password_hash, first_name, last_name, role, is_active, payment_confirmed, education_completed, backoffice_access) VALUES
-('hakandalkilic', 'hakandalkilic14@gmail.com', '$2a$10$O5VIcass0amwDz1rdRzcK.UcA8afAS2zfXclcg7j47EhfbdPkFTQG', 'Hakan', 'Dalkılıç', 'admin', TRUE, TRUE, TRUE, TRUE),
-('hakandemiray', 'sporfuturisti@gmail.com', '$2a$10$dNnspNyHfybj0XKKHDxZku9KH95q3.lvtV/sNFgjWHGeEjf8YNXYq', 'Hakan', 'Demiray', 'admin', TRUE, TRUE, TRUE, TRUE),
+INSERT INTO users (username, email, password_hash, first_name, last_name, role, is_active, payment_confirmed, education_completed, backoffice_access, sponsor_id) VALUES
+('hoowell', 'admin@hoowell.net', '$2a$10$g/UMsawVSpxhjsbBWUH2OOCnF14KDgFJHBwic.dAZvmWBTTZJlMBu', 'Hoowell', 'Admin', 'admin', TRUE, TRUE, TRUE, TRUE, 'P2025000000'),
+('hakandalkilic', 'hakandalkilic14@gmail.com', '$2a$10$RYydMaICbfrAP2EvSWgIQOrrNkTI7zm4wayQD2esRrOOUNndKBhZi', 'Hakan', 'Dalkılıç', 'admin', TRUE, TRUE, TRUE, TRUE, 'P2025000014'),
+('hakandemiray', 'sporfuturisti@gmail.com', '$2a$10$dNnspNyHfybj0XKKHDxZku9KH95q3.lvtV/sNFgjWHGeEjf8YNXYq', 'Hakan', 'Demiray', 'admin', TRUE, TRUE, TRUE, TRUE, 'P2025000033'),
 ('admin3', 'admin3@hoowell.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Admin', 'Three', 'admin', TRUE, TRUE, TRUE, TRUE),
 ('admin4', 'admin4@hoowell.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Admin', 'Four', 'admin', TRUE, TRUE, TRUE, TRUE),
 ('admin5', 'admin5@hoowell.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Admin', 'Five', 'admin', TRUE, TRUE, TRUE, TRUE);

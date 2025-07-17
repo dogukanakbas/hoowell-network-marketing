@@ -18,29 +18,25 @@ const AdminPanel = () => {
         <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
           <Link 
             to="/admin/users" 
-            className={`btn ${location.pathname === '/admin/users' ? 'btn-primary' : 'btn'}`}
-            style={{ backgroundColor: location.pathname !== '/admin/users' ? '#6c757d' : '', color: 'white' }}
+            className={`btn ${location.pathname === '/admin/users' ? 'btn-primary' : 'btn-secondary'}`}
           >
             Kullanıcı Yönetimi
           </Link>
           <Link 
             to="/admin/payments" 
-            className={`btn ${location.pathname === '/admin/payments' ? 'btn-primary' : 'btn'}`}
-            style={{ backgroundColor: location.pathname !== '/admin/payments' ? '#6c757d' : '', color: 'white' }}
+            className={`btn ${location.pathname === '/admin/payments' ? 'btn-primary' : 'btn-secondary'}`}
           >
             Ödeme Onayları
           </Link>
           <Link 
             to="/admin/settings" 
-            className={`btn ${location.pathname === '/admin/settings' ? 'btn-primary' : 'btn'}`}
-            style={{ backgroundColor: location.pathname !== '/admin/settings' ? '#6c757d' : '', color: 'white' }}
+            className={`btn ${location.pathname === '/admin/settings' ? 'btn-primary' : 'btn-secondary'}`}
           >
             Sistem Ayarları
           </Link>
           <Link 
             to="/admin/questions" 
-            className={`btn ${location.pathname === '/admin/questions' ? 'btn-primary' : 'btn'}`}
-            style={{ backgroundColor: location.pathname !== '/admin/questions' ? '#6c757d' : '', color: 'white' }}
+            className={`btn ${location.pathname === '/admin/questions' ? 'btn-primary' : 'btn-secondary'}`}
           >
             Soru Yönetimi
           </Link>
@@ -342,15 +338,15 @@ const PaymentApprovals = () => {
                 {payment.status === 'pending' && (
                   <div style={{ display: 'flex', gap: '5px' }}>
                     <button 
-                      className="btn btn-primary"
-                      style={{ fontSize: '12px', padding: '5px 10px', backgroundColor: '#28a745' }}
+                      className="btn btn-success"
+                      style={{ fontSize: '12px', padding: '5px 10px' }}
                       onClick={() => approvePayment(payment.id)}
                     >
                       Onayla
                     </button>
                     <button 
                       className="btn btn-danger"
-                      style={{ fontSize: '12px', padding: '5px 10px', backgroundColor: '#dc3545' }}
+                      style={{ fontSize: '12px', padding: '5px 10px' }}
                       onClick={() => rejectPayment(payment.id)}
                     >
                       Reddet
