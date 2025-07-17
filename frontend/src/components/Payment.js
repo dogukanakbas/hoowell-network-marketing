@@ -79,7 +79,7 @@ const Payment = () => {
         }
       });
 
-      setMessage('Ödeme kaydınız oluşturuldu. Onay için bekleyiniz.');
+      setMessage('Ödeme makbuzu yüklendi! Eğitimlere erişiminiz açılmıştır. Ödemeniz kontrol edildikten sonra onaylanacaktır.');
       setReceipt(null);
       fetchPayments();
     } catch (error) {

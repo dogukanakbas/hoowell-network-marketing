@@ -1,11 +1,18 @@
 import React from 'react';
 import { Outlet, Navigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import AccessRestricted from './AccessRestricted';
+import PaymentBlockedWarning from './PaymentBlockedWarning';
 
 const Layout = () => {
-  const { user, logout, loading } = useAuth();
+  const { user, logout, loading, refreshUser } = useAuth();
   const location = useLocation();
+
+  // Sayfa yüklendiğinde user bilgilerini yenile
+  React.useEffect(() => {
+    if (user) {
+      refreshUser();
+    }
+  }, [user, refreshUser]);
 
   if (loading) {
     return (
@@ -120,6 +127,9 @@ const Layout = () => {
               <div style={{ fontSize: '14px', color: '#666' }}>
                 {user.career_level?.toUpperCase()} İŞ ORTAĞI
               </div>
+              <div style={{ fontSize: '12px', color: '#007bff', fontWeight: 'bold' }}>
+                ID: {user.sponsor_id || 'Atanmamış'}
+              </div>
             </div>
             <button 
               onClick={logout}
@@ -131,6 +141,7 @@ const Layout = () => {
           </div>
         </div>
         
+        <PaymentBlockedWarning />
         <Outlet />
       </div>
     </div>

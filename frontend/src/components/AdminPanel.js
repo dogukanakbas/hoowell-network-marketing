@@ -97,7 +97,9 @@ const UserManagement = () => {
     e.preventDefault();
     try {
       const response = await axios.post('/api/admin/users', newUser);
-      setMessage(`Kullanıcı oluşturuldu. Şifre: ${response.data.password}`);
+      setMessage(`✅ Kullanıcı başarıyla oluşturuldu!
+📋 Sponsor ID: ${response.data.sponsor_id}
+🔑 Şifre: ${response.data.password}`);
       setNewUser({
         username: '',
         email: '',
@@ -213,7 +215,7 @@ const UserManagement = () => {
         <table className="table">
           <thead>
             <tr>
-              <th>ID</th>
+              <th>Sponsor ID</th>
               <th>Ad Soyad</th>
               <th>Kullanıcı Adı</th>
               <th>E-posta</th>
@@ -226,7 +228,7 @@ const UserManagement = () => {
           <tbody>
             {users.map((user) => (
               <tr key={user.id}>
-                <td>{user.id}</td>
+                <td>{user.sponsor_id || 'Atanmamış'}</td>
                 <td>{user.first_name} {user.last_name}</td>
                 <td>{user.username}</td>
                 <td>{user.email}</td>
@@ -279,9 +281,24 @@ const PaymentApprovals = () => {
   const approvePayment = async (paymentId) => {
     try {
       await axios.put(`/api/admin/payments/${paymentId}/approve`);
+      alert('Ödeme onaylandı');
       fetchPayments();
     } catch (error) {
       console.error('Error approving payment:', error);
+      alert('Ödeme onaylanırken hata oluştu');
+    }
+  };
+
+  const rejectPayment = async (paymentId) => {
+    if (window.confirm('Bu ödemeyi reddetmek istediğinizden emin misiniz? Kullanıcının eğitim erişimi engellenecektir.')) {
+      try {
+        await axios.put(`/api/admin/payments/${paymentId}/reject`);
+        alert('Ödeme reddedildi, kullanıcı bloklandı');
+        fetchPayments();
+      } catch (error) {
+        console.error('Error rejecting payment:', error);
+        alert('Ödeme reddedilirken hata oluştu');
+      }
     }
   };
 
@@ -317,18 +334,28 @@ const PaymentApprovals = () => {
               <td>
                 <span className={`status-badge status-${payment.status}`}>
                   {payment.status === 'pending' ? 'Bekliyor' : 
-                   payment.status === 'approved' ? 'Onaylandı' : 'Reddedildi'}
+                   payment.status === 'approved' ? 'Onaylandı' : 
+                   payment.status === 'rejected' ? 'Reddedildi' : payment.status}
                 </span>
               </td>
               <td>
                 {payment.status === 'pending' && (
-                  <button 
-                    className="btn btn-primary"
-                    style={{ fontSize: '12px', padding: '5px 10px' }}
-                    onClick={() => approvePayment(payment.id)}
-                  >
-                    Onayla
-                  </button>
+                  <div style={{ display: 'flex', gap: '5px' }}>
+                    <button 
+                      className="btn btn-primary"
+                      style={{ fontSize: '12px', padding: '5px 10px', backgroundColor: '#28a745' }}
+                      onClick={() => approvePayment(payment.id)}
+                    >
+                      Onayla
+                    </button>
+                    <button 
+                      className="btn btn-danger"
+                      style={{ fontSize: '12px', padding: '5px 10px', backgroundColor: '#dc3545' }}
+                      onClick={() => rejectPayment(payment.id)}
+                    >
+                      Reddet
+                    </button>
+                  </div>
                 )}
               </td>
             </tr>

@@ -41,7 +41,7 @@ const AccessRestricted = ({ pageName, icon }) => {
         }}>
           HOOWELL
         </div>
-        
+
         <div style={{
           color: 'var(--text-light)',
           fontSize: '14px',
@@ -104,10 +104,10 @@ const AccessRestricted = ({ pageName, icon }) => {
           }}>
             📊 Mevcut Durumunuz:
           </h4>
-          
+
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <span style={{ 
+              <span style={{
                 color: user?.payment_confirmed ? '#28a745' : '#dc3545',
                 fontSize: '16px'
               }}>
@@ -117,9 +117,9 @@ const AccessRestricted = ({ pageName, icon }) => {
                 Ödeme Onayı
               </span>
             </div>
-            
+
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <span style={{ 
+              <span style={{
                 color: user?.education_completed ? '#28a745' : '#dc3545',
                 fontSize: '16px'
               }}>
@@ -129,9 +129,9 @@ const AccessRestricted = ({ pageName, icon }) => {
                 Eğitim Tamamlama
               </span>
             </div>
-            
+
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <span style={{ 
+              <span style={{
                 color: user?.backoffice_access ? '#28a745' : '#dc3545',
                 fontSize: '16px'
               }}>
@@ -146,10 +146,10 @@ const AccessRestricted = ({ pageName, icon }) => {
 
         {/* Action Button */}
         {!user?.payment_confirmed ? (
-          <a 
-            href="/payment" 
+          <a
+            href="/payment"
             className="btn btn-primary"
-            style={{ 
+            style={{
               textDecoration: 'none',
               display: 'inline-block',
               marginBottom: '15px'
@@ -158,10 +158,10 @@ const AccessRestricted = ({ pageName, icon }) => {
             💳 Ödeme Yap
           </a>
         ) : !user?.education_completed ? (
-          <a 
-            href="/education" 
+          <a
+            href="/education"
             className="btn btn-gold"
-            style={{ 
+            style={{
               textDecoration: 'none',
               display: 'inline-block',
               marginBottom: '15px'

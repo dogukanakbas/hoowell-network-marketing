@@ -13,10 +13,8 @@ const Education = () => {
   const [userProgress, setUserProgress] = useState([]);
 
   useEffect(() => {
-    if (user.payment_confirmed) {
-      fetchVideos();
-      fetchUserProgress();
-    }
+    fetchVideos();
+    fetchUserProgress();
   }, [user]);
 
   const fetchVideos = async () => {
@@ -102,11 +100,23 @@ const Education = () => {
     return fileId ? `https://drive.google.com/file/d/${fileId}/preview` : driveUrl;
   };
 
-  if (!user.payment_confirmed) {
+  // Ödeme bloklu kullanıcılar için uyarı
+  if (user.payment_blocked) {
     return (
       <div className="dashboard-card">
-        <h3>Eğitimlere Erişim</h3>
-        <p>Eğitimlere erişebilmek için önce ödemenizin onaylanması gerekmektedir.</p>
+        <div style={{
+          backgroundColor: '#f8d7da',
+          color: '#721c24',
+          padding: '20px',
+          borderRadius: '10px',
+          textAlign: 'center'
+        }}>
+          <h3>⚠️ Erişim Engellendi</h3>
+          <p>Ödemeniz reddedilmiştir. Eğitimlere devam edebilmek için lütfen geçerli bir ödeme makbuzu yükleyiniz.</p>
+          <a href="/payment" className="btn btn-primary" style={{ marginTop: '15px' }}>
+            Ödeme Yap
+          </a>
+        </div>
       </div>
     );
   }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 
@@ -9,32 +9,32 @@ const Dashboard = () => {
     baskanlikHavuzu: 8000,
     karPaylasimHavuzu: 5000
   });
-  const [news, setNews] = useState([]);
-  const [videos, setVideos] = useState([]);
+  // const [news, setNews] = useState([]);
+  // const [videos, setVideos] = useState([]);
 
-  useEffect(() => {
-    fetchDashboardData();
-  }, []);
-
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = useCallback(async () => {
     try {
       // Fetch dashboard statistics
       const statsResponse = await axios.get('/api/dashboard/stats');
       setStats(statsResponse.data);
 
       // Fetch news
-      const newsResponse = await axios.get('/api/news');
-      setNews(newsResponse.data);
+      // const newsResponse = await axios.get('/api/news');
+      // setNews(newsResponse.data);
 
       // Fetch videos if user has access
-      if (user.payment_confirmed) {
-        const videosResponse = await axios.get('/api/videos');
-        setVideos(videosResponse.data);
-      }
+      // if (user.payment_confirmed) {
+      //   const videosResponse = await axios.get('/api/videos');
+      //   setVideos(videosResponse.data);
+      // }
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, [fetchDashboardData]);
 
   const getStatusMessage = () => {
     if (!user.payment_confirmed) {
@@ -65,6 +65,29 @@ const Dashboard = () => {
 
   return (
     <div>
+      {/* Sponsor ID Kartı */}
+      <div className="dashboard-card" style={{ marginBottom: '20px', backgroundColor: '#f8f9fa', border: '2px solid #007bff' }}>
+        <div style={{ textAlign: 'center', padding: '20px' }}>
+          <h3 style={{ color: '#007bff', marginBottom: '10px' }}>Sponsor ID'niz</h3>
+          <div style={{ 
+            fontSize: '32px', 
+            fontWeight: 'bold', 
+            color: '#007bff',
+            fontFamily: 'monospace',
+            letterSpacing: '2px',
+            padding: '15px',
+            backgroundColor: 'white',
+            borderRadius: '10px',
+            border: '2px dashed #007bff'
+          }}>
+            {user.sponsor_id || 'Henüz Atanmamış'}
+          </div>
+          <p style={{ marginTop: '10px', color: '#666', fontSize: '14px' }}>
+            Bu ID'yi referans olarak kullanabilirsiniz
+          </p>
+        </div>
+      </div>
+
       {/* Status Card */}
       <div className="dashboard-card" style={{ marginBottom: '30px', textAlign: 'left' }}>
         <h3>{status.title}</h3>
