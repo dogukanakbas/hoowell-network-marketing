@@ -41,7 +41,7 @@ CREATE TABLE users (
     last_name VARCHAR(50) NOT NULL,
     phone VARCHAR(20),
     role ENUM('admin', 'partner') DEFAULT 'partner',
-    sponsor_id INT,
+    sponsor_id VARCHAR(20),
     career_level ENUM('bronze', 'silver', 'gold', 'star_leader', 'super_star_leader', 'presidents_team', 'country_distributor') DEFAULT 'bronze',
     total_kkp DECIMAL(15,2) DEFAULT 0,
     active_partners INT DEFAULT 0,
@@ -51,7 +51,22 @@ CREATE TABLE users (
     backoffice_access BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (sponsor_id) REFERENCES users(id)
+    payment_pending BOOLEAN DEFAULT FALSE,
+    payment_blocked BOOLEAN DEFAULT FALSE,
+    payment_block_date DATETIME,
+    created_by INT,
+    partner_type ENUM('individual','corporate'),
+    tc_no VARCHAR(11),
+    delivery_address TEXT,
+    billing_address TEXT,
+    company_name VARCHAR(255),
+    tax_office VARCHAR(255),
+    tax_no VARCHAR(20),
+    authorized_person VARCHAR(255),
+    referrer_sponsor_id VARCHAR(20),
+    UNIQUE KEY sponsor_id (sponsor_id),
+    INDEX idx_created_by (created_by),
+    INDEX idx_referrer_sponsor_id (referrer_sponsor_id)
 );
 
 -- Insert default admin users
@@ -59,9 +74,9 @@ INSERT INTO users (username, email, password_hash, first_name, last_name, role, 
 ('hoowell', 'admin@hoowell.net', '$2a$10$g/UMsawVSpxhjsbBWUH2OOCnF14KDgFJHBwic.dAZvmWBTTZJlMBu', 'Hoowell', 'Admin', 'admin', TRUE, TRUE, TRUE, TRUE, 'P2025000000'),
 ('hakandalkilic', 'hakandalkilic14@gmail.com', '$2a$10$RYydMaICbfrAP2EvSWgIQOrrNkTI7zm4wayQD2esRrOOUNndKBhZi', 'Hakan', 'Dalkılıç', 'admin', TRUE, TRUE, TRUE, TRUE, 'P2025000014'),
 ('hakandemiray', 'sporfuturisti@gmail.com', '$2a$10$dNnspNyHfybj0XKKHDxZku9KH95q3.lvtV/sNFgjWHGeEjf8YNXYq', 'Hakan', 'Demiray', 'admin', TRUE, TRUE, TRUE, TRUE, 'P2025000033'),
-('admin3', 'admin3@hoowell.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Admin', 'Three', 'admin', TRUE, TRUE, TRUE, TRUE),
-('admin4', 'admin4@hoowell.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Admin', 'Four', 'admin', TRUE, TRUE, TRUE, TRUE),
-('admin5', 'admin5@hoowell.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Admin', 'Five', 'admin', TRUE, TRUE, TRUE, TRUE);
+('admin3', 'admin3@hoowell.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Admin', 'Three', 'admin', TRUE, TRUE, TRUE, TRUE, 'P2025000003'),
+('admin4', 'admin4@hoowell.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Admin', 'Four', 'admin', TRUE, TRUE, TRUE, TRUE, 'P2025000004'),
+('admin5', 'admin5@hoowell.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Admin', 'Five', 'admin', TRUE, TRUE, TRUE, TRUE, 'P2025000005');
 
 -- Payments Table
 CREATE TABLE payments (
@@ -76,9 +91,12 @@ CREATE TABLE payments (
     status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
     approved_by INT,
     approved_at TIMESTAMP NULL,
+    verified_by INT,
+    verified_at TIMESTAMP NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (approved_by) REFERENCES users(id)
+    FOREIGN KEY (approved_by) REFERENCES users(id),
+    FOREIGN KEY (verified_by) REFERENCES users(id)
 );
 
 -- Videos Table
