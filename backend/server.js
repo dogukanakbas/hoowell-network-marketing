@@ -1123,14 +1123,4 @@ app.post('/api/admin/questions/bulk', verifyToken, verifyAdmin, async (req, res)
     console.error('Bulk questions error:', error);
     res.status(500).json({ message: 'Sunucu hatası' });
   }
-});ion_c, option_d, correct_answer) VALUES (?, ?, ?, ?, ?, ?, ?)',
-        [video_id, question.text, question.a, question.b, question.c, question.d, question.correct]
-      );
-    }
-
-    res.json({ message: `${questions.length} soru başarıyla eklendi` });
-  } catch (error) {
-    console.error('Bulk questions error:', error);
-    res.status(500).json({ message: 'Sunucu hatası' });
-  }
 });
