@@ -25,7 +25,8 @@ const Login = () => {
     const result = await login(username, password);
     
     if (result.success) {
-      navigate('/');
+      // AuthContext'ten gelen yönlendirme path'ini kullan
+      navigate(result.redirectPath || '/');
     } else {
       setError(result.message);
     }
@@ -53,14 +54,18 @@ const Login = () => {
           )}
           
           <div className="form-group">
-            <label>Kullanıcı Adı</label>
+            <label>Kullanıcı Adı / E-posta / Partner ID</label>
             <input
               type="text"
               className="form-control"
+              placeholder="Kullanıcı adı, e-posta veya Partner ID (örn: P2025000001)"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
             />
+            <small style={{ color: '#666', fontSize: '12px', marginTop: '5px', display: 'block' }}>
+              Partner ID ile giriş yapabilirsiniz (örn: P2025000000)
+            </small>
           </div>
           
           <div className="form-group">

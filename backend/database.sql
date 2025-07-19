@@ -48,6 +48,7 @@ CREATE TABLE users (
     is_active BOOLEAN DEFAULT FALSE,
     payment_confirmed BOOLEAN DEFAULT FALSE,
     education_completed BOOLEAN DEFAULT FALSE,
+    education_deadline DATETIME NULL,
     backoffice_access BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -64,9 +65,23 @@ CREATE TABLE users (
     tax_no VARCHAR(20),
     authorized_person VARCHAR(255),
     referrer_sponsor_id VARCHAR(20),
+    -- Yeni kayıt sistemi için ek alanlar
+    city VARCHAR(100),
+    district VARCHAR(100),
+    full_address TEXT,
+    authorized_first_name VARCHAR(100),
+    authorized_last_name VARCHAR(100),
+    registration_type ENUM('individual', 'corporate'),
+    contract1_accepted BOOLEAN DEFAULT FALSE,
+    contract2_accepted BOOLEAN DEFAULT FALSE,
+    total_amount DECIMAL(10,2) DEFAULT 0,
+    registration_step INT DEFAULT 1,
+    registration_completed BOOLEAN DEFAULT FALSE,
     UNIQUE KEY sponsor_id (sponsor_id),
     INDEX idx_created_by (created_by),
-    INDEX idx_referrer_sponsor_id (referrer_sponsor_id)
+    INDEX idx_referrer_sponsor_id (referrer_sponsor_id),
+    INDEX idx_registration_type (registration_type),
+    INDEX idx_city (city)
 );
 
 -- Insert default admin users
@@ -105,23 +120,24 @@ CREATE TABLE videos (
     title VARCHAR(200) NOT NULL,
     description TEXT,
     google_drive_url TEXT NOT NULL,
+    cover_image VARCHAR(255) DEFAULT NULL,
     order_number INT NOT NULL,
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Insert videos
-INSERT INTO videos (title, description, google_drive_url, order_number) VALUES
-('Hoowell\'e Hoşgeldiniz', 'Hoowell ailesine katıldığınız için teşekkürler. Bu videoda size sistemimizi tanıtıyoruz.', 'https://drive.google.com/file/d/1vg6RsU-b2hk4i6FDimAGnvWaESy6Qvnh/view?usp=sharing', 1),
-('Kaliteli Satıcı Olmak İçin Psikolojik Hazırlık', 'Başarılı bir satış temsilcisi olmak için gerekli zihinsel hazırlık süreçleri.', 'https://drive.google.com/file/d/1zk45_cn-r3_EtUvKGIDFJRsEx7SKFke4/view?usp=sharing', 2),
-('İyi Bir Satıcının Sahip Olması Gereken Özellikler', 'Başarılı satış temsilcilerinin ortak özellikleri ve bu özellikleri nasıl geliştirebileceğiniz.', 'https://drive.google.com/file/d/1bDJPS2-f1D9uxrABUsK2GwGdFfA_c06x/view?usp=sharing', 3),
-('Kaliteli Reklam ve Satışın Senaryosu', 'Etkili reklam stratejileri ve satış senaryolarının nasıl hazırlanacağı.', 'https://drive.google.com/file/d/17a3oIhtoQDFkI7CqzQbSPLi0mU8R71ca/view?usp=sharing', 4),
-('Mazeret Aşmak ve Satış Teknikleri', 'Müşteri itirazlarını aşma teknikleri ve etkili satış yöntemleri.', 'https://drive.google.com/file/d/1O1Op_EiAzhpmd68hk-8pXxL57ABrSk8w/view?usp=sharing', 5),
-('Düzenli Memnun Müşteri Kitlesi Oluşturmak', 'Sadık müşteri portföyü oluşturma ve müşteri memnuniyetini artırma stratejileri.', 'https://drive.google.com/file/d/1-5zB-thDF4SZGt1fpeTpLr71geuor0WP/view?usp=sharing', 6),
-('Müşteri Kontak Listesi Nasıl Yapılır ve Yönetilir', 'Etkili müşteri veritabanı oluşturma ve yönetme teknikleri.', 'https://drive.google.com/file/d/1Oo7dl-4Yxch7CEd38nCkzJ7mimraw1-A/view?usp=sharing', 7),
-('Takım Kur Pasif Gelir Kazan', 'Network marketing sisteminde takım oluşturma ve pasif gelir elde etme yöntemleri.', 'https://drive.google.com/file/d/1ZeS0945o9nL2FXNO4Uj4_0G1nQjQTcjo/view?usp=sharing', 8),
-('İşinizi Kurmak İçin Psikolojik Hazırlık', 'Kendi işinizi kurma sürecinde gerekli zihinsel hazırlık ve motivasyon teknikleri.', 'https://drive.google.com/file/d/19wmUPWpwTceuTUH_pUU3gzJiZCio3BRg/view?usp=sharing', 9),
-('İşinize Başlama Zamanı', 'Artık hazırsınız! İşinize başlama ve ilk adımları atma rehberi.', 'https://drive.google.com/file/d/1vSVMfK9jEHa9OMkGBVI1-nVQYrcdCGF0/view?usp=sharing', 10);
+INSERT INTO videos (title, description, google_drive_url, cover_image, order_number) VALUES
+('Hoowell\'e Hoşgeldiniz', 'Hoowell ailesine katıldığınız için teşekkürler. Bu videoda size sistemimizi tanıtıyoruz.', 'https://drive.google.com/file/d/1vg6RsU-b2hk4i6FDimAGnvWaESy6Qvnh/view?usp=sharing', '/video-covers/video-1-cover.jpg', 1),
+('Kaliteli Satıcı Olmak İçin Psikolojik Hazırlık', 'Başarılı bir satış temsilcisi olmak için gerekli zihinsel hazırlık süreçleri.', 'https://drive.google.com/file/d/1zk45_cn-r3_EtUvKGIDFJRsEx7SKFke4/view?usp=sharing', '/video-covers/video-2-cover.jpg', 2),
+('İyi Bir Satıcının Sahip Olması Gereken Özellikler', 'Başarılı satış temsilcilerinin ortak özellikleri ve bu özellikleri nasıl geliştirebileceğiniz.', 'https://drive.google.com/file/d/1bDJPS2-f1D9uxrABUsK2GwGdFfA_c06x/view?usp=sharing', '/video-covers/video-3-cover.jpg', 3),
+('Kaliteli Reklam ve Satışın Senaryosu', 'Etkili reklam stratejileri ve satış senaryolarının nasıl hazırlanacağı.', 'https://drive.google.com/file/d/17a3oIhtoQDFkI7CqzQbSPLi0mU8R71ca/view?usp=sharing', '/video-covers/video-4-cover.jpg', 4),
+('Mazeret Aşmak ve Satış Teknikleri', 'Müşteri itirazlarını aşma teknikleri ve etkili satış yöntemleri.', 'https://drive.google.com/file/d/1O1Op_EiAzhpmd68hk-8pXxL57ABrSk8w/view?usp=sharing', '/video-covers/video-5-cover.jpg', 5),
+('Düzenli Memnun Müşteri Kitlesi Oluşturmak', 'Sadık müşteri portföyü oluşturma ve müşteri memnuniyetini artırma stratejileri.', 'https://drive.google.com/file/d/1-5zB-thDF4SZGt1fpeTpLr71geuor0WP/view?usp=sharing', '/video-covers/video-6-cover.jpg', 6),
+('Müşteri Kontak Listesi Nasıl Yapılır ve Yönetilir', 'Etkili müşteri veritabanı oluşturma ve yönetme teknikleri.', 'https://drive.google.com/file/d/1Oo7dl-4Yxch7CEd38nCkzJ7mimraw1-A/view?usp=sharing', '/video-covers/video-7-cover.jpg', 7),
+('Takım Kur Pasif Gelir Kazan', 'Network marketing sisteminde takım oluşturma ve pasif gelir elde etme yöntemleri.', 'https://drive.google.com/file/d/1ZeS0945o9nL2FXNO4Uj4_0G1nQjQTcjo/view?usp=sharing', '/video-covers/video-8-cover.jpg', 8),
+('İşinizi Kurmak İçin Psikolojik Hazırlık', 'Kendi işinizi kurma sürecinde gerekli zihinsel hazırlık ve motivasyon teknikleri.', 'https://drive.google.com/file/d/19wmUPWpwTceuTUH_pUU3gzJiZCio3BRg/view?usp=sharing', '/video-covers/video-9-cover.jpg', 9),
+('İşinize Başlama Zamanı', 'Artık hazırsınız! İşinize başlama ve ilk adımları atma rehberi.', 'https://drive.google.com/file/d/1vSVMfK9jEHa9OMkGBVI1-nVQYrcdCGF0/view?usp=sharing', '/video-covers/video-10-cover.jpg', 10);
 
 -- Questions Table
 CREATE TABLE questions (
@@ -222,4 +238,69 @@ CREATE TABLE news (
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (author_id) REFERENCES users(id)
+);
+
+-- Customers Table
+CREATE TABLE customers (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    customer_id VARCHAR(20) UNIQUE NOT NULL,
+    registration_type ENUM('individual', 'corporate') NOT NULL,
+    
+    -- Bireysel müşteri bilgileri
+    first_name VARCHAR(100),
+    last_name VARCHAR(100),
+    tc_no VARCHAR(11),
+    email VARCHAR(100) NOT NULL,
+    phone VARCHAR(20) NOT NULL,
+    
+    -- Kurumsal müşteri bilgileri
+    company_name VARCHAR(255),
+    tax_office VARCHAR(255),
+    tax_no VARCHAR(20),
+    authorized_person VARCHAR(255),
+    authorized_email VARCHAR(100),
+    authorized_phone VARCHAR(20),
+    
+    -- Adres bilgileri
+    delivery_address TEXT NOT NULL,
+    delivery_city VARCHAR(100) NOT NULL,
+    delivery_district VARCHAR(100) NOT NULL,
+    billing_address TEXT,
+    billing_city VARCHAR(100),
+    billing_district VARCHAR(100),
+    same_address BOOLEAN DEFAULT TRUE,
+    
+    -- Ürün bilgileri
+    selected_product VARCHAR(50),
+    product_price DECIMAL(10,2),
+    product_vat DECIMAL(10,2),
+    total_amount DECIMAL(10,2),
+    
+    -- Sözleşme onayları
+    contract1_accepted BOOLEAN DEFAULT FALSE,
+    contract2_accepted BOOLEAN DEFAULT FALSE,
+    
+    -- Sistem bilgileri
+    created_by INT,
+    order_id VARCHAR(50),
+    status ENUM('pending', 'confirmed', 'cancelled') DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    INDEX idx_customer_id (customer_id),
+    INDEX idx_email (email),
+    INDEX idx_created_by (created_by),
+    INDEX idx_status (status),
+    FOREIGN KEY (created_by) REFERENCES users(id)
+);
+
+-- Customer References Table
+CREATE TABLE customer_references (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    customer_id INT NOT NULL,
+    reference_name VARCHAR(100) NOT NULL,
+    reference_surname VARCHAR(100) NOT NULL,
+    reference_phone VARCHAR(20) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE
 );

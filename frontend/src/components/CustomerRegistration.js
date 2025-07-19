@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
+// import { useAuth } from '../context/AuthContext'; // Şu an kullanılmıyor
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -88,89 +88,110 @@ const turkeyData = {
   "Zonguldak": ["Alaplı", "Çaycuma", "Devrek", "Ereğli", "Gökçebey", "Kilimli", "Kozlu", "Merkez"]
 };
 
-const PartnerRegistration = () => {
-  const { user } = useAuth();
+const CustomerRegistration = () => {
+  // const { user } = useAuth(); // Şu an kullanılmıyor
   const navigate = useNavigate();
   
   // Süreç adımları
   const [currentStep, setCurrentStep] = useState(1);
   const [registrationType, setRegistrationType] = useState('');
+  const [selectedProduct, setSelectedProduct] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   
   // Form verileri
   const [formData, setFormData] = useState({
+    // Bireysel bilgiler
     first_name: '',
     last_name: '',
     tc_no: '',
     email: '',
     phone: '',
-    city: '',
-    district: '',
-    address: '',
+    delivery_address: '',
+    delivery_city: '',
+    delivery_district: '',
+    billing_address: '',
+    billing_city: '',
+    billing_district: '',
+    same_address: true,
+    
+    // Kurumsal bilgiler
     company_name: '',
     tax_office: '',
     tax_no: '',
-    authorized_first_name: '',
-    authorized_last_name: '',
+    authorized_person: '',
+    authorized_email: '',
+    authorized_phone: '',
+    company_address: '',
+    company_city: '',
+    company_district: '',
+    
+    // Referans listesi (max 10 kişi)
+    references: [
+      { name: '', surname: '', phone: '' }
+    ],
+    
+    // Sözleşme onayları
     contract1_accepted: false,
     contract2_accepted: false
   });
 
-  // Eğitim tamamlanmamışsa erişim engelle (Admin hariç)
-  if (!user || (!user.education_completed && user.role !== 'admin')) {
-    return (
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '60vh',
-        textAlign: 'center',
-        padding: '40px 20px'
-      }}>
-        <div style={{ fontSize: '80px', marginBottom: '20px', opacity: 0.3 }}>🎓</div>
-        <div style={{
-          backgroundColor: 'var(--card-gray)',
-          padding: '40px',
-          borderRadius: '20px',
-          boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
-          maxWidth: '600px'
-        }}>
-          <h2 style={{ color: 'var(--primary-dark)', marginBottom: '20px' }}>
-            Eğitim Tamamlama Gerekli
-          </h2>
-          <p style={{ color: 'var(--text-light)', fontSize: '16px', lineHeight: '1.5' }}>
-            İş Ortağı Kayıt Paneli'ne erişmek için önce eğitimlerinizi tamamlamanız gerekmektedir.
-          </p>
-          <a href="/education" style={{
-            display: 'inline-block',
-            marginTop: '20px',
-            padding: '12px 30px',
-            backgroundColor: 'var(--primary-dark)',
-            color: 'var(--white)',
-            textDecoration: 'none',
-            borderRadius: '10px',
-            fontWeight: 'bold'
-          }}>
-            Eğitimlere Git
-          </a>
-        </div>
-      </div>
-    );
-  }
+  // Ürün bilgileri
+  const products = [
+    {
+      id: 'product1',
+      name: 'Premium Ürün',
+      price: 72000,
+      vat: 14400,
+      total: 86400,
+      image: '/product1.jpg' // Sonra eklenecek
+    },
+    {
+      id: 'product2',
+      name: 'Standart Ürün',
+      price: 16000,
+      vat: 3200,
+      total: 19200,
+      image: '/product2.jpg' // Sonra eklenecek
+    }
+  ];
+
+  // Referans ekleme
+  const addReference = () => {
+    if (formData.references.length < 10) {
+      setFormData({
+        ...formData,
+        references: [...formData.references, { name: '', surname: '', phone: '' }]
+      });
+    }
+  };
+
+  // Referans silme
+  const removeReference = (index) => {
+    if (formData.references.length > 1) {
+      const newReferences = formData.references.filter((_, i) => i !== index);
+      setFormData({ ...formData, references: newReferences });
+    }
+  };
+
+  // Referans güncelleme
+  const updateReference = (index, field, value) => {
+    const newReferences = [...formData.references];
+    newReferences[index][field] = value;
+    setFormData({ ...formData, references: newReferences });
+  };
 
   // Form doğrulama
   const isStep2Valid = () => {
     if (registrationType === 'individual') {
       return formData.first_name && formData.last_name && formData.tc_no && 
-             formData.email && formData.phone && formData.city && 
-             formData.district && formData.address;
+             formData.email && formData.phone && formData.delivery_address && 
+             formData.delivery_city && formData.delivery_district;
     } else {
       return formData.company_name && formData.tax_office && formData.tax_no && 
-             formData.authorized_first_name && formData.authorized_last_name && 
-             formData.email && formData.phone && formData.city && 
-             formData.district && formData.address;
+             formData.authorized_person && formData.authorized_email && 
+             formData.authorized_phone && formData.company_address && 
+             formData.company_city && formData.company_district;
     }
   };
 
@@ -186,7 +207,7 @@ const PartnerRegistration = () => {
         boxShadow: '0 4px 15px rgba(0,0,0,0.1)'
       }}>
         <h1 style={{ color: 'var(--primary-dark)', marginBottom: '20px' }}>
-          İş Ortağı Kayıt Süreci
+          Müşteri Kayıt Süreci
         </h1>
         
         {/* İlerleme Çubuğu */}
@@ -219,12 +240,12 @@ const PartnerRegistration = () => {
         </div>
         
         <div style={{ marginTop: '15px', color: 'var(--text-light)', fontSize: '14px' }}>
-          {currentStep === 1 && 'Kayıt Türü Seçimi'}
-          {currentStep === 2 && 'Bilgi Girişi'}
+          {currentStep === 1 && 'Müşteri Türü Seçimi'}
+          {currentStep === 2 && 'Müşteri Bilgileri'}
           {currentStep === 3 && 'Ürün Seçimi'}
           {currentStep === 4 && 'Sipariş Özeti'}
           {currentStep === 5 && 'Sözleşme Onayları'}
-          {currentStep === 6 && 'Ödeme'}
+          {currentStep === 6 && 'Sipariş Tamamlama'}
         </div>
       </div>
 
@@ -242,7 +263,7 @@ const PartnerRegistration = () => {
         </div>
       )}
 
-      {/* ADIM 1: Kayıt Türü Seçimi */}
+      {/* ADIM 1: Müşteri Türü Seçimi */}
       {currentStep === 1 && (
         <div style={{
           backgroundColor: 'var(--card-gray)',
@@ -252,7 +273,7 @@ const PartnerRegistration = () => {
           boxShadow: '0 4px 15px rgba(0,0,0,0.1)'
         }}>
           <h2 style={{ color: 'var(--primary-dark)', marginBottom: '30px', fontSize: '28px' }}>
-            Kayıt Türünü Seçin
+            Müşteri Türünü Seçin
           </h2>
           
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px', maxWidth: '800px', margin: '0 auto' }}>
@@ -272,9 +293,9 @@ const PartnerRegistration = () => {
               }}
             >
               <div style={{ fontSize: '60px', marginBottom: '20px' }}>👤</div>
-              <h3 style={{ color: 'var(--primary-dark)', marginBottom: '15px' }}>Bireysel Kayıt</h3>
+              <h3 style={{ color: 'var(--primary-dark)', marginBottom: '15px' }}>Bireysel Müşteri</h3>
               <p style={{ color: 'var(--text-light)', fontSize: '14px' }}>
-                Kişisel bilgilerinizle kayıt olun
+                Kişisel bilgilerle müşteri kaydı
               </p>
             </div>
             
@@ -294,15 +315,15 @@ const PartnerRegistration = () => {
               }}
             >
               <div style={{ fontSize: '60px', marginBottom: '20px' }}>🏢</div>
-              <h3 style={{ color: 'var(--primary-dark)', marginBottom: '15px' }}>Kurumsal Kayıt</h3>
+              <h3 style={{ color: 'var(--primary-dark)', marginBottom: '15px' }}>Kurumsal Müşteri</h3>
               <p style={{ color: 'var(--text-light)', fontSize: '14px' }}>
-                Şirket bilgilerinizle kayıt olun
+                Şirket bilgileriyle müşteri kaydı
               </p>
             </div>
           </div>
         </div>
-      )} 
-     {/* ADIM 2: Bilgi Girişi */}
+      )}  
+    {/* ADIM 2: Müşteri Bilgileri */}
       {currentStep === 2 && (
         <div style={{
           backgroundColor: 'var(--card-gray)',
@@ -311,11 +332,15 @@ const PartnerRegistration = () => {
           boxShadow: '0 4px 15px rgba(0,0,0,0.1)'
         }}>
           <h2 style={{ color: 'var(--primary-dark)', marginBottom: '30px', textAlign: 'center' }}>
-            {registrationType === 'individual' ? 'Bireysel Bilgiler' : 'Kurumsal Bilgiler'}
+            {registrationType === 'individual' ? 'Bireysel Müşteri Bilgileri' : 'Kurumsal Müşteri Bilgileri'}
           </h2>
           
           {registrationType === 'individual' ? (
             <div>
+              {/* Kişisel Bilgiler */}
+              <h3 style={{ color: 'var(--primary-dark)', marginBottom: '20px', fontSize: '18px' }}>
+                👤 Kişisel Bilgiler
+              </h3>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
                 <div>
                   <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: 'var(--text-dark)' }}>
@@ -356,7 +381,7 @@ const PartnerRegistration = () => {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px', marginBottom: '30px' }}>
                 <div>
                   <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: 'var(--text-dark)' }}>
                     TC Kimlik No *
@@ -395,28 +420,31 @@ const PartnerRegistration = () => {
                     }}
                   />
                 </div>
+
+                <div>
+                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: 'var(--text-dark)' }}>
+                    Telefon *
+                  </label>
+                  <input
+                    type="tel"
+                    required
+                    value={formData.phone}
+                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                    style={{
+                      width: '100%',
+                      padding: '12px 15px',
+                      border: '2px solid var(--border-color)',
+                      borderRadius: '10px',
+                      fontSize: '14px'
+                    }}
+                  />
+                </div>
               </div>
 
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: 'var(--text-dark)' }}>
-                  Telefon *
-                </label>
-                <input
-                  type="tel"
-                  required
-                  value={formData.phone}
-                  onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                  style={{
-                    width: '100%',
-                    padding: '12px 15px',
-                    border: '2px solid var(--border-color)',
-                    borderRadius: '10px',
-                    fontSize: '14px'
-                  }}
-                />
-              </div>
-
-              {/* Adres Seçimi */}
+              {/* Teslimat Adresi */}
+              <h3 style={{ color: 'var(--primary-dark)', marginBottom: '20px', fontSize: '18px' }}>
+                📦 Teslimat Adresi
+              </h3>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
                 <div>
                   <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: 'var(--text-dark)' }}>
@@ -424,8 +452,8 @@ const PartnerRegistration = () => {
                   </label>
                   <select
                     required
-                    value={formData.city}
-                    onChange={(e) => setFormData({...formData, city: e.target.value, district: ''})}
+                    value={formData.delivery_city}
+                    onChange={(e) => setFormData({...formData, delivery_city: e.target.value, delivery_district: ''})}
                     style={{
                       width: '100%',
                       padding: '12px 15px',
@@ -447,20 +475,20 @@ const PartnerRegistration = () => {
                   </label>
                   <select
                     required
-                    value={formData.district}
-                    onChange={(e) => setFormData({...formData, district: e.target.value})}
-                    disabled={!formData.city}
+                    value={formData.delivery_district}
+                    onChange={(e) => setFormData({...formData, delivery_district: e.target.value})}
+                    disabled={!formData.delivery_city}
                     style={{
                       width: '100%',
                       padding: '12px 15px',
                       border: '2px solid var(--border-color)',
                       borderRadius: '10px',
                       fontSize: '14px',
-                      opacity: !formData.city ? 0.5 : 1
+                      opacity: !formData.delivery_city ? 0.5 : 1
                     }}
                   >
                     <option value="">İlçe Seçin</option>
-                    {formData.city && turkeyData[formData.city]?.map(district => (
+                    {formData.delivery_city && turkeyData[formData.delivery_city]?.map(district => (
                       <option key={district} value={district}>{district}</option>
                     ))}
                   </select>
@@ -469,13 +497,13 @@ const PartnerRegistration = () => {
 
               <div style={{ marginBottom: '20px' }}>
                 <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: 'var(--text-dark)' }}>
-                  Adres Detayı *
+                  Teslimat Adresi Detayı *
                 </label>
                 <textarea
                   required
                   rows="3"
-                  value={formData.address}
-                  onChange={(e) => setFormData({...formData, address: e.target.value})}
+                  value={formData.delivery_address}
+                  onChange={(e) => setFormData({...formData, delivery_address: e.target.value})}
                   placeholder="Mahalle, sokak, bina no, daire no vb. detayları yazın..."
                   style={{
                     width: '100%',
@@ -487,13 +515,119 @@ const PartnerRegistration = () => {
                   }}
                 />
               </div>
+
+              {/* Fatura Adresi */}
+              <h3 style={{ color: 'var(--primary-dark)', marginBottom: '20px', fontSize: '18px' }}>
+                🧾 Fatura Adresi
+              </h3>
+              
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+                  <input
+                    type="checkbox"
+                    checked={formData.same_address}
+                    onChange={(e) => {
+                      setFormData({
+                        ...formData, 
+                        same_address: e.target.checked,
+                        billing_address: e.target.checked ? formData.delivery_address : '',
+                        billing_city: e.target.checked ? formData.delivery_city : '',
+                        billing_district: e.target.checked ? formData.delivery_district : ''
+                      });
+                    }}
+                    style={{ marginRight: '10px', transform: 'scale(1.2)' }}
+                  />
+                  <span style={{ fontSize: '14px', color: 'var(--text-dark)' }}>
+                    Fatura adresi teslimat adresi ile aynı
+                  </span>
+                </label>
+              </div>
+
+              {!formData.same_address && (
+                <div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: 'var(--text-dark)' }}>
+                        İl *
+                      </label>
+                      <select
+                        required
+                        value={formData.billing_city}
+                        onChange={(e) => setFormData({...formData, billing_city: e.target.value, billing_district: ''})}
+                        style={{
+                          width: '100%',
+                          padding: '12px 15px',
+                          border: '2px solid var(--border-color)',
+                          borderRadius: '10px',
+                          fontSize: '14px'
+                        }}
+                      >
+                        <option value="">İl Seçin</option>
+                        {Object.keys(turkeyData).map(city => (
+                          <option key={city} value={city}>{city}</option>
+                        ))}
+                      </select>
+                    </div>
+                    
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: 'var(--text-dark)' }}>
+                        İlçe *
+                      </label>
+                      <select
+                        required
+                        value={formData.billing_district}
+                        onChange={(e) => setFormData({...formData, billing_district: e.target.value})}
+                        disabled={!formData.billing_city}
+                        style={{
+                          width: '100%',
+                          padding: '12px 15px',
+                          border: '2px solid var(--border-color)',
+                          borderRadius: '10px',
+                          fontSize: '14px',
+                          opacity: !formData.billing_city ? 0.5 : 1
+                        }}
+                      >
+                        <option value="">İlçe Seçin</option>
+                        {formData.billing_city && turkeyData[formData.billing_city]?.map(district => (
+                          <option key={district} value={district}>{district}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div style={{ marginBottom: '20px' }}>
+                    <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: 'var(--text-dark)' }}>
+                      Fatura Adresi Detayı *
+                    </label>
+                    <textarea
+                      required
+                      rows="3"
+                      value={formData.billing_address}
+                      onChange={(e) => setFormData({...formData, billing_address: e.target.value})}
+                      placeholder="Mahalle, sokak, bina no, daire no vb. detayları yazın..."
+                      style={{
+                        width: '100%',
+                        padding: '12px 15px',
+                        border: '2px solid var(--border-color)',
+                        borderRadius: '10px',
+                        fontSize: '14px',
+                        resize: 'vertical'
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
             <div>
+              {/* Kurumsal Bilgiler */}
+              <h3 style={{ color: 'var(--primary-dark)', marginBottom: '20px', fontSize: '18px' }}>
+                🏢 Şirket Bilgileri
+              </h3>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
                 <div>
                   <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: 'var(--text-dark)' }}>
-                    Şirket İsmi *
+                    Firma Adı *
                   </label>
                   <input
                     type="text"
@@ -530,7 +664,7 @@ const PartnerRegistration = () => {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px', marginBottom: '30px' }}>
                 <div>
                   <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: 'var(--text-dark)' }}>
                     Vergi Numarası *
@@ -552,53 +686,32 @@ const PartnerRegistration = () => {
                 
                 <div>
                   <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: 'var(--text-dark)' }}>
+                    Yetkili Kişi *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.authorized_person}
+                    onChange={(e) => setFormData({...formData, authorized_person: e.target.value})}
+                    style={{
+                      width: '100%',
+                      padding: '12px 15px',
+                      border: '2px solid var(--border-color)',
+                      borderRadius: '10px',
+                      fontSize: '14px'
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: 'var(--text-dark)' }}>
                     E-mail *
                   </label>
                   <input
                     type="email"
                     required
-                    value={formData.email}
-                    onChange={(e) => setFormData({...formData, email: e.target.value})}
-                    style={{
-                      width: '100%',
-                      padding: '12px 15px',
-                      border: '2px solid var(--border-color)',
-                      borderRadius: '10px',
-                      fontSize: '14px'
-                    }}
-                  />
-                </div>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: 'var(--text-dark)' }}>
-                    Sorumlu Kişi Adı *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.authorized_first_name}
-                    onChange={(e) => setFormData({...formData, authorized_first_name: e.target.value})}
-                    style={{
-                      width: '100%',
-                      padding: '12px 15px',
-                      border: '2px solid var(--border-color)',
-                      borderRadius: '10px',
-                      fontSize: '14px'
-                    }}
-                  />
-                </div>
-                
-                <div>
-                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: 'var(--text-dark)' }}>
-                    Sorumlu Kişi Soyadı *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.authorized_last_name}
-                    onChange={(e) => setFormData({...formData, authorized_last_name: e.target.value})}
+                    value={formData.authorized_email}
+                    onChange={(e) => setFormData({...formData, authorized_email: e.target.value})}
                     style={{
                       width: '100%',
                       padding: '12px 15px',
@@ -617,8 +730,8 @@ const PartnerRegistration = () => {
                 <input
                   type="tel"
                   required
-                  value={formData.phone}
-                  onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                  value={formData.authorized_phone}
+                  onChange={(e) => setFormData({...formData, authorized_phone: e.target.value})}
                   style={{
                     width: '100%',
                     padding: '12px 15px',
@@ -629,7 +742,10 @@ const PartnerRegistration = () => {
                 />
               </div>
 
-              {/* Adres Seçimi */}
+              {/* Şirket Adresi */}
+              <h3 style={{ color: 'var(--primary-dark)', marginBottom: '20px', fontSize: '18px' }}>
+                🏢 Şirket Adresi
+              </h3>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
                 <div>
                   <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: 'var(--text-dark)' }}>
@@ -637,8 +753,8 @@ const PartnerRegistration = () => {
                   </label>
                   <select
                     required
-                    value={formData.city}
-                    onChange={(e) => setFormData({...formData, city: e.target.value, district: ''})}
+                    value={formData.company_city}
+                    onChange={(e) => setFormData({...formData, company_city: e.target.value, company_district: ''})}
                     style={{
                       width: '100%',
                       padding: '12px 15px',
@@ -660,20 +776,20 @@ const PartnerRegistration = () => {
                   </label>
                   <select
                     required
-                    value={formData.district}
-                    onChange={(e) => setFormData({...formData, district: e.target.value})}
-                    disabled={!formData.city}
+                    value={formData.company_district}
+                    onChange={(e) => setFormData({...formData, company_district: e.target.value})}
+                    disabled={!formData.company_city}
                     style={{
                       width: '100%',
                       padding: '12px 15px',
                       border: '2px solid var(--border-color)',
                       borderRadius: '10px',
                       fontSize: '14px',
-                      opacity: !formData.city ? 0.5 : 1
+                      opacity: !formData.company_city ? 0.5 : 1
                     }}
                   >
                     <option value="">İlçe Seçin</option>
-                    {formData.city && turkeyData[formData.city]?.map(district => (
+                    {formData.company_city && turkeyData[formData.company_city]?.map(district => (
                       <option key={district} value={district}>{district}</option>
                     ))}
                   </select>
@@ -682,13 +798,13 @@ const PartnerRegistration = () => {
 
               <div style={{ marginBottom: '20px' }}>
                 <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: 'var(--text-dark)' }}>
-                  Şirket Adresi *
+                  Şirket Adresi Detayı *
                 </label>
                 <textarea
                   required
                   rows="3"
-                  value={formData.address}
-                  onChange={(e) => setFormData({...formData, address: e.target.value})}
+                  value={formData.company_address}
+                  onChange={(e) => setFormData({...formData, company_address: e.target.value})}
                   placeholder="Mahalle, sokak, bina no, daire no vb. detayları yazın..."
                   style={{
                     width: '100%',
@@ -701,6 +817,119 @@ const PartnerRegistration = () => {
                 />
               </div>
             </div>
+          )}
+
+          {/* Referans Listesi */}
+          <h3 style={{ color: 'var(--primary-dark)', marginBottom: '20px', fontSize: '18px', marginTop: '30px' }}>
+            👥 Referans Listesi (Maksimum 10 Kişi)
+          </h3>
+          
+          {formData.references.map((reference, index) => (
+            <div key={index} style={{
+              backgroundColor: 'var(--white)',
+              padding: '20px',
+              borderRadius: '10px',
+              marginBottom: '15px',
+              border: '1px solid var(--border-color)'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+                <h4 style={{ color: 'var(--primary-dark)', margin: 0 }}>
+                  Referans {index + 1}
+                </h4>
+                {formData.references.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeReference(index)}
+                    style={{
+                      backgroundColor: '#dc3545',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '5px',
+                      padding: '5px 10px',
+                      fontSize: '12px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Sil
+                  </button>
+                )}
+              </div>
+              
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '15px' }}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', fontWeight: 'bold' }}>
+                    İsim
+                  </label>
+                  <input
+                    type="text"
+                    value={reference.name}
+                    onChange={(e) => updateReference(index, 'name', e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '10px',
+                      border: '1px solid var(--border-color)',
+                      borderRadius: '5px',
+                      fontSize: '14px'
+                    }}
+                  />
+                </div>
+                
+                <div>
+                  <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', fontWeight: 'bold' }}>
+                    Soyisim
+                  </label>
+                  <input
+                    type="text"
+                    value={reference.surname}
+                    onChange={(e) => updateReference(index, 'surname', e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '10px',
+                      border: '1px solid var(--border-color)',
+                      borderRadius: '5px',
+                      fontSize: '14px'
+                    }}
+                  />
+                </div>
+                
+                <div>
+                  <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', fontWeight: 'bold' }}>
+                    Telefon No
+                  </label>
+                  <input
+                    type="tel"
+                    value={reference.phone}
+                    onChange={(e) => updateReference(index, 'phone', e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '10px',
+                      border: '1px solid var(--border-color)',
+                      borderRadius: '5px',
+                      fontSize: '14px'
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          ))}
+
+          {formData.references.length < 10 && (
+            <button
+              type="button"
+              onClick={addReference}
+              style={{
+                backgroundColor: 'var(--primary-dark)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '10px',
+                padding: '12px 20px',
+                fontSize: '14px',
+                cursor: 'pointer',
+                marginBottom: '30px'
+              }}
+            >
+              + Referans Ekle
+            </button>
           )}
           
           <div style={{ display: 'flex', gap: '20px', marginTop: '30px' }}>
@@ -735,80 +964,202 @@ const PartnerRegistration = () => {
                 cursor: isStep2Valid() ? 'pointer' : 'not-allowed'
               }}
             >
-              Kayıt Oluştur →
+              Ürün Seçimine Geç →
             </button>
           </div>
         </div>
-      )}     
- {/* ADIM 3: Ürün Seçimi */}
+      )} 
+     {/* ADIM 3: Ürün Seçimi */}
       {currentStep === 3 && (
         <div style={{
           backgroundColor: 'var(--card-gray)',
           borderRadius: '15px',
           padding: '40px',
-          textAlign: 'center',
           boxShadow: '0 4px 15px rgba(0,0,0,0.1)'
         }}>
-          <h2 style={{ color: 'var(--primary-dark)', marginBottom: '30px' }}>
+          <h2 style={{ color: 'var(--primary-dark)', marginBottom: '30px', textAlign: 'center' }}>
             Ürün Seçimi
           </h2>
           
-          <div style={{
-            maxWidth: '600px',
-            margin: '0 auto',
-            padding: '40px',
-            border: '3px solid var(--accent-gold)',
-            borderRadius: '20px',
-            backgroundColor: 'var(--white)',
-            boxShadow: '0 10px 30px rgba(0,0,0,0.1)'
-          }}>
-            <div style={{ fontSize: '60px', marginBottom: '20px' }}>🏢</div>
-            <h3 style={{ color: 'var(--primary-dark)', marginBottom: '20px', fontSize: '24px' }}>
-              FRANCHISE SATIŞ PAKETİ
-            </h3>
-            
-            <div style={{ marginBottom: '30px' }}>
-              <div style={{ 
-                fontSize: '18px', 
-                color: 'var(--text-dark)', 
-                marginBottom: '10px',
-                textDecoration: 'line-through',
-                opacity: 0.7
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px', maxWidth: '1000px', margin: '0 auto' }}>
+            {/* Ürün 1 - Premium */}
+            <div 
+              onClick={() => setSelectedProduct('product1')}
+              style={{
+                padding: '30px',
+                border: selectedProduct === 'product1' ? '3px solid var(--accent-gold)' : '3px solid var(--border-color)',
+                borderRadius: '20px',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                backgroundColor: 'var(--white)',
+                boxShadow: selectedProduct === 'product1' ? '0 10px 30px rgba(255,215,0,0.3)' : '0 5px 15px rgba(0,0,0,0.1)',
+                textAlign: 'center'
+              }}
+            >
+              {/* Ürün Resmi Placeholder */}
+              <div style={{
+                width: '200px',
+                height: '200px',
+                backgroundColor: '#f0f0f0',
+                borderRadius: '15px',
+                margin: '0 auto 20px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '48px',
+                color: '#ccc'
               }}>
-                4.000 ₺
+                📱
               </div>
-              <div style={{ 
-                fontSize: '16px', 
-                color: 'var(--text-light)', 
-                marginBottom: '10px'
-              }}>
-                + %20 KDV
+              
+              <h3 style={{ color: 'var(--primary-dark)', marginBottom: '15px', fontSize: '20px' }}>
+                Premium Ürün
+              </h3>
+              
+              <div style={{ marginBottom: '20px' }}>
+                <div style={{ 
+                  fontSize: '16px', 
+                  color: 'var(--text-dark)', 
+                  marginBottom: '5px',
+                  textDecoration: 'line-through',
+                  opacity: 0.7
+                }}>
+                  72.000 ₺
+                </div>
+                <div style={{ 
+                  fontSize: '14px', 
+                  color: 'var(--text-light)', 
+                  marginBottom: '10px'
+                }}>
+                  + %20 KDV (14.400 ₺)
+                </div>
+                <div style={{ 
+                  fontSize: '28px', 
+                  color: 'var(--primary-dark)', 
+                  fontWeight: 'bold'
+                }}>
+                  86.400 ₺
+                </div>
               </div>
-              <div style={{ 
-                fontSize: '32px', 
-                color: 'var(--primary-dark)', 
+
+              <div style={{
+                padding: '10px',
+                backgroundColor: selectedProduct === 'product1' ? 'var(--accent-gold)' : 'var(--card-gray)',
+                borderRadius: '10px',
+                color: selectedProduct === 'product1' ? 'var(--primary-dark)' : 'var(--text-dark)',
                 fontWeight: 'bold',
-                marginBottom: '20px'
+                fontSize: '14px'
               }}>
-                4.800 ₺
+                {selectedProduct === 'product1' ? '✓ Seçildi' : 'Seç'}
               </div>
             </div>
 
-            <button
-              onClick={() => setCurrentStep(4)}
+            {/* Ürün 2 - Standart */}
+            <div 
+              onClick={() => setSelectedProduct('product2')}
               style={{
-                padding: '15px 40px',
-                backgroundColor: 'var(--primary-dark)',
-                color: 'var(--white)',
-                border: 'none',
-                borderRadius: '10px',
-                fontSize: '18px',
-                fontWeight: 'bold',
+                padding: '30px',
+                border: selectedProduct === 'product2' ? '3px solid var(--accent-gold)' : '3px solid var(--border-color)',
+                borderRadius: '20px',
                 cursor: 'pointer',
-                boxShadow: '0 5px 15px rgba(0,0,0,0.2)'
+                transition: 'all 0.3s ease',
+                backgroundColor: 'var(--white)',
+                boxShadow: selectedProduct === 'product2' ? '0 10px 30px rgba(255,215,0,0.3)' : '0 5px 15px rgba(0,0,0,0.1)',
+                textAlign: 'center'
               }}
             >
-              Sipariş Ver
+              {/* Ürün Resmi Placeholder */}
+              <div style={{
+                width: '200px',
+                height: '200px',
+                backgroundColor: '#f0f0f0',
+                borderRadius: '15px',
+                margin: '0 auto 20px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '48px',
+                color: '#ccc'
+              }}>
+                📱
+              </div>
+              
+              <h3 style={{ color: 'var(--primary-dark)', marginBottom: '15px', fontSize: '20px' }}>
+                Standart Ürün
+              </h3>
+              
+              <div style={{ marginBottom: '20px' }}>
+                <div style={{ 
+                  fontSize: '16px', 
+                  color: 'var(--text-dark)', 
+                  marginBottom: '5px',
+                  textDecoration: 'line-through',
+                  opacity: 0.7
+                }}>
+                  16.000 ₺
+                </div>
+                <div style={{ 
+                  fontSize: '14px', 
+                  color: 'var(--text-light)', 
+                  marginBottom: '10px'
+                }}>
+                  + %20 KDV (3.200 ₺)
+                </div>
+                <div style={{ 
+                  fontSize: '28px', 
+                  color: 'var(--primary-dark)', 
+                  fontWeight: 'bold'
+                }}>
+                  19.200 ₺
+                </div>
+              </div>
+
+              <div style={{
+                padding: '10px',
+                backgroundColor: selectedProduct === 'product2' ? 'var(--accent-gold)' : 'var(--card-gray)',
+                borderRadius: '10px',
+                color: selectedProduct === 'product2' ? 'var(--primary-dark)' : 'var(--text-dark)',
+                fontWeight: 'bold',
+                fontSize: '14px'
+              }}>
+                {selectedProduct === 'product2' ? '✓ Seçildi' : 'Seç'}
+              </div>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: '20px', marginTop: '40px' }}>
+            <button
+              onClick={() => setCurrentStep(2)}
+              style={{
+                flex: 1,
+                padding: '15px',
+                backgroundColor: 'var(--card-gray)',
+                color: 'var(--text-dark)',
+                border: '2px solid var(--border-color)',
+                borderRadius: '10px',
+                fontSize: '16px',
+                fontWeight: 'bold',
+                cursor: 'pointer'
+              }}
+            >
+              ← Geri
+            </button>
+            <button
+              onClick={() => setCurrentStep(4)}
+              disabled={!selectedProduct}
+              style={{
+                flex: 2,
+                padding: '15px',
+                backgroundColor: selectedProduct ? 'var(--primary-dark)' : 'var(--card-gray)',
+                color: selectedProduct ? 'var(--white)' : 'var(--text-light)',
+                border: 'none',
+                borderRadius: '10px',
+                fontSize: '16px',
+                fontWeight: 'bold',
+                cursor: selectedProduct ? 'pointer' : 'not-allowed'
+              }}
+            >
+              Sipariş Özetine Geç →
             </button>
           </div>
         </div>
@@ -826,6 +1177,7 @@ const PartnerRegistration = () => {
             Sipariş Özeti
           </h2>
           
+          {/* Müşteri Bilgileri */}
           <div style={{
             backgroundColor: 'var(--white)',
             borderRadius: '15px',
@@ -834,16 +1186,33 @@ const PartnerRegistration = () => {
             boxShadow: '0 5px 15px rgba(0,0,0,0.1)'
           }}>
             <h3 style={{ color: 'var(--primary-dark)', marginBottom: '20px' }}>
-              Müşteri Bilgileri
+              👤 Müşteri Bilgileri
             </h3>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', fontSize: '14px' }}>
-              <div><strong>İsim:</strong> {registrationType === 'individual' ? `${formData.first_name} ${formData.last_name}` : formData.company_name}</div>
-              <div><strong>E-mail:</strong> {formData.email}</div>
-              <div><strong>Telefon:</strong> {formData.phone}</div>
-              <div><strong>Adres:</strong> {formData.address}, {formData.district}/{formData.city}</div>
+              {registrationType === 'individual' ? (
+                <>
+                  <div><strong>İsim:</strong> {formData.first_name} {formData.last_name}</div>
+                  <div><strong>TC No:</strong> {formData.tc_no}</div>
+                  <div><strong>E-mail:</strong> {formData.email}</div>
+                  <div><strong>Telefon:</strong> {formData.phone}</div>
+                  <div><strong>Teslimat:</strong> {formData.delivery_address}, {formData.delivery_district}/{formData.delivery_city}</div>
+                  <div><strong>Fatura:</strong> {formData.same_address ? 'Teslimat ile aynı' : `${formData.billing_address}, ${formData.billing_district}/${formData.billing_city}`}</div>
+                </>
+              ) : (
+                <>
+                  <div><strong>Firma:</strong> {formData.company_name}</div>
+                  <div><strong>Vergi Dairesi:</strong> {formData.tax_office}</div>
+                  <div><strong>Vergi No:</strong> {formData.tax_no}</div>
+                  <div><strong>Yetkili:</strong> {formData.authorized_person}</div>
+                  <div><strong>E-mail:</strong> {formData.authorized_email}</div>
+                  <div><strong>Telefon:</strong> {formData.authorized_phone}</div>
+                  <div style={{ gridColumn: '1 / -1' }}><strong>Adres:</strong> {formData.company_address}, {formData.company_district}/{formData.company_city}</div>
+                </>
+              )}
             </div>
           </div>
 
+          {/* Seçilen Ürün */}
           <div style={{
             backgroundColor: 'var(--white)',
             borderRadius: '15px',
@@ -852,27 +1221,59 @@ const PartnerRegistration = () => {
             boxShadow: '0 5px 15px rgba(0,0,0,0.1)'
           }}>
             <h3 style={{ color: 'var(--primary-dark)', marginBottom: '20px' }}>
-              Ürün Bilgileri
+              🛍️ Seçilen Ürün
             </h3>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div>
-                <div style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '5px' }}>
-                  Franchise Satış Paketi
+            {(() => {
+              const product = products.find(p => p.id === selectedProduct);
+              return (
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div>
+                    <div style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '5px' }}>
+                      {product?.name}
+                    </div>
+                    <div style={{ fontSize: '14px', color: 'var(--text-light)' }}>
+                      Perakende satış fiyatı + KDV
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontSize: '24px', fontWeight: 'bold', color: 'var(--primary-dark)' }}>
+                      {product?.total.toLocaleString()} ₺
+                    </div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-light)' }}>
+                      (KDV Dahil)
+                    </div>
+                  </div>
                 </div>
-                <div style={{ fontSize: '14px', color: 'var(--text-light)' }}>
-                  Network marketing franchise hakkı
-                </div>
-              </div>
-              <div style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: '24px', fontWeight: 'bold', color: 'var(--primary-dark)' }}>
-                  4.800 ₺
-                </div>
-                <div style={{ fontSize: '12px', color: 'var(--text-light)' }}>
-                  (KDV Dahil)
-                </div>
+              );
+            })()}
+          </div>
+
+          {/* Referans Listesi */}
+          {formData.references.some(ref => ref.name || ref.surname || ref.phone) && (
+            <div style={{
+              backgroundColor: 'var(--white)',
+              borderRadius: '15px',
+              padding: '30px',
+              marginBottom: '30px',
+              boxShadow: '0 5px 15px rgba(0,0,0,0.1)'
+            }}>
+              <h3 style={{ color: 'var(--primary-dark)', marginBottom: '20px' }}>
+                👥 Referans Listesi
+              </h3>
+              <div style={{ display: 'grid', gap: '10px' }}>
+                {formData.references.filter(ref => ref.name || ref.surname || ref.phone).map((ref, index) => (
+                  <div key={index} style={{ 
+                    padding: '10px', 
+                    backgroundColor: 'var(--card-gray)', 
+                    borderRadius: '8px',
+                    fontSize: '14px'
+                  }}>
+                    <strong>{index + 1}.</strong> {ref.name} {ref.surname} - {ref.phone}
+                  </div>
+                ))}
               </div>
             </div>
-          </div>
+          )}
 
           <div style={{ display: 'flex', gap: '20px' }}>
             <button
@@ -905,12 +1306,13 @@ const PartnerRegistration = () => {
                 cursor: 'pointer'
               }}
             >
-              Devam Et →
+              Sözleşmelere Geç →
             </button>
           </div>
         </div>
-      )} 
-     {/* ADIM 5: Sözleşme Onayları */}
+      )}
+
+      {/* ADIM 5: Sözleşme Onayları */}
       {currentStep === 5 && (
         <div style={{
           backgroundColor: 'var(--card-gray)',
@@ -922,7 +1324,7 @@ const PartnerRegistration = () => {
             Sözleşme Onayları
           </h2>
           
-          {/* Sözleşme 1 */}
+          {/* Sözleşme 1 - Satış Sözleşmesi */}
           <div style={{
             backgroundColor: 'var(--white)',
             borderRadius: '15px',
@@ -931,7 +1333,7 @@ const PartnerRegistration = () => {
             boxShadow: '0 5px 15px rgba(0,0,0,0.1)'
           }}>
             <h3 style={{ color: 'var(--primary-dark)', marginBottom: '20px' }}>
-              1. Uzaktan Satın Alma Sözleşmesi
+              1. Satış Sözleşmesi
             </h3>
             <div style={{
               maxHeight: '200px',
@@ -943,20 +1345,20 @@ const PartnerRegistration = () => {
               lineHeight: '1.5',
               marginBottom: '20px'
             }}>
-              <p><strong>UZAKTAN SATIN ALMA SÖZLEŞMESİ</strong></p>
-              <p>İşbu sözleşme, 6502 sayılı Tüketicinin Korunması Hakkında Kanun ve Mesafeli Sözleşmeler Yönetmeliği hükümleri gereğince düzenlenmiştir.</p>
+              <p><strong>SATIŞ SÖZLEŞMESİ</strong></p>
+              <p>İşbu sözleşme, 6502 sayılı Tüketicinin Korunması Hakkında Kanun ve ilgili yönetmelikler çerçevesinde düzenlenmiştir.</p>
               <p><strong>SATICI BİLGİLERİ:</strong></p>
               <p>Ünvan: HOOWELL Network Marketing Ltd. Şti.</p>
               <p>Adres: [Şirket Adresi]</p>
               <p>Telefon: [Telefon Numarası]</p>
               <p>E-posta: info@hoowell.com</p>
-              <p><strong>ÜRÜN/HİZMET BİLGİLERİ:</strong></p>
-              <p>Franchise Satış Paketi - Network Marketing Franchise Hakkı</p>
-              <p>Fiyat: 4.800 TL (KDV Dahil)</p>
-              <p><strong>CAYMA HAKKI:</strong></p>
-              <p>Tüketici, 14 gün içerisinde herhangi bir gerekçe göstermeksizin ve cezai şart ödemeksizin sözleşmeden cayma hakkına sahiptir.</p>
+              <p><strong>ÜRÜN BİLGİLERİ:</strong></p>
+              <p>Ürün: {products.find(p => p.id === selectedProduct)?.name}</p>
+              <p>Fiyat: {products.find(p => p.id === selectedProduct)?.total.toLocaleString()} TL (KDV Dahil)</p>
               <p><strong>TESLİMAT:</strong></p>
-              <p>Dijital içerik ve franchise hakları ödeme onayından sonra 24 saat içerisinde teslim edilecektir.</p>
+              <p>Ürün, sipariş onayından sonra 7-14 iş günü içerisinde teslim edilecektir.</p>
+              <p><strong>GARANTİ:</strong></p>
+              <p>Ürün 2 yıl garantili olup, garanti koşulları ürün ile birlikte teslim edilecektir.</p>
             </div>
             
             <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
@@ -967,12 +1369,12 @@ const PartnerRegistration = () => {
                 style={{ marginRight: '10px', transform: 'scale(1.2)' }}
               />
               <span style={{ fontSize: '14px', color: 'var(--text-dark)' }}>
-                Uzaktan Satın Alma Sözleşmesi'ni okudum, anladım ve kabul ediyorum.
+                Satış Sözleşmesi'ni okudum, anladım ve kabul ediyorum.
               </span>
             </label>
           </div>
 
-          {/* Sözleşme 2 */}
+          {/* Sözleşme 2 - Kişisel Verilerin Korunması */}
           <div style={{
             backgroundColor: 'var(--white)',
             borderRadius: '15px',
@@ -981,7 +1383,7 @@ const PartnerRegistration = () => {
             boxShadow: '0 5px 15px rgba(0,0,0,0.1)'
           }}>
             <h3 style={{ color: 'var(--primary-dark)', marginBottom: '20px' }}>
-              2. Şirket İlkeleri Sözleşmesi
+              2. Kişisel Verilerin Korunması Sözleşmesi
             </h3>
             <div style={{
               maxHeight: '200px',
@@ -993,21 +1395,20 @@ const PartnerRegistration = () => {
               lineHeight: '1.5',
               marginBottom: '20px'
             }}>
-              <p><strong>HOOWELL ŞİRKET İLKELERİ VE ETİK KURALLARI</strong></p>
-              <p><strong>1. GENEL İLKELER:</strong></p>
-              <p>• Dürüstlük ve şeffaflık ilkelerine bağlı kalınacaktır.</p>
-              <p>• Müşteri memnuniyeti öncelikli hedefimizdir.</p>
-              <p>• Yasal düzenlemelere tam uyum sağlanacaktır.</p>
-              <p><strong>2. İŞ ORTAĞI SORUMLULUKLARI:</strong></p>
-              <p>• Ürün ve hizmetler hakkında doğru bilgi verilecektir.</p>
-              <p>• Yanıltıcı reklam ve pazarlama yapılmayacaktır.</p>
-              <p>• Şirket imajına zarar verecek davranışlardan kaçınılacaktır.</p>
-              <p><strong>3. ETİK KURALLAR:</strong></p>
-              <p>• Adil rekabet kurallarına uyulacaktır.</p>
-              <p>• Kişisel verilerin korunması sağlanacaktır.</p>
-              <p>• Çıkar çatışmalarından kaçınılacaktır.</p>
-              <p><strong>4. CEZAI HÜKÜMLER:</strong></p>
-              <p>Bu kurallara aykırı davranış durumunda iş ortaklığı feshedilebilir.</p>
+              <p><strong>KİŞİSEL VERİLERİN KORUNMASI AYDINLATMA METNİ</strong></p>
+              <p>6698 sayılı Kişisel Verilerin Korunması Kanunu kapsamında aşağıdaki bilgilendirmeyi yapmaktayız.</p>
+              <p><strong>VERİ SORUMLUSU:</strong></p>
+              <p>HOOWELL Network Marketing Ltd. Şti.</p>
+              <p><strong>İŞLENEN KİŞİSEL VERİLER:</strong></p>
+              <p>• Kimlik bilgileri (Ad, soyad, TC kimlik numarası)</p>
+              <p>• İletişim bilgileri (Telefon, e-posta, adres)</p>
+              <p>• Finansal bilgiler (Ödeme bilgileri)</p>
+              <p><strong>İŞLEME AMAÇLARI:</strong></p>
+              <p>• Satış işlemlerinin gerçekleştirilmesi</p>
+              <p>• Müşteri hizmetlerinin sunulması</p>
+              <p>• Yasal yükümlülüklerin yerine getirilmesi</p>
+              <p><strong>HAKLARINIZ:</strong></p>
+              <p>Kişisel verileriniz ile ilgili bilgi alma, düzeltme, silme haklarınız bulunmaktadır.</p>
             </div>
             
             <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
@@ -1018,7 +1419,7 @@ const PartnerRegistration = () => {
                 style={{ marginRight: '10px', transform: 'scale(1.2)' }}
               />
               <span style={{ fontSize: '14px', color: 'var(--text-dark)' }}>
-                Şirket İlkeleri Sözleşmesi'ni okudum, anladım ve kabul ediyorum.
+                Kişisel Verilerin Korunması Sözleşmesi'ni okudum, anladım ve kabul ediyorum.
               </span>
             </label>
           </div>
@@ -1055,13 +1456,13 @@ const PartnerRegistration = () => {
                 cursor: (formData.contract1_accepted && formData.contract2_accepted) ? 'pointer' : 'not-allowed'
               }}
             >
-              Ödeme Sayfasına Git →
+              Siparişi Tamamla →
             </button>
           </div>
         </div>
       )}
 
-      {/* ADIM 6: Kayıt Tamamlama ve Kullanıcı Bilgileri */}
+      {/* ADIM 6: Sipariş Tamamlama */}
       {currentStep === 6 && (
         <div style={{
           backgroundColor: 'var(--card-gray)',
@@ -1070,33 +1471,63 @@ const PartnerRegistration = () => {
           boxShadow: '0 4px 15px rgba(0,0,0,0.1)'
         }}>
           {!loading && !message.includes('✅') ? (
-            // Kayıt işlemi henüz yapılmadı
+            // Sipariş henüz tamamlanmadı
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '80px', marginBottom: '20px' }}>🚀</div>
+              <div style={{ fontSize: '80px', marginBottom: '20px' }}>🛒</div>
               <h2 style={{ color: 'var(--primary-dark)', marginBottom: '20px' }}>
-                Kayıt İşlemini Tamamla
+                Siparişi Tamamla
               </h2>
               <p style={{ color: 'var(--text-light)', fontSize: '16px', marginBottom: '30px' }}>
-                Tüm bilgiler onaylandı. Kayıt işlemini tamamlamak için butona tıklayın.
+                Tüm bilgiler onaylandı. Siparişi tamamlamak için butona tıklayın.
               </p>
               
               <button
                 onClick={async () => {
                   setLoading(true);
                   try {
-                    // Kayıt verilerini backend'e gönder
-                    const response = await axios.post('/api/partner/register-new', {
+                    // Loading simülasyonu
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                    // Backend'e müşteri kayıt isteği gönder
+                    const customerData = {
                       registration_type: registrationType,
-                      ...formData,
-                      full_address: `${formData.address}, ${formData.district}/${formData.city}`,
-                      total_amount: 4800,
-                      contracts_accepted: true
+                      first_name: formData.first_name,
+                      last_name: formData.last_name,
+                      tc_no: formData.tc_no,
+                      email: formData.email,
+                      phone: formData.phone,
+                      delivery_address: formData.delivery_address,
+                      delivery_city: formData.delivery_city,
+                      delivery_district: formData.delivery_district,
+                      billing_address: formData.same_address ? formData.delivery_address : formData.billing_address,
+                      billing_city: formData.same_address ? formData.delivery_city : formData.billing_city,
+                      billing_district: formData.same_address ? formData.delivery_district : formData.billing_district,
+                      same_address: formData.same_address,
+                      company_name: formData.company_name,
+                      tax_office: formData.tax_office,
+                      tax_no: formData.tax_no,
+                      authorized_person: formData.authorized_person,
+                      authorized_email: formData.authorized_email,
+                      authorized_phone: formData.authorized_phone,
+                      selected_product: selectedProduct,
+                      product_price: products.find(p => p.id === selectedProduct)?.price,
+                      product_vat: products.find(p => p.id === selectedProduct)?.vat,
+                      total_amount: products.find(p => p.id === selectedProduct)?.total,
+                      contract1_accepted: formData.contract1_accepted,
+                      contract2_accepted: formData.contract2_accepted,
+                      references: formData.references
+                    };
+
+                    const response = await axios.post('/api/customer/register', customerData, {
+                      headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                      }
                     });
 
-                    setMessage(`✅ Kayıt başarıyla tamamlandı!|${JSON.stringify(response.data)}`);
+                    setMessage(`✅ Müşteri kaydı başarıyla tamamlandı!|${response.data.customer_code}|${response.data.order_id}|${response.data.total_amount}`);
                     
                   } catch (error) {
-                    setMessage('❌ Kayıt hatası: ' + (error.response?.data?.message || 'Bilinmeyen hata'));
+                    setMessage('❌ Sipariş hatası: ' + (error.message || 'Bilinmeyen hata'));
                     setLoading(false);
                   }
                 }}
@@ -1113,64 +1544,110 @@ const PartnerRegistration = () => {
                   boxShadow: '0 5px 15px rgba(0,0,0,0.2)'
                 }}
               >
-                {loading ? 'Kayıt Oluşturuluyor...' : 'Kayıt İşlemini Tamamla'}
+                {loading ? 'Sipariş Oluşturuluyor...' : 'Siparişi Tamamla'}
               </button>
             </div>
           ) : message.includes('✅') ? (
-            // Kayıt başarılı - Kullanıcı bilgilerini göster
+            // Sipariş başarılı
             <div>
               <div style={{ textAlign: 'center', marginBottom: '30px' }}>
                 <div style={{ fontSize: '80px', marginBottom: '20px' }}>✅</div>
                 <h2 style={{ color: 'var(--primary-dark)', marginBottom: '10px' }}>
-                  Kayıt Başarıyla Tamamlandı!
+                  Sipariş Başarıyla Oluşturuldu!
                 </h2>
                 <p style={{ color: 'var(--text-light)', fontSize: '16px' }}>
-                  İş ortağı kaydı oluşturuldu. Aşağıdaki bilgileri not alın.
+                  Müşteri siparişi kaydedildi. Aşağıdaki bilgileri not alın.
                 </p>
               </div>
 
-              {/* Kullanıcı Bilgileri */}
+              {/* Müşteri Bilgileri */}
               {(() => {
                 try {
-                  const userData = JSON.parse(message.split('|')[1]);
+                  const messageParts = message.split('|');
+                  const customerCode = messageParts[1];
+                  const orderId = messageParts[2];
+                  const totalAmount = messageParts[3];
+                  
                   return (
-                    <div style={{
-                      backgroundColor: 'var(--white)',
-                      borderRadius: '15px',
-                      padding: '30px',
-                      marginBottom: '30px',
-                      boxShadow: '0 5px 15px rgba(0,0,0,0.1)'
-                    }}>
-                      <h3 style={{ color: 'var(--primary-dark)', marginBottom: '20px', textAlign: 'center' }}>
-                        🔐 Giriş Bilgileri
-                      </h3>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', fontSize: '16px' }}>
-                        <div style={{ padding: '15px', backgroundColor: 'var(--card-gray)', borderRadius: '10px' }}>
-                          <strong style={{ color: 'var(--primary-dark)' }}>Sponsor ID:</strong><br/>
-                          <span style={{ fontSize: '18px', fontWeight: 'bold' }}>{userData.sponsor_id}</span>
-                        </div>
-                        <div style={{ padding: '15px', backgroundColor: 'var(--card-gray)', borderRadius: '10px' }}>
-                          <strong style={{ color: 'var(--primary-dark)' }}>E-mail:</strong><br/>
-                          <span style={{ fontSize: '18px', fontWeight: 'bold' }}>{userData.email}</span>
-                        </div>
-                        <div style={{ padding: '15px', backgroundColor: '#e8f5e8', borderRadius: '10px', border: '2px solid #4caf50', gridColumn: '1 / -1' }}>
-                          <strong style={{ color: '#2e7d32' }}>Şifre:</strong><br/>
-                          <span style={{ fontSize: '18px', fontWeight: 'bold', color: '#2e7d32' }}>{userData.password}</span>
+                    <div>
+                      {/* Müşteri Bilgileri */}
+                      <div style={{
+                        backgroundColor: 'var(--white)',
+                        borderRadius: '15px',
+                        padding: '30px',
+                        marginBottom: '30px',
+                        boxShadow: '0 5px 15px rgba(0,0,0,0.1)'
+                      }}>
+                        <h3 style={{ color: 'var(--primary-dark)', marginBottom: '20px', textAlign: 'center' }}>
+                          📋 Müşteri Kayıt Bilgileri
+                        </h3>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', fontSize: '16px' }}>
+                          <div style={{ padding: '15px', backgroundColor: 'var(--card-gray)', borderRadius: '10px' }}>
+                            <strong style={{ color: 'var(--primary-dark)' }}>Müşteri Kodu:</strong><br/>
+                            <span style={{ fontSize: '18px', fontWeight: 'bold' }}>{customerCode}</span>
+                          </div>
+                          <div style={{ padding: '15px', backgroundColor: 'var(--card-gray)', borderRadius: '10px' }}>
+                            <strong style={{ color: 'var(--primary-dark)' }}>Sipariş No:</strong><br/>
+                            <span style={{ fontSize: '18px', fontWeight: 'bold' }}>{orderId}</span>
+                          </div>
+                          <div style={{ padding: '15px', backgroundColor: '#e8f5e8', borderRadius: '10px', border: '2px solid #4caf50', gridColumn: '1 / -1' }}>
+                            <strong style={{ color: '#2e7d32' }}>Toplam Tutar:</strong><br/>
+                            <span style={{ fontSize: '24px', fontWeight: 'bold', color: '#2e7d32' }}>{parseInt(totalAmount)?.toLocaleString()} ₺</span>
+                          </div>
                         </div>
                       </div>
-                      
-                      <div style={{ 
-                        marginTop: '20px', 
-                        padding: '15px', 
-                        backgroundColor: '#fff3cd', 
-                        borderRadius: '10px',
-                        border: '1px solid #ffc107',
-                        textAlign: 'center'
+
+                      {/* IBAN Bilgileri */}
+                      <div style={{
+                        backgroundColor: '#fff3cd',
+                        borderRadius: '15px',
+                        padding: '30px',
+                        marginBottom: '30px',
+                        boxShadow: '0 5px 15px rgba(0,0,0,0.1)',
+                        border: '2px solid #ffc107'
                       }}>
-                        <strong style={{ color: '#856404' }}>⚠️ Önemli:</strong>
-                        <p style={{ color: '#856404', margin: '5px 0 0 0', fontSize: '14px' }}>
-                          Bu bilgileri güvenli bir yerde saklayın. Şifre sadece bir kez gösterilmektedir.
-                        </p>
+                        <h3 style={{ color: '#856404', marginBottom: '20px', textAlign: 'center' }}>
+                          💳 Ödeme Bilgileri
+                        </h3>
+                        <div style={{ backgroundColor: 'var(--white)', padding: '25px', borderRadius: '10px', marginBottom: '20px' }}>
+                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', fontSize: '16px' }}>
+                            <div>
+                              <strong style={{ color: 'var(--primary-dark)' }}>Banka:</strong><br/>
+                              <span style={{ fontSize: '18px', fontWeight: 'bold' }}>Türkiye İş Bankası</span>
+                            </div>
+                            <div>
+                              <strong style={{ color: 'var(--primary-dark)' }}>Hesap Sahibi:</strong><br/>
+                              <span style={{ fontSize: '18px', fontWeight: 'bold' }}>HOOWELL TEKNOLOJİ A.Ş.</span>
+                            </div>
+                            <div style={{ gridColumn: '1 / -1' }}>
+                              <strong style={{ color: 'var(--primary-dark)' }}>IBAN:</strong><br/>
+                              <div style={{ 
+                                fontSize: '20px', 
+                                fontWeight: 'bold', 
+                                backgroundColor: '#f8f9fa', 
+                                padding: '15px', 
+                                borderRadius: '8px',
+                                border: '2px solid #dee2e6',
+                                fontFamily: 'monospace',
+                                letterSpacing: '2px',
+                                textAlign: 'center',
+                                marginTop: '10px'
+                              }}>
+                                TR64 0006 4000 0011 2345 6789 01
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div style={{ 
+                          backgroundColor: '#f8d7da', 
+                          padding: '20px', 
+                          borderRadius: '10px',
+                          border: '1px solid #f5c6cb'
+                        }}>
+                          <p style={{ color: '#721c24', margin: 0, fontWeight: 'bold', textAlign: 'center' }}>
+                            ⚠️ Ödeme yaparken açıklama kısmına mutlaka Müşteri Kodu ({customerCode}) yazınız!
+                          </p>
+                        </div>
                       </div>
                     </div>
                   );
@@ -1179,61 +1656,25 @@ const PartnerRegistration = () => {
                 }
               })()}
 
-              {/* Ödeme Bilgileri */}
-              <div style={{
-                backgroundColor: 'var(--white)',
-                borderRadius: '15px',
-                padding: '30px',
-                marginBottom: '30px',
-                boxShadow: '0 5px 15px rgba(0,0,0,0.1)'
-              }}>
-                <h3 style={{ color: 'var(--primary-dark)', marginBottom: '20px', textAlign: 'center' }}>
-                  💳 Ödeme Bilgileri
-                </h3>
-                <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-                  <div style={{ fontSize: '28px', fontWeight: 'bold', color: 'var(--primary-dark)' }}>
-                    4.800 ₺
-                  </div>
-                  <div style={{ fontSize: '14px', color: 'var(--text-light)' }}>
-                    (KDV Dahil - Franchise Satış Paketi)
-                  </div>
-                </div>
-                
-                <div style={{ 
-                  padding: '20px', 
-                  backgroundColor: 'var(--card-gray)', 
-                  borderRadius: '10px',
-                  marginBottom: '20px'
-                }}>
-                  <h4 style={{ color: 'var(--primary-dark)', marginBottom: '10px' }}>IBAN Bilgileri:</h4>
-                  <div style={{ fontSize: '16px', fontWeight: 'bold', letterSpacing: '2px' }}>
-                    TR77 0011 1000 0000 0153 1671 66
-                  </div>
-                  <div style={{ fontSize: '14px', color: 'var(--text-light)', marginTop: '5px' }}>
-                    HOOWELL Network Marketing Ltd. Şti.
-                  </div>
-                </div>
-              </div>
-
               {/* Aksiyon Butonları */}
               <div style={{ display: 'flex', gap: '20px' }}>
                 <button
                   onClick={() => {
-                    // Ödeme kaydı oluştur (dekont yok)
-                    navigate('/payment', {
-                      state: {
-                        partnerId: JSON.parse(message.split('|')[1]).partner_id,
-                        amount: 4800,
-                        partnerInfo: {
-                          name: registrationType === 'individual' 
-                            ? `${formData.first_name} ${formData.last_name}`
-                            : formData.company_name,
-                          email: formData.email,
-                          type: registrationType
-                        },
-                        skipReceipt: true // Dekont yükleme atla
-                      }
+                    // Yeni sipariş için formu sıfırla
+                    setCurrentStep(1);
+                    setRegistrationType('');
+                    setSelectedProduct('');
+                    setFormData({
+                      first_name: '', last_name: '', tc_no: '', email: '', phone: '',
+                      delivery_address: '', delivery_city: '', delivery_district: '',
+                      billing_address: '', billing_city: '', billing_district: '',
+                      same_address: true, company_name: '', tax_office: '', tax_no: '',
+                      authorized_person: '', authorized_email: '', authorized_phone: '',
+                      company_address: '', company_city: '', company_district: '',
+                      references: [{ name: '', surname: '', phone: '' }],
+                      contract1_accepted: false, contract2_accepted: false
                     });
+                    setMessage('');
                   }}
                   style={{
                     flex: 1,
@@ -1247,7 +1688,7 @@ const PartnerRegistration = () => {
                     cursor: 'pointer'
                   }}
                 >
-                  Ödeme Kaydı Oluştur
+                  Yeni Sipariş Oluştur
                 </button>
                 
                 <button
@@ -1278,4 +1719,4 @@ const PartnerRegistration = () => {
   );
 };
 
-export default PartnerRegistration;
+export default CustomerRegistration;

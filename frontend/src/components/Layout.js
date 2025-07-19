@@ -31,31 +31,53 @@ const Layout = () => {
     return <Navigate to="/login" />;
   }
 
-  const menuItems = [
-    { path: '/', label: 'Ana Sayfa' },
-    { path: '/kariyerim', label: 'Kariyerim' },
-    { path: '/satislarim', label: 'Satışlarım' },
-    { path: '/franchise-agi', label: 'Franchise Ağı Yapısı' },
-    { path: '/memnun-musteri-takip', label: 'Memnun Müşteri Takip' },
-    { path: '/sponsorluk-takip', label: 'Sponsorluk Takip Paneli' },
-    { path: '/takim-takip', label: 'Takım Takip Paneli' },
-    { path: '/liderlik-baskanlik-takip', label: 'Liderlik ve Başkanlık Takip' },
-    { path: '/kar-paylasimi-promosyon', label: 'Kar Paylaşımı Promosyonu' },
-    { path: '/global-seyahat-promosyonu', label: 'Global Seyahat' },
-    { path: '/bilgi-bankasi', label: 'Bilgi Bankası' }
+  // Yeni kullanıcılar için hoşgeldin ekranı kontrolü
+  const welcomeShown = localStorage.getItem(`welcome_shown_${user.id}`);
+  if (user.role === 'partner' && !user.education_completed && !welcomeShown && location.pathname !== '/welcome') {
+    return <Navigate to="/welcome" />;
+  }
+
+  // Partner kullanıcıları için eğitim kontrolü
+  if (user.role === 'partner' && !user.education_completed && location.pathname === '/' && welcomeShown) {
+    return <Navigate to="/education" />;
+  }
+
+  // Menu öğelerini kullanıcı durumuna göre filtrele
+  const allMenuItems = [
+    { path: '/', label: 'Ana Sayfa', requiresEducation: true },
+    { path: '/kariyerim', label: 'Kariyerim', requiresEducation: true },
+    { path: '/satislarim', label: 'Satışlarım', requiresEducation: true },
+    { path: '/franchise-agi', label: 'Franchise Ağı Yapısı', requiresEducation: true },
+    { path: '/memnun-musteri-takip', label: 'Memnun Müşteri Takip', requiresEducation: true },
+    { path: '/sponsorluk-takip', label: 'Sponsorluk Takip Paneli', requiresEducation: true },
+    { path: '/takim-takip', label: 'Takım Takip Paneli', requiresEducation: true },
+    { path: '/liderlik-baskanlik-takip', label: 'Liderlik ve Başkanlık Takip', requiresEducation: true },
+    { path: '/kar-paylasimi-promosyon', label: 'Kar Paylaşımı Promosyonu', requiresEducation: true },
+    { path: '/global-seyahat-promosyonu', label: 'Global Seyahat', requiresEducation: true },
+    { path: '/bilgi-bankasi', label: 'Bilgi Bankası', requiresEducation: true }
   ];
+
+  // Partner kullanıcıları için menu filtreleme
+  const menuItems = user.role === 'admin' 
+    ? allMenuItems 
+    : allMenuItems.filter(item => 
+        !item.requiresEducation || user.education_completed
+      );
 
   // Admin menü öğeleri
   const adminMenuItems = [
     { path: '/admin/users', label: 'Kullanıcı Yönetimi' },
     { path: '/admin/payments', label: 'Ödeme Onayları' },
     { path: '/admin/settings', label: 'Sistem Ayarları' },
-    { path: '/admin/reports', label: 'Raporlar' }
+    { path: '/admin/reports', label: 'Raporlar' },
+    { path: '/partner-registration', label: 'İş Ortağı Kayıt' }
   ];
 
   return (
     <div className="App">
       <div className="sidebar">
+
+
         {/* Kullanıcı Bilgileri */}
         <div style={{ 
           display: 'flex', 
@@ -169,27 +191,7 @@ const Layout = () => {
             </>
           )}
           
-          {!user.payment_confirmed && (
-            <Link 
-              to="/payment"
-              style={{
-                display: 'block',
-                padding: '15px 20px',
-                backgroundColor: 'var(--success-green)',
-                color: 'var(--white)',
-                textDecoration: 'none',
-                borderRadius: '15px',
-                textAlign: 'center',
-                fontSize: '14px',
-                fontWeight: '500',
-                transition: 'all 0.3s',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                marginTop: '10px'
-              }}
-            >
-              Ödeme Yap
-            </Link>
-          )}
+          {/* Ödeme Yap butonu kaldırıldı - Yeni kullanıcılar için */}
           
           {user.payment_confirmed && !user.education_completed && (
             <Link 

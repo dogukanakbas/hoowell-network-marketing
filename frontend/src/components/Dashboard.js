@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useAuth } from '../context/AuthContext';
+// import { useAuth } from '../context/AuthContext'; // Şu an kullanılmıyor
 import axios from 'axios';
 
 const Dashboard = () => {
-  const { user } = useAuth();
+  // const { user } = useAuth(); // Şu an kullanılmıyor
   const [stats, setStats] = useState({
     liderlikHavuzu: 12000,
     baskanlikHavuzu: 8000,
@@ -34,24 +34,29 @@ const Dashboard = () => {
         marginBottom: '30px',
         gap: '20px'
       }}>
-        <button style={{
-          backgroundColor: 'var(--card-gray)',
-          border: 'none',
-          borderRadius: '15px',
-          padding: '15px 25px',
-          fontSize: '16px',
-          fontWeight: 'bold',
-          color: 'var(--text-dark)',
-          cursor: 'pointer',
-          boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
-          transition: 'transform 0.3s',
-          height: '60px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}>
-          Müşteri Sipariş Paneli
-        </button>
+        <a 
+          href="/customer-registration"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'var(--card-gray)',
+            border: 'none',
+            borderRadius: '15px',
+            padding: '15px 25px',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            color: 'var(--text-dark)',
+            cursor: 'pointer',
+            boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
+            transition: 'transform 0.3s',
+            textDecoration: 'none',
+            textAlign: 'center',
+            height: '60px'
+          }}
+        >
+          Müşteri Kayıt Paneli
+        </a>
         
         <div style={{
           backgroundColor: 'var(--primary-dark)',

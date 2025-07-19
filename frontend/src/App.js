@@ -11,6 +11,9 @@ import Education from './components/Education';
 import AdminPanel from './components/AdminPanel';
 import AccessRestricted from './components/AccessRestricted';
 import PartnerRegistration from './components/PartnerRegistration';
+import CustomerRegistration from './components/CustomerRegistration';
+// import AdminPayment from './components/AdminPayment'; // Şu an kullanılmıyor
+import Welcome from './components/Welcome';
 
 // Context
 import { AuthProvider } from './context/AuthContext';
@@ -22,11 +25,13 @@ function App() {
         <div className="App">
           <Routes>
             <Route path="/login" element={<Login />} />
+            <Route path="/welcome" element={<Welcome />} />
             <Route path="/" element={<Layout />}>
               <Route index element={<Dashboard />} />
               <Route path="payment" element={<Payment />} />
               <Route path="education" element={<Education />} />
               <Route path="partner-registration" element={<PartnerRegistration />} />
+              <Route path="customer-registration" element={<CustomerRegistration />} />
               <Route path="admin/*" element={<AdminPanel />} />
               
               {/* Restricted Pages */}

@@ -15,8 +15,10 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Set axios default base URL
-  axios.defaults.baseURL = 'http://localhost:5001';
+  // Set axios default base URL based on environment
+  axios.defaults.baseURL = process.env.NODE_ENV === 'production' 
+    ? window.location.origin 
+    : 'http://localhost:5001';
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -54,7 +56,28 @@ export const AuthProvider = ({ children }) => {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       setUser(user);
       
-      return { success: true };
+      // Giriş sonrası yönlendirme mantığı
+      let redirectPath = '/';
+      if (user.role === 'partner' && !user.education_completed) {
+        // Eğer kullanıcının education_deadline'ı varsa (yeni kullanıcı), Welcome sayfasına yönlendir
+        if (user.education_deadline) {
+          // Welcome sayfası daha önce gösterildi mi kontrol et
+          const welcomeShown = localStorage.getItem(`welcome_shown_${user.id}`);
+          if (!welcomeShown) {
+            redirectPath = '/welcome';
+          } else {
+            redirectPath = '/education';
+          }
+        } else {
+          redirectPath = '/education';
+        }
+      } else if (user.role === 'partner' && user.education_completed) {
+        redirectPath = '/';
+      } else if (user.role === 'admin') {
+        redirectPath = '/';
+      }
+      
+      return { success: true, redirectPath };
     } catch (error) {
       return {
         success: false,

@@ -11,11 +11,45 @@ const Education = () => {
   const [showExam, setShowExam] = useState(false);
   const [examResult, setExamResult] = useState(null);
   const [userProgress, setUserProgress] = useState([]);
+  const [showVideoModal, setShowVideoModal] = useState(false);
+  const [timeLeft, setTimeLeft] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0
+  });
 
   useEffect(() => {
     fetchVideos();
     fetchUserProgress();
   }, [user]);
+
+  // Geri sayım hesaplama
+  useEffect(() => {
+    if (!user?.education_deadline) return;
+
+    const calculateTimeLeft = () => {
+      const deadline = new Date(user.education_deadline);
+      const now = new Date();
+      const difference = deadline - now;
+
+      if (difference > 0) {
+        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+        setTimeLeft({ days, hours, minutes, seconds });
+      } else {
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+      }
+    };
+
+    calculateTimeLeft();
+    const timer = setInterval(calculateTimeLeft, 1000);
+
+    return () => clearInterval(timer);
+  }, [user?.education_deadline]);
 
   const fetchVideos = async () => {
     try {
@@ -122,122 +156,484 @@ const Education = () => {
   }
 
   return (
-    <div>
-      <div className="dashboard-card" style={{ marginBottom: '30px' }}>
-        <h3>Eğitim Programı</h3>
-        <p>10 video eğitimini tamamlayarak backoffice erişiminizi aktifleştirin.</p>
-        
-        <div style={{ marginTop: '20px' }}>
-          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-            {videos.map((video, index) => {
-              const progress = getVideoProgress(video.id);
-              const canWatch = canWatchVideo(index);
-              
-              return (
-                <div
-                  key={video.id}
-                  style={{
-                    width: '40px',
-                    height: '40px',
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: progress.exam_passed ? '#28a745' : 
-                                   progress.watched ? '#ffc107' : 
-                                   canWatch ? '#007bff' : '#6c757d',
-                    color: 'white',
-                    fontWeight: 'bold'
-                  }}
-                >
-                  {index + 1}
-                </div>
-              );
-            })}
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #0e2323 0%, #1a4a3a 50%, #0e2323 100%)',
+      padding: '0',
+      margin: '0 -20px'
+    }}>
+      {/* Üst Başlık ve Logo Alanı */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '30px 40px',
+        borderBottom: '2px solid rgba(255, 215, 0, 0.2)'
+      }}>
+        {/* Sol Başlık */}
+        <div>
+          <h1 style={{
+            color: '#FFD700',
+            fontSize: '36px',
+            fontWeight: 'bold',
+            margin: '0',
+            textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)'
+          }}>
+            HOOWELL TEMEL EĞİTİM PANELİ
+          </h1>
+        </div>
+
+        {/* Sağ Logo */}
+        <div style={{ textAlign: 'center' }}>
+          <div style={{
+            width: '100px',
+            height: '80px',
+            margin: '0 auto 10px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 5px 15px rgba(255, 215, 0, 0.4)',
+            borderRadius: '15px',
+            background: 'rgba(255, 255, 255, 0.1)',
+            backdropFilter: 'blur(10px)',
+            border: '2px solid rgba(255, 215, 0, 0.3)'
+          }}>
+            <img 
+              src="/hoowell-logo.png" 
+              alt="HOOWELL Logo" 
+              style={{
+                width: '80px',
+                height: '60px',
+                objectFit: 'contain'
+              }}
+              onError={(e) => {
+                // Fallback logo eğer resim yüklenemezse
+                e.target.style.display = 'none';
+                e.target.nextSibling.style.display = 'flex';
+              }}
+            />
+            <div style={{
+              display: 'none',
+              width: '80px',
+              height: '60px',
+              background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+              borderRadius: '10px',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '32px',
+              fontWeight: 'bold',
+              color: '#0e2323'
+            }}>
+              H
+            </div>
           </div>
-          
-          <div style={{ marginTop: '10px', fontSize: '14px', color: '#666' }}>
-            <span style={{ color: '#28a745' }}>●</span> Tamamlandı &nbsp;
-            <span style={{ color: '#ffc107' }}>●</span> İzlendi &nbsp;
-            <span style={{ color: '#007bff' }}>●</span> Mevcut &nbsp;
-            <span style={{ color: '#6c757d' }}>●</span> Kilitli
-          </div>
+
         </div>
       </div>
 
-      {/* Video List */}
-      <div className="dashboard-card">
-        <h3>Video Eğitimleri</h3>
-        
+      {/* Geri Sayım Alanı */}
+      {user?.education_deadline && (
+        <div style={{
+          padding: '20px 40px',
+          textAlign: 'center',
+          borderBottom: '1px solid rgba(255, 215, 0, 0.1)'
+        }}>
+          <div style={{
+            background: 'rgba(0, 0, 0, 0.3)',
+            borderRadius: '20px',
+            padding: '20px',
+            border: '2px solid rgba(255, 215, 0, 0.3)',
+            backdropFilter: 'blur(10px)'
+          }}>
+            <h3 style={{
+              color: '#FFD700',
+              fontSize: '20px',
+              marginBottom: '15px',
+              fontWeight: 'bold'
+            }}>
+              VİDEOLARDAN SONRA TESTLERİ GEÇİN
+            </h3>
+            
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center',
+              gap: '15px',
+              marginBottom: '15px'
+            }}>
+              <div style={{
+                background: 'rgba(255, 215, 0, 0.2)',
+                borderRadius: '10px',
+                padding: '10px 15px',
+                minWidth: '70px',
+                border: '1px solid rgba(255, 215, 0, 0.4)'
+              }}>
+                <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#FFD700' }}>
+                  {timeLeft.days}
+                </div>
+                <div style={{ fontSize: '10px', color: '#fff' }}>GÜN</div>
+              </div>
+              <div style={{
+                background: 'rgba(255, 215, 0, 0.2)',
+                borderRadius: '10px',
+                padding: '10px 15px',
+                minWidth: '70px',
+                border: '1px solid rgba(255, 215, 0, 0.4)'
+              }}>
+                <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#FFD700' }}>
+                  {timeLeft.hours}
+                </div>
+                <div style={{ fontSize: '10px', color: '#fff' }}>SAAT</div>
+              </div>
+              <div style={{
+                background: 'rgba(255, 215, 0, 0.2)',
+                borderRadius: '10px',
+                padding: '10px 15px',
+                minWidth: '70px',
+                border: '1px solid rgba(255, 215, 0, 0.4)'
+              }}>
+                <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#FFD700' }}>
+                  {timeLeft.minutes}
+                </div>
+                <div style={{ fontSize: '10px', color: '#fff' }}>DAKİKA</div>
+              </div>
+            </div>
+            
+            <div style={{
+              background: 'rgba(0, 0, 0, 0.4)',
+              borderRadius: '15px',
+              padding: '10px',
+              border: '1px solid rgba(255, 215, 0, 0.2)'
+            }}>
+              <div style={{ color: '#FFD700', fontSize: '14px', fontWeight: 'bold' }}>
+                HEDEF %70 BAŞARI
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Video Grid */}
+      <div style={{
+        padding: '30px 40px',
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+        gap: '25px'
+      }}>
         {videos.map((video, index) => {
           const progress = getVideoProgress(video.id);
           const canWatch = canWatchVideo(index);
           
           return (
-            <div 
+            <div
               key={video.id}
-              style={{ 
-                border: '1px solid #e0e0e0', 
-                borderRadius: '10px', 
-                padding: '20px', 
-                marginBottom: '20px',
-                opacity: canWatch ? 1 : 0.5
+              style={{
+                background: 'rgba(0, 0, 0, 0.4)',
+                borderRadius: '15px',
+                padding: '20px',
+                border: progress.exam_passed ? '2px solid #28a745' : 
+                       progress.watched ? '2px solid #ffc107' : 
+                       canWatch ? '2px solid #FFD700' : '2px solid #666',
+                backdropFilter: 'blur(10px)',
+                opacity: canWatch ? 1 : 0.6,
+                transition: 'all 0.3s ease',
+                cursor: canWatch ? 'pointer' : 'not-allowed',
+                position: 'relative',
+                overflow: 'hidden'
+              }}
+              onMouseEnter={(e) => {
+                if (canWatch) {
+                  e.target.style.transform = 'translateY(-5px)';
+                  e.target.style.boxShadow = '0 10px 30px rgba(255, 215, 0, 0.3)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (canWatch) {
+                  e.target.style.transform = 'translateY(0)';
+                  e.target.style.boxShadow = 'none';
+                }
               }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
-                <h4>{video.title}</h4>
-                <div>
-                  {progress.exam_passed && (
-                    <span className="status-badge status-approved">Tamamlandı</span>
-                  )}
-                  {progress.watched && !progress.exam_passed && (
-                    <span className="status-badge status-pending">Sınav Bekliyor</span>
-                  )}
-                  {!canWatch && (
-                    <span className="status-badge" style={{ backgroundColor: '#6c757d', color: 'white' }}>
-                      Kilitli
-                    </span>
+              {/* Video Numarası */}
+              <div style={{
+                position: 'absolute',
+                top: '15px',
+                right: '15px',
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                background: progress.exam_passed ? '#28a745' : 
+                           progress.watched ? '#ffc107' : 
+                           canWatch ? '#FFD700' : '#666',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '18px',
+                fontWeight: 'bold',
+                color: progress.exam_passed || progress.watched || canWatch ? '#000' : '#fff'
+              }}>
+                {index + 1}
+              </div>
+
+              {/* Video Başlığı */}
+              <h3 style={{
+                color: '#FFD700',
+                fontSize: '16px',
+                fontWeight: 'bold',
+                marginBottom: '10px',
+                marginRight: '50px',
+                lineHeight: '1.3'
+              }}>
+                {video.title.toUpperCase()}
+              </h3>
+
+              {/* Video Açıklaması */}
+              <p style={{
+                color: '#ccc',
+                fontSize: '12px',
+                marginBottom: '15px',
+                lineHeight: '1.4'
+              }}>
+                {video.description}
+              </p>
+
+              {/* Video Kapak Görseli */}
+              <div style={{
+                width: '100%',
+                height: '180px',
+                borderRadius: '10px',
+                marginBottom: '15px',
+                border: '2px solid rgba(255, 215, 0, 0.3)',
+                position: 'relative',
+                overflow: 'hidden',
+                background: '#000'
+              }}>
+                {video.cover_image ? (
+                  <img 
+                    src={video.cover_image} 
+                    alt={video.title}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      opacity: canWatch ? 1 : 0.4,
+                      transition: 'opacity 0.3s ease'
+                    }}
+                    onError={(e) => {
+                      // Fallback kapak görseli
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'flex';
+                    }}
+                  />
+                ) : null}
+                
+                {/* Fallback veya kapak yoksa */}
+                <div style={{
+                  display: video.cover_image ? 'none' : 'flex',
+                  width: '100%',
+                  height: '100%',
+                  background: canWatch ? 
+                    'linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2))' : 
+                    'rgba(102, 102, 102, 0.3)',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0
+                }}>
+                  {canWatch ? (
+                    <div style={{
+                      fontSize: '40px',
+                      color: '#FFD700'
+                    }}>
+                      ▶️
+                    </div>
+                  ) : (
+                    <div style={{
+                      fontSize: '40px',
+                      color: '#666'
+                    }}>
+                      🔒
+                    </div>
                   )}
                 </div>
+
+                {/* Play Button Overlay */}
+                {canWatch && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: '60px',
+                    height: '60px',
+                    background: 'rgba(0, 0, 0, 0.7)',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '24px',
+                    color: '#FFD700',
+                    backdropFilter: 'blur(5px)',
+                    border: '2px solid rgba(255, 215, 0, 0.5)',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.background = 'rgba(255, 215, 0, 0.9)';
+                    e.target.style.color = '#000';
+                    e.target.style.transform = 'translate(-50%, -50%) scale(1.1)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.background = 'rgba(0, 0, 0, 0.7)';
+                    e.target.style.color = '#FFD700';
+                    e.target.style.transform = 'translate(-50%, -50%) scale(1)';
+                  }}
+                  >
+                    ▶
+                  </div>
+                )}
+
+                {/* Kilit İkonu */}
+                {!canWatch && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: '60px',
+                    height: '60px',
+                    background: 'rgba(102, 102, 102, 0.8)',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '24px',
+                    color: '#fff',
+                    backdropFilter: 'blur(5px)'
+                  }}>
+                    🔒
+                  </div>
+                )}
+
+                {/* Video Durumu Badge */}
+                {progress.exam_passed && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '10px',
+                    left: '10px',
+                    background: '#28a745',
+                    color: 'white',
+                    padding: '4px 8px',
+                    borderRadius: '12px',
+                    fontSize: '10px',
+                    fontWeight: 'bold'
+                  }}>
+                    ✅ TAMAMLANDI
+                  </div>
+                )}
+                
+                {progress.watched && !progress.exam_passed && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '10px',
+                    left: '10px',
+                    background: '#ffc107',
+                    color: '#000',
+                    padding: '4px 8px',
+                    borderRadius: '12px',
+                    fontSize: '10px',
+                    fontWeight: 'bold'
+                  }}>
+                    📝 SINAV BEKLİYOR
+                  </div>
+                )}
               </div>
-              
-              <p style={{ color: '#666', marginBottom: '15px' }}>{video.description}</p>
-              
-              {canWatch && (
-                <div>
-                  <iframe
-                    src={getEmbedUrl(video.google_drive_url)}
-                    width="100%"
-                    height="400"
-                    style={{ border: 'none', borderRadius: '8px' }}
-                    title={video.title}
-                  ></iframe>
-                  
-                  {!progress.watched && (
-                    <button 
-                      className="btn btn-primary"
-                      style={{ marginTop: '15px' }}
-                      onClick={() => handleVideoComplete(video.id)}
-                    >
-                      Videoyu Tamamladım
-                    </button>
-                  )}
-                  
-                  {progress.watched && !progress.exam_passed && (
-                    <button 
-                      className="btn btn-gold"
-                      style={{ marginTop: '15px' }}
+
+              {/* Durum ve Butonlar */}
+              <div style={{ textAlign: 'center' }}>
+                {progress.exam_passed && (
+                  <div style={{
+                    background: '#28a745',
+                    color: 'white',
+                    padding: '8px 15px',
+                    borderRadius: '20px',
+                    fontSize: '12px',
+                    fontWeight: 'bold',
+                    marginBottom: '10px'
+                  }}>
+                    ✅ TAMAMLANDI
+                  </div>
+                )}
+                
+                {progress.watched && !progress.exam_passed && (
+                  <div>
+                    <div style={{
+                      background: '#ffc107',
+                      color: '#000',
+                      padding: '8px 15px',
+                      borderRadius: '20px',
+                      fontSize: '12px',
+                      fontWeight: 'bold',
+                      marginBottom: '10px'
+                    }}>
+                      📝 SINAV BEKLİYOR
+                    </div>
+                    <button
                       onClick={() => {
                         fetchQuestions(video.id);
                         setCurrentVideo(video.id);
                         setShowExam(true);
                       }}
+                      style={{
+                        background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+                        color: '#000',
+                        border: 'none',
+                        borderRadius: '20px',
+                        padding: '8px 20px',
+                        fontSize: '12px',
+                        fontWeight: 'bold',
+                        cursor: 'pointer'
+                      }}
                     >
-                      Sınava Gir
+                      SINAVA GİR
                     </button>
-                  )}
-                </div>
-              )}
+                  </div>
+                )}
+                
+                {canWatch && !progress.watched && (
+                  <button
+                    onClick={() => {
+                      setCurrentVideo(video.id);
+                      setShowVideoModal(true);
+                    }}
+                    style={{
+                      background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+                      color: '#000',
+                      border: 'none',
+                      borderRadius: '20px',
+                      padding: '10px 25px',
+                      fontSize: '12px',
+                      fontWeight: 'bold',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    VİDEOYU İZLE
+                  </button>
+                )}
+                
+                {!canWatch && (
+                  <div style={{
+                    background: '#666',
+                    color: 'white',
+                    padding: '8px 15px',
+                    borderRadius: '20px',
+                    fontSize: '12px',
+                    fontWeight: 'bold'
+                  }}>
+                    🔒 KİTLİ
+                  </div>
+                )}
+              </div>
             </div>
           );
         })}
@@ -251,98 +647,372 @@ const Education = () => {
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: 'rgba(0,0,0,0.5)',
+          backgroundColor: 'rgba(0,0,0,0.8)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          zIndex: 1000
+          zIndex: 1000,
+          backdropFilter: 'blur(5px)'
         }}>
           <div style={{
-            backgroundColor: 'white',
-            padding: '30px',
-            borderRadius: '15px',
-            maxWidth: '600px',
+            background: 'linear-gradient(135deg, #0e2323, #1a4a3a)',
+            padding: '40px',
+            borderRadius: '20px',
+            maxWidth: '700px',
             width: '90%',
-            maxHeight: '80vh',
-            overflowY: 'auto'
+            maxHeight: '85vh',
+            overflowY: 'auto',
+            border: '2px solid #FFD700',
+            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)'
           }}>
-            <h3>Video Sınavı</h3>
-            <p style={{ color: '#666', marginBottom: '20px' }}>
-              10 sorudan en az 7'sini doğru cevaplamanız gerekmektedir.
-            </p>
-
             {examResult ? (
-              <div>
+              <div style={{ textAlign: 'center' }}>
                 <div style={{
-                  padding: '20px',
-                  borderRadius: '10px',
-                  textAlign: 'center',
-                  backgroundColor: examResult.passed ? '#d4edda' : '#f8d7da',
-                  color: examResult.passed ? '#155724' : '#721c24',
+                  fontSize: '60px',
                   marginBottom: '20px'
                 }}>
-                  <h4>{examResult.passed ? 'Tebrikler!' : 'Başarısız'}</h4>
-                  <p>Skorunuz: {examResult.score}/10</p>
-                  {examResult.passed ? (
-                    <p>Sınavı başarıyla geçtiniz. Bir sonraki videoya geçebilirsiniz.</p>
-                  ) : (
-                    <p>Sınavı geçmek için en az 7 doğru cevap vermelisiniz. Tekrar deneyebilirsiniz.</p>
-                  )}
+                  {examResult.passed ? '🎉' : '😞'}
                 </div>
                 
-                <button 
-                  className="btn btn-primary"
+                <h3 style={{
+                  color: '#FFD700',
+                  fontSize: '28px',
+                  marginBottom: '20px',
+                  fontWeight: 'bold'
+                }}>
+                  {examResult.passed ? 'TEBRİKLER!' : 'BAŞARISIZ'}
+                </h3>
+                
+                <div style={{
+                  background: examResult.passed ? 'rgba(40, 167, 69, 0.2)' : 'rgba(220, 53, 69, 0.2)',
+                  border: examResult.passed ? '2px solid #28a745' : '2px solid #dc3545',
+                  borderRadius: '15px',
+                  padding: '25px',
+                  marginBottom: '30px'
+                }}>
+                  <div style={{
+                    fontSize: '36px',
+                    fontWeight: 'bold',
+                    color: examResult.passed ? '#28a745' : '#dc3545',
+                    marginBottom: '10px'
+                  }}>
+                    {examResult.score}/10
+                  </div>
+                  <p style={{
+                    color: '#fff',
+                    fontSize: '16px',
+                    lineHeight: '1.5',
+                    margin: 0
+                  }}>
+                    {examResult.passed ? (
+                      'Sınavı başarıyla geçtiniz! Bir sonraki videoya geçebilirsiniz.'
+                    ) : (
+                      'Sınavı geçmek için en az 7 doğru cevap vermelisiniz. Tekrar deneyebilirsiniz.'
+                    )}
+                  </p>
+                </div>
+                
+                <button
                   onClick={() => {
                     setShowExam(false);
                     setExamResult(null);
                     setCurrentVideo(null);
                   }}
+                  style={{
+                    background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+                    color: '#000',
+                    border: 'none',
+                    borderRadius: '25px',
+                    padding: '15px 40px',
+                    fontSize: '16px',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    boxShadow: '0 5px 15px rgba(255, 215, 0, 0.4)'
+                  }}
                 >
-                  Kapat
+                  KAPAT
                 </button>
               </div>
             ) : (
               <div>
-                {questions.map((question, index) => (
-                  <div key={question.id} style={{ marginBottom: '25px' }}>
-                    <h5>Soru {index + 1}</h5>
-                    <p style={{ marginBottom: '15px' }}>{question.question_text}</p>
-                    
-                    {['a', 'b', 'c', 'd'].map(option => (
-                      <label key={option} style={{ display: 'block', marginBottom: '8px', cursor: 'pointer' }}>
-                        <input
-                          type="radio"
-                          name={`question_${question.id}`}
-                          value={option}
-                          onChange={(e) => handleAnswerChange(question.id, e.target.value)}
-                          style={{ marginRight: '10px' }}
-                        />
-                        {question[`option_${option}`]}
-                      </label>
-                    ))}
-                  </div>
-                ))}
+                <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+                  <h3 style={{
+                    color: '#FFD700',
+                    fontSize: '24px',
+                    fontWeight: 'bold',
+                    marginBottom: '10px'
+                  }}>
+                    📝 VİDEO SINAVI
+                  </h3>
+                  <p style={{
+                    color: '#ccc',
+                    fontSize: '16px',
+                    margin: 0
+                  }}>
+                    10 sorudan en az 7'sini doğru cevaplamanız gerekmektedir.
+                  </p>
+                </div>
+
+                <div style={{
+                  maxHeight: '400px',
+                  overflowY: 'auto',
+                  paddingRight: '10px'
+                }}>
+                  {questions.map((question, index) => (
+                    <div key={question.id} style={{
+                      background: 'rgba(0, 0, 0, 0.3)',
+                      borderRadius: '15px',
+                      padding: '20px',
+                      marginBottom: '20px',
+                      border: '1px solid rgba(255, 215, 0, 0.2)'
+                    }}>
+                      <h5 style={{
+                        color: '#FFD700',
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                        marginBottom: '15px'
+                      }}>
+                        Soru {index + 1}
+                      </h5>
+                      <p style={{
+                        color: '#fff',
+                        fontSize: '14px',
+                        marginBottom: '20px',
+                        lineHeight: '1.5'
+                      }}>
+                        {question.question_text}
+                      </p>
+                      
+                      {['a', 'b', 'c', 'd'].map(option => (
+                        <label key={option} style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          marginBottom: '12px',
+                          cursor: 'pointer',
+                          padding: '10px',
+                          borderRadius: '8px',
+                          transition: 'background-color 0.2s',
+                          backgroundColor: answers[question.id] === option ? 'rgba(255, 215, 0, 0.2)' : 'transparent'
+                        }}
+                        onMouseEnter={(e) => {
+                          if (answers[question.id] !== option) {
+                            e.target.style.backgroundColor = 'rgba(255, 215, 0, 0.1)';
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (answers[question.id] !== option) {
+                            e.target.style.backgroundColor = 'transparent';
+                          }
+                        }}
+                        >
+                          <input
+                            type="radio"
+                            name={`question_${question.id}`}
+                            value={option}
+                            onChange={(e) => handleAnswerChange(question.id, e.target.value)}
+                            style={{
+                              marginRight: '12px',
+                              transform: 'scale(1.2)'
+                            }}
+                          />
+                          <span style={{
+                            color: answers[question.id] === option ? '#FFD700' : '#ccc',
+                            fontSize: '14px',
+                            fontWeight: answers[question.id] === option ? 'bold' : 'normal'
+                          }}>
+                            {option.toUpperCase()}) {question[`option_${option}`]}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  ))}
+                </div>
                 
-                <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-                  <button 
-                    className="btn btn-secondary"
+                <div style={{
+                  display: 'flex',
+                  gap: '15px',
+                  justifyContent: 'center',
+                  marginTop: '30px'
+                }}>
+                  <button
                     onClick={() => {
                       setShowExam(false);
                       setAnswers({});
                     }}
+                    style={{
+                      background: 'rgba(108, 117, 125, 0.8)',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: '20px',
+                      padding: '12px 30px',
+                      fontSize: '14px',
+                      fontWeight: 'bold',
+                      cursor: 'pointer'
+                    }}
                   >
-                    İptal
+                    İPTAL
                   </button>
-                  <button 
-                    className="btn btn-primary"
+                  <button
                     onClick={submitExam}
                     disabled={Object.keys(answers).length !== questions.length}
+                    style={{
+                      background: Object.keys(answers).length === questions.length ? 
+                        'linear-gradient(135deg, #FFD700, #FFA500)' : 
+                        'rgba(108, 117, 125, 0.5)',
+                      color: Object.keys(answers).length === questions.length ? '#000' : '#666',
+                      border: 'none',
+                      borderRadius: '20px',
+                      padding: '12px 30px',
+                      fontSize: '14px',
+                      fontWeight: 'bold',
+                      cursor: Object.keys(answers).length === questions.length ? 'pointer' : 'not-allowed',
+                      boxShadow: Object.keys(answers).length === questions.length ? 
+                        '0 5px 15px rgba(255, 215, 0, 0.4)' : 'none'
+                    }}
                   >
-                    Sınavı Bitir
+                    SINAVI BİTİR ({Object.keys(answers).length}/{questions.length})
                   </button>
                 </div>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Video Modal */}
+      {showVideoModal && currentVideo && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.9)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          backdropFilter: 'blur(5px)'
+        }}>
+          <div style={{
+            background: 'linear-gradient(135deg, #0e2323, #1a4a3a)',
+            padding: '30px',
+            borderRadius: '20px',
+            maxWidth: '900px',
+            width: '95%',
+            maxHeight: '90vh',
+            overflowY: 'auto',
+            border: '2px solid #FFD700',
+            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)',
+            position: 'relative'
+          }}>
+            {/* Kapat Butonu */}
+            <button
+              onClick={() => {
+                setShowVideoModal(false);
+                setCurrentVideo(null);
+              }}
+              style={{
+                position: 'absolute',
+                top: '15px',
+                right: '15px',
+                background: 'rgba(255, 255, 255, 0.2)',
+                border: 'none',
+                borderRadius: '50%',
+                width: '40px',
+                height: '40px',
+                color: '#fff',
+                fontSize: '20px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              ✕
+            </button>
+
+            {/* Video Başlığı */}
+            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+              <h3 style={{
+                color: '#FFD700',
+                fontSize: '24px',
+                fontWeight: 'bold',
+                marginBottom: '10px'
+              }}>
+                {videos.find(v => v.id === currentVideo)?.title}
+              </h3>
+              <p style={{
+                color: '#ccc',
+                fontSize: '14px',
+                margin: 0
+              }}>
+                {videos.find(v => v.id === currentVideo)?.description}
+              </p>
+            </div>
+
+            {/* Video Player */}
+            <div style={{
+              width: '100%',
+              height: '500px',
+              marginBottom: '20px',
+              borderRadius: '15px',
+              overflow: 'hidden',
+              border: '2px solid rgba(255, 215, 0, 0.3)'
+            }}>
+              <iframe
+                src={getEmbedUrl(videos.find(v => v.id === currentVideo)?.google_drive_url || '')}
+                width="100%"
+                height="100%"
+                style={{ border: 'none' }}
+                title={videos.find(v => v.id === currentVideo)?.title}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            </div>
+
+            {/* Video Tamamlama Butonu */}
+            <div style={{ textAlign: 'center' }}>
+              <button
+                onClick={() => {
+                  handleVideoComplete(currentVideo);
+                  setShowVideoModal(false);
+                }}
+                style={{
+                  background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+                  color: '#000',
+                  border: 'none',
+                  borderRadius: '25px',
+                  padding: '15px 40px',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                  boxShadow: '0 5px 15px rgba(255, 215, 0, 0.4)',
+                  marginRight: '15px'
+                }}
+              >
+                📝 VİDEOYU TAMAMLADIM - SINAVA GEÇ
+              </button>
+              
+              <button
+                onClick={() => {
+                  setShowVideoModal(false);
+                  setCurrentVideo(null);
+                }}
+                style={{
+                  background: 'rgba(108, 117, 125, 0.8)',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '25px',
+                  padding: '15px 30px',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer'
+                }}
+              >
+                KAPAT
+              </button>
+            </div>
           </div>
         </div>
       )}

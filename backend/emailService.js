@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer');
 
 // SMTP transporter oluştur
-const transporter = nodemailer.createTransporter({
+const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: process.env.SMTP_PORT,
   secure: process.env.SMTP_SECURE === 'true',
@@ -82,8 +82,101 @@ const sendPasswordResetEmail = async (user, resetToken) => {
   return await sendEmail(user.email, subject, html);
 };
 
+// Yeni kayıt sistemi hoş geldin emaili
+const sendNewRegistrationEmail = async (user, password) => {
+  const subject = 'HOOWELL - Kayıt İşleminiz Tamamlandı!';
+  const registrationTypeText = user.registration_type === 'individual' ? 'Bireysel' : 'Kurumsal';
+  
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f8f9fa;">
+      <!-- Header -->
+      <div style="background: linear-gradient(135deg, #0e2323 0%, #1a4a3a 50%, #0e2323 100%); padding: 40px 20px; text-align: center;">
+        <h1 style="color: #FFD700; font-size: 32px; margin: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
+          HOOWELL
+        </h1>
+        <p style="color: #fff; margin: 10px 0 0 0; font-size: 14px; letter-spacing: 1px;">
+          INNOVATE YOUR LIFE
+        </p>
+      </div>
+      
+      <!-- Content -->
+      <div style="padding: 40px 30px; background-color: #fff;">
+        <h2 style="color: #0e2323; margin-bottom: 20px;">
+          🎉 Hoş Geldiniz ${user.first_name}!
+        </h2>
+        
+        <p style="color: #333; line-height: 1.6; margin-bottom: 20px;">
+          HOOWELL ailesine katıldığınız için teşekkür ederiz. ${registrationTypeText} kayıt işleminiz başarıyla tamamlanmıştır.
+        </p>
+        
+        <!-- Registration Info -->
+        <div style="background-color: #f8f9fa; padding: 25px; border-radius: 10px; margin: 25px 0; border-left: 4px solid #FFD700;">
+          <h3 style="color: #0e2323; margin-top: 0;">📋 Kayıt Bilgileriniz</h3>
+          <p><strong>Kayıt Türü:</strong> ${registrationTypeText}</p>
+          <p><strong>Email:</strong> ${user.email}</p>
+          <p><strong>Sponsor ID:</strong> ${user.sponsor_id}</p>
+          <p><strong>Toplam Tutar:</strong> ${user.total_amount} ₺</p>
+        </div>
+        
+        <!-- Login Info -->
+        <div style="background-color: #e8f5e8; padding: 25px; border-radius: 10px; margin: 25px 0; border-left: 4px solid #28a745;">
+          <h3 style="color: #0e2323; margin-top: 0;">🔐 Giriş Bilgileriniz</h3>
+          <p><strong>Kullanıcı Adı:</strong> ${user.username}</p>
+          <p><strong>Email:</strong> ${user.email}</p>
+          <p><strong>Geçici Şifre:</strong> <code style="background-color: #fff; padding: 4px 8px; border-radius: 4px; color: #dc3545; font-weight: bold;">${password}</code></p>
+        </div>
+        
+        <!-- Next Steps -->
+        <div style="background-color: #fff3cd; padding: 25px; border-radius: 10px; margin: 25px 0; border-left: 4px solid #ffc107;">
+          <h3 style="color: #0e2323; margin-top: 0;">📝 Sonraki Adımlar</h3>
+          <ol style="color: #333; line-height: 1.8;">
+            <li><strong>Ödeme İşlemi:</strong> Kayıt ücretinizi ödemek için sisteme giriş yapın</li>
+            <li><strong>Eğitim Süreci:</strong> Ödeme onaylandıktan sonra 7 gün içinde eğitimlerinizi tamamlayın</li>
+            <li><strong>Web Ofis:</strong> Eğitimler tamamlandıktan sonra web ofisiniz aktif hale gelecek</li>
+          </ol>
+        </div>
+        
+        <!-- CTA Button -->
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="http://localhost:3000/login" 
+             style="background: linear-gradient(135deg, #FFD700, #FFA500); 
+                    color: #0e2323; 
+                    padding: 15px 30px; 
+                    text-decoration: none; 
+                    border-radius: 25px; 
+                    font-weight: bold; 
+                    font-size: 16px;
+                    box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);">
+            💳 SİSTEME GİRİŞ YAP
+          </a>
+        </div>
+        
+        <!-- Important Note -->
+        <div style="background-color: #f8d7da; padding: 20px; border-radius: 10px; margin: 25px 0; border-left: 4px solid #dc3545;">
+          <p style="color: #721c24; margin: 0; font-weight: bold;">
+            ⚠️ Önemli: Güvenliğiniz için ilk girişinizde şifrenizi değiştirmeyi unutmayın!
+          </p>
+        </div>
+      </div>
+      
+      <!-- Footer -->
+      <div style="background-color: #0e2323; padding: 20px; text-align: center;">
+        <p style="color: #FFD700; margin: 0; font-size: 14px;">
+          HOOWELL Teknoloji A.Ş.
+        </p>
+        <p style="color: #ccc; margin: 5px 0 0 0; font-size: 12px;">
+          Bu email otomatik olarak gönderilmiştir. Lütfen yanıtlamayın.
+        </p>
+      </div>
+    </div>
+  `;
+  
+  return await sendEmail(user.email, subject, html);
+};
+
 module.exports = {
   sendEmail,
   sendWelcomeEmail,
-  sendPasswordResetEmail
+  sendPasswordResetEmail,
+  sendNewRegistrationEmail
 };
