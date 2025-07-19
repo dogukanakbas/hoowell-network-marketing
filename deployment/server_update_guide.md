@@ -1,17 +1,26 @@
 # HOOWELL Sunucu Güncelleme Rehberi
 
-## 🔄 Güvenli Güncelleme Adımları
+## 🔄 Güvenli Güncelleme Adımları (Sunucuda Yapılacak)
 
-### 1. Backup Alma (ÖNEMLİ!)
+### 1. Sunucuya Bağlan ve Backup Al (ÖNEMLİ!)
 ```bash
-# Sunucuda çalıştır
-cd /path/to/hoowell/project
+# SSH ile sunucuya bağlan
+ssh user@your-server-ip
 
-# Tam veritabanı backup'ı
-mysqldump -u root -p hoowell_network > backup_$(date +%Y%m%d_%H%M%S).sql
+# Proje dizinine git
+cd /var/www/hoowell  # veya projenin bulunduğu dizin
+
+# Tam veritabanı backup'ı (mevcut kullanıcıları korumak için)
+mysqldump -u root -p hoowell_network > backups/hoowell_backup_$(date +%Y%m%d_%H%M%S).sql
+
+# Sadece kullanıcı verilerini ayrı backup'la (ekstra güvenlik)
+mysqldump -u root -p hoowell_network users payments user_video_progress > backups/users_backup_$(date +%Y%m%d_%H%M%S).sql
 
 # Proje dosyalarını backup'la
-tar -czf hoowell_backup_$(date +%Y%m%d_%H%M%S).tar.gz .
+tar -czf backups/project_backup_$(date +%Y%m%d_%H%M%S).tar.gz --exclude=node_modules --exclude=frontend/node_modules .
+
+# Backup'ların oluştuğunu kontrol et
+ls -la backups/
 ```
 
 ### 2. Git Pull ile Güncellemeleri Al
