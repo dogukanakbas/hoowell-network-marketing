@@ -214,6 +214,19 @@ PREPARE stmt FROM @sql;
 EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
 
+-- Education_started_at kolonu ekle (ÖNEMLİ!)
+SET @col_exists = 0;
+SELECT COUNT(*) INTO @col_exists 
+FROM INFORMATION_SCHEMA.COLUMNS 
+WHERE TABLE_SCHEMA = 'hoowell_network' 
+AND TABLE_NAME = 'users' 
+AND COLUMN_NAME = 'education_started_at';
+
+SET @sql = IF(@col_exists = 0, 'ALTER TABLE users ADD COLUMN education_started_at DATETIME NULL', 'SELECT "education_started_at column already exists"');
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
 -- 4. Mevcut admin kullanıcılarının sponsor_id'lerini güncelle (sadece NULL olanlar)
 UPDATE users SET sponsor_id = 'P2025000000' WHERE username = 'hoowell' AND sponsor_id IS NULL;
 UPDATE users SET sponsor_id = 'P2025000014' WHERE username = 'hakandalkilic' AND sponsor_id IS NULL;
@@ -248,7 +261,21 @@ UPDATE users SET
     registration_step = 6
 WHERE role = 'partner' AND registration_completed IS NULL;
 
--- 7. Kontrol sorguları
+-- 7. Mevcut kullanıcıların eğitim bilgilerini düzelt (ÖNEMLİ!)
+UPDATE users SET 
+    education_started_at = COALESCE(education_started_at, created_at),
+    education_deadline = COALESCE(education_deadline, DATE_ADD(created_at, INTERVAL 7 DAY))
+WHERE role = 'partner';
+
+-- 8. Ödeme onaylı ama eğitim bilgileri eksik olanları özel olarak düzelt
+UPDATE users SET 
+    education_started_at = COALESCE(education_started_at, created_at),
+    education_deadline = COALESCE(education_deadline, DATE_ADD(created_at, INTERVAL 7 DAY))
+WHERE role = 'partner' 
+AND payment_confirmed = TRUE 
+AND (education_started_at IS NULL OR education_deadline IS NULL);
+
+-- 9. Kontrol sorguları
 SELECT 'Migration completed successfully' as status;
 SELECT COUNT(*) as total_users FROM users;
 SELECT COUNT(*) as total_customers FROM customers;

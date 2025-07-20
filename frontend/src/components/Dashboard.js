@@ -5,10 +5,21 @@ import axios from 'axios';
 const Dashboard = () => {
   // const { user } = useAuth(); // Şu an kullanılmıyor
   const [stats, setStats] = useState({
-    liderlikHavuzu: 12000,
-    baskanlikHavuzu: 8000,
-    karPaylasimHavuzu: 5000
+    liderlikHavuzu: 0,
+    baskanlikHavuzu: 0,
+    karPaylasimHavuzu: 0
   });
+
+  // Dinamik tarih hesaplama
+  const getNextMonthEnd = () => {
+    const now = new Date();
+    const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    return nextMonth.toLocaleDateString('tr-TR', { 
+      day: '2-digit', 
+      month: '2-digit', 
+      year: 'numeric' 
+    });
+  };
 
   const fetchDashboardData = useCallback(async () => {
     try {
@@ -121,14 +132,14 @@ const Dashboard = () => {
             LİDERLİK HAVUZU
           </h3>
           <p style={{ color: 'var(--text-light)', fontSize: '14px', marginBottom: '15px' }}>
-            Bitiş Tarihi: 31.03.2025
+            Bitiş Tarihi: {getNextMonthEnd()}
           </p>
           <div style={{ 
             fontSize: '32px', 
             fontWeight: 'bold', 
             color: 'var(--text-dark)' 
           }}>
-            ₺{stats.liderlikHavuzu?.toLocaleString()}
+            ₺0
           </div>
         </div>
 
@@ -143,14 +154,14 @@ const Dashboard = () => {
             BAŞKANLIK HAVUZU
           </h3>
           <p style={{ color: 'var(--text-light)', fontSize: '14px', marginBottom: '15px' }}>
-            Bitiş Tarihi: 31.03.2025
+            Bitiş Tarihi: {getNextMonthEnd()}
           </p>
           <div style={{ 
             fontSize: '32px', 
             fontWeight: 'bold', 
             color: 'var(--text-dark)' 
           }}>
-            ₺{stats.baskanlikHavuzu?.toLocaleString()}
+            ₺0
           </div>
         </div>
 
@@ -165,15 +176,19 @@ const Dashboard = () => {
             KAR PAYLAŞIMI HAVUZU
           </h3>
           <p style={{ color: 'var(--text-light)', fontSize: '14px', marginBottom: '15px' }}>
-            Bitiş Tarihi: 31.03.2025
+            Promosyon Havuzu
           </p>
           <div style={{ 
-            fontSize: '32px', 
+            fontSize: '20px', 
             fontWeight: 'bold', 
-            color: 'var(--text-dark)' 
+            color: '#ffc107',
+            marginBottom: '10px'
           }}>
-            ₺{stats.karPaylasimHavuzu?.toLocaleString()}
+            🚀 OCAK 2026'DA BAŞLAYACAKTIR
           </div>
+          <p style={{ color: '#dc3545', fontSize: '12px', fontWeight: 'bold' }}>
+            ⚠️ Yeni dönem promosyonu
+          </p>
         </div>
       </div>
 
@@ -210,7 +225,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Video Alanı */}
+        {/* Video Paylaşım Alanı */}
         <div style={{
           backgroundColor: 'var(--card-gray)',
           borderRadius: '15px',
@@ -219,44 +234,139 @@ const Dashboard = () => {
           boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
           textAlign: 'center'
         }}>
-          <h3 style={{ color: 'var(--text-dark)', marginBottom: '15px' }}>
-            ÇALIŞIRKEN KULLANILACAK VİDEOLAR
+          <h3 style={{ color: 'var(--text-dark)', marginBottom: '20px' }}>
+            📹 PAYLAŞIM VİDEOLARI
           </h3>
-          <div style={{ marginBottom: '15px' }}>
-            <h4 style={{ color: 'var(--text-dark)', fontSize: '16px', marginBottom: '10px' }}>
-              İş Tanıtım Programı
-            </h4>
-            <p style={{ color: 'var(--text-light)', fontSize: '14px', marginBottom: '15px' }}>
-              Bu video, işin genel tanıtımı ve temel prensiplerini anlatır.
-            </p>
-          </div>
           
-          {/* Video Placeholder */}
+          {/* Ürün Demo */}
+          <div style={{ marginBottom: '15px' }}>
+            <h4 style={{ color: 'var(--text-dark)', fontSize: '14px', marginBottom: '8px' }}>
+              🎬 Ürün Demo Videosu
+            </h4>
+            <button
+              onClick={() => {
+                const shareText = "HOOWELL Ürün Demo - İnovatif ürünlerimizi keşfedin!";
+                const shareUrl = "https://drive.google.com/file/d/demo-video-id/view";
+                
+                if (navigator.share) {
+                  navigator.share({ title: shareText, url: shareUrl });
+                } else {
+                  navigator.clipboard.writeText(`${shareText} ${shareUrl}`);
+                  alert('Link kopyalandı!');
+                }
+              }}
+              style={{
+                backgroundColor: 'var(--primary-dark)',
+                color: 'var(--white)',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '8px 15px',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                marginBottom: '10px'
+              }}
+            >
+              📤 Paylaş
+            </button>
+          </div>
+
+          {/* İş Tanıtım */}
+          <div style={{ marginBottom: '15px' }}>
+            <h4 style={{ color: 'var(--text-dark)', fontSize: '14px', marginBottom: '8px' }}>
+              💼 İş Tanıtım Videosu
+            </h4>
+            <button
+              onClick={() => {
+                const shareText = "HOOWELL İş Fırsatı - Hayalinizdeki işe sahip olun!";
+                const shareUrl = "https://drive.google.com/file/d/business-intro-video-id/view";
+                
+                if (navigator.share) {
+                  navigator.share({ title: shareText, url: shareUrl });
+                } else {
+                  navigator.clipboard.writeText(`${shareText} ${shareUrl}`);
+                  alert('Link kopyalandı!');
+                }
+              }}
+              style={{
+                backgroundColor: 'var(--primary-dark)',
+                color: 'var(--white)',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '8px 15px',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                marginBottom: '10px'
+              }}
+            >
+              📤 Paylaş
+            </button>
+          </div>
+
+          {/* Pazarlama Planı */}
+          <div style={{ marginBottom: '15px' }}>
+            <h4 style={{ color: 'var(--text-dark)', fontSize: '14px', marginBottom: '8px' }}>
+              📈 Pazarlama Planı
+            </h4>
+            <button
+              onClick={() => {
+                const shareText = "HOOWELL Pazarlama Planı - Kazanç fırsatlarını keşfedin!";
+                const shareUrl = "https://drive.google.com/file/d/marketing-plan-video-id/view";
+                
+                if (navigator.share) {
+                  navigator.share({ title: shareText, url: shareUrl });
+                } else {
+                  navigator.clipboard.writeText(`${shareText} ${shareUrl}`);
+                  alert('Link kopyalandı!');
+                }
+              }}
+              style={{
+                backgroundColor: 'var(--primary-dark)',
+                color: 'var(--white)',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '8px 15px',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                marginBottom: '15px'
+              }}
+            >
+              📤 Paylaş
+            </button>
+          </div>
+
+          {/* Temel Eğitimler Butonu */}
           <div style={{
             backgroundColor: 'var(--primary-dark)',
             borderRadius: '10px',
-            padding: '40px 20px',
-            marginBottom: '15px',
-            position: 'relative'
+            padding: '15px',
+            marginTop: '20px'
           }}>
-            <div style={{ color: 'var(--accent-gold)', fontSize: '24px', fontWeight: 'bold' }}>
-              HOOWELL
+            <div style={{ color: 'var(--accent-gold)', fontSize: '16px', fontWeight: 'bold', marginBottom: '8px' }}>
+              📚 TEMEL EĞİTİMLER
             </div>
-            <div style={{ color: 'var(--white)', fontSize: '14px', marginTop: '5px' }}>
-              İŞ TANITIM PROGRAMI
-            </div>
-            <div style={{ color: 'var(--white)', fontSize: '12px', marginTop: '10px' }}>
-              INNOVATE YOUR LIFE
-            </div>
-          </div>
-          
-          <div>
-            <h4 style={{ color: 'var(--text-dark)', fontSize: '16px', marginBottom: '10px' }}>
-              Kazanç ve Pazarlama Planı
-            </h4>
-            <p style={{ color: 'var(--text-light)', fontSize: '14px' }}>
-              Bu video, kazanç ve pazarlama planının detaylarını açıklar.
+            <p style={{ color: 'var(--white)', fontSize: '12px', marginBottom: '10px' }}>
+              Sınavsız erişim - İstediğiniz zaman izleyin
             </p>
+            <a 
+              href="/education"
+              style={{
+                backgroundColor: 'var(--accent-gold)',
+                color: 'var(--primary-dark)',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '8px 15px',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                textDecoration: 'none',
+                display: 'inline-block'
+              }}
+            >
+              EĞİTİMLERE GİT
+            </a>
           </div>
         </div>
 

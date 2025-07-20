@@ -6,7 +6,7 @@ const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const { sendNewRegistrationEmail } = require('./emailService');
-require('dotenv').config({ path: '../.env' });
+require('dotenv').config();
 
 const app = express();
 
@@ -188,7 +188,7 @@ app.post('/api/auth/login', async (req, res) => {
 app.get('/api/auth/me', verifyToken, async (req, res) => {
   try {
     const [users] = await db.promise().execute(
-      'SELECT id, username, email, first_name, last_name, phone, role, sponsor_id, career_level, total_kkp, active_partners, is_active, payment_confirmed, education_completed, backoffice_access, payment_pending, payment_blocked, education_deadline FROM users WHERE id = ?',
+      'SELECT id, username, email, first_name, last_name, phone, role, sponsor_id, career_level, total_kkp, active_partners, is_active, payment_confirmed, education_completed, backoffice_access, payment_pending, payment_blocked, education_deadline, education_started_at FROM users WHERE id = ?',
       [req.user.id]
     );
 
@@ -311,9 +311,9 @@ app.post('/api/payments', verifyToken, upload.single('receipt'), async (req, res
       [req.user.id, payment_type, amount_usd, amount_try, vat_amount, total_amount_calc, receipt_path, 'pending']
     );
 
-    // Kullanıcıya otomatik eğitim erişimi ver
+    // Kullanıcıya otomatik eğitim erişimi ver ve eğitim başlangıç zamanını kaydet
     await db.promise().execute(
-      'UPDATE users SET payment_confirmed = TRUE, education_completed = FALSE, payment_pending = TRUE, payment_blocked = FALSE WHERE id = ?',
+      'UPDATE users SET payment_confirmed = TRUE, education_completed = FALSE, payment_pending = TRUE, payment_blocked = FALSE, education_started_at = NOW(), education_deadline = DATE_ADD(NOW(), INTERVAL 7 DAY) WHERE id = ?',
       [req.user.id]
     );
 

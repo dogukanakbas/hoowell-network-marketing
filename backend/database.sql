@@ -49,6 +49,7 @@ CREATE TABLE users (
     payment_confirmed BOOLEAN DEFAULT FALSE,
     education_completed BOOLEAN DEFAULT FALSE,
     education_deadline DATETIME NULL,
+    education_started_at DATETIME NULL,
     backoffice_access BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

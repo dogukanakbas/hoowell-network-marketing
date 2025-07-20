@@ -120,8 +120,13 @@ const Education = () => {
   };
 
   const canWatchVideo = (videoIndex) => {
+    // Eğitim tamamlanan kullanıcılar tüm videoları izleyebilir
+    if (user?.education_completed) return true;
+    
+    // İlk video her zaman izlenebilir
     if (videoIndex === 0) return true;
     
+    // Diğer videolar için önceki videonun sınavının geçilmiş olması gerekir
     const previousVideo = videos[videoIndex - 1];
     const previousProgress = getVideoProgress(previousVideo?.id);
     
@@ -231,8 +236,8 @@ const Education = () => {
         </div>
       </div>
 
-      {/* Geri Sayım Alanı */}
-      {user?.education_deadline && (
+      {/* Geri Sayım Alanı - Sadece eğitim tamamlanmamış kullanıcılar için */}
+      {user?.education_deadline && !user?.education_completed && (
         <div style={{
           padding: '20px 40px',
           textAlign: 'center',
@@ -552,16 +557,39 @@ const Education = () => {
               {/* Durum ve Butonlar */}
               <div style={{ textAlign: 'center' }}>
                 {progress.exam_passed && (
-                  <div style={{
-                    background: '#28a745',
-                    color: 'white',
-                    padding: '8px 15px',
-                    borderRadius: '20px',
-                    fontSize: '12px',
-                    fontWeight: 'bold',
-                    marginBottom: '10px'
-                  }}>
-                    ✅ TAMAMLANDI
+                  <div>
+                    <div style={{
+                      background: '#28a745',
+                      color: 'white',
+                      padding: '8px 15px',
+                      borderRadius: '20px',
+                      fontSize: '12px',
+                      fontWeight: 'bold',
+                      marginBottom: '10px'
+                    }}>
+                      ✅ TAMAMLANDI
+                    </div>
+                    {/* Eğitim tamamlanan kullanıcılar için tekrar izleme butonu */}
+                    {user?.education_completed && (
+                      <button
+                        onClick={() => {
+                          setCurrentVideo(video.id);
+                          setShowVideoModal(true);
+                        }}
+                        style={{
+                          background: 'linear-gradient(135deg, #28a745, #20c997)',
+                          color: '#fff',
+                          border: 'none',
+                          borderRadius: '20px',
+                          padding: '8px 20px',
+                          fontSize: '12px',
+                          fontWeight: 'bold',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        TEKRAR İZLE
+                      </button>
+                    )}
                   </div>
                 )}
                 
@@ -578,25 +606,45 @@ const Education = () => {
                     }}>
                       📝 SINAV BEKLİYOR
                     </div>
-                    <button
-                      onClick={() => {
-                        fetchQuestions(video.id);
-                        setCurrentVideo(video.id);
-                        setShowExam(true);
-                      }}
-                      style={{
-                        background: 'linear-gradient(135deg, #FFD700, #FFA500)',
-                        color: '#000',
-                        border: 'none',
-                        borderRadius: '20px',
-                        padding: '8px 20px',
-                        fontSize: '12px',
-                        fontWeight: 'bold',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      SINAVA GİR
-                    </button>
+                    <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                      <button
+                        onClick={() => {
+                          setCurrentVideo(video.id);
+                          setShowVideoModal(true);
+                        }}
+                        style={{
+                          background: 'linear-gradient(135deg, #17a2b8, #138496)',
+                          color: '#fff',
+                          border: 'none',
+                          borderRadius: '20px',
+                          padding: '8px 15px',
+                          fontSize: '12px',
+                          fontWeight: 'bold',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        TEKRAR İZLE
+                      </button>
+                      <button
+                        onClick={() => {
+                          fetchQuestions(video.id);
+                          setCurrentVideo(video.id);
+                          setShowExam(true);
+                        }}
+                        style={{
+                          background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+                          color: '#000',
+                          border: 'none',
+                          borderRadius: '20px',
+                          padding: '8px 15px',
+                          fontSize: '12px',
+                          fontWeight: 'bold',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        SINAVA GİR
+                      </button>
+                    </div>
                   </div>
                 )}
                 
