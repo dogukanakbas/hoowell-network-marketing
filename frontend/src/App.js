@@ -12,6 +12,11 @@ import AdminPanel from './components/AdminPanel';
 import AccessRestricted from './components/AccessRestricted';
 import PartnerRegistration from './components/PartnerRegistration';
 import CustomerRegistration from './components/CustomerRegistration';
+import CareerTracker from './components/CareerTracker';
+import CustomerSatisfactionTracker from './components/CustomerSatisfactionTracker';
+import SponsorshipTracker from './components/SponsorshipTracker';
+import SalesTracker from './components/SalesTracker';
+import FranchiseNetwork from './components/FranchiseNetwork';
 // import AdminPayment from './components/AdminPayment'; // Şu an kullanılmıyor
 import Welcome from './components/Welcome';
 
@@ -35,11 +40,11 @@ function App() {
               <Route path="admin/*" element={<AdminPanel />} />
               
               {/* Restricted Pages */}
-              <Route path="kariyerim" element={<AccessRestricted pageName="Kariyerim" icon="📈" />} />
-              <Route path="satislarim" element={<AccessRestricted pageName="Satışlarım" icon="💰" />} />
-              <Route path="franchise-agi" element={<AccessRestricted pageName="Franchise Ağı Yapısı" icon="🌐" />} />
-              <Route path="memnun-musteri-takip" element={<AccessRestricted pageName="Memnun Müşteri Takip Paneli" icon="😊" />} />
-              <Route path="sponsorluk-takip" element={<AccessRestricted pageName="Sponsorluk Takip Paneli" icon="👥" />} />
+              <Route path="kariyerim" element={<CareerTracker />} />
+              <Route path="satislarim" element={<SalesTracker />} />
+              <Route path="franchise-agi" element={<FranchiseNetwork />} />
+              <Route path="memnun-musteri-takip" element={<CustomerSatisfactionTracker />} />
+              <Route path="sponsorluk-takip" element={<SponsorshipTracker />} />
               <Route path="takim-takip" element={<AccessRestricted pageName="Takım Takip Paneli" icon="👨‍👩‍👧‍👦" />} />
               <Route path="liderlik-baskanlik-takip" element={<AccessRestricted pageName="Liderlik ve Başkanlık Takip Paneli" icon="👑" />} />
               <Route path="kar-paylasimi-promosyon" element={<AccessRestricted pageName="Kar Paylaşımı Promosyonu" icon="🎁" />} />

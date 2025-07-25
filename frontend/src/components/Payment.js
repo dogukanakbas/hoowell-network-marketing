@@ -160,7 +160,7 @@ const Payment = () => {
               TR77 0011 1000 0000 0153 1671 66
             </div>
             <div style={{ fontSize: '16px', color: 'var(--text-dark)' }}>
-              <strong>Alıcı:</strong> HOOWELL NETWORK MARKETING LTD. ŞTİ.
+              <strong>Alıcı:</strong> HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ
             </div>
           </div>
 
