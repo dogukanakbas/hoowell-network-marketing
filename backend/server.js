@@ -262,18 +262,18 @@ app.get('/api/network/user-details/:userId', verifyToken, async (req, res) => {
         u.career_level,
         u.total_kkp,
         u.created_at,
-        up.profile_photo,
-        up.join_date,
+        COALESCE(up.profile_photo, '') as profile_photo,
+        COALESCE(up.join_date, u.created_at) as join_date,
         up.last_login,
-        up.total_sales,
-        up.monthly_sales,
-        up.team_size,
-        up.active_team_members,
-        up.personal_volume,
-        up.team_volume,
-        up.notes,
-        sponsor.first_name as sponsor_first_name,
-        sponsor.last_name as sponsor_last_name,
+        COALESCE(up.total_sales, 0) as total_sales,
+        COALESCE(up.monthly_sales, 0) as monthly_sales,
+        COALESCE(up.team_size, 0) as team_size,
+        COALESCE(up.active_team_members, 0) as active_team_members,
+        COALESCE(up.personal_volume, 0) as personal_volume,
+        COALESCE(up.team_volume, 0) as team_volume,
+        COALESCE(up.notes, '') as notes,
+        COALESCE(sponsor.first_name, '') as sponsor_first_name,
+        COALESCE(sponsor.last_name, '') as sponsor_last_name,
         -- Calculate real-time activity status
         CASE 
           WHEN EXISTS (
@@ -281,6 +281,11 @@ app.get('/api/network/user-details/:userId', verifyToken, async (req, res) => {
             WHERE st.seller_id = u.id 
             AND MONTH(st.sale_date) = MONTH(NOW()) 
             AND YEAR(st.sale_date) = YEAR(NOW())
+          ) OR EXISTS (
+            SELECT 1 FROM customers c 
+            WHERE c.created_by = u.id 
+            AND MONTH(c.created_at) = MONTH(NOW()) 
+            AND YEAR(c.created_at) = YEAR(NOW())
           ) THEN TRUE
           ELSE FALSE
         END as is_active_this_month
@@ -346,18 +351,11 @@ app.post('/api/network/initialize-profiles', verifyToken, async (req, res) => {
 });
 
 // KKP Award Functions
-const awardKKPForCustomerSale = async (userId, totalAmount) => {
+const awardKKPForCustomerSale = async (userId, productPrice) => {
   try {
-    // Get USD rate
-    const [settings] = await db.promise().execute(
-      'SELECT setting_value FROM system_settings WHERE setting_key = ?',
-      ['usd_to_try_rate']
-    );
-
-    const usdRate = parseFloat(settings[0]?.setting_value || 40);
-
-    // Calculate KKP: 1 KKP = 1 USD
-    const kkpEarned = totalAmount / usdRate;
+    // KKP calculation: 1 KKP = 1 USD (net price, excluding VAT)
+    // productPrice is already in USD (net amount)
+    const kkpEarned = productPrice;
 
     // Update user's total KKP
     await db.promise().execute(
@@ -365,7 +363,7 @@ const awardKKPForCustomerSale = async (userId, totalAmount) => {
       [kkpEarned, userId]
     );
 
-    console.log(`KKP awarded: User ${userId} earned ${kkpEarned} KKP from customer sale (${totalAmount} TL)`);
+    console.log(`KKP awarded: User ${userId} earned ${kkpEarned} KKP from customer sale (${productPrice} USD net)`);
 
     return kkpEarned;
   } catch (error) {
@@ -711,9 +709,8 @@ app.post('/api/customers', verifyToken, async (req, res) => {
       req.user.id, 'confirmed'
     ]);
 
-    // Award KKP for customer sale - USD cinsinden total_amount'u TL'ye çevir
-    const totalAmountTL = total_amount * 40; // USD to TL conversion
-    const kkpEarned = await awardKKPForCustomerSale(req.user.id, totalAmountTL);
+    // Award KKP for customer sale - KDV hariç net fiyat üzerinden
+    const kkpEarned = await awardKKPForCustomerSale(req.user.id, product_price);
 
     // Create sales tracking record
     await createSalesTrackingRecord(
@@ -1956,16 +1953,16 @@ app.get('/api/career/progress', verifyToken, async (req, res) => {
       [userId]
     );
 
-    // Calculate KKP from customer sales (Müşteri satışları - TL cinsinden, USD'ye çevir)
+    // Calculate KKP from customer sales (KDV hariç net fiyat üzerinden)
     const [customersResult] = await db.promise().execute(
-      'SELECT SUM(total_amount) as customer_sales FROM customers WHERE created_by = ?',
+      'SELECT SUM(product_price) as customer_net_sales FROM customers WHERE created_by = ?',
       [userId]
     );
 
     // KKP Calculations
     const paymentKKP = paymentsResult[0].total_sales ? Math.floor(paymentsResult[0].total_sales / usdToTryRate) : 0;
     const partnerKKP = (partnersResult[0].partner_count || 0) * 120; // Her partner 120 KKP (partner registration bonus)
-    const customerKKP = customersResult[0].customer_sales ? Math.floor(customersResult[0].customer_sales / usdToTryRate) : 0; // TL'yi USD'ye çevir
+    const customerKKP = customersResult[0].customer_net_sales ? Math.floor(customersResult[0].customer_net_sales) : 0; // KDV hariç net fiyat = KKP
     const totalKKP = paymentKKP + partnerKKP + customerKKP;
 
     // Active partners count
