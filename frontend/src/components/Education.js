@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
+import Certificate from './Certificate';
 
 const Education = () => {
   const { user } = useAuth();
@@ -12,6 +13,7 @@ const Education = () => {
   const [examResult, setExamResult] = useState(null);
   const [userProgress, setUserProgress] = useState([]);
   const [showVideoModal, setShowVideoModal] = useState(false);
+  const [showCertificate, setShowCertificate] = useState(false);
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
@@ -176,7 +178,7 @@ const Education = () => {
         borderBottom: '2px solid rgba(255, 215, 0, 0.2)'
       }}>
         {/* Sol Başlık */}
-        <div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
           <h1 style={{
             color: '#FFD700',
             fontSize: '36px',
@@ -186,6 +188,38 @@ const Education = () => {
           }}>
             HOOWELL TEMEL EĞİTİM PANELİ
           </h1>
+
+          {/* Sertifika Butonu - Sadece eğitim tamamlanan kullanıcılar için */}
+          {user?.education_completed && (
+            <button
+              onClick={() => setShowCertificate(true)}
+              style={{
+                background: 'linear-gradient(135deg, #28a745, #20c997)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '15px',
+                padding: '12px 25px',
+                fontSize: '14px',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                boxShadow: '0 5px 15px rgba(40, 167, 69, 0.4)',
+                transition: 'all 0.3s ease',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = 'translateY(-2px)';
+                e.target.style.boxShadow = '0 8px 25px rgba(40, 167, 69, 0.6)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = 'translateY(0)';
+                e.target.style.boxShadow = '0 5px 15px rgba(40, 167, 69, 0.4)';
+              }}
+            >
+              🎓 SERTİFİKAMI GÖSTER
+            </button>
+          )}
         </div>
 
         {/* Sağ Logo */}
@@ -1063,6 +1097,11 @@ const Education = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Sertifika Modal */}
+      {showCertificate && (
+        <Certificate onClose={() => setShowCertificate(false)} />
       )}
     </div>
   );

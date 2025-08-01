@@ -24,8 +24,11 @@ const Payment = () => {
 
   const fetchPayments = async () => {
     try {
-      // eslint-disable-next-line no-unused-vars
-      const response = await axios.get('/api/payments/my');
+      const response = await axios.get('/api/payments/my', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
       setPayments(response.data);
     } catch (error) {
       console.error('Error fetching payments:', error);
@@ -34,8 +37,11 @@ const Payment = () => {
 
   const fetchSettings = async () => {
     try {
-      // eslint-disable-next-line no-unused-vars
-      const response = await axios.get('/api/settings');
+      const response = await axios.get('/api/settings', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
       setSettings(response.data);
     } catch (error) {
       console.error('Error fetching settings:', error);

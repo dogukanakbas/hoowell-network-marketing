@@ -53,7 +53,9 @@ const Layout = () => {
     { path: '/takim-takip', label: 'Takım Takip Paneli', requiresEducation: true },
     { path: '/liderlik-baskanlik-takip', label: 'Liderlik ve Başkanlık Takip', requiresEducation: true },
     { path: '/kar-paylasimi-promosyon', label: 'Kar Paylaşımı Promosyonu', requiresEducation: true },
+    { path: '/doping-promosyonu', label: 'Doping Promosyonu', requiresEducation: true },
     { path: '/global-seyahat-promosyonu', label: 'Global Seyahat', requiresEducation: true },
+    { path: '/muhasebe-takip-paneli', label: 'Muhasebe Takip Paneli', requiresEducation: true },
     { path: '/bilgi-bankasi', label: 'Bilgi Bankası', requiresEducation: true }
   ];
 
@@ -109,6 +111,9 @@ const Layout = () => {
             </div>
             <div style={{ fontSize: '12px', color: 'var(--text-light)', marginTop: '2px' }}>
               ID: {user.sponsor_id || 'Atanmamış'}
+            </div>
+            <div style={{ fontSize: '11px', color: 'var(--accent-gold)', marginTop: '2px', fontWeight: 'bold' }}>
+              KKP: {user.total_kkp?.toLocaleString() || '0'}
             </div>
           </div>
         </div>

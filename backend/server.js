@@ -11,8 +11,13 @@ require('dotenv').config();
 const app = express();
 
 // Middleware
-app.use(cors());
-app.use(express.json());
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://yourdomain.com'] 
+    : ['http://localhost:3000'],
+  credentials: true
+}));
+app.use(express.json({ limit: '10mb' }));
 app.use('/uploads', express.static('uploads'));
 
 // Multer configuration for file uploads
@@ -32,7 +37,18 @@ const db = mysql.createConnection({
   host: process.env.DB_HOST || 'localhost',
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'hoowell_network'
+  database: process.env.DB_NAME || 'hoowell_network',
+  acquireTimeout: 60000,
+  timeout: 60000,
+  reconnect: true
+});
+
+// Database connection error handling
+db.on('error', (err) => {
+  console.error('Database connection error:', err);
+  if (err.code === 'PROTOCOL_CONNECTION_LOST') {
+    console.log('Attempting to reconnect to database...');
+  }
 });
 
 // JWT Secret
@@ -459,7 +475,7 @@ const updateUserActivityStatus = async (userId) => {
   }
 };
 
-// Sponsorship Earnings Calculation Functions
+// Sponsorship Earnings Calculation Functions - IMPROVED WITH DOWNLINE
 const calculateSponsorshipEarnings = async (partnerId, saleAmount, saleType) => {
   try {
     // Get partner info
@@ -475,17 +491,33 @@ const calculateSponsorshipEarnings = async (partnerId, saleAmount, saleType) => 
     const sponsorId = partner[0].created_by;
     const partnerLevel = partner[0].career_level;
 
-    // Get sponsor's career level
+    // RECURSIVE DOWNLINE COMMISSION CALCULATION
+    await calculateDownlineCommissions(sponsorId, saleAmount, saleType, 1, partnerId);
+
+  } catch (error) {
+    console.error('Calculate sponsorship earnings error:', error);
+  }
+};
+
+// New function for recursive downline commissions
+const calculateDownlineCommissions = async (currentSponsorId, saleAmount, saleType, level, originalPartnerId) => {
+  try {
+    // Maximum levels for commission (prevent infinite recursion)
+    const MAX_LEVELS = 5;
+    if (level > MAX_LEVELS) return;
+
+    // Get current sponsor info
     const [sponsor] = await db.promise().execute(
-      'SELECT career_level FROM users WHERE id = ?',
-      [sponsorId]
+      'SELECT id, career_level, created_by FROM users WHERE id = ?',
+      [currentSponsorId]
     );
 
-    if (!sponsor[0]) {
-      return; // Sponsor not found
-    }
+    if (!sponsor[0]) return;
 
     const sponsorLevel = sponsor[0].career_level;
+    const nextSponsorId = sponsor[0].created_by;
+
+
 
     // Calculate bonus based on partner's level and sponsor's eligibility
     const bonusPercentages = {
@@ -710,6 +742,7 @@ app.post('/api/customers', verifyToken, async (req, res) => {
     ]);
 
     // Award KKP for customer sale - KDV hariç net fiyat üzerinden
+    // product_price zaten KDV hariç net fiyat (USD cinsinden)
     const kkpEarned = await awardKKPForCustomerSale(req.user.id, product_price);
 
     // Create sales tracking record
@@ -718,7 +751,7 @@ app.post('/api/customers', verifyToken, async (req, res) => {
       result.insertId,
       'product_sale',
       selected_product === 'education' ? 'Eğitim Paketi' : 'Cihaz Paketi',
-      totalAmountTL
+      total_amount
     );
 
     // Update user activity status
@@ -818,6 +851,82 @@ app.get('/api/sales/tracker', verifyToken, async (req, res) => {
   }
 });
 
+// Career Progress API
+app.get('/api/career/progress', verifyToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Get user's current career data
+    const [userResult] = await db.promise().execute(`
+      SELECT 
+        career_level,
+        total_kkp,
+        active_partners,
+        created_at
+      FROM users 
+      WHERE id = ?
+    `, [userId]);
+
+    if (userResult.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const user = userResult[0];
+    
+    // Calculate target values based on current level
+    const levelTargets = {
+      bronze: { kkp: 15000, partners: 1 },
+      silver: { kkp: 50000, partners: 3 },
+      gold: { kkp: 100000, partners: 7 },
+      star_leader: { kkp: 175000, partners: 15 },
+      super_star_leader: { kkp: 300000, partners: 25 },
+      presidents_team: { kkp: 400000, partners: 30 },
+      country_distributor: { kkp: 400000, partners: 30 }
+    };
+
+    const currentTargets = levelTargets[user.career_level] || levelTargets.bronze;
+
+    res.json({
+      current_level: user.career_level,
+      total_kkp: parseFloat(user.total_kkp) || 0,
+      active_partners: user.active_partners || 0,
+      target_kkp: currentTargets.kkp,
+      target_partners: currentTargets.partners,
+      level_upgraded: false
+    });
+
+  } catch (error) {
+    console.error('Career progress error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Career Bonuses API
+app.get('/api/career/bonuses', verifyToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const [bonuses] = await db.promise().execute(`
+      SELECT 
+        career_level,
+        bonus_amount,
+        kkp_threshold,
+        paid,
+        paid_at,
+        created_at
+      FROM career_bonuses 
+      WHERE user_id = ?
+      ORDER BY created_at DESC
+    `, [userId]);
+
+    res.json(bonuses);
+
+  } catch (error) {
+    console.error('Career bonuses error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 // Automatic Sales Activation System (Cron Job Alternative)
 const activatePendingSales = async () => {
   try {
@@ -858,6 +967,215 @@ const resetMonthlyActivity = async () => {
 
 // Run monthly reset check daily at midnight
 setInterval(resetMonthlyActivity, 24 * 60 * 60 * 1000); // 24 hours
+
+// Dashboard Stats API
+app.get('/api/dashboard/stats', verifyToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const currentMonth = new Date().getMonth() + 1;
+    const currentYear = new Date().getFullYear();
+
+    // Get total commission earnings from sponsorship_earnings
+    const [commissionResult] = await db.promise().execute(`
+      SELECT 
+        COALESCE(SUM(bronze_earnings + silver_earnings + gold_earnings + star_earnings + super_star_earnings), 0) as total_commission,
+        COALESCE(SUM(monthly_earnings), 0) as monthly_earnings
+      FROM sponsorship_earnings 
+      WHERE sponsor_id = ?
+    `, [userId]);
+
+    // Get pending commissions from sales_tracking
+    const [pendingResult] = await db.promise().execute(`
+      SELECT COALESCE(SUM(bonus_amount), 0) as pending_commissions
+      FROM sales_tracking 
+      WHERE seller_id = ? AND status = 'pending'
+    `, [userId]);
+
+    // Get pool data (example calculations)
+    const [poolResult] = await db.promise().execute(`
+      SELECT 
+        COALESCE(SUM(total_amount), 0) as yearly_revenue
+      FROM payments 
+      WHERE status = 'approved' AND YEAR(created_at) = ?
+    `, [currentYear]);
+
+    const yearlyRevenue = poolResult[0]?.yearly_revenue || 0;
+
+    res.json({
+      totalCommission: (commissionResult[0]?.total_commission || 0) / 40, // Convert TL to USD
+      monthlyEarnings: (commissionResult[0]?.monthly_earnings || 0) / 40,
+      pendingCommissions: (pendingResult[0]?.pending_commissions || 0) / 40,
+      liderlikHavuzu: (yearlyRevenue * 0.005) / 40, // 0.5% of yearly revenue in USD
+      baskanlikHavuzu: (yearlyRevenue * 0.005) / 40,
+      karPaylasimHavuzu: (yearlyRevenue * 0.01) / 40 // 1% of yearly revenue in USD
+    });
+
+  } catch (error) {
+    console.error('Dashboard stats error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Health Check Endpoint
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'OK', 
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
+
+// Server Error Handler
+app.use((err, req, res, next) => {
+  console.error('Server Error:', err);
+  res.status(500).json({ 
+    message: 'Internal Server Error',
+    error: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong'
+  });
+});
+
+// Import accounting endpoints
+const {
+  getAccountingData,
+  addEarning,
+  updateEarning,
+  getEarningTypes,
+  getAccountingSummary
+} = require('./accounting_api_endpoints');
+
+// Muhasebe Takip Paneli API Routes
+app.get('/api/accounting/data', verifyToken, getAccountingData);
+app.post('/api/accounting/earnings', verifyToken, addEarning);
+app.put('/api/accounting/earnings/:id', verifyToken, updateEarning);
+app.get('/api/accounting/earning-types', verifyToken, getEarningTypes);
+app.get('/api/accounting/summary', verifyToken, getAccountingSummary);
+
+// Global Seyahat API Routes
+app.get('/api/global-travel/data', verifyToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    
+    const [rows] = await db.promise().execute(`
+      SELECT * FROM global_travel_data WHERE user_id = ?
+    `, [userId]);
+    
+    if (rows.length === 0) {
+      // Kullanıcı için varsayılan veri oluştur
+      await db.promise().execute(`
+        INSERT INTO global_travel_data (user_id) VALUES (?)
+      `, [userId]);
+      
+      // Yeni oluşturulan veriyi getir
+      const [newRows] = await db.promise().execute(`
+        SELECT * FROM global_travel_data WHERE user_id = ?
+      `, [userId]);
+      
+      return res.json(newRows[0]);
+    }
+    
+    res.json(rows[0]);
+  } catch (error) {
+    console.error('Global travel data fetch error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Global seyahat verileri getirilemedi',
+      error: error.message
+    });
+  }
+});
+
+// Doping Promosyonu API Routes
+app.get('/api/doping-promotion/progress', verifyToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    
+    // Kullanıcının başlangıç tarihi
+    const [userInfo] = await db.promise().execute(`
+      SELECT created_at FROM users WHERE id = ?
+    `, [userId]);
+    
+    if (userInfo.length === 0) {
+      return res.status(404).json({ error: 'Kullanıcı bulunamadı' });
+    }
+    
+    const startDate = new Date(userInfo[0].created_at);
+    const now = new Date();
+    const daysPassed = Math.floor((now - startDate) / (1000 * 60 * 60 * 24));
+    
+    // Etap 1: İlk 60 gün
+    const etap1EndDate = new Date(startDate.getTime() + (60 * 24 * 60 * 60 * 1000));
+    
+    // Etap 2: 61-120 gün
+    const etap2StartDate = new Date(startDate.getTime() + (61 * 24 * 60 * 60 * 1000));
+    const etap2EndDate = new Date(startDate.getTime() + (120 * 24 * 60 * 60 * 1000));
+    
+    // Kullanıcının sponsor_id'sini al
+    const [sponsorInfo] = await db.promise().execute(`
+      SELECT sponsor_id FROM users WHERE id = ?
+    `, [userId]);
+    
+    const userSponsorId = sponsorInfo[0]?.sponsor_id;
+    
+    // Takım satış verileri (kullanıcının kendisi + takımı)
+    const [teamSales] = await db.promise().execute(`
+      SELECT 
+        COUNT(CASE WHEN c.created_at BETWEEN ? AND ? THEN 1 END) as etap1_sales,
+        COUNT(CASE WHEN c.created_at BETWEEN ? AND ? THEN 1 END) as etap2_sales
+      FROM customers c
+      JOIN users u ON c.created_by = u.id
+      WHERE u.id = ? OR u.sponsor_id = ?
+    `, [startDate, etap1EndDate, etap2StartDate, etap2EndDate, userId, userSponsorId]);
+    
+    // Şahsi iş ortağı sayısı (kullanıcının direkt sponsor olduğu kişiler)
+    const [partners] = await db.promise().execute(`
+      SELECT 
+        COUNT(CASE WHEN created_at BETWEEN ? AND ? THEN 1 END) as etap1_partners,
+        COUNT(CASE WHEN created_at BETWEEN ? AND ? THEN 1 END) as etap2_partners
+      FROM users 
+      WHERE sponsor_id = ?
+    `, [startDate, etap1EndDate, etap2StartDate, etap2EndDate, userSponsorId]);
+    
+    // Kazanılacak puan hesaplama (şimdilik 0, ileride hesaplanacak)
+    const etap1Completed = (teamSales[0].etap1_sales >= 40 && partners[0].etap1_partners >= 7);
+    const etap2Completed = (teamSales[0].etap2_sales >= 80 && partners[0].etap2_partners >= 15);
+    
+    const dopingData = {
+      etap1: {
+        baslangic_tarihi: startDate.toLocaleDateString('tr-TR'),
+        bitis_tarihi: etap1EndDate.toLocaleDateString('tr-TR'),
+        hedef_satis: 40,
+        yapilan_satis: teamSales[0].etap1_sales || 0,
+        kalan_satis: Math.max(0, 40 - (teamSales[0].etap1_sales || 0)),
+        hedef_ortak: 7,
+        yapilan_ortak: partners[0].etap1_partners || 0,
+        kalan_ortak: Math.max(0, 7 - (partners[0].etap1_partners || 0)),
+        kazanilacak_puan: etap1Completed ? 2000 : 0, // 2x KKP bonusu
+        tamamlandi: etap1Completed
+      },
+      etap2: {
+        baslangic_tarihi: etap2StartDate.toLocaleDateString('tr-TR'),
+        bitis_tarihi: etap2EndDate.toLocaleDateString('tr-TR'),
+        hedef_satis: 80,
+        yapilan_satis: teamSales[0].etap2_sales || 0,
+        kalan_satis: Math.max(0, 80 - (teamSales[0].etap2_sales || 0)),
+        hedef_ortak: 15,
+        yapilan_ortak: partners[0].etap2_partners || 0,
+        kalan_ortak: Math.max(0, 15 - (partners[0].etap2_partners || 0)),
+        kazanilacak_puan: etap2Completed ? 3000 : 0, // 2x KKP bonusu
+        tamamlandi: etap2Completed
+      }
+    };
+    
+    res.json(dopingData);
+  } catch (error) {
+    console.error('Doping promotion data fetch error:', error);
+    res.status(500).json({ 
+      error: 'Doping promosyonu verileri getirilemedi',
+      message: error.message 
+    });
+  }
+});
 
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
@@ -1974,15 +2292,15 @@ app.get('/api/career/progress', verifyToken, async (req, res) => {
       [totalKKP, activePartners, userId]
     );
 
-    // Career level requirements
+    // Career level requirements - Updated to match HOOWELL Global Career Levels
     const careerRequirements = {
-      bronze: { kkp_required: 0, partners_required: 0 },
-      silver: { kkp_required: 20000, partners_required: 1 },
-      gold: { kkp_required: 50000, partners_required: 3 },
-      star_leader: { kkp_required: 100000, partners_required: 7 },
-      super_star_leader: { kkp_required: 175000, partners_required: 15 },
-      presidents_team: { kkp_required: 300000, partners_required: 25 },
-      country_distributor: { kkp_required: 400000, partners_required: 30 }
+      bronze: { kkp_required: 0, partners_required: 0 }, // İlk satış sonrası Bronze
+      silver: { kkp_required: 15000, partners_required: 1 }, // 15.000 KKP + 1 aktif ortak
+      gold: { kkp_required: 50000, partners_required: 3 }, // 50.000 KKP + 3 aktif ortak
+      star_leader: { kkp_required: 100000, partners_required: 7 }, // 100.000 KKP + 7 aktif ortak
+      super_star_leader: { kkp_required: 175000, partners_required: 15 }, // 175.000 KKP + 15 aktif ortak
+      presidents_team: { kkp_required: 300000, partners_required: 25 }, // 300.000 KKP + 25 aktif ortak
+      country_distributor: { kkp_required: 400000, partners_required: 30 } // 400.000 KKP + 30 aktif ortak
     };
 
     let currentLevel = user.career_level || 'bronze';
@@ -2205,7 +2523,7 @@ app.get('/api/customer-satisfaction/my-customers', verifyToken, async (req, res)
     const [customers] = await db.promise().execute(`
       SELECT 
         c.*,
-        COUNT(cr.id) as referral_count,
+        COUNT(cr.id) as reference_count,
         c.created_at as purchase_date
       FROM customers c
       LEFT JOIN customer_references cr ON c.id = cr.customer_id
@@ -2217,10 +2535,11 @@ app.get('/api/customer-satisfaction/my-customers', verifyToken, async (req, res)
     // Add reward information
     const customersWithRewards = customers.map(customer => ({
       ...customer,
-      level1_reward: customer.referral_count >= 1 ? 'Filtre Seti (400€)' : null,
-      level2_reward: customer.referral_count >= 2 ? 'El Terminali' : null,
-      level3_reward: customer.referral_count >= 3 ? 'Franchise Hakkı' : null,
-      product_name: 'Alkali İonizer',
+      referrals: customer.reference_count, // Eski uyumluluk için
+      level1_reward: customer.reference_count >= 1 ? '450 USD Filtre Seti' : null,
+      level2_reward: customer.reference_count >= 2 ? '410 USD El Terminali' : null,
+      level3_reward: customer.reference_count >= 3 ? '500 USD Franchise Lisans' : null,
+      product_name: customer.selected_product === 'education' ? 'Eğitim Paketi' : 'Cihaz Paketi',
       is_protected: isCustomerProtected(customer.created_at) // 60 gün koruma
     }));
 
@@ -2291,12 +2610,143 @@ app.post('/api/customer-satisfaction/add-reference', verifyToken, async (req, re
       [customer_id, reference_name, reference_surname, reference_phone]
     );
 
-    res.json({ message: 'Referans başarıyla eklendi' });
+    // Get total reference count for this customer
+    const [refCount] = await db.promise().execute(
+      'SELECT COUNT(*) as count FROM customer_references WHERE customer_id = ?',
+      [customer_id]
+    );
+
+    const referenceCount = refCount[0].count;
+
+    // Award rewards based on reference count
+    let rewardName = '';
+    let rewardValue = 0;
+    
+    if (referenceCount === 1) {
+      rewardName = '450 USD Değerinde Ücretsiz Filtre';
+      rewardValue = 450;
+    } else if (referenceCount === 2) {
+      rewardName = '410 USD Değerinde El Terminali';
+      rewardValue = 410;
+    } else if (referenceCount === 3) {
+      rewardName = '500 USD Değerinde Franchise Lisans';
+      rewardValue = 500;
+    }
+
+    // If reward earned, add to rewards table
+    if (rewardName) {
+      await db.promise().execute(`
+        INSERT INTO customer_satisfaction_rewards (
+          customer_id, reward_level, reward_name, reward_description, earned_date
+        ) VALUES (?, ?, ?, ?, NOW())
+      `, [customer_id, referenceCount, rewardName, `${referenceCount}. referans ödülü`, ]);
+    }
+
+    res.json({ 
+      success: true,
+      message: 'Referans başarıyla eklendi',
+      referenceCount,
+      rewardEarned: rewardName || null,
+      rewardValue: rewardValue || 0
+    });
   } catch (error) {
     console.error('Add reference error:', error);
     res.status(500).json({ message: 'Sunucu hatası' });
   }
-});// Sponsorship Tracking API
+});// Profit Sharing API
+app.get('/api/profit-sharing/data', verifyToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const currentYear = new Date().getFullYear();
+
+    // Get user's career level
+    const [user] = await db.promise().execute(
+      'SELECT career_level, total_kkp FROM users WHERE id = ?',
+      [userId]
+    );
+
+    if (user.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const userLevel = user[0].career_level;
+
+    // Calculate yearly revenue (example calculation)
+    const [revenueResult] = await db.promise().execute(`
+      SELECT SUM(total_amount) as yearly_revenue 
+      FROM payments 
+      WHERE status = 'approved' 
+      AND YEAR(created_at) = ?
+    `, [currentYear]);
+
+    const yearlyRevenue = revenueResult[0]?.yearly_revenue || 0;
+
+    // Get user's sales and partner data for current year
+    const [salesData] = await db.promise().execute(`
+      SELECT 
+        COUNT(CASE WHEN sale_type = 'product_sale' THEN 1 END) as personal_sales,
+        COUNT(CASE WHEN sale_type = 'partner_registration' THEN 1 END) as partner_registrations
+      FROM sales_tracking 
+      WHERE seller_id = ? AND YEAR(sale_date) = ?
+    `, [userId, currentYear]);
+
+    const [partnerData] = await db.promise().execute(`
+      SELECT COUNT(*) as active_partners 
+      FROM users 
+      WHERE created_by = ? AND is_active = TRUE
+    `, [userId]);
+
+    const personalSales = salesData[0]?.personal_sales || 0;
+    const activePartners = partnerData[0]?.active_partners || 0;
+    const careerPromotions = 0; // This would need to be tracked separately
+
+    // Calculate points for each category
+    const salesChampions = {
+      pool_amount: yearlyRevenue * 0.005, // 0.5% of yearly revenue
+      personal_sales: personalSales,
+      career_promotions: careerPromotions,
+      total_points: personalSales + (careerPromotions * 10),
+      target_points: 50,
+      remaining_points: Math.max(0, 50 - (personalSales + (careerPromotions * 10))),
+      is_qualified: (personalSales + (careerPromotions * 10)) >= 50
+    };
+
+    const partnershipChampions = {
+      pool_amount: yearlyRevenue * 0.005, // 0.5% of yearly revenue
+      active_partners: activePartners,
+      career_promotions: careerPromotions,
+      total_points: activePartners + (careerPromotions * 10),
+      target_points: 25,
+      remaining_points: Math.max(0, 25 - (activePartners + (careerPromotions * 10))),
+      is_qualified: (activePartners + (careerPromotions * 10)) >= 25
+    };
+
+    const yearLeaders = {
+      pool_amount: yearlyRevenue * 0.01, // 1.0% of yearly revenue
+      personal_sales: personalSales,
+      active_partners: activePartners,
+      career_promotions: careerPromotions,
+      total_points: personalSales + (activePartners * 2) + (careerPromotions * 10),
+      target_points: 75,
+      remaining_points: Math.max(0, 75 - (personalSales + (activePartners * 2) + (careerPromotions * 10))),
+      is_qualified: (personalSales + (activePartners * 2) + (careerPromotions * 10)) >= 75
+    };
+
+    res.json({
+      salesChampions,
+      partnershipChampions,
+      yearLeaders,
+      yearly_revenue: yearlyRevenue,
+      current_year: currentYear
+    });
+
+  } catch (error) {
+    console.error('Profit sharing data error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Sponsorship Tracking API
 app.get('/api/sponsorship/my-partners', verifyToken, async (req, res) => {
   try {
     const userId = req.user.id;

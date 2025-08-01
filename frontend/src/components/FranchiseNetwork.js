@@ -267,7 +267,7 @@ const FranchiseNetwork = () => {
                 const totalChildren = nodeData.children.length;
                 const isFirstChild = index === 0;
                 const isLastChild = index === totalChildren - 1;
-                const isMiddleChild = !isFirstChild && !isLastChild;
+                // const isMiddleChild = !isFirstChild && !isLastChild; // Not used currently
 
                 return (
                   <div key={child.user_id} style={{ 

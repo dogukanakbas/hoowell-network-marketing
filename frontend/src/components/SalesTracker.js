@@ -9,6 +9,7 @@ const SalesTracker = () => {
     activeSales: [],
     monthlyActivity: false
   });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchSalesData();
@@ -16,6 +17,7 @@ const SalesTracker = () => {
 
   const fetchSalesData = async () => {
     try {
+      setLoading(true);
       const response = await axios.get('/api/sales/tracker', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -24,61 +26,111 @@ const SalesTracker = () => {
       setSalesData(response.data);
     } catch (error) {
       console.error('Sales data fetch error:', error);
+      // Hata durumunda boş veri göster
+      setSalesData({
+        pendingSales: [],
+        activeSales: [],
+        monthlyActivity: false
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div style={{
-      padding: '20px',
       minHeight: '100vh',
-      backgroundColor: 'var(--background-light)'
+      background: 'linear-gradient(135deg, #0e2323 0%, #1a3333 50%, #0e2323 100%)',
+      padding: '20px',
+      margin: '0 -20px'
     }}>
-      {/* Başlık */}
+      {/* HOOWELL Logo - Sağ Üst */}
+      <div style={{
+        position: 'absolute',
+        top: '20px',
+        right: '20px',
+        zIndex: 10
+      }}>
+        <div style={{
+          width: '80px',
+          height: '80px',
+          background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+          borderRadius: '15px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: '0 5px 15px rgba(255, 215, 0, 0.4)',
+          border: '2px solid rgba(255, 255, 255, 0.2)'
+        }}>
+          <div style={{
+            fontSize: '12px',
+            fontWeight: 'bold',
+            color: '#0e2323',
+            textAlign: 'center',
+            lineHeight: '1.2'
+          }}>
+            <div>HOOWELL</div>
+            <div style={{ fontSize: '8px' }}>INNOVATE YOUR LIFE</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Ana Başlık */}
       <div style={{
         textAlign: 'center',
-        marginBottom: '40px'
+        marginBottom: '40px',
+        paddingTop: '20px'
       }}>
         <h1 style={{
-          color: 'var(--accent-gold)',
-          fontSize: '32px',
+          color: '#FFD700',
+          fontSize: '48px',
           fontWeight: 'bold',
-          marginBottom: '10px',
-          textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
+          margin: '0',
+          textShadow: '3px 3px 6px rgba(0,0,0,0.7)',
+          letterSpacing: '2px',
+          textDecoration: 'underline'
         }}>
           SATIŞ TAKİP PANELİ
         </h1>
-        
-        {/* Hoowell Logo */}
-        <div style={{
-          position: 'absolute',
-          top: '20px',
-          right: '20px',
-          backgroundColor: 'var(--accent-gold)',
-          color: 'var(--white)',
-          padding: '10px 15px',
-          borderRadius: '10px',
-          fontSize: '14px',
-          fontWeight: 'bold'
-        }}>
-          HooWell
-        </div>
       </div>
 
       {/* Ana Container */}
       <div style={{
-        maxWidth: '1000px',
+        maxWidth: '1200px',
         margin: '0 auto',
-        backgroundColor: 'var(--white)',
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
         borderRadius: '20px',
         padding: '40px',
-        boxShadow: '0 10px 30px rgba(0,0,0,0.1)'
+        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5)',
+        border: '3px solid #FFD700',
+        minHeight: loading ? '400px' : 'auto',
+        display: 'flex',
+        flexDirection: 'column',
+        position: 'relative'
       }}>
+        
+        {/* Loading Overlay */}
+        {loading && (
+          <div style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            color: 'var(--primary-dark)',
+            fontSize: '20px',
+            fontWeight: 'bold',
+            zIndex: 10
+          }}>
+            Satış verileri yükleniyor...
+          </div>
+        )}
         
         {/* Bekleme Odası */}
         <div style={{ marginBottom: '40px' }}>
           <div style={{
-            backgroundColor: '#FF8C42',
-            color: 'var(--white)',
+            backgroundColor: '#2c5530',
+            color: 'white',
             padding: '15px',
             borderRadius: '10px 10px 0 0',
             textAlign: 'center',
@@ -89,8 +141,8 @@ const SalesTracker = () => {
           </div>
           
           <div style={{
-            backgroundColor: 'var(--white)',
-            border: '2px solid #FF8C42',
+            backgroundColor: 'white',
+            border: '2px solid #2c5530',
             borderTop: 'none',
             borderRadius: '0 0 10px 10px',
             overflow: 'hidden'
@@ -99,75 +151,156 @@ const SalesTracker = () => {
             <div style={{
               display: 'grid',
               gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr',
-              backgroundColor: '#4A90E2',
-              color: 'var(--white)',
+              backgroundColor: '#B8860B',
+              color: 'white',
               fontWeight: 'bold',
               fontSize: '14px'
             }}>
-              <div style={{ padding: '15px', textAlign: 'center', borderRight: '1px solid rgba(255,255,255,0.2)' }}>
+              <div style={{ 
+                padding: '15px', 
+                textAlign: 'center', 
+                borderRight: '1px solid rgba(255,255,255,0.3)',
+                backgroundColor: '#B8860B'
+              }}>
+                ADI SOYADI
+              </div>
+              <div style={{ 
+                padding: '15px', 
+                textAlign: 'center', 
+                borderRight: '1px solid rgba(255,255,255,0.3)',
+                backgroundColor: '#B8860B'
+              }}>
                 SATILAN ÜRÜN
               </div>
-              <div style={{ padding: '15px', textAlign: 'center', borderRight: '1px solid rgba(255,255,255,0.2)' }}>
+              <div style={{ 
+                padding: '15px', 
+                textAlign: 'center', 
+                borderRight: '1px solid rgba(255,255,255,0.3)',
+                backgroundColor: '#B8860B'
+              }}>
                 SATIŞ TARİHİ
               </div>
-              <div style={{ padding: '15px', textAlign: 'center', borderRight: '1px solid rgba(255,255,255,0.2)' }}>
+              <div style={{ 
+                padding: '15px', 
+                textAlign: 'center', 
+                borderRight: '1px solid rgba(255,255,255,0.3)',
+                backgroundColor: '#B8860B'
+              }}>
                 BONUS TARİHİ
               </div>
-              <div style={{ padding: '15px', textAlign: 'center', borderRight: '1px solid rgba(255,255,255,0.2)' }}>
-                KAZANILAN BONUS
-              </div>
-              <div style={{ padding: '15px', textAlign: 'center' }}>
-                ADI SOYADI
+              <div style={{ 
+                padding: '15px', 
+                textAlign: 'center',
+                backgroundColor: '#B8860B'
+              }}>
+                KAZANILAN KOMİSYON
               </div>
             </div>
             
             {/* Bekleme Odası Verileri */}
-            {salesData.pendingSales.length > 0 ? (
-              salesData.pendingSales.map((sale, index) => (
-                <div
-                  key={index}
-                  style={{
+            <div style={{ minHeight: '60px' }}>
+              {loading ? (
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '40px',
+                  fontSize: '16px',
+                  color: '#666'
+                }}>
+                  Veriler yükleniyor...
+                </div>
+              ) : salesData.pendingSales.length === 0 ? (
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '40px',
+                  fontSize: '16px',
+                  color: '#666'
+                }}>
+                  Bekleme odasında satış bulunmamaktadır.
+                </div>
+              ) : (
+                salesData.pendingSales.map((sale) => (
+                  <div key={sale.id} style={{
                     display: 'grid',
                     gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr',
-                    backgroundColor: index % 2 === 0 ? '#f8f9fa' : 'var(--white)',
-                    fontSize: '14px'
-                  }}
-                >
-                  <div style={{ padding: '15px', textAlign: 'center', borderRight: '1px solid #dee2e6' }}>
-                    {sale.product_name}
+                    borderBottom: '1px solid #eee'
+                  }}>
+                    <div style={{
+                      backgroundColor: 'white',
+                      border: '1px solid #ddd',
+                      padding: '15px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '14px',
+                      color: '#333'
+                    }}>
+                      {sale.customer_name}
+                    </div>
+                    <div style={{
+                      backgroundColor: 'white',
+                      border: '1px solid #ddd',
+                      padding: '15px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '14px',
+                      color: '#333'
+                    }}>
+                      {sale.product_name}
+                    </div>
+                    <div style={{
+                      backgroundColor: 'white',
+                      border: '1px solid #ddd',
+                      padding: '15px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '14px',
+                      color: '#333'
+                    }}>
+                      {new Date(sale.sale_date).toLocaleDateString('tr-TR')}
+                    </div>
+                    <div style={{
+                      backgroundColor: 'white',
+                      border: '1px solid #ddd',
+                      padding: '15px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '14px',
+                      color: '#333'
+                    }}>
+                      {new Date(sale.bonus_date).toLocaleDateString('tr-TR')}
+                    </div>
+                    <div style={{
+                      backgroundColor: 'white',
+                      border: '1px solid #ddd',
+                      padding: '15px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '14px',
+                      color: '#333',
+                      fontWeight: 'bold'
+                    }}>
+                      ₺{sale.bonus_amount?.toLocaleString()}
+                    </div>
                   </div>
-                  <div style={{ padding: '15px', textAlign: 'center', borderRight: '1px solid #dee2e6' }}>
-                    {new Date(sale.sale_date).toLocaleDateString('tr-TR')}
-                  </div>
-                  <div style={{ padding: '15px', textAlign: 'center', borderRight: '1px solid #dee2e6' }}>
-                    {new Date(sale.bonus_date).toLocaleDateString('tr-TR')}
-                  </div>
-                  <div style={{ padding: '15px', textAlign: 'center', borderRight: '1px solid #dee2e6', fontWeight: 'bold' }}>
-                    {sale.bonus_amount.toLocaleString()} ₺
-                  </div>
-                  <div style={{ padding: '15px', textAlign: 'center' }}>
-                    {sale.customer_name}
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div style={{
-                padding: '30px',
-                textAlign: 'center',
-                color: 'var(--text-light)',
-                fontSize: '16px'
-              }}>
-                Bekleme odasında satış bulunmuyor
-              </div>
-            )}
+                ))
+              )}
+            </div>
           </div>
         </div>
 
         {/* Ay İçinde Gerçekleşen Satışlar */}
         <div style={{ marginBottom: '40px' }}>
           <div style={{
-            backgroundColor: '#FF8C42',
-            color: 'var(--white)',
+            backgroundColor: '#2c5530',
+            color: 'white',
             padding: '15px',
             borderRadius: '10px 10px 0 0',
             textAlign: 'center',
@@ -178,8 +311,8 @@ const SalesTracker = () => {
           </div>
           
           <div style={{
-            backgroundColor: 'var(--white)',
-            border: '2px solid #FF8C42',
+            backgroundColor: 'white',
+            border: '2px solid #2c5530',
             borderTop: 'none',
             borderRadius: '0 0 10px 10px',
             overflow: 'hidden'
@@ -188,151 +321,290 @@ const SalesTracker = () => {
             <div style={{
               display: 'grid',
               gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr',
-              backgroundColor: '#4A90E2',
-              color: 'var(--white)',
+              backgroundColor: '#B8860B',
+              color: 'white',
               fontWeight: 'bold',
               fontSize: '14px'
             }}>
-              <div style={{ padding: '15px', textAlign: 'center', borderRight: '1px solid rgba(255,255,255,0.2)' }}>
+              <div style={{ 
+                padding: '15px', 
+                textAlign: 'center', 
+                borderRight: '1px solid rgba(255,255,255,0.3)',
+                backgroundColor: '#B8860B'
+              }}>
+                ADI SOYADI
+              </div>
+              <div style={{ 
+                padding: '15px', 
+                textAlign: 'center', 
+                borderRight: '1px solid rgba(255,255,255,0.3)',
+                backgroundColor: '#B8860B'
+              }}>
                 SATILAN ÜRÜN
               </div>
-              <div style={{ padding: '15px', textAlign: 'center', borderRight: '1px solid rgba(255,255,255,0.2)' }}>
+              <div style={{ 
+                padding: '15px', 
+                textAlign: 'center', 
+                borderRight: '1px solid rgba(255,255,255,0.3)',
+                backgroundColor: '#B8860B'
+              }}>
                 SATIŞ TARİHİ
               </div>
-              <div style={{ padding: '15px', textAlign: 'center', borderRight: '1px solid rgba(255,255,255,0.2)' }}>
-                BONUS TARİHİ
+              <div style={{ 
+                padding: '15px', 
+                textAlign: 'center', 
+                borderRight: '1px solid rgba(255,255,255,0.3)',
+                backgroundColor: '#B8860B'
+              }}>
+                KAZANILAN KOMİSYON
               </div>
-              <div style={{ padding: '15px', textAlign: 'center', borderRight: '1px solid rgba(255,255,255,0.2)' }}>
-                KAZANILAN BONUS
-              </div>
-              <div style={{ padding: '15px', textAlign: 'center' }}>
-                ADI SOYADI
+              <div style={{ 
+                padding: '15px', 
+                textAlign: 'center',
+                backgroundColor: '#B8860B'
+              }}>
+                ÖDEME DURUMU
               </div>
             </div>
             
             {/* Aktif Satış Verileri */}
-            {salesData.activeSales.length > 0 ? (
-              salesData.activeSales.map((sale, index) => (
-                <div
-                  key={index}
-                  style={{
+            <div style={{ minHeight: '60px' }}>
+              {loading ? (
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '40px',
+                  fontSize: '16px',
+                  color: '#666'
+                }}>
+                  Veriler yükleniyor...
+                </div>
+              ) : salesData.activeSales.length === 0 ? (
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '40px',
+                  fontSize: '16px',
+                  color: '#666'
+                }}>
+                  Bu ay gerçekleşen satış bulunmamaktadır.
+                </div>
+              ) : (
+                salesData.activeSales.map((sale) => (
+                  <div key={sale.id} style={{
                     display: 'grid',
                     gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr',
-                    backgroundColor: index % 2 === 0 ? '#f8f9fa' : 'var(--white)',
-                    fontSize: '14px'
-                  }}
-                >
-                  <div style={{ padding: '15px', textAlign: 'center', borderRight: '1px solid #dee2e6' }}>
-                    {sale.product_name}
+                    borderBottom: '1px solid #eee'
+                  }}>
+                    <div style={{
+                      backgroundColor: 'white',
+                      border: '1px solid #ddd',
+                      padding: '15px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '14px',
+                      color: '#333'
+                    }}>
+                      {sale.customer_name}
+                    </div>
+                    <div style={{
+                      backgroundColor: 'white',
+                      border: '1px solid #ddd',
+                      padding: '15px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '14px',
+                      color: '#333'
+                    }}>
+                      {sale.product_name}
+                    </div>
+                    <div style={{
+                      backgroundColor: 'white',
+                      border: '1px solid #ddd',
+                      padding: '15px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '14px',
+                      color: '#333'
+                    }}>
+                      {new Date(sale.sale_date).toLocaleDateString('tr-TR')}
+                    </div>
+                    <div style={{
+                      backgroundColor: 'white',
+                      border: '1px solid #ddd',
+                      padding: '15px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '14px',
+                      color: '#333',
+                      fontWeight: 'bold'
+                    }}>
+                      ₺{sale.bonus_amount?.toLocaleString()}
+                    </div>
+                    <div style={{
+                      backgroundColor: 'white',
+                      border: '1px solid #ddd',
+                      padding: '15px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '14px',
+                      color: '#333'
+                    }}>
+                      <span style={{
+                        backgroundColor: sale.status === 'active' ? '#28a745' : '#ffc107',
+                        color: 'white',
+                        padding: '4px 8px',
+                        borderRadius: '4px',
+                        fontSize: '12px'
+                      }}>
+                        {sale.status === 'active' ? 'Ödendi' : 'Bekliyor'}
+                      </span>
+                    </div>
                   </div>
-                  <div style={{ padding: '15px', textAlign: 'center', borderRight: '1px solid #dee2e6' }}>
-                    {new Date(sale.sale_date).toLocaleDateString('tr-TR')}
-                  </div>
-                  <div style={{ padding: '15px', textAlign: 'center', borderRight: '1px solid #dee2e6' }}>
-                    {new Date(sale.bonus_date).toLocaleDateString('tr-TR')}
-                  </div>
-                  <div style={{ padding: '15px', textAlign: 'center', borderRight: '1px solid #dee2e6', fontWeight: 'bold' }}>
-                    {sale.bonus_amount.toLocaleString()} ₺
-                  </div>
-                  <div style={{ padding: '15px', textAlign: 'center' }}>
-                    {sale.customer_name}
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div style={{
-                padding: '30px',
-                textAlign: 'center',
-                color: 'var(--text-light)',
-                fontSize: '16px'
-              }}>
-                Bu ay gerçekleşen satış bulunmuyor
-              </div>
-            )}
+                ))
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Aktiflik Kontrolü */}
+        {/* Aylık Aktiflik Kontrolü */}
         <div style={{
-          backgroundColor: '#FF8C42',
-          color: 'var(--white)',
-          padding: '20px',
+          backgroundColor: '#2c5530',
           borderRadius: '15px',
+          padding: '30px',
           textAlign: 'center'
         }}>
           <h3 style={{
-            fontSize: '20px',
+            color: 'white',
+            fontSize: '24px',
             fontWeight: 'bold',
-            marginBottom: '20px'
+            marginBottom: '30px',
+            margin: '0 0 30px 0'
           }}>
-            AKTİFLİK KONTROLÜ
+            AYLIK AKTİFLİK KONTROLÜ
           </h3>
           
           <div style={{
             display: 'flex',
             justifyContent: 'center',
-            gap: '40px',
-            alignItems: 'center'
+            gap: '60px',
+            alignItems: 'center',
+            marginBottom: '30px'
           }}>
+            {/* HAYIR Butonu */}
             <div style={{
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center'
             }}>
               <div style={{
-                width: '80px',
-                height: '80px',
+                width: '120px',
+                height: '120px',
                 borderRadius: '50%',
-                backgroundColor: salesData.monthlyActivity ? '#28a745' : '#DC143C',
+                backgroundColor: '#DC143C',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: 'var(--white)',
+                color: 'white',
                 fontSize: '24px',
                 fontWeight: 'bold',
-                marginBottom: '10px',
+                marginBottom: '15px',
+                boxShadow: '0 5px 15px rgba(220, 20, 60, 0.4)',
+                opacity: salesData.monthlyActivity ? 0.3 : 1,
+                filter: salesData.monthlyActivity ? 'blur(2px)' : 'none',
                 transition: 'all 0.3s ease'
               }}>
-                {salesData.monthlyActivity ? 'EVET' : 'HAYIR'}
+                HAYIR
               </div>
+            </div>
+
+            {/* EVET Butonu */}
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center'
+            }}>
               <div style={{
-                fontSize: '16px',
-                fontWeight: 'bold'
+                width: '120px',
+                height: '120px',
+                borderRadius: '50%',
+                backgroundColor: '#28a745',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'white',
+                fontSize: '24px',
+                fontWeight: 'bold',
+                marginBottom: '15px',
+                boxShadow: '0 5px 15px rgba(40, 167, 69, 0.4)',
+                opacity: !salesData.monthlyActivity ? 0.3 : 1,
+                filter: !salesData.monthlyActivity ? 'blur(2px)' : 'none',
+                transition: 'all 0.3s ease'
               }}>
-                Bu Ay Aktif Misiniz?
+                EVET
               </div>
             </div>
           </div>
           
           <div style={{
-            marginTop: '20px',
-            padding: '15px',
             backgroundColor: 'rgba(255,255,255,0.1)',
             borderRadius: '10px',
-            fontSize: '14px',
-            lineHeight: '1.5'
+            padding: '20px',
+            color: 'white',
+            fontSize: '16px',
+            lineHeight: '1.6',
+            textAlign: 'left'
           }}>
-            <strong>Aktiflik Kuralı:</strong> Bu ay aktif olmak için şahsi olarak en az 1 ürün satmanız 
-            veya bulduğunuz yeni bir iş ortağının ilk satışını yapması gerekir.
+            <p style={{ margin: '0 0 10px 0', textAlign: 'center', fontWeight: 'bold' }}>
+              İş Ortağının o ay içinde AKTİF olması için ya ŞAHSİ olarak en az 1 adet ÜRÜN satması
+            </p>
+            <p style={{ margin: '0 0 10px 0', textAlign: 'center', fontWeight: 'bold' }}>
+              Ya da Kendisinin bulduğu YENİ BİR İŞ ORTAĞININ ilk SATIŞINI yapması gerekir.
+            </p>
+            <p style={{ margin: '0', textAlign: 'center', fontSize: '14px', opacity: 0.9 }}>
+              Satışlar 15. günde AKTİFLEŞTİKTEN sonra aktiflik kotanıza sayılacaktır.
+            </p>
           </div>
         </div>
+      </div>
 
-        {/* Hoowell Bilgi Bankası Logo */}
+      {/* Alt Sağ Logo */}
+      <div style={{
+        position: 'absolute',
+        bottom: '20px',
+        right: '20px',
+        zIndex: 10
+      }}>
         <div style={{
-          position: 'absolute',
-          bottom: '20px',
-          right: '20px',
-          backgroundColor: 'var(--accent-gold)',
-          color: 'var(--white)',
-          padding: '10px 15px',
-          borderRadius: '10px',
-          fontSize: '12px',
-          fontWeight: 'bold',
-          textAlign: 'center'
+          width: '80px',
+          height: '80px',
+          background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+          borderRadius: '15px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: '0 5px 15px rgba(255, 215, 0, 0.4)',
+          border: '2px solid rgba(255, 255, 255, 0.2)'
         }}>
-          <div>Hoowell</div>
-          <div>BİLGİ</div>
-          <div>BANKASI</div>
+          <div style={{
+            fontSize: '10px',
+            fontWeight: 'bold',
+            color: '#0e2323',
+            textAlign: 'center',
+            lineHeight: '1.1'
+          }}>
+            <div>HOOWELL</div>
+            <div style={{ fontSize: '8px' }}>BİLGİ</div>
+            <div style={{ fontSize: '8px' }}>BANKASI</div>
+          </div>
         </div>
       </div>
     </div>

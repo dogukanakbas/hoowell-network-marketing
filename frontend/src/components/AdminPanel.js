@@ -3,6 +3,12 @@ import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import QuestionManager from './QuestionManager';
 import AdminPayment from './AdminPayment';
+import AdminSystemSettings from './AdminSystemSettings';
+import AdminCompanyManagement from './AdminCompanyManagement';
+import AdminMonthlySales from './AdminMonthlySales';
+import AdminPaymentDetails from './AdminPaymentDetails';
+import AdminCareerManagement from './AdminCareerManagement';
+import AdminQuestionManagement from './AdminQuestionManagement';
 import axios from 'axios';
 
 const AdminPanel = () => {
@@ -41,6 +47,42 @@ const AdminPanel = () => {
           >
             Soru Yönetimi
           </Link>
+          <Link 
+            to="/admin/system-settings" 
+            className={`btn ${location.pathname === '/admin/system-settings' ? 'btn-primary' : 'btn-secondary'}`}
+          >
+            Sistem Ayarları
+          </Link>
+          <Link 
+            to="/admin/company-management" 
+            className={`btn ${location.pathname === '/admin/company-management' ? 'btn-primary' : 'btn-secondary'}`}
+          >
+            Şirket Yönetimi
+          </Link>
+          <Link 
+            to="/admin/monthly-sales" 
+            className={`btn ${location.pathname === '/admin/monthly-sales' ? 'btn-primary' : 'btn-secondary'}`}
+          >
+            Aylık Satışlar
+          </Link>
+          <Link 
+            to="/admin/payment-details" 
+            className={`btn ${location.pathname === '/admin/payment-details' ? 'btn-primary' : 'btn-secondary'}`}
+          >
+            Ödeme Detayları
+          </Link>
+          <Link 
+            to="/admin/career-management" 
+            className={`btn ${location.pathname === '/admin/career-management' ? 'btn-primary' : 'btn-secondary'}`}
+          >
+            Kariyer Yönetimi
+          </Link>
+          <Link 
+            to="/admin/question-management" 
+            className={`btn ${location.pathname === '/admin/question-management' ? 'btn-primary' : 'btn-secondary'}`}
+          >
+            Soru Yönetimi
+          </Link>
         </div>
       </div>
 
@@ -50,6 +92,12 @@ const AdminPanel = () => {
         <Route path="settings" element={<SystemSettings />} />
         <Route path="questions" element={<QuestionManager />} />
         <Route path="payment" element={<AdminPayment />} />
+        <Route path="system-settings" element={<AdminSystemSettings />} />
+        <Route path="company-management" element={<AdminCompanyManagement />} />
+        <Route path="monthly-sales" element={<AdminMonthlySales />} />
+        <Route path="payment-details" element={<AdminPaymentDetails />} />
+        <Route path="career-management" element={<AdminCareerManagement />} />
+        <Route path="question-management" element={<AdminQuestionManagement />} />
         <Route index element={<AdminDashboard />} />
       </Routes>
     </div>

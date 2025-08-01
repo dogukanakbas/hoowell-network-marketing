@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 
 const CustomerSatisfactionTracker = () => {
-  const { user } = useAuth();
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -18,11 +16,40 @@ const CustomerSatisfactionTracker = () => {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
-      setCustomers(response.data);
+      
+      if (response.data && Array.isArray(response.data)) {
+        setCustomers(response.data);
+      } else {
+        setCustomers([]);
+      }
     } catch (error) {
       console.error('Customer fetch error:', error);
+      setCustomers([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const addReference = async (customerId, referenceName, referenceSurname, referencePhone) => {
+    try {
+      const response = await axios.post('/api/customer-satisfaction/add-reference', {
+        customer_id: customerId,
+        reference_name: referenceName,
+        reference_surname: referenceSurname,
+        reference_phone: referencePhone
+      }, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      if (response.data.success) {
+        alert(`Referans başarıyla eklendi! ${response.data.rewardEarned ? `Ödül kazandınız: ${response.data.rewardEarned}` : ''}`);
+        fetchCustomers(); // Verileri yenile
+      }
+    } catch (error) {
+      console.error('Add reference error:', error);
+      alert('Referans eklenirken hata oluştu');
     }
   };
 
@@ -32,19 +59,7 @@ const CustomerSatisfactionTracker = () => {
     return date.toLocaleDateString('tr-TR');
   };
 
-  const getRewardLevel = (referralCount) => {
-    if (referralCount >= 3) return '3.SEVİYE ÖDÜL';
-    if (referralCount >= 2) return '2.SEVİYE ÖDÜL';
-    if (referralCount >= 1) return '1.SEVİYE ÖDÜL';
-    return '-';
-  };
-
-  const getRewardDescription = (referralCount) => {
-    if (referralCount >= 3) return 'Bedava FRANCHISE alma hakkı';
-    if (referralCount >= 2) return 'ALKALİ İONİZER EL TERMİNALİ';
-    if (referralCount >= 1) return '400 € değerinde FİLTRE SETİ';
-    return '-';
-  };
+  // Gerçek veriler backend'den gelecek
 
   if (loading) {
     return (
@@ -54,7 +69,8 @@ const CustomerSatisfactionTracker = () => {
         alignItems: 'center',
         minHeight: '60vh',
         fontSize: '18px',
-        color: 'var(--text-dark)'
+        color: '#FFD700',
+        backgroundColor: '#0e2323'
       }}>
         Müşteri verileri yükleniyor...
       </div>
@@ -63,311 +79,470 @@ const CustomerSatisfactionTracker = () => {
 
   return (
     <div style={{
-      padding: '20px',
       minHeight: '100vh',
-      backgroundColor: 'var(--background-light)'
+      background: 'linear-gradient(135deg, #0e2323 0%, #1a3333 50%, #0e2323 100%)',
+      padding: '20px',
+      margin: '0 -20px'
     }}>
       {/* Başlık */}
       <div style={{
         textAlign: 'center',
-        marginBottom: '40px'
+        marginBottom: '30px'
       }}>
         <h1 style={{
-          color: 'var(--accent-gold)',
-          fontSize: '32px',
+          color: '#FFD700',
+          fontSize: '36px',
           fontWeight: 'bold',
-          marginBottom: '10px',
-          textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
+          marginBottom: '20px',
+          textShadow: '3px 3px 6px rgba(0,0,0,0.7)',
+          letterSpacing: '2px'
         }}>
-          MEMNUN MÜŞTERİ TAKİP PANELİ
+          MEMNUN MÜŞTERİ TAKİP PROGRAMI
         </h1>
         
-        {/* Hoowell Logo */}
+        {/* Hoowell Logo - Sağ Üst */}
         <div style={{
           position: 'absolute',
           top: '20px',
           right: '20px',
-          backgroundColor: 'var(--accent-gold)',
-          color: 'var(--white)',
-          padding: '10px 15px',
-          borderRadius: '10px',
-          fontSize: '14px',
-          fontWeight: 'bold'
+          width: '80px',
+          height: '80px',
+          background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+          borderRadius: '15px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: '0 5px 15px rgba(255, 215, 0, 0.4)',
+          border: '2px solid rgba(255, 255, 255, 0.2)'
         }}>
-          HooWell
+          <div style={{
+            fontSize: '12px',
+            fontWeight: 'bold',
+            color: '#0e2323',
+            textAlign: 'center',
+            lineHeight: '1.2'
+          }}>
+            <div>HOOWELL</div>
+            <div style={{ fontSize: '8px' }}>INNOVATE YOUR LIFE</div>
+          </div>
         </div>
       </div>
 
-      {/* Ana Tablo */}
+      {/* Ana Panel */}
       <div style={{
-        backgroundColor: 'var(--white)',
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
         borderRadius: '20px',
-        padding: '20px',
-        boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
-        overflowX: 'auto'
+        padding: '30px',
+        boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+        border: '3px solid #FFD700'
       }}>
-        {/* Program Açıklaması */}
+        {/* Ödül Kartları */}
         <div style={{
-          backgroundColor: 'var(--card-gray)',
-          padding: '20px',
-          borderRadius: '15px',
-          marginBottom: '30px'
+          display: 'flex',
+          justifyContent: 'center',
+          gap: '15px',
+          marginBottom: '30px',
+          flexWrap: 'wrap'
         }}>
-          <h3 style={{ color: 'var(--primary-dark)', marginBottom: '15px' }}>
-            MEMNUN MÜŞTERİ PROGRAMI
-          </h3>
-          <div style={{ fontSize: '14px', lineHeight: '1.6', color: 'var(--text-dark)' }}>
-            <p><strong>Ödül Sistemi:</strong></p>
-            <ul style={{ marginLeft: '20px', marginBottom: '15px' }}>
-              <li><strong>1. Satış:</strong> 400 € değerinde FİLTRE SETİ (Bedava)</li>
-              <li><strong>2. Satış:</strong> ALKALİ İONİZER EL TERMİNALİ</li>
-              <li><strong>3. Satış:</strong> Bedava FRANCHISE alma hakkı</li>
-            </ul>
-            <p><strong>Önemli:</strong> Ödüller satıştan 15 gün sonra aktif olur. İlk 60 gün sadakat programı ile korunursunuz.</p>
+          {/* 450 USD Kart */}
+          <div style={{
+            background: 'linear-gradient(135deg, #2a2a2a 0%, #404040 50%, #2a2a2a 100%)',
+            borderRadius: '15px',
+            padding: '15px',
+            textAlign: 'center',
+            color: '#FFD700',
+            fontWeight: 'bold',
+            border: '2px solid #FFD700',
+            minWidth: '150px',
+            boxShadow: '0 4px 15px rgba(0, 0, 0, 0.5)'
+          }}>
+            <div style={{ fontSize: '14px', marginBottom: '5px' }}>450 USD</div>
+            <div style={{ fontSize: '12px', marginBottom: '5px' }}>Değerinde</div>
+            <div style={{ fontSize: '12px' }}>ÜCRETSİZ FİLTRE</div>
+            <div style={{ fontSize: '12px' }}>Hediyesi</div>
+          </div>
+
+          {/* 410 USD Kart */}
+          <div style={{
+            background: 'linear-gradient(135deg, #2a2a2a 0%, #404040 50%, #2a2a2a 100%)',
+            borderRadius: '15px',
+            padding: '15px',
+            textAlign: 'center',
+            color: '#FFD700',
+            fontWeight: 'bold',
+            border: '2px solid #FFD700',
+            minWidth: '150px',
+            boxShadow: '0 4px 15px rgba(0, 0, 0, 0.5)'
+          }}>
+            <div style={{ fontSize: '14px', marginBottom: '5px' }}>410 USD</div>
+            <div style={{ fontSize: '12px', marginBottom: '5px' }}>Değerinde</div>
+            <div style={{ fontSize: '12px' }}>EL TERMİNALİ</div>
+            <div style={{ fontSize: '12px' }}>Hediye</div>
+          </div>
+
+          {/* 500 USD Kart */}
+          <div style={{
+            background: 'linear-gradient(135deg, #2a2a2a 0%, #404040 50%, #2a2a2a 100%)',
+            borderRadius: '15px',
+            padding: '15px',
+            textAlign: 'center',
+            color: '#FFD700',
+            fontWeight: 'bold',
+            border: '2px solid #FFD700',
+            minWidth: '150px',
+            boxShadow: '0 4px 15px rgba(0, 0, 0, 0.5)'
+          }}>
+            <div style={{ fontSize: '14px', marginBottom: '5px' }}>500 USD</div>
+            <div style={{ fontSize: '12px', marginBottom: '5px' }}>Değerinde</div>
+            <div style={{ fontSize: '12px' }}>FRANCHAİSE</div>
+            <div style={{ fontSize: '12px' }}>LİSANS Bedava</div>
           </div>
         </div>
 
-        {/* Tablo */}
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{
-            width: '100%',
-            borderCollapse: 'collapse',
-            fontSize: '14px'
-          }}>
-            <thead>
-              <tr style={{
-                backgroundColor: '#4A90E2',
-                color: 'white'
-              }}>
-                <th style={{
-                  padding: '15px 10px',
-                  textAlign: 'center',
-                  fontWeight: 'bold',
-                  border: '1px solid #ddd'
-                }}>
-                  MÜŞTERİ
-                </th>
-                <th style={{
-                  padding: '15px 10px',
-                  textAlign: 'center',
-                  fontWeight: 'bold',
-                  border: '1px solid #ddd'
-                }}>
-                  SATIN ALMA TARİHİ
-                </th>
-                <th style={{
-                  padding: '15px 10px',
-                  textAlign: 'center',
-                  fontWeight: 'bold',
-                  border: '1px solid #ddd'
-                }}>
-                  SATIN ALDIĞI ÜRÜN
-                </th>
-                <th style={{
-                  padding: '15px 10px',
-                  textAlign: 'center',
-                  fontWeight: 'bold',
-                  border: '1px solid #ddd'
-                }}>
-                  1.SEVİYE ÖDÜL
-                </th>
-                <th style={{
-                  padding: '15px 10px',
-                  textAlign: 'center',
-                  fontWeight: 'bold',
-                  border: '1px solid #ddd'
-                }}>
-                  2.SEVİYE ÖDÜL
-                </th>
-                <th style={{
-                  padding: '15px 10px',
-                  textAlign: 'center',
-                  fontWeight: 'bold',
-                  border: '1px solid #ddd'
-                }}>
-                  3.SEVİYE ÖDÜL
-                </th>
-                <th style={{
-                  padding: '15px 10px',
-                  textAlign: 'center',
-                  fontWeight: 'bold',
-                  border: '1px solid #ddd'
-                }}>
-                  VERİLMİŞ REFERANSLAR
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {customers.length > 0 ? customers.map((customer, index) => (
-                <tr key={customer.id} style={{
-                  backgroundColor: index % 2 === 0 ? '#f8f9fa' : 'white'
-                }}>
-                  <td style={{
-                    padding: '12px 10px',
-                    textAlign: 'center',
-                    border: '1px solid #ddd',
-                    fontWeight: 'bold'
-                  }}>
-                    {customer.first_name} {customer.last_name}
-                  </td>
-                  <td style={{
-                    padding: '12px 10px',
-                    textAlign: 'center',
-                    border: '1px solid #ddd'
-                  }}>
-                    {formatDate(customer.purchase_date)}
-                  </td>
-                  <td style={{
-                    padding: '12px 10px',
-                    textAlign: 'center',
-                    border: '1px solid #ddd'
-                  }}>
-                    {customer.product_name || 'Alkali İonizer'}
-                  </td>
-                  <td style={{
-                    padding: '12px 10px',
-                    textAlign: 'center',
-                    border: '1px solid #ddd',
-                    backgroundColor: customer.referral_count >= 1 ? '#28a745' : 'transparent',
-                    color: customer.referral_count >= 1 ? 'white' : 'var(--text-dark)'
-                  }}>
-                    {customer.referral_count >= 1 ? customer.level1_reward || 'Filtre Seti' : '-'}
-                  </td>
-                  <td style={{
-                    padding: '12px 10px',
-                    textAlign: 'center',
-                    border: '1px solid #ddd',
-                    backgroundColor: customer.referral_count >= 2 ? '#28a745' : 'transparent',
-                    color: customer.referral_count >= 2 ? 'white' : 'var(--text-dark)'
-                  }}>
-                    {customer.referral_count >= 2 ? customer.level2_reward || 'El Terminali' : '-'}
-                  </td>
-                  <td style={{
-                    padding: '12px 10px',
-                    textAlign: 'center',
-                    border: '1px solid #ddd',
-                    backgroundColor: customer.referral_count >= 3 ? '#28a745' : 'transparent',
-                    color: customer.referral_count >= 3 ? 'white' : 'var(--text-dark)'
-                  }}>
-                    {customer.referral_count >= 3 ? customer.level3_reward || 'Franchise Hakkı' : '-'}
-                  </td>
-                  <td style={{
-                    padding: '12px 10px',
-                    textAlign: 'center',
-                    border: '1px solid #ddd'
-                  }}>
-                    <button
-                      onClick={() => window.open(`/customer-references/${customer.id}`, '_blank')}
-                      style={{
-                        backgroundColor: '#4A90E2',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '5px',
-                        padding: '5px 10px',
-                        fontSize: '12px',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      Referansları Gör ({customer.referral_count || 0})
-                    </button>
-                  </td>
-                </tr>
-              )) : (
-                <tr>
-                  <td colSpan="7" style={{
-                    padding: '40px',
-                    textAlign: 'center',
-                    color: 'var(--text-light)',
-                    fontSize: '16px'
-                  }}>
-                    Henüz müşteri kaydınız bulunmamaktadır.
-                    <br />
-                    <a href="/customer-registration" style={{
-                      color: 'var(--primary-dark)',
-                      textDecoration: 'none',
-                      fontWeight: 'bold'
-                    }}>
-                      Yeni müşteri kayıt et →
-                    </a>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Alt Bilgi */}
-        <div style={{
-          marginTop: '30px',
-          padding: '20px',
-          backgroundColor: 'var(--card-gray)',
-          borderRadius: '15px'
-        }}>
+        {/* Tablo Yapısı */}
+        <div style={{ overflowX: 'auto', marginBottom: '30px' }}>
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-            gap: '20px'
+            gridTemplateColumns: 'repeat(7, 1fr)',
+            gap: '2px',
+            fontSize: '12px',
+            minWidth: '1000px'
           }}>
+            {/* Başlık Satırı */}
             <div style={{
-              backgroundColor: 'var(--white)',
-              padding: '15px',
-              borderRadius: '10px',
-              textAlign: 'center'
+              backgroundColor: '#B8860B',
+              color: 'white',
+              padding: '15px 8px',
+              textAlign: 'center',
+              fontWeight: 'bold',
+              fontSize: '11px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minHeight: '60px'
             }}>
-              <h4 style={{ color: 'var(--primary-dark)', marginBottom: '10px' }}>
-                Toplam Müşteri
-              </h4>
-              <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#4A90E2' }}>
-                {customers.length}
-              </div>
+              MÜŞTERİ
             </div>
-            
             <div style={{
-              backgroundColor: 'var(--white)',
-              padding: '15px',
-              borderRadius: '10px',
-              textAlign: 'center'
+              backgroundColor: '#B8860B',
+              color: 'white',
+              padding: '15px 8px',
+              textAlign: 'center',
+              fontWeight: 'bold',
+              fontSize: '11px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minHeight: '60px'
             }}>
-              <h4 style={{ color: 'var(--primary-dark)', marginBottom: '10px' }}>
-                Ödül Kazanan Müşteri
-              </h4>
-              <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#28a745' }}>
-                {customers.filter(c => c.referral_count >= 1).length}
-              </div>
+              SATIN ALMA<br />TARİHİ
             </div>
-            
             <div style={{
-              backgroundColor: 'var(--white)',
-              padding: '15px',
-              borderRadius: '10px',
-              textAlign: 'center'
+              backgroundColor: '#B8860B',
+              color: 'white',
+              padding: '15px 8px',
+              textAlign: 'center',
+              fontWeight: 'bold',
+              fontSize: '11px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minHeight: '60px'
             }}>
-              <h4 style={{ color: 'var(--primary-dark)', marginBottom: '10px' }}>
-                Toplam Referans
-              </h4>
-              <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#FFD700' }}>
-                {customers.reduce((total, c) => total + (c.referral_count || 0), 0)}
-              </div>
+              ALINAN ÜRÜN
             </div>
+            <div style={{
+              backgroundColor: '#B8860B',
+              color: 'white',
+              padding: '15px 8px',
+              textAlign: 'center',
+              fontWeight: 'bold',
+              fontSize: '11px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minHeight: '60px'
+            }}>
+              VERİLEN<br />REFERANSLAR
+            </div>
+            <div style={{
+              backgroundColor: '#B8860B',
+              color: 'white',
+              padding: '15px 8px',
+              textAlign: 'center',
+              fontWeight: 'bold',
+              fontSize: '11px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minHeight: '60px'
+            }}>
+              1.HEDİYE
+            </div>
+            <div style={{
+              backgroundColor: '#B8860B',
+              color: 'white',
+              padding: '15px 8px',
+              textAlign: 'center',
+              fontWeight: 'bold',
+              fontSize: '11px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minHeight: '60px'
+            }}>
+              2.HEDİYE
+            </div>
+            <div style={{
+              backgroundColor: '#B8860B',
+              color: 'white',
+              padding: '15px 8px',
+              textAlign: 'center',
+              fontWeight: 'bold',
+              fontSize: '11px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minHeight: '60px'
+            }}>
+              3.HEDİYE
+            </div>
+
+            {/* Veri Satırları - Gerçek veriler */}
+            {customers.length > 0 ? customers.map((customer, rowIndex) => (
+              [
+                // Müşteri
+                <div key={`${rowIndex}-0`} style={{
+                  backgroundColor: 'white',
+                  border: '1px solid #ddd',
+                  padding: '15px 8px',
+                  minHeight: '50px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '12px'
+                }}>
+                  {customer.first_name} {customer.last_name}
+                </div>,
+                // Satın Alma Tarihi
+                <div key={`${rowIndex}-1`} style={{
+                  backgroundColor: 'white',
+                  border: '1px solid #ddd',
+                  padding: '15px 8px',
+                  minHeight: '50px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '12px'
+                }}>
+                  {formatDate(customer.created_at)}
+                </div>,
+                // Alınan Ürün
+                <div key={`${rowIndex}-2`} style={{
+                  backgroundColor: 'white',
+                  border: '1px solid #ddd',
+                  padding: '15px 8px',
+                  minHeight: '50px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '12px'
+                }}>
+                  {customer.selected_product === 'education' ? 'Eğitim Paketi' : 'Cihaz Paketi'}
+                </div>,
+                // Verilen Referanslar
+                <div key={`${rowIndex}-3`} style={{
+                  backgroundColor: 'white',
+                  border: '1px solid #ddd',
+                  padding: '15px 8px',
+                  minHeight: '50px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '12px'
+                }}>
+                  {customer.reference_count || 0}
+                  <button
+                    onClick={() => {
+                      const name = prompt('Referans Adı:');
+                      const surname = prompt('Referans Soyadı:');
+                      const phone = prompt('Referans Telefonu:');
+                      if (name && surname && phone) {
+                        addReference(customer.id, name, surname, phone);
+                      }
+                    }}
+                    style={{
+                      marginLeft: '5px',
+                      padding: '2px 6px',
+                      fontSize: '10px',
+                      backgroundColor: '#28a745',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '3px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    +
+                  </button>
+                </div>,
+                // 1. Hediye
+                <div key={`${rowIndex}-4`} style={{
+                  backgroundColor: (customer.reference_count >= 1) ? '#d4edda' : 'white',
+                  border: '1px solid #ddd',
+                  padding: '15px 8px',
+                  minHeight: '50px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '12px',
+                  color: (customer.reference_count >= 1) ? '#155724' : '#666'
+                }}>
+                  {(customer.reference_count >= 1) ? '✓ Kazandı' : '-'}
+                </div>,
+                // 2. Hediye
+                <div key={`${rowIndex}-5`} style={{
+                  backgroundColor: (customer.reference_count >= 2) ? '#d4edda' : 'white',
+                  border: '1px solid #ddd',
+                  padding: '15px 8px',
+                  minHeight: '50px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '12px',
+                  color: (customer.reference_count >= 2) ? '#155724' : '#666'
+                }}>
+                  {(customer.reference_count >= 2) ? '✓ Kazandı' : '-'}
+                </div>,
+                // 3. Hediye
+                <div key={`${rowIndex}-6`} style={{
+                  backgroundColor: (customer.reference_count >= 3) ? '#d4edda' : 'white',
+                  border: '1px solid #ddd',
+                  padding: '15px 8px',
+                  minHeight: '50px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '12px',
+                  color: (customer.reference_count >= 3) ? '#155724' : '#666'
+                }}>
+                  {(customer.reference_count >= 3) ? '✓ Kazandı' : '-'}
+                </div>
+              ]
+            )).flat() : 
+            // Veri yoksa boş satırlar göster
+            Array.from({ length: 8 }, (_, rowIndex) => (
+              Array.from({ length: 7 }, (_, colIndex) => (
+                <div
+                  key={`empty-${rowIndex}-${colIndex}`}
+                  style={{
+                    backgroundColor: 'white',
+                    border: '1px solid #ddd',
+                    padding: '15px 8px',
+                    minHeight: '50px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '12px',
+                    color: '#999'
+                  }}
+                >
+                  -
+                </div>
+              ))
+            )).flat()}
           </div>
         </div>
 
-        {/* Hoowell Bilgi Bankası Logo */}
+        {/* Alt İstatistik Kartları */}
         <div style={{
-          position: 'absolute',
-          bottom: '20px',
-          right: '20px',
-          backgroundColor: 'var(--accent-gold)',
-          color: 'var(--white)',
-          padding: '10px 15px',
-          borderRadius: '10px',
-          fontSize: '12px',
-          fontWeight: 'bold',
-          textAlign: 'center'
+          display: 'flex',
+          justifyContent: 'center',
+          gap: '20px',
+          flexWrap: 'wrap'
         }}>
-          <div>Hoowell</div>
-          <div>BİLGİ</div>
-          <div>BANKASI</div>
+          <div style={{
+            background: 'linear-gradient(135deg, #2a2a2a 0%, #404040 50%, #2a2a2a 100%)',
+            borderRadius: '15px',
+            padding: '20px',
+            textAlign: 'center',
+            color: '#FFD700',
+            fontWeight: 'bold',
+            border: '2px solid #FFD700',
+            minWidth: '150px',
+            boxShadow: '0 4px 15px rgba(0, 0, 0, 0.5)'
+          }}>
+            <div style={{ fontSize: '14px', marginBottom: '10px' }}>TOPLAM MÜŞTERİ</div>
+            <div style={{ fontSize: '32px', fontWeight: 'bold' }}>{customers.length}</div>
+          </div>
+
+          <div style={{
+            background: 'linear-gradient(135deg, #2a2a2a 0%, #404040 50%, #2a2a2a 100%)',
+            borderRadius: '15px',
+            padding: '20px',
+            textAlign: 'center',
+            color: '#FFD700',
+            fontWeight: 'bold',
+            border: '2px solid #FFD700',
+            minWidth: '150px',
+            boxShadow: '0 4px 15px rgba(0, 0, 0, 0.5)'
+          }}>
+            <div style={{ fontSize: '14px', marginBottom: '10px' }}>TOPLAM REFERANSLAR</div>
+            <div style={{ fontSize: '32px', fontWeight: 'bold' }}>
+              {customers.reduce((total, customer) => total + (customer.referrals || 0), 0)}
+            </div>
+          </div>
+
+          <div style={{
+            background: 'linear-gradient(135deg, #2a2a2a 0%, #404040 50%, #2a2a2a 100%)',
+            borderRadius: '15px',
+            padding: '20px',
+            textAlign: 'center',
+            color: '#FFD700',
+            fontWeight: 'bold',
+            border: '2px solid #FFD700',
+            minWidth: '150px',
+            boxShadow: '0 4px 15px rgba(0, 0, 0, 0.5)'
+          }}>
+            <div style={{ fontSize: '14px', marginBottom: '10px' }}>1.HEDİYE KAZANAN</div>
+            <div style={{ fontSize: '32px', fontWeight: 'bold' }}>
+              {customers.filter(customer => (customer.referrals || 0) >= 1).length}
+            </div>
+          </div>
+
+          <div style={{
+            background: 'linear-gradient(135deg, #2a2a2a 0%, #404040 50%, #2a2a2a 100%)',
+            borderRadius: '15px',
+            padding: '20px',
+            textAlign: 'center',
+            color: '#FFD700',
+            fontWeight: 'bold',
+            border: '2px solid #FFD700',
+            minWidth: '150px',
+            boxShadow: '0 4px 15px rgba(0, 0, 0, 0.5)'
+          }}>
+            <div style={{ fontSize: '14px', marginBottom: '10px' }}>2.HEDİYE KAZANAN</div>
+            <div style={{ fontSize: '32px', fontWeight: 'bold' }}>
+              {customers.filter(customer => (customer.referrals || 0) >= 2).length}
+            </div>
+          </div>
+
+          <div style={{
+            background: 'linear-gradient(135deg, #2a2a2a 0%, #404040 50%, #2a2a2a 100%)',
+            borderRadius: '15px',
+            padding: '20px',
+            textAlign: 'center',
+            color: '#FFD700',
+            fontWeight: 'bold',
+            border: '2px solid #FFD700',
+            minWidth: '150px',
+            boxShadow: '0 4px 15px rgba(0, 0, 0, 0.5)'
+          }}>
+            <div style={{ fontSize: '14px', marginBottom: '10px' }}>3.HEDİYE KAZANAN</div>
+            <div style={{ fontSize: '32px', fontWeight: 'bold' }}>
+              {customers.filter(customer => (customer.referrals || 0) >= 3).length}
+            </div>
+          </div>
         </div>
       </div>
     </div>

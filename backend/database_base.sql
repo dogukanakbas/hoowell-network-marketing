@@ -41,7 +41,8 @@ CREATE TABLE users (
     last_name VARCHAR(50) NOT NULL,
     phone VARCHAR(20),
     role ENUM('admin', 'partner') DEFAULT 'partner',
-    sponsor_id INT,
+    sponsor_id VARCHAR(20),
+    created_by INT,
     career_level ENUM('bronze', 'silver', 'gold', 'star_leader', 'super_star_leader', 'presidents_team', 'country_distributor') DEFAULT 'bronze',
     total_kkp DECIMAL(15,2) DEFAULT 0,
     active_partners INT DEFAULT 0,
@@ -51,7 +52,7 @@ CREATE TABLE users (
     backoffice_access BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (sponsor_id) REFERENCES users(id)
+    FOREIGN KEY (created_by) REFERENCES users(id)
 );
 
 -- Insert default admin users (password: password)

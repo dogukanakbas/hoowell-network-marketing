@@ -17,6 +17,12 @@ import CustomerSatisfactionTracker from './components/CustomerSatisfactionTracke
 import SponsorshipTracker from './components/SponsorshipTracker';
 import SalesTracker from './components/SalesTracker';
 import FranchiseNetwork from './components/FranchiseNetwork';
+import KarPaylasimi from './components/KarPaylasimi';
+import DopingPromosyonu from './components/DopingPromosyonu';
+import GlobalSeyahat from './components/GlobalSeyahat';
+import TeamTracker from './components/TeamTracker';
+import LeadershipPanel from './components/LeadershipPanel';
+import MuhasebeTakipPaneli from './components/MuhasebeTakipPaneli';
 // import AdminPayment from './components/AdminPayment'; // Şu an kullanılmıyor
 import Welcome from './components/Welcome';
 
@@ -45,10 +51,12 @@ function App() {
               <Route path="franchise-agi" element={<FranchiseNetwork />} />
               <Route path="memnun-musteri-takip" element={<CustomerSatisfactionTracker />} />
               <Route path="sponsorluk-takip" element={<SponsorshipTracker />} />
-              <Route path="takim-takip" element={<AccessRestricted pageName="Takım Takip Paneli" icon="👨‍👩‍👧‍👦" />} />
-              <Route path="liderlik-baskanlik-takip" element={<AccessRestricted pageName="Liderlik ve Başkanlık Takip Paneli" icon="👑" />} />
-              <Route path="kar-paylasimi-promosyon" element={<AccessRestricted pageName="Kar Paylaşımı Promosyonu" icon="🎁" />} />
-              <Route path="global-seyahat-promosyonu" element={<AccessRestricted pageName="Global Seyahat Promosyonu" icon="✈️" />} />
+              <Route path="takim-takip" element={<TeamTracker />} />
+              <Route path="liderlik-baskanlik-takip" element={<LeadershipPanel />} />
+              <Route path="kar-paylasimi-promosyon" element={<KarPaylasimi />} />
+              <Route path="doping-promosyonu" element={<DopingPromosyonu />} />
+              <Route path="global-seyahat-promosyonu" element={<GlobalSeyahat />} />
+              <Route path="muhasebe-takip-paneli" element={<MuhasebeTakipPaneli />} />
               <Route path="bilgi-bankasi" element={<AccessRestricted pageName="Bilgi Bankası" icon="📚" />} />
             </Route>
           </Routes>
