@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Certificate from './Certificate';
 
 const Education = () => {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
+  const navigate = useNavigate();
   const [videos, setVideos] = useState([]);
   const [currentVideo, setCurrentVideo] = useState(null);
   const [questions, setQuestions] = useState([]);
@@ -65,7 +67,19 @@ const Education = () => {
   const fetchUserProgress = async () => {
     try {
       const response = await axios.get('/api/education/progress');
-      setUserProgress(response.data);
+      
+      // Progress array'i al
+      const progressData = response.data.progress || response.data;
+      setUserProgress(Array.isArray(progressData) ? progressData : []);
+      
+      // Eğitim tamamlandıysa otomatik yönlendir
+      if (response.data.education_completed && response.data.backoffice_access) {
+        await refreshUser();
+        setTimeout(() => {
+          alert('🎉 Eğitimleriniz tamamlanmış! Backoffice sistemine yönlendiriliyorsunuz.');
+          navigate('/');
+        }, 1000);
+      }
     } catch (error) {
       console.error('Error fetching progress:', error);
     }
@@ -108,12 +122,30 @@ const Education = () => {
       setExamResult(response.data);
       
       if (response.data.passed) {
-        fetchUserProgress();
+        await fetchUserProgress();
+        
+        // Eğitim tamamlandı mı kontrol et
+        if (response.data.education_completed) {
+          // User bilgilerini yenile
+          await refreshUser();
+          
+          // Tebrikler mesajı göster
+          setTimeout(() => {
+            alert('🎉 ' + (response.data.message || 'Tebrikler! Eğitimlerinizi başarıyla tamamladınız. Artık backoffice sistemine erişebilirsiniz.'));
+            
+            // Ana sayfaya yönlendir
+            navigate('/');
+          }, 500);
+        } else {
+          // User bilgilerini yenile (eğitim devam ediyor)
+          await refreshUser();
+        }
       }
       
       setAnswers({});
     } catch (error) {
       console.error('Error submitting exam:', error);
+      alert('Sınav gönderilirken bir hata oluştu. Lütfen tekrar deneyin.');
     }
   };
 

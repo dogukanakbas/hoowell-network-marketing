@@ -1,6 +1,6 @@
-# HOOWELL Network Marketing Platform
+# HOOWELL Global Su Arıtma Sistemleri
 
-Modern bir network marketing sistemi. React frontend, Node.js backend ve MySQL veritabanı kullanılarak geliştirilmiştir.
+Modern bir su arıtma sistemleri platformu. React frontend, Node.js backend ve MySQL veritabanı kullanılarak geliştirilmiştir.
 
 ## Özellikler
 

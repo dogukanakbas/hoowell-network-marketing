@@ -28,7 +28,9 @@ const DopingPromosyonu = () => {
       kalan_ortak: 15,
       kazanilacak_puan: 0,
       tamamlandi: false
-    }
+    },
+    days_since_registration: 0,
+    current_stage: 1
   });
 
   useEffect(() => {
@@ -65,27 +67,25 @@ const DopingPromosyonu = () => {
         zIndex: 10
       }}>
         <div style={{
-          width: '80px',
-          height: '80px',
-          background: 'linear-gradient(135deg, #FFD700, #FFA500)',
-          borderRadius: '15px',
+          width: '100px',
+          height: '60px',
+          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+          borderRadius: '10px',
           display: 'flex',
-          flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          boxShadow: '0 5px 15px rgba(255, 215, 0, 0.4)',
-          border: '2px solid rgba(255, 255, 255, 0.2)'
+          boxShadow: '0 5px 15px rgba(0, 0, 0, 0.2)',
+          padding: '5px'
         }}>
-          <div style={{
-            fontSize: '12px',
-            fontWeight: 'bold',
-            color: '#0e2323',
-            textAlign: 'center',
-            lineHeight: '1.2'
-          }}>
-            <div>HOOWELL</div>
-            <div style={{ fontSize: '8px' }}>INNOVATE YOUR LIFE</div>
-          </div>
+          <img 
+            src="/hoowell-logo.png" 
+            alt="HOOWELL Logo"
+            style={{
+              width: '90px',
+              height: '50px',
+              objectFit: 'contain'
+            }}
+          />
         </div>
       </div>
 
@@ -106,6 +106,41 @@ const DopingPromosyonu = () => {
         }}>
           KARİYER DOPİNG PROMOSYONU
         </h1>
+        
+        {/* Durum Göstergesi */}
+        <div style={{
+          marginTop: '20px',
+          padding: '15px 30px',
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          borderRadius: '15px',
+          border: '2px solid #FFD700',
+          display: 'inline-block'
+        }}>
+          <div style={{
+            color: '#FFD700',
+            fontSize: '18px',
+            fontWeight: 'bold',
+            marginBottom: '5px'
+          }}>
+            MEVCUT DURUM
+          </div>
+          <div style={{
+            color: 'white',
+            fontSize: '16px'
+          }}>
+            Kayıt Sonrası: <strong style={{ color: '#FFD700' }}>{dopingData.days_since_registration} Gün</strong>
+          </div>
+          <div style={{
+            color: 'white',
+            fontSize: '16px'
+          }}>
+            Aktif Etap: <strong style={{ color: '#FFD700' }}>
+              {dopingData.current_stage === 1 ? '1. ETAP (İlk 60 Gün)' : 
+               dopingData.current_stage === 2 ? '2. ETAP (61-120 Gün)' : 
+               'Promosyon Süresi Doldu'}
+            </strong>
+          </div>
+        </div>
       </div>
 
       {/* İki Etap Container */}
@@ -151,7 +186,9 @@ const DopingPromosyonu = () => {
             </div>
           </div>
 
-          {/* Takım Satışı Butonu */}
+
+
+          {/* Toplam Satış Tablosu */}
           <div style={{
             backgroundColor: '#666',
             borderRadius: '10px',
@@ -164,11 +201,10 @@ const DopingPromosyonu = () => {
               fontSize: '16px',
               fontWeight: 'bold'
             }}>
-              TAKIM SATIŞI
+              TOPLAM TAKIM SATIŞI (Şahsi + Takım)
             </div>
           </div>
 
-          {/* Satış Tablosu */}
           <div style={{
             display: 'flex',
             gap: '10px',
@@ -213,7 +249,7 @@ const DopingPromosyonu = () => {
                 fontWeight: 'bold',
                 marginBottom: '10px'
               }}>
-                YAPILAN
+                TOPLAM YAPILAN
               </div>
               <div style={{
                 backgroundColor: 'white',
@@ -357,6 +393,33 @@ const DopingPromosyonu = () => {
             </div>
           </div>
 
+          {/* Etap Durumu */}
+          <div style={{
+            textAlign: 'center',
+            marginBottom: '20px',
+            padding: '15px',
+            backgroundColor: dopingData.etap1.tamamlandi ? '#28a745' : '#dc3545',
+            borderRadius: '10px'
+          }}>
+            <div style={{
+              color: 'white',
+              fontSize: '18px',
+              fontWeight: 'bold',
+              marginBottom: '10px'
+            }}>
+              {dopingData.etap1.tamamlandi ? '✅ ETAP TAMAMLANDI' : '⏳ ETAP DEVAM EDİYOR'}
+            </div>
+            <div style={{
+              color: 'white',
+              fontSize: '14px'
+            }}>
+              {dopingData.etap1.tamamlandi 
+                ? 'KKP\'leriniz 2 ile çarpılıyor!' 
+                : `${dopingData.etap1.kalan_satis} satış ve ${dopingData.etap1.kalan_ortak} ortak kaldı`
+              }
+            </div>
+          </div>
+
           {/* Hediye Kazanılacak Extra Puan */}
           <div style={{
             textAlign: 'center',
@@ -377,6 +440,16 @@ const DopingPromosyonu = () => {
             }}>
               {dopingData.etap1.kazanilacak_puan.toFixed(3)} KKP
             </div>
+            {dopingData.etap1.tamamlandi && (
+              <div style={{
+                color: '#28a745',
+                fontSize: '14px',
+                fontWeight: 'bold',
+                marginTop: '10px'
+              }}>
+                🎉 2X ÇARPAN AKTİF!
+              </div>
+            )}
           </div>
         </div>
 
@@ -414,7 +487,9 @@ const DopingPromosyonu = () => {
             </div>
           </div>
 
-          {/* Takım Satışı Butonu */}
+
+
+          {/* Toplam Satış Tablosu */}
           <div style={{
             backgroundColor: '#666',
             borderRadius: '10px',
@@ -427,11 +502,10 @@ const DopingPromosyonu = () => {
               fontSize: '16px',
               fontWeight: 'bold'
             }}>
-              TAKIM SATIŞI
+              TOPLAM TAKIM SATIŞI (Şahsi + Takım)
             </div>
           </div>
 
-          {/* Satış Tablosu */}
           <div style={{
             display: 'flex',
             gap: '10px',
@@ -476,7 +550,7 @@ const DopingPromosyonu = () => {
                 fontWeight: 'bold',
                 marginBottom: '10px'
               }}>
-                YAPILAN
+                TOPLAM YAPILAN
               </div>
               <div style={{
                 backgroundColor: 'white',
@@ -620,6 +694,33 @@ const DopingPromosyonu = () => {
             </div>
           </div>
 
+          {/* Etap Durumu */}
+          <div style={{
+            textAlign: 'center',
+            marginBottom: '20px',
+            padding: '15px',
+            backgroundColor: dopingData.etap2.tamamlandi ? '#28a745' : '#dc3545',
+            borderRadius: '10px'
+          }}>
+            <div style={{
+              color: 'white',
+              fontSize: '18px',
+              fontWeight: 'bold',
+              marginBottom: '10px'
+            }}>
+              {dopingData.etap2.tamamlandi ? '✅ ETAP TAMAMLANDI' : '⏳ ETAP DEVAM EDİYOR'}
+            </div>
+            <div style={{
+              color: 'white',
+              fontSize: '14px'
+            }}>
+              {dopingData.etap2.tamamlandi 
+                ? 'KKP\'leriniz 2 ile çarpılıyor!' 
+                : `${dopingData.etap2.kalan_satis} satış ve ${dopingData.etap2.kalan_ortak} ortak kaldı`
+              }
+            </div>
+          </div>
+
           {/* Hediye Kazanılacak Extra Puan */}
           <div style={{
             textAlign: 'center',
@@ -640,6 +741,16 @@ const DopingPromosyonu = () => {
             }}>
               {dopingData.etap2.kazanilacak_puan.toFixed(3)} KKP
             </div>
+            {dopingData.etap2.tamamlandi && (
+              <div style={{
+                color: '#28a745',
+                fontSize: '14px',
+                fontWeight: 'bold',
+                marginTop: '10px'
+              }}>
+                🎉 2X ÇARPAN AKTİF!
+              </div>
+            )}
           </div>
         </div>
       </div>

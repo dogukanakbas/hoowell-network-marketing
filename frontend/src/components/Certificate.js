@@ -93,7 +93,7 @@ const Certificate = ({ onClose }) => {
               color: '#FFD700',
               letterSpacing: '2px'
             }}>
-              NETWORK MARKETING
+              SU ARITMA SİSTEMLERİ
             </div>
           </div>
 
@@ -133,7 +133,7 @@ const Certificate = ({ onClose }) => {
             </div>
 
             <div style={{ marginBottom: '20px' }}>
-              HOOWELL Network Marketing Eğitim Programını başarıyla tamamladığını
+              HOOWELL Su Arıtma Sistemleri Eğitim Programını başarıyla tamamladığını
               ve iş ortaklığı yapmaya hak kazandığını beyan ederiz.
             </div>
 

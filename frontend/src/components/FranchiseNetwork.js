@@ -83,8 +83,20 @@ const FranchiseNetwork = () => {
     const childrenCount = hasChildren ? nodeData.children.length : 0;
 
     // Responsive card width based on screen size
-    const cardWidth = window.innerWidth < 768 ? '160px' : '180px';
-    const cardGap = window.innerWidth < 768 ? '20px' : '30px';
+    const getResponsiveValues = () => {
+      const width = window.innerWidth;
+      if (width <= 480) {
+        return { cardWidth: '140px', cardGap: '15px', fontSize: '11px' };
+      } else if (width <= 768) {
+        return { cardWidth: '160px', cardGap: '20px', fontSize: '12px' };
+      } else if (width <= 992) {
+        return { cardWidth: '170px', cardGap: '25px', fontSize: '13px' };
+      } else {
+        return { cardWidth: '180px', cardGap: '30px', fontSize: '14px' };
+      }
+    };
+    
+    const { cardWidth, cardGap, fontSize } = getResponsiveValues();
 
     return (
       <div key={nodeData.user_id} style={{
@@ -361,14 +373,20 @@ const FranchiseNetwork = () => {
           position: 'absolute',
           top: '20px',
           right: '20px',
-          backgroundColor: 'var(--accent-gold)',
-          color: 'var(--white)',
-          padding: '10px 15px',
+          backgroundColor: 'rgba(255, 255, 255, 0.95)',
           borderRadius: '10px',
-          fontSize: '14px',
-          fontWeight: 'bold'
+          padding: '5px',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
         }}>
-          HooWell
+          <img 
+            src="/hoowell-logo.png" 
+            alt="HOOWELL Logo"
+            style={{
+              width: '80px',
+              height: '40px',
+              objectFit: 'contain'
+            }}
+          />
         </div>
       </div>
 
@@ -710,18 +728,30 @@ const FranchiseNetwork = () => {
         position: 'fixed',
         bottom: '20px',
         right: '20px',
-        backgroundColor: 'var(--accent-gold)',
-        color: 'var(--white)',
-        padding: '10px 15px',
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
         borderRadius: '10px',
-        fontSize: '12px',
-        fontWeight: 'bold',
+        padding: '8px',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
         textAlign: 'center',
         zIndex: 100
       }}>
-        <div>Hoowell</div>
-        <div>BİLGİ</div>
-        <div>BANKASI</div>
+        <img 
+          src="/hoowell-logo.png" 
+          alt="HOOWELL Logo"
+          style={{
+            width: '60px',
+            height: '30px',
+            objectFit: 'contain',
+            marginBottom: '3px'
+          }}
+        />
+        <div style={{
+          fontSize: '8px',
+          fontWeight: 'bold',
+          color: 'var(--primary-dark)'
+        }}>
+          BİLGİ BANKASI
+        </div>
       </div>
     </div>
   );

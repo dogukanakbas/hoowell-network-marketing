@@ -54,33 +54,31 @@ const GlobalSeyahat = () => {
       margin: '0 -20px',
       position: 'relative'
     }}>
-      {/* Hoowell Logo - Sağ Üst */}
+      {/* HOOWELL Logo - Sağ Üst */}
       <div style={{
         position: 'absolute',
         top: '20px',
         right: '20px',
-        width: '80px',
-        height: '80px',
-        background: 'linear-gradient(135deg, #FFD700, #FFA500)',
-        borderRadius: '15px',
+        width: '100px',
+        height: '60px',
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        borderRadius: '10px',
         display: 'flex',
-        flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        boxShadow: '0 5px 15px rgba(255, 215, 0, 0.4)',
-        border: '2px solid rgba(255, 255, 255, 0.2)',
+        boxShadow: '0 5px 15px rgba(0, 0, 0, 0.2)',
+        padding: '5px',
         zIndex: 10
       }}>
-        <div style={{
-          fontSize: '12px',
-          fontWeight: 'bold',
-          color: '#0e2323',
-          textAlign: 'center',
-          lineHeight: '1.2'
-        }}>
-          <div>HOOWELL</div>
-          <div style={{ fontSize: '8px' }}>INNOVATE YOUR LIFE</div>
-        </div>
+        <img 
+          src="/hoowell-logo.png" 
+          alt="HOOWELL Logo"
+          style={{
+            width: '90px',
+            height: '50px',
+            objectFit: 'contain'
+          }}
+        />
       </div>
 
       {/* Başlık */}
@@ -267,7 +265,7 @@ const GlobalSeyahat = () => {
                 flex: 1,
                 color: '#666'
               }}>
-                {travelData.sales1.current.toLocaleString()}
+                {(travelData.sales1?.current || 0).toLocaleString()}
               </div>
               <div style={{
                 backgroundColor: 'white',
@@ -280,7 +278,7 @@ const GlobalSeyahat = () => {
                 flex: 1,
                 color: '#666'
               }}>
-                {travelData.sales1.remaining.toLocaleString()}
+                {(travelData.sales1?.remaining || 40000).toLocaleString()}
               </div>
             </div>
           </div>
@@ -381,7 +379,7 @@ const GlobalSeyahat = () => {
                 flex: 1,
                 color: '#666'
               }}>
-                {travelData.sales2.current.toLocaleString()}
+                {(travelData.sales2?.current || 0).toLocaleString()}
               </div>
               <div style={{
                 backgroundColor: 'white',
@@ -394,7 +392,7 @@ const GlobalSeyahat = () => {
                 flex: 1,
                 color: '#666'
               }}>
-                {travelData.sales2.remaining.toLocaleString()}
+                {(travelData.sales2?.remaining || 65000).toLocaleString()}
               </div>
             </div>
           </div>
@@ -497,7 +495,7 @@ const GlobalSeyahat = () => {
               flex: 1,
               color: '#666'
             }}>
-              {travelData.partnership.current}
+              {travelData.partnership?.current || 0}
             </div>
             <div style={{
               backgroundColor: 'white',
@@ -510,7 +508,7 @@ const GlobalSeyahat = () => {
               flex: 1,
               color: '#666'
             }}>
-              {travelData.partnership.remaining}
+              {travelData.partnership?.remaining || 5}
             </div>
           </div>
         </div>

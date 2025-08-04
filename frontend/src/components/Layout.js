@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet, Navigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import PaymentBlockedWarning from './PaymentBlockedWarning';
@@ -6,6 +6,42 @@ import PaymentBlockedWarning from './PaymentBlockedWarning';
 const Layout = () => {
   const { user, logout, loading, refreshUser } = useAuth();
   const location = useLocation();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Ekran boyutu kontrolü
+  useEffect(() => {
+    const checkScreenSize = () => {
+      const mobile = window.innerWidth <= 768;
+      setIsMobile(mobile);
+      
+      // Desktop'ta sidebar her zaman açık, mobilde kapalı
+      if (!mobile) {
+        setSidebarOpen(false); // Desktop'ta state false ama CSS ile görünür
+      }
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
+
+  // Sayfa değiştiğinde mobil menüyü kapat
+  useEffect(() => {
+    if (isMobile) {
+      setSidebarOpen(false);
+    }
+  }, [location.pathname, isMobile]);
+
+  // Mobil menü toggle
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
+  // Overlay'e tıklandığında menüyü kapat
+  const closeSidebar = () => {
+    setSidebarOpen(false);
+  };
 
   // Sayfa yüklendiğinde user bilgilerini yenile
   React.useEffect(() => {
@@ -77,8 +113,48 @@ const Layout = () => {
 
   return (
     <div className="App">
-      <div className="sidebar">
+      {/* Mobile Menu Toggle Button */}
+      {isMobile && (
+        <button 
+          className="mobile-menu-toggle"
+          onClick={toggleSidebar}
+          aria-label="Menu"
+        >
+          ☰
+        </button>
+      )}
 
+      {/* Mobile Overlay */}
+      {isMobile && (
+        <div 
+          className={`mobile-overlay ${sidebarOpen ? 'active' : ''}`}
+          onClick={closeSidebar}
+        />
+      )}
+
+      <div className={`sidebar ${isMobile && sidebarOpen ? 'open' : ''}`}>
+        
+        {/* HOOWELL Logo */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginBottom: '20px',
+          padding: '15px',
+          backgroundColor: 'rgba(255, 255, 255, 0.1)',
+          borderRadius: '15px'
+        }}>
+          <img 
+            src="/hoowell-logo.png" 
+            alt="HOOWELL Logo"
+            style={{
+              width: '120px',
+              height: '60px',
+              objectFit: 'contain',
+              filter: 'brightness(1.2) drop-shadow(0 2px 4px rgba(0,0,0,0.3))'
+            }}
+          />
+        </div>
 
         {/* Kullanıcı Bilgileri */}
         <div style={{ 
@@ -141,19 +217,24 @@ const Layout = () => {
             <Link 
               key={item.path}
               to={item.path} 
+              onClick={() => isMobile && closeSidebar()}
               style={{
                 display: 'block',
-                padding: '15px 20px',
-                backgroundColor: location.pathname === item.path ? 'var(--primary-dark)' : 'var(--primary-dark)',
-                color: 'var(--white)',
+                padding: isMobile ? '18px 20px' : '15px 20px',
+                backgroundColor: location.pathname === item.path ? 'var(--accent-gold)' : 'var(--primary-dark)',
+                color: location.pathname === item.path ? 'var(--primary-dark)' : 'var(--white)',
                 textDecoration: 'none',
                 borderRadius: '15px',
                 textAlign: 'center',
-                fontSize: '14px',
+                fontSize: isMobile ? '16px' : '14px',
                 fontWeight: '500',
                 transition: 'all 0.3s',
                 boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                opacity: location.pathname === item.path ? '1' : '0.9'
+                opacity: location.pathname === item.path ? '1' : '0.9',
+                minHeight: isMobile ? '50px' : 'auto',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
               }}
             >
               {item.label}
@@ -175,19 +256,23 @@ const Layout = () => {
                 <Link 
                   key={item.path}
                   to={item.path}
+                  onClick={() => isMobile && closeSidebar()}
                   style={{
-                    display: 'block',
-                    padding: '15px 20px',
-                    backgroundColor: location.pathname === item.path ? 'var(--primary-dark)' : 'var(--primary-dark)',
-                    color: 'var(--white)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: isMobile ? '18px 20px' : '15px 20px',
+                    backgroundColor: location.pathname === item.path ? 'var(--accent-gold)' : 'var(--primary-dark)',
+                    color: location.pathname === item.path ? 'var(--primary-dark)' : 'var(--white)',
                     textDecoration: 'none',
                     borderRadius: '15px',
                     textAlign: 'center',
-                    fontSize: '14px',
+                    fontSize: isMobile ? '16px' : '14px',
                     fontWeight: '500',
                     transition: 'all 0.3s',
                     boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                    opacity: location.pathname === item.path ? '1' : '0.9'
+                    opacity: location.pathname === item.path ? '1' : '0.9',
+                    minHeight: isMobile ? '50px' : 'auto'
                   }}
                 >
                   {item.label}
@@ -201,19 +286,23 @@ const Layout = () => {
           {user.payment_confirmed && !user.education_completed && (
             <Link 
               to="/education"
+              onClick={() => isMobile && closeSidebar()}
               style={{
-                display: 'block',
-                padding: '15px 20px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: isMobile ? '18px 20px' : '15px 20px',
                 backgroundColor: 'var(--accent-gold)',
                 color: 'var(--primary-dark)',
                 textDecoration: 'none',
                 borderRadius: '15px',
                 textAlign: 'center',
-                fontSize: '14px',
+                fontSize: isMobile ? '16px' : '14px',
                 fontWeight: '500',
                 transition: 'all 0.3s',
                 boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                marginTop: '10px'
+                marginTop: '10px',
+                minHeight: isMobile ? '50px' : 'auto'
               }}
             >
               Eğitimler
@@ -222,20 +311,27 @@ const Layout = () => {
 
           {/* Çıkış Butonu */}
           <button 
-            onClick={logout}
+            onClick={() => {
+              if (isMobile) closeSidebar();
+              logout();
+            }}
             style={{
-              padding: '15px 20px',
+              padding: isMobile ? '18px 20px' : '15px 20px',
               backgroundColor: '#dc3545',
               color: 'var(--white)',
               border: 'none',
               borderRadius: '15px',
               textAlign: 'center',
-              fontSize: '14px',
+              fontSize: isMobile ? '16px' : '14px',
               fontWeight: '500',
               cursor: 'pointer',
               transition: 'all 0.3s',
               boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-              marginTop: '20px'
+              marginTop: '20px',
+              minHeight: isMobile ? '50px' : 'auto',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
             }}
           >
             Çıkış

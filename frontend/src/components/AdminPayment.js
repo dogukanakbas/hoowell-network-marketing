@@ -190,7 +190,7 @@ const AdminPayment = () => {
                 <strong>Alıcı:</strong> HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ
               </div>
               <div>
-                <strong>Tutar:</strong> 100 USD (Yaklaşık ₺4.000)
+                <strong>Tutar:</strong> 4.800 TL (KDV Dahil)
               </div>
             </div>
             
@@ -206,7 +206,7 @@ const AdminPayment = () => {
               </h5>
               <ul style={{ color: '#856404', margin: 0, paddingLeft: '20px' }}>
                 <li>IBAN numarasını partner'a iletin</li>
-                <li>Ödeme tutarını belirtin (100 USD)</li>
+                <li>Ödeme tutarını belirtin (4.800 TL - KDV Dahil)</li>
                 <li>Partner ID'sini açıklama kısmına yazmasını söyleyin</li>
                 <li>Ödeme dekontunu sisteme yüklemesini hatırlatın</li>
               </ul>

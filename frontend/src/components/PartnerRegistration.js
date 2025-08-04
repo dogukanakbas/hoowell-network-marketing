@@ -175,7 +175,7 @@ const PartnerRegistration = () => {
   };
 
   return (
-    <div style={{ padding: '0' }}>
+    <div className="registration-container" style={{ padding: '0' }}>
       {/* Başlık ve İlerleme Çubuğu */}
       <div style={{
         backgroundColor: 'var(--card-gray)',
@@ -255,7 +255,7 @@ const PartnerRegistration = () => {
             Kayıt Türünü Seçin
           </h2>
           
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px', maxWidth: '800px', margin: '0 auto' }}>
+          <div className="registration-type-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px', maxWidth: '800px', margin: '0 auto' }}>
             <div 
               onClick={() => {
                 setRegistrationType('individual');
@@ -324,15 +324,10 @@ const PartnerRegistration = () => {
                   <input
                     type="text"
                     required
+                    placeholder="Adınızı girin"
                     value={formData.first_name}
                     onChange={(e) => setFormData({...formData, first_name: e.target.value})}
-                    style={{
-                      width: '100%',
-                      padding: '12px 15px',
-                      border: '2px solid var(--border-color)',
-                      borderRadius: '10px',
-                      fontSize: '14px'
-                    }}
+                    className="partner-input"
                   />
                 </div>
                 
@@ -343,15 +338,10 @@ const PartnerRegistration = () => {
                   <input
                     type="text"
                     required
+                    placeholder="Soyadınızı girin"
                     value={formData.last_name}
                     onChange={(e) => setFormData({...formData, last_name: e.target.value})}
-                    style={{
-                      width: '100%',
-                      padding: '12px 15px',
-                      border: '2px solid var(--border-color)',
-                      borderRadius: '10px',
-                      fontSize: '14px'
-                    }}
+                    className="partner-input"
                   />
                 </div>
               </div>
@@ -365,14 +355,17 @@ const PartnerRegistration = () => {
                     type="text"
                     required
                     maxLength="11"
+                    placeholder="TC Kimlik No (11 hane)"
                     value={formData.tc_no}
                     onChange={(e) => setFormData({...formData, tc_no: e.target.value})}
                     style={{
                       width: '100%',
                       padding: '12px 15px',
-                      border: '2px solid var(--border-color)',
+                      border: '2px solid #ddd',
                       borderRadius: '10px',
-                      fontSize: '14px'
+                      fontSize: '14px',
+                      backgroundColor: '#fff',
+                      color: '#333'
                     }}
                   />
                 </div>
@@ -498,15 +491,10 @@ const PartnerRegistration = () => {
                   <input
                     type="text"
                     required
+                    placeholder="Şirket adını girin"
                     value={formData.company_name}
                     onChange={(e) => setFormData({...formData, company_name: e.target.value})}
-                    style={{
-                      width: '100%',
-                      padding: '12px 15px',
-                      border: '2px solid var(--border-color)',
-                      borderRadius: '10px',
-                      fontSize: '14px'
-                    }}
+                    className="partner-input"
                   />
                 </div>
                 
@@ -517,14 +505,17 @@ const PartnerRegistration = () => {
                   <input
                     type="text"
                     required
+                    placeholder="Vergi dairesi adı"
                     value={formData.tax_office}
                     onChange={(e) => setFormData({...formData, tax_office: e.target.value})}
                     style={{
                       width: '100%',
                       padding: '12px 15px',
-                      border: '2px solid var(--border-color)',
+                      border: '2px solid #ddd',
                       borderRadius: '10px',
-                      fontSize: '14px'
+                      fontSize: '14px',
+                      backgroundColor: '#fff',
+                      color: '#333'
                     }}
                   />
                 </div>
@@ -538,14 +529,17 @@ const PartnerRegistration = () => {
                   <input
                     type="text"
                     required
+                    placeholder="Vergi numarası"
                     value={formData.tax_no}
                     onChange={(e) => setFormData({...formData, tax_no: e.target.value})}
                     style={{
                       width: '100%',
                       padding: '12px 15px',
-                      border: '2px solid var(--border-color)',
+                      border: '2px solid #ddd',
                       borderRadius: '10px',
-                      fontSize: '14px'
+                      fontSize: '14px',
+                      backgroundColor: '#fff',
+                      color: '#333'
                     }}
                   />
                 </div>
@@ -578,14 +572,17 @@ const PartnerRegistration = () => {
                   <input
                     type="text"
                     required
+                    placeholder="Sorumlu kişinin adı"
                     value={formData.authorized_first_name}
                     onChange={(e) => setFormData({...formData, authorized_first_name: e.target.value})}
                     style={{
                       width: '100%',
                       padding: '12px 15px',
-                      border: '2px solid var(--border-color)',
+                      border: '2px solid #ddd',
                       borderRadius: '10px',
-                      fontSize: '14px'
+                      fontSize: '14px',
+                      backgroundColor: '#fff',
+                      color: '#333'
                     }}
                   />
                 </div>
@@ -597,14 +594,17 @@ const PartnerRegistration = () => {
                   <input
                     type="text"
                     required
+                    placeholder="Sorumlu kişinin soyadı"
                     value={formData.authorized_last_name}
                     onChange={(e) => setFormData({...formData, authorized_last_name: e.target.value})}
                     style={{
                       width: '100%',
                       padding: '12px 15px',
-                      border: '2px solid var(--border-color)',
+                      border: '2px solid #ddd',
                       borderRadius: '10px',
-                      fontSize: '14px'
+                      fontSize: '14px',
+                      backgroundColor: '#fff',
+                      color: '#333'
                     }}
                   />
                 </div>
@@ -860,7 +860,7 @@ const PartnerRegistration = () => {
                   Franchise Satış Paketi
                 </div>
                 <div style={{ fontSize: '14px', color: 'var(--text-light)' }}>
-                  Network marketing franchise hakkı
+                  Su arıtma sistemleri franchise hakkı
                 </div>
               </div>
               <div style={{ textAlign: 'right' }}>
@@ -946,12 +946,12 @@ const PartnerRegistration = () => {
               <p><strong>UZAKTAN SATIN ALMA SÖZLEŞMESİ</strong></p>
               <p>İşbu sözleşme, 6502 sayılı Tüketicinin Korunması Hakkında Kanun ve Mesafeli Sözleşmeler Yönetmeliği hükümleri gereğince düzenlenmiştir.</p>
               <p><strong>SATICI BİLGİLERİ:</strong></p>
-              <p>Ünvan: HOOWELL Network Marketing Ltd. Şti.</p>
+              <p>Ünvan: HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ</p>
               <p>Adres: [Şirket Adresi]</p>
               <p>Telefon: [Telefon Numarası]</p>
               <p>E-posta: info@hoowell.com</p>
               <p><strong>ÜRÜN/HİZMET BİLGİLERİ:</strong></p>
-              <p>Franchise Satış Paketi - Network Marketing Franchise Hakkı</p>
+              <p>Franchise Satış Paketi - Su Arıtma Sistemleri Franchise Hakkı</p>
               <p>Fiyat: 4.800 TL (KDV Dahil)</p>
               <p><strong>CAYMA HAKKI:</strong></p>
               <p>Tüketici, 14 gün içerisinde herhangi bir gerekçe göstermeksizin ve cezai şart ödemeksizin sözleşmeden cayma hakkına sahiptir.</p>
@@ -1210,7 +1210,7 @@ const PartnerRegistration = () => {
                     TR77 0011 1000 0000 0153 1671 66
                   </div>
                   <div style={{ fontSize: '14px', color: 'var(--text-light)', marginTop: '5px' }}>
-                    HOOWELL Network Marketing Ltd. Şti.
+                    HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ
                   </div>
                 </div>
               </div>

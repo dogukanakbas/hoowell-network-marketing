@@ -1,7 +1,7 @@
 {
-  "name": "hoowell-network-marketing",
+  "name": "hoowell-global-su-aritma",
   "version": "1.0.0",
-  "description": "Network Marketing Platform",
+  "description": "Su Arıtma Sistemleri Platformu",
   "main": "server.js",
   "scripts": {
     "dev": "concurrently \"npm run server\" \"npm run client\"",

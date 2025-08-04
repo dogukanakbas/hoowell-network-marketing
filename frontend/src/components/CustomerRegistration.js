@@ -2,6 +2,25 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+// Türkiye İl ve İlçe verileri (Kısaltılmış versiyon)
+const turkeyData = {
+  "İstanbul": ["Adalar", "Arnavutköy", "Ataşehir", "Avcılar", "Bağcılar", "Bahçelievler", "Bakırköy", "Başakşehir", "Bayrampaşa", "Beşiktaş", "Beykoz", "Beylikdüzü", "Beyoğlu", "Büyükçekmece", "Çatalca", "Çekmeköy", "Esenler", "Esenyurt", "Eyüpsultan", "Fatih", "Gaziosmanpaşa", "Güngören", "Kadıköy", "Kağıthane", "Kartal", "Küçükçekmece", "Maltepe", "Pendik", "Sancaktepe", "Sarıyer", "Silivri", "Sultanbeyli", "Sultangazi", "Şile", "Şişli", "Tuzla", "Ümraniye", "Üsküdar", "Zeytinburnu"],
+  "Ankara": ["Akyurt", "Altındağ", "Ayaş", "Bala", "Beypazarı", "Çamlıdere", "Çankaya", "Çubuk", "Elmadağ", "Etimesgut", "Evren", "Gölbaşı", "Güdül", "Haymana", "Kalecik", "Kazan", "Keçiören", "Kızılcahamam", "Mamak", "Nallıhan", "Polatlı", "Pursaklar", "Sincan", "Şereflikoçhisar", "Yenimahalle"],
+  "İzmir": ["Aliağa", "Balçova", "Bayındır", "Bayraklı", "Bergama", "Beydağ", "Bornova", "Buca", "Çeşme", "Çiğli", "Dikili", "Foça", "Gaziemir", "Güzelbahçe", "Karabağlar", "Karaburun", "Karşıyaka", "Kemalpaşa", "Kınık", "Kiraz", "Konak", "Menderes", "Menemen", "Narlıdere", "Ödemiş", "Seferihisar", "Selçuk", "Tire", "Torbalı", "Urla"],
+  "Bursa": ["Büyükorhan", "Gemlik", "Gürsu", "Harmancık", "İnegöl", "İznik", "Karacabey", "Keles", "Kestel", "Mudanya", "Mustafakemalpaşa", "Nilüfer", "Orhaneli", "Orhangazi", "Osmangazi", "Yenişehir", "Yıldırım"],
+  "Antalya": ["Akseki", "Aksu", "Alanya", "Demre", "Döşemealtı", "Elmalı", "Finike", "Gazipaşa", "Gündoğmuş", "İbradı", "Kaş", "Kemer", "Kepez", "Konyaaltı", "Korkuteli", "Kumluca", "Manavgat", "Muratpaşa", "Serik"],
+  "Adana": ["Aladağ", "Ceyhan", "Çukurova", "Feke", "İmamoğlu", "Karaisalı", "Karataş", "Kozan", "Pozantı", "Saimbeyli", "Sarıçam", "Seyhan", "Tufanbeyli", "Yumurtalık", "Yüreğir"],
+  "Konya": ["Ahırlı", "Akören", "Akşehir", "Altınekin", "Beyşehir", "Bozkır", "Cihanbeyli", "Çeltik", "Çumra", "Derbent", "Derebucak", "Doğanhisar", "Emirgazi", "Ereğli", "Güneysınır", "Hadim", "Halkapınar", "Hüyük", "Ilgın", "Kadınhanı", "Karapınar", "Karatay", "Kulu", "Meram", "Sarayönü", "Selçuklu", "Seydişehir", "Taşkent", "Tuzlukçu", "Yalıhüyük", "Yunak"],
+  "Gaziantep": ["Araban", "İslahiye", "Karkamış", "Nizip", "Nurdağı", "Oğuzeli", "Şahinbey", "Şehitkamil", "Yavuzeli"],
+  "Şanlıurfa": ["Akçakale", "Birecik", "Bozova", "Ceylanpınar", "Eyyübiye", "Halfeti", "Haliliye", "Harran", "Hilvan", "Karaköprü", "Siverek", "Suruç", "Viranşehir"],
+  "Kocaeli": ["Başiskele", "Çayırova", "Darıca", "Derince", "Dilovası", "Gebze", "Gölcük", "İzmit", "Kandıra", "Karamürsel", "Kartepe", "Körfez"],
+  "Mersin": ["Akdeniz", "Anamur", "Aydıncık", "Bozyazı", "Çamlıyayla", "Erdemli", "Gülnar", "Mezitli", "Mut", "Silifke", "Tarsus", "Toroslar", "Yenişehir"],
+  "Diyarbakır": ["Bağlar", "Bismil", "Çermik", "Çınar", "Çüngüş", "Dicle", "Eğil", "Ergani", "Hani", "Hazro", "Kayapınar", "Kocaköy", "Kulp", "Lice", "Silvan", "Sur", "Yenişehir"],
+  "Hatay": ["Altınözü", "Antakya", "Arsuz", "Belen", "Defne", "Dörtyol", "Erzin", "Hassa", "İskenderun", "Kırıkhan", "Kumlu", "Payas", "Reyhanlı", "Samandağ", "Yayladağı"],
+  "Manisa": ["Ahmetli", "Akhisar", "Alaşehir", "Demirci", "Gölmarmara", "Gördes", "Kırkağaç", "Köprübaşı", "Kula", "Salihli", "Sarıgöl", "Saruhanlı", "Selendi", "Soma", "Şehzadeler", "Turgutlu", "Yunusemre"],
+  "Kayseri": ["Akkışla", "Bünyan", "Develi", "Felahiye", "Hacılar", "İncesu", "Kocasinan", "Melikgazi", "Özvatan", "Pınarbaşı", "Sarıoğlan", "Sarız", "Talas", "Tomarza", "Yahyalı", "Yeşilhisar"]
+};
+
 const CustomerRegistration = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
@@ -12,6 +31,8 @@ const CustomerRegistration = () => {
     tc_no: '',
     email: '',
     phone: '',
+    city: '',
+    district: '',
     delivery_address: '',
     company_name: '',
     tax_office: '',
@@ -28,17 +49,17 @@ const CustomerRegistration = () => {
     {
       id: 'education',
       name: 'Eğitim Paketi',
-      price: 100,
-      vat: 20,
-      total: 120,
-      description: 'Network Marketing Eğitim Sistemi'
+      price: 4000, // 100 USD * 40 TL
+      vat: 800,    // 20% KDV
+      total: 4800, // KDV dahil
+      description: 'Su Arıtma Eğitim Sistemi'
     },
     {
       id: 'device',
       name: 'Cihaz Paketi',
-      price: 1800,
-      vat: 360,
-      total: 2160,
+      price: 72000,  // 1800 USD * 40 TL
+      vat: 14400,    // 20% KDV
+      total: 86400,  // KDV dahil
       description: 'HOOWELL Cihazı + Eğitim Sistemi'
     }
   ];
@@ -55,7 +76,7 @@ const CustomerRegistration = () => {
     try {
       // Validasyon kontrolleri
       if (formData.registration_type === 'individual') {
-        if (!formData.first_name || !formData.last_name || !formData.tc_no || !formData.email || !formData.phone) {
+        if (!formData.first_name || !formData.last_name || !formData.tc_no || !formData.email || !formData.phone || !formData.city || !formData.district || !formData.delivery_address) {
           alert('Lütfen tüm zorunlu alanları doldurun.');
           return;
         }
@@ -64,7 +85,7 @@ const CustomerRegistration = () => {
           return;
         }
       } else {
-        if (!formData.company_name || !formData.tax_office || !formData.tax_no || !formData.authorized_person) {
+        if (!formData.company_name || !formData.tax_office || !formData.tax_no || !formData.authorized_person || !formData.city || !formData.district || !formData.delivery_address) {
           alert('Lütfen tüm zorunlu alanları doldurun.');
           return;
         }
@@ -79,9 +100,9 @@ const CustomerRegistration = () => {
 
       const submitData = {
         ...formData,
-        product_price: selectedProductData?.price || 0,
-        product_vat: selectedProductData?.vat || 0,
-        total_amount: selectedProductData?.total || 0
+        product_price: selectedProductData?.price || 0,  // TL cinsinden net fiyat
+        product_vat: selectedProductData?.vat || 0,      // TL cinsinden KDV
+        total_amount: selectedProductData?.total || 0    // TL cinsinden toplam
       };
 
       const response = await axios.post('/api/customers', submitData, {
@@ -91,7 +112,7 @@ const CustomerRegistration = () => {
       });
 
       if (response.data.success) {
-        alert(`Müşteri kaydı başarıyla oluşturuldu!\n\nKazandığınız KKP: ${response.data.kkp_earned?.toFixed(2) || 0} KKP\nToplam Tutar (USD): $${response.data.total_amount_usd?.toFixed(2) || 0}`);
+        alert(`Müşteri kaydı başarıyla oluşturuldu!\n\nKazandığınız KKP: ${response.data.kkp_earned?.toFixed(2) || 0} KKP\nToplam Tutar: ${selectedProductData?.total?.toLocaleString() || 0} TL (KDV Dahil)`);
         setCurrentStep(6);
       }
     } catch (error) {
@@ -101,7 +122,7 @@ const CustomerRegistration = () => {
   };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '1000px', margin: '0 auto' }}>
+    <div className="registration-container" style={{ padding: '20px', maxWidth: '1000px', margin: '0 auto' }}>
       {/* Başlık */}
       <div style={{
         backgroundColor: 'var(--card-gray)',
@@ -158,7 +179,7 @@ const CustomerRegistration = () => {
             Kayıt Türü Seçimi
           </h2>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px', maxWidth: '600px', margin: '0 auto' }}>
+          <div className="registration-type-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px', maxWidth: '600px', margin: '0 auto' }}>
             <div
               onClick={() => setFormData({ ...formData, registration_type: 'individual' })}
               style={{
@@ -310,6 +331,52 @@ const CustomerRegistration = () => {
                   />
                 </div>
 
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>İl *</label>
+                    <select
+                      value={formData.city}
+                      onChange={(e) => setFormData({ ...formData, city: e.target.value, district: '' })}
+                      style={{
+                        width: '100%',
+                        padding: '12px',
+                        border: '2px solid #ddd',
+                        borderRadius: '8px',
+                        fontSize: '16px',
+                        backgroundColor: '#fff'
+                      }}
+                    >
+                      <option value="">İl Seçin</option>
+                      {Object.keys(turkeyData).map(city => (
+                        <option key={city} value={city}>{city}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>İlçe *</label>
+                    <select
+                      value={formData.district}
+                      onChange={(e) => setFormData({ ...formData, district: e.target.value })}
+                      disabled={!formData.city}
+                      style={{
+                        width: '100%',
+                        padding: '12px',
+                        border: '2px solid #ddd',
+                        borderRadius: '8px',
+                        fontSize: '16px',
+                        backgroundColor: formData.city ? '#fff' : '#f5f5f5',
+                        cursor: formData.city ? 'pointer' : 'not-allowed'
+                      }}
+                    >
+                      <option value="">İlçe Seçin</option>
+                      {formData.city && turkeyData[formData.city]?.map(district => (
+                        <option key={district} value={district}>{district}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
                 <div>
                   <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Teslimat Adresi *</label>
                   <textarea
@@ -324,7 +391,7 @@ const CustomerRegistration = () => {
                       fontSize: '16px',
                       resize: 'vertical'
                     }}
-                    placeholder="Detaylı adres bilgisi..."
+                    placeholder="Detaylı adres bilgisi (Mahalle, Sokak, Bina No, Daire No vb.)"
                   />
                 </div>
               </div>
@@ -493,7 +560,7 @@ const CustomerRegistration = () => {
             Ürün Seçimi
           </h2>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px', maxWidth: '800px', margin: '0 auto' }}>
+          <div className="product-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px', maxWidth: '800px', margin: '0 auto' }}>
             {products.map((product) => (
               <div
                 key={product.id}
@@ -513,7 +580,7 @@ const CustomerRegistration = () => {
                   {product.description}
                 </p>
                 <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '10px' }}>
-                  {product.total} USD
+                  {product.total.toLocaleString()} TL
                 </div>
                 <div style={{ fontSize: '12px', opacity: 0.7 }}>
                   (KDV Dahil)
@@ -582,9 +649,9 @@ const CustomerRegistration = () => {
             }}>
               <h4>SATIŞ SÖZLEŞMESİ</h4>
               <p>İşbu sözleşme, 6502 sayılı Tüketicinin Korunması Hakkında Kanun çerçevesinde düzenlenmiştir.</p>
-              <p><strong>SATICI:</strong> HOOWELL Network Marketing Ltd. Şti.</p>
+              <p><strong>SATICI:</strong> HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ</p>
               <p><strong>ÜRÜN:</strong> {products.find(p => p.id === formData.selected_product)?.name}</p>
-              <p><strong>FİYAT:</strong> {products.find(p => p.id === formData.selected_product)?.total} USD (KDV Dahil)</p>
+              <p><strong>FİYAT:</strong> {products.find(p => p.id === formData.selected_product)?.total.toLocaleString()} TL (KDV Dahil)</p>
               <p>Ürün, sipariş onayından sonra 7-14 iş günü içinde teslim edilecektir.</p>
             </div>
 
@@ -705,10 +772,10 @@ const CustomerRegistration = () => {
                 <div>
                   <p><strong>Ürün:</strong> {products.find(p => p.id === formData.selected_product)?.name}</p>
                   <p><strong>Açıklama:</strong> {products.find(p => p.id === formData.selected_product)?.description}</p>
-                  <p><strong>Fiyat:</strong> {products.find(p => p.id === formData.selected_product)?.price} USD</p>
-                  <p><strong>KDV:</strong> {products.find(p => p.id === formData.selected_product)?.vat} USD</p>
+                  <p><strong>Fiyat:</strong> {products.find(p => p.id === formData.selected_product)?.price.toLocaleString()} TL</p>
+                  <p><strong>KDV (%20):</strong> {products.find(p => p.id === formData.selected_product)?.vat.toLocaleString()} TL</p>
                   <p style={{ fontSize: '18px', fontWeight: 'bold', color: 'var(--primary-dark)' }}>
-                    <strong>Toplam:</strong> {products.find(p => p.id === formData.selected_product)?.total} USD
+                    <strong>Toplam:</strong> {products.find(p => p.id === formData.selected_product)?.total.toLocaleString()} TL
                   </p>
                 </div>
               )}

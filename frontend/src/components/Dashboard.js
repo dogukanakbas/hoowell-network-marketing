@@ -12,6 +12,20 @@ const Dashboard = () => {
     pendingCommissions: 0
   });
 
+  // Responsive state
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Responsive breakpoints
+  const isMobile = windowWidth <= 768;
+  const isTablet = windowWidth > 768 && windowWidth <= 1024;
+  const isDesktop = windowWidth > 1024;
+
   const fetchDashboardData = useCallback(async () => {
     try {
       const statsResponse = await axios.get('/api/dashboard/stats');
@@ -29,8 +43,8 @@ const Dashboard = () => {
     <div style={{ 
       minHeight: '100vh',
       background: 'linear-gradient(135deg, #0e2323 0%, #1a3333 50%, #0e2323 100%)',
-      margin: '0 -20px',
-      padding: '20px',
+      margin: isMobile ? '0 -15px' : '0 -20px',
+      padding: isMobile ? '15px' : '20px',
       position: 'relative'
     }}>
       {/* HOOWELL Logo - Üst Merkez */}
@@ -38,47 +52,36 @@ const Dashboard = () => {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        marginBottom: '30px'
+        marginBottom: isMobile ? '15px' : isTablet ? '20px' : '30px'
       }}>
         <div style={{
-          width: '100px',
-          height: '100px',
-          background: 'linear-gradient(135deg, #FFD700, #FFA500)',
-          borderRadius: '20px',
+          width: isMobile ? '120px' : isTablet ? '150px' : '180px',
+          height: isMobile ? '80px' : isTablet ? '100px' : '120px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          marginBottom: '15px',
-          boxShadow: '0 10px 30px rgba(255, 215, 0, 0.4)',
-          border: '3px solid rgba(255, 255, 255, 0.2)'
+          marginBottom: isMobile ? '10px' : '15px',
+          borderRadius: '15px',
+          backgroundColor: 'rgba(255, 255, 255, 0.1)',
+          padding: '10px'
         }}>
-          <div style={{
-            width: '60px',
-            height: '60px',
-            backgroundColor: '#0e2323',
-            borderRadius: '12px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}>
-            <span style={{ color: '#FFD700', fontSize: '28px', fontWeight: 'bold' }}>H</span>
-          </div>
+          <img 
+            src="/hoowell-logo.png" 
+            alt="HOOWELL Logo"
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'contain',
+              filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))'
+            }}
+          />
         </div>
         <div style={{
           color: '#FFD700',
-          fontSize: '32px',
-          fontWeight: 'bold',
+          fontSize: isMobile ? '12px' : '14px',
           textAlign: 'center',
-          textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
-          marginBottom: '5px'
-        }}>
-          HOOWELL
-        </div>
-        <div style={{
-          color: '#FFD700',
-          fontSize: '14px',
-          textAlign: 'center',
-          opacity: 0.8
+          opacity: 0.8,
+          fontWeight: '500'
         }}>
           INNOVATE YOUR LIFE
         </div>
@@ -87,17 +90,20 @@ const Dashboard = () => {
       {/* Ana Container */}
       <div style={{
         display: 'flex',
-        gap: '30px',
+        flexDirection: isMobile ? 'column' : 'row',
+        gap: isMobile ? '20px' : isTablet ? '20px' : '30px',
         maxWidth: '1400px',
         margin: '0 auto',
-        alignItems: 'flex-start'
+        alignItems: isMobile ? 'center' : 'flex-start'
       }}>
         {/* Sol Panel - Video ve Haberler */}
         <div style={{
-          width: '280px',
+          width: isMobile ? '100%' : isTablet ? '250px' : '280px',
+          maxWidth: isMobile ? '400px' : 'none',
           display: 'flex',
           flexDirection: 'column',
-          gap: '20px'
+          gap: isMobile ? '15px' : '20px',
+          order: isMobile ? 2 : 0
         }}>
           {/* Haftalık Çalışma Takvimi */}
           <div style={{
@@ -174,55 +180,72 @@ const Dashboard = () => {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: '25px'
+          gap: isMobile ? '20px' : '25px',
+          order: isMobile ? 1 : 0
         }}>
-          {/* Ana Promosyon Görseli - Daha Küçük ve Düzenli */}
+          {/* Ana Promosyon Görseli - Responsive */}
           <div style={{
-            width: '500px',
-            height: '280px',
+            width: isMobile ? '100%' : isTablet ? '400px' : '500px',
+            height: isMobile ? '200px' : isTablet ? '220px' : '280px',
+            maxWidth: isMobile ? '350px' : 'none',
             backgroundImage: 'url(./anasayfa.jpeg)',
             backgroundSize: 'contain',
             backgroundRepeat: 'no-repeat',
             backgroundPosition: 'center',
-            borderRadius: '15px',
-            border: '3px solid #FFD700',
+            borderRadius: isMobile ? '12px' : '15px',
+            border: `${isMobile ? '2px' : '3px'} solid #FFD700`,
             boxShadow: '0 15px 40px rgba(255, 215, 0, 0.3)',
             backgroundColor: 'rgba(255, 215, 0, 0.1)'
           }}>
           </div>
 
-          {/* Alt Butonlar - Daha Kompakt */}
+          {/* Alt Butonlar - Responsive */}
           <div style={{
             display: 'flex',
-            gap: '15px',
+            flexDirection: isMobile ? 'column' : 'row',
+            gap: isMobile ? '12px' : '15px',
             flexWrap: 'wrap',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            width: isMobile ? '100%' : 'auto',
+            maxWidth: isMobile ? '350px' : 'none'
           }}>
             {/* Müşteri Kayıt Paneli */}
             <Link 
               to="/customer-registration"
               style={{
                 background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)',
-                borderRadius: '12px',
-                padding: '12px 20px',
+                borderRadius: isMobile ? '10px' : '12px',
+                padding: isMobile ? '15px 20px' : '12px 20px',
                 textAlign: 'center',
                 cursor: 'pointer',
                 boxShadow: '0 8px 25px rgba(255, 215, 0, 0.3)',
-                minWidth: '150px',
+                minWidth: isMobile ? '100%' : '150px',
                 textDecoration: 'none',
                 transition: 'all 0.3s',
-                border: '2px solid rgba(255, 255, 255, 0.2)'
+                border: '2px solid rgba(255, 255, 255, 0.2)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: isMobile ? '50px' : 'auto'
               }}
               onMouseEnter={(e) => {
-                e.target.style.transform = 'translateY(-3px)';
-                e.target.style.boxShadow = '0 12px 35px rgba(255, 215, 0, 0.4)';
+                if (!isMobile) {
+                  e.target.style.transform = 'translateY(-3px)';
+                  e.target.style.boxShadow = '0 12px 35px rgba(255, 215, 0, 0.4)';
+                }
               }}
               onMouseLeave={(e) => {
-                e.target.style.transform = 'translateY(0px)';
-                e.target.style.boxShadow = '0 8px 25px rgba(255, 215, 0, 0.3)';
+                if (!isMobile) {
+                  e.target.style.transform = 'translateY(0px)';
+                  e.target.style.boxShadow = '0 8px 25px rgba(255, 215, 0, 0.3)';
+                }
               }}
             >
-              <div style={{ color: '#0e2323', fontSize: '14px', fontWeight: 'bold' }}>
+              <div style={{ 
+                color: '#0e2323', 
+                fontSize: isMobile ? '16px' : '14px', 
+                fontWeight: 'bold' 
+              }}>
                 MÜŞTERİ KAYIT PANELİ
               </div>
             </Link>
@@ -230,13 +253,17 @@ const Dashboard = () => {
             {/* Hoşgeldin Promosyonu */}
             <div style={{
               background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)',
-              borderRadius: '12px',
-              padding: '12px 20px',
+              borderRadius: isMobile ? '10px' : '12px',
+              padding: isMobile ? '15px 20px' : '12px 20px',
               textAlign: 'center',
               boxShadow: '0 8px 25px rgba(255, 215, 0, 0.3)',
-              minWidth: '150px',
+              minWidth: isMobile ? '100%' : '150px',
               position: 'relative',
-              border: '2px solid rgba(255, 255, 255, 0.2)'
+              border: '2px solid rgba(255, 255, 255, 0.2)',
+              minHeight: isMobile ? '50px' : 'auto',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center'
             }}>
               <div style={{ color: '#0e2323', fontSize: '11px', fontWeight: 'bold', marginBottom: '3px' }}>
                 HOŞGELDİK PROMOSYONU KALAN
@@ -254,26 +281,38 @@ const Dashboard = () => {
               to="/partner-registration"
               style={{
                 background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)',
-                borderRadius: '12px',
-                padding: '12px 20px',
+                borderRadius: isMobile ? '10px' : '12px',
+                padding: isMobile ? '15px 20px' : '12px 20px',
                 textAlign: 'center',
                 cursor: 'pointer',
                 boxShadow: '0 8px 25px rgba(255, 215, 0, 0.3)',
-                minWidth: '150px',
+                minWidth: isMobile ? '100%' : '150px',
                 textDecoration: 'none',
                 transition: 'all 0.3s',
-                border: '2px solid rgba(255, 255, 255, 0.2)'
+                border: '2px solid rgba(255, 255, 255, 0.2)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: isMobile ? '50px' : 'auto'
               }}
               onMouseEnter={(e) => {
-                e.target.style.transform = 'translateY(-3px)';
-                e.target.style.boxShadow = '0 12px 35px rgba(255, 215, 0, 0.4)';
+                if (!isMobile) {
+                  e.target.style.transform = 'translateY(-3px)';
+                  e.target.style.boxShadow = '0 12px 35px rgba(255, 215, 0, 0.4)';
+                }
               }}
               onMouseLeave={(e) => {
-                e.target.style.transform = 'translateY(0px)';
-                e.target.style.boxShadow = '0 8px 25px rgba(255, 215, 0, 0.3)';
+                if (!isMobile) {
+                  e.target.style.transform = 'translateY(0px)';
+                  e.target.style.boxShadow = '0 8px 25px rgba(255, 215, 0, 0.3)';
+                }
               }}
             >
-              <div style={{ color: '#0e2323', fontSize: '14px', fontWeight: 'bold' }}>
+              <div style={{ 
+                color: '#0e2323', 
+                fontSize: isMobile ? '16px' : '14px', 
+                fontWeight: 'bold' 
+              }}>
                 İŞ ORTAĞI KAYIT PANELİ
               </div>
             </Link>
@@ -282,10 +321,12 @@ const Dashboard = () => {
 
         {/* Sağ Panel - Havuzlar ve Komisyonlar */}
         <div style={{
-          width: '280px',
+          width: isMobile ? '100%' : isTablet ? '250px' : '280px',
+          maxWidth: isMobile ? '400px' : 'none',
           display: 'flex',
           flexDirection: 'column',
-          gap: '20px'
+          gap: isMobile ? '15px' : '20px',
+          order: isMobile ? 3 : 0
         }}>
           {/* Toplam Komisyon Kazancı */}
           <div style={{
@@ -312,7 +353,7 @@ const Dashboard = () => {
               fontWeight: 'bold', 
               color: '#fff'
             }}>
-              {stats.totalCommission || '0.00'} $
+              {((stats.totalCommission || 0) * 40).toLocaleString()} TL
             </div>
             <Link 
               to="/sponsorluk-takip"
@@ -357,7 +398,7 @@ const Dashboard = () => {
               fontWeight: 'bold', 
               color: '#FFD700'
             }}>
-              {stats.liderlikHavuzu || '0.000'} $
+              {((stats.liderlikHavuzu || 0) * 40).toLocaleString()} TL
             </div>
           </div>
 
@@ -386,7 +427,7 @@ const Dashboard = () => {
               fontWeight: 'bold', 
               color: '#FFD700'
             }}>
-              0.000 $
+              0 TL
             </div>
           </div>
 
@@ -418,7 +459,7 @@ const Dashboard = () => {
               fontWeight: 'bold', 
               color: '#FFD700'
             }}>
-              0.000 $
+              0 TL
             </div>
           </div>
         </div>

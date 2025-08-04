@@ -95,7 +95,7 @@ const KarPaylasimi = () => {
           }}>
             💰
           </div>
-          
+
           <h2 style={{
             color: '#FFD700',
             fontSize: '32px',
@@ -104,7 +104,7 @@ const KarPaylasimi = () => {
           }}>
             KAR PAYLAŞIMI HAVUZLARI
           </h2>
-          
+
           <div style={{
             backgroundColor: '#fff3cd',
             border: '2px solid #ffeaa7',
@@ -143,7 +143,7 @@ const KarPaylasimi = () => {
             }}>
               📊 Mevcut Durumunuz:
             </h4>
-            
+
             <div style={{
               fontSize: '20px',
               fontWeight: 'bold',
@@ -152,7 +152,7 @@ const KarPaylasimi = () => {
             }}>
               Kariyer Seviyeniz: {user?.career_level?.toUpperCase() || 'BRONZE'}
             </div>
-            
+
             <div style={{
               color: '#6c757d',
               fontSize: '16px'
@@ -216,7 +216,7 @@ const KarPaylasimi = () => {
           }}>
             {title}
           </div>
-          
+
           <div style={{
             textAlign: 'center',
             color: '#dc3545',
@@ -527,8 +527,8 @@ const KarPaylasimi = () => {
           <div style={{
             width: '60px',
             height: '60px',
-            background: data.is_qualified 
-              ? 'linear-gradient(135deg, #28a745, #20c997)' 
+            background: data.is_qualified
+              ? 'linear-gradient(135deg, #28a745, #20c997)'
               : 'linear-gradient(135deg, #dc3545, #c82333)',
             borderRadius: '50%',
             display: 'flex',
@@ -550,7 +550,7 @@ const KarPaylasimi = () => {
           fontWeight: 'bold',
           marginBottom: '15px'
         }}>
-          {data.is_qualified 
+          {data.is_qualified
             ? `TEBRİKLER ${profitData.current_year} YILI KAR PAYLAŞIMINI\nBU KATEGORİDE KAZANDINIZ !`
             : `${data.remaining_points} PUAN DAHA TOPLAYARAK\nBU KATEGORİYE GİREBİLİRSİNİZ !`
           }
@@ -595,27 +595,25 @@ const KarPaylasimi = () => {
         zIndex: 10
       }}>
         <div style={{
-          width: '80px',
-          height: '80px',
-          background: 'linear-gradient(135deg, #FFD700, #FFA500)',
-          borderRadius: '15px',
+          width: '100px',
+          height: '60px',
+          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+          borderRadius: '10px',
           display: 'flex',
-          flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          boxShadow: '0 5px 15px rgba(255, 215, 0, 0.4)',
-          border: '2px solid rgba(255, 255, 255, 0.2)'
+          boxShadow: '0 5px 15px rgba(0, 0, 0, 0.2)',
+          padding: '5px'
         }}>
-          <div style={{
-            fontSize: '12px',
-            fontWeight: 'bold',
-            color: '#0e2323',
-            textAlign: 'center',
-            lineHeight: '1.2'
-          }}>
-            <div>HOOWELL</div>
-            <div style={{ fontSize: '8px' }}>INNOVATE YOUR LIFE</div>
-          </div>
+          <img
+            src="/hoowell-logo.png"
+            alt="HOOWELL Logo"
+            style={{
+              width: '90px',
+              height: '50px',
+              objectFit: 'contain'
+            }}
+          />
         </div>
       </div>
 
@@ -646,16 +644,16 @@ const KarPaylasimi = () => {
         flexWrap: 'wrap',
         marginBottom: '40px'
       }}>
-        <ProfitCard 
-          title="SATIŞ ŞAMPİYONLARI" 
-          data={profitData.salesChampions} 
+        <ProfitCard
+          title="SATIŞ ŞAMPİYONLARI"
+          data={profitData.salesChampions}
         />
-        <ProfitCard 
-          title="ORTAK BULMA ŞAMPİYONLARI" 
-          data={profitData.partnershipChampions} 
+        <ProfitCard
+          title="ORTAK BULMA ŞAMPİYONLARI"
+          data={profitData.partnershipChampions}
         />
-        <ProfitCard 
-          title="YILIN EN İYİ LİDERLERİ" 
+        <ProfitCard
+          title="YILIN EN İYİ LİDERLERİ"
           data={profitData.yearLeaders}
           isLeaderCard={true}
         />
@@ -700,27 +698,35 @@ const KarPaylasimi = () => {
         zIndex: 10
       }}>
         <div style={{
-          width: '80px',
+          width: '100px',
           height: '80px',
-          background: 'linear-gradient(135deg, #FFD700, #FFA500)',
-          borderRadius: '15px',
+          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+          borderRadius: '10px',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          boxShadow: '0 5px 15px rgba(255, 215, 0, 0.4)',
-          border: '2px solid rgba(255, 255, 255, 0.2)'
+          boxShadow: '0 5px 15px rgba(0, 0, 0, 0.2)',
+          padding: '5px'
         }}>
+          <img
+            src="/hoowell-logo.png"
+            alt="HOOWELL Logo"
+            style={{
+              width: '80px',
+              height: '40px',
+              objectFit: 'contain',
+              marginBottom: '5px'
+            }}
+          />
           <div style={{
-            fontSize: '10px',
+            fontSize: '8px',
             fontWeight: 'bold',
             color: '#0e2323',
             textAlign: 'center',
             lineHeight: '1.1'
           }}>
-            <div>HOOWELL</div>
-            <div style={{ fontSize: '8px' }}>BİLGİ</div>
-            <div style={{ fontSize: '8px' }}>BANKASI</div>
+            <div>BİLGİ BANKASI</div>
           </div>
         </div>
       </div>

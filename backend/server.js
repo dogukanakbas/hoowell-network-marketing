@@ -12,8 +12,8 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://yourdomain.com'] 
+  origin: process.env.NODE_ENV === 'production'
+    ? ['https://yourdomain.com']
     : ['http://localhost:3000'],
   credentials: true
 }));
@@ -37,10 +37,7 @@ const db = mysql.createConnection({
   host: process.env.DB_HOST || 'localhost',
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'hoowell_network',
-  acquireTimeout: 60000,
-  timeout: 60000,
-  reconnect: true
+  database: process.env.DB_NAME || 'hoowell_network'
 });
 
 // Database connection error handling
@@ -371,7 +368,14 @@ const awardKKPForCustomerSale = async (userId, productPrice) => {
   try {
     // KKP calculation: 1 KKP = 1 USD (net price, excluding VAT)
     // productPrice is already in USD (net amount)
-    const kkpEarned = productPrice;
+    let kkpEarned = productPrice;
+
+    // Check for doping promotion multiplier
+    const dopingMultiplier = await checkDopingPromotionMultiplier(userId);
+    if (dopingMultiplier > 1) {
+      kkpEarned = kkpEarned * dopingMultiplier;
+      console.log(`Doping promotion applied: ${dopingMultiplier}x multiplier for user ${userId}`);
+    }
 
     // Update user's total KKP
     await db.promise().execute(
@@ -379,7 +383,7 @@ const awardKKPForCustomerSale = async (userId, productPrice) => {
       [kkpEarned, userId]
     );
 
-    console.log(`KKP awarded: User ${userId} earned ${kkpEarned} KKP from customer sale (${productPrice} USD net)`);
+    console.log(`KKP awarded: User ${userId} earned ${kkpEarned} KKP from customer sale (${productPrice} USD net, multiplier: ${dopingMultiplier}x)`);
 
     return kkpEarned;
   } catch (error) {
@@ -388,10 +392,74 @@ const awardKKPForCustomerSale = async (userId, productPrice) => {
   }
 };
 
+// Check if user qualifies for doping promotion multiplier
+const checkDopingPromotionMultiplier = async (userId) => {
+  try {
+    // Get user registration date
+    const [userInfo] = await db.promise().execute(
+      'SELECT created_at FROM users WHERE id = ?',
+      [userId]
+    );
+    
+    if (!userInfo[0]) return 1;
+    
+    const registrationDate = new Date(userInfo[0].created_at);
+    const now = new Date();
+    const daysSinceRegistration = Math.floor((now - registrationDate) / (1000 * 60 * 60 * 24));
+    
+    // Get personal sales count
+    const [personalSales] = await db.promise().execute(`
+      SELECT COUNT(*) as count
+      FROM customers c
+      WHERE c.created_by = ? AND c.selected_product = 'device'
+    `, [userId]);
+    
+    // Get team sales count
+    const [teamSales] = await db.promise().execute(`
+      SELECT COUNT(*) as count
+      FROM customers c
+      INNER JOIN users u ON c.created_by = u.id
+      WHERE u.created_by = ? AND c.selected_product = 'device'
+    `, [userId]);
+    
+    // Get personal partners count
+    const [personalPartners] = await db.promise().execute(`
+      SELECT COUNT(*) as count
+      FROM users u
+      WHERE u.created_by = ? AND u.role = 'partner'
+    `, [userId]);
+    
+    const totalSales = personalSales[0].count + teamSales[0].count;
+    const totalPartners = personalPartners[0].count;
+    
+    // Stage 1: First 60 days - 40 sales + 7 partners = 2x multiplier
+    if (daysSinceRegistration <= 60 && totalSales >= 40 && totalPartners >= 7) {
+      return 2;
+    }
+    
+    // Stage 2: 61-120 days - 80 sales + 15 partners = 2x multiplier
+    if (daysSinceRegistration > 60 && daysSinceRegistration <= 120 && totalSales >= 80 && totalPartners >= 15) {
+      return 2;
+    }
+    
+    return 1; // No multiplier
+  } catch (error) {
+    console.error('Check doping promotion multiplier error:', error);
+    return 1;
+  }
+};
+
 const awardKKPForPartnerRegistration = async (userId) => {
   try {
     // Partner registration gives fixed KKP (e.g., 120 KKP = 120 USD equivalent)
-    const kkpEarned = 120;
+    let kkpEarned = 120;
+
+    // Check for doping promotion multiplier
+    const dopingMultiplier = await checkDopingPromotionMultiplier(userId);
+    if (dopingMultiplier > 1) {
+      kkpEarned = kkpEarned * dopingMultiplier;
+      console.log(`Doping promotion applied: ${dopingMultiplier}x multiplier for partner registration by user ${userId}`);
+    }
 
     // Update user's total KKP
     await db.promise().execute(
@@ -399,7 +467,7 @@ const awardKKPForPartnerRegistration = async (userId) => {
       [kkpEarned, userId]
     );
 
-    console.log(`KKP awarded: User ${userId} earned ${kkpEarned} KKP from partner registration`);
+    console.log(`KKP awarded: User ${userId} earned ${kkpEarned} KKP from partner registration (multiplier: ${dopingMultiplier}x)`);
 
     return kkpEarned;
   } catch (error) {
@@ -742,8 +810,9 @@ app.post('/api/customers', verifyToken, async (req, res) => {
     ]);
 
     // Award KKP for customer sale - KDV hariç net fiyat üzerinden
-    // product_price zaten KDV hariç net fiyat (USD cinsinden)
-    const kkpEarned = await awardKKPForCustomerSale(req.user.id, product_price);
+    // product_price TL cinsinden, USD'ye çevir (1 USD = 1 KKP)
+    const productPriceUSD = product_price / 40; // TL'yi USD'ye çevir
+    const kkpEarned = await awardKKPForCustomerSale(req.user.id, productPriceUSD);
 
     // Create sales tracking record
     await createSalesTrackingRecord(
@@ -762,7 +831,7 @@ app.post('/api/customers', verifyToken, async (req, res) => {
       UPDATE user_profiles 
       SET total_sales = total_sales + ?, monthly_sales = monthly_sales + ?, is_active_this_month = TRUE
       WHERE user_id = ?
-    `, [total_amount / 40, total_amount / 40, req.user.id]); // USD cinsinden kaydet
+    `, [total_amount / 40, total_amount / 40, req.user.id]); // USD cinsinden kaydet (KKP hesaplama için)
 
     // Calculate sponsorship earnings for the seller's sponsor
     await calculateSponsorshipEarnings(req.user.id, total_amount, 'customer_sale');
@@ -772,6 +841,7 @@ app.post('/api/customers', verifyToken, async (req, res) => {
       message: 'Müşteri kaydı başarıyla oluşturuldu!',
       customer_id: customerId,
       kkp_earned: kkpEarned,
+      total_amount_tl: total_amount,
       total_amount_usd: total_amount / 40
     });
 
@@ -872,7 +942,7 @@ app.get('/api/career/progress', verifyToken, async (req, res) => {
     }
 
     const user = userResult[0];
-    
+
     // Calculate target values based on current level
     const levelTargets = {
       bronze: { kkp: 15000, partners: 1 },
@@ -923,6 +993,144 @@ app.get('/api/career/bonuses', verifyToken, async (req, res) => {
 
   } catch (error) {
     console.error('Career bonuses error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Doping Promotion API
+app.get('/api/doping-promotion/progress', verifyToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    
+    // Get user registration date
+    const [userInfo] = await db.promise().execute(
+      'SELECT created_at FROM users WHERE id = ?',
+      [userId]
+    );
+    
+    if (!userInfo[0]) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    const registrationDate = new Date(userInfo[0].created_at);
+    const now = new Date();
+    const daysSinceRegistration = Math.floor((now - registrationDate) / (1000 * 60 * 60 * 24));
+    
+    // Calculate stage dates
+    const stage1Start = new Date(registrationDate);
+    const stage1End = new Date(registrationDate);
+    stage1End.setDate(stage1End.getDate() + 60);
+    
+    const stage2Start = new Date(registrationDate);
+    stage2Start.setDate(stage2Start.getDate() + 61);
+    const stage2End = new Date(registrationDate);
+    stage2End.setDate(stage2End.getDate() + 120);
+    
+    // Get personal sales (direct sales by user)
+    const [personalSales] = await db.promise().execute(`
+      SELECT COUNT(*) as count
+      FROM customers c
+      WHERE c.created_by = ? AND c.selected_product = 'device'
+    `, [userId]);
+    
+    // Get team sales (sales by user's partners)
+    const [teamSales] = await db.promise().execute(`
+      SELECT COUNT(*) as count
+      FROM customers c
+      INNER JOIN users u ON c.created_by = u.id
+      WHERE u.created_by = ? AND c.selected_product = 'device'
+    `, [userId]);
+    
+    // Get personal partners (direct partners registered by user)
+    const [personalPartners] = await db.promise().execute(`
+      SELECT COUNT(*) as count
+      FROM users u
+      WHERE u.created_by = ? AND u.role = 'partner'
+    `, [userId]);
+    
+    // Calculate stage 1 progress
+    const stage1PersonalSales = personalSales[0].count;
+    const stage1TeamSales = teamSales[0].count;
+    const stage1TotalSales = stage1PersonalSales + stage1TeamSales;
+    const stage1Partners = personalPartners[0].count;
+    
+    // Calculate stage 1 KKP bonus
+    let stage1KKPBonus = 0;
+    if (daysSinceRegistration <= 60 && stage1TotalSales >= 40 && stage1Partners >= 7) {
+      // Calculate KKP earned in first 60 days and double it
+      const [stage1KKP] = await db.promise().execute(`
+        SELECT COALESCE(SUM(
+          CASE 
+            WHEN c.selected_product = 'device' THEN 1800
+            WHEN c.selected_product = 'education' THEN 100
+            ELSE 0
+          END
+        ), 0) as total_kkp
+        FROM customers c
+        WHERE c.created_by = ? AND c.created_at BETWEEN ? AND ?
+      `, [userId, registrationDate, stage1End]);
+      
+      stage1KKPBonus = stage1KKP[0].total_kkp; // This will be doubled
+    }
+    
+    // Calculate stage 2 progress (similar logic for 61-120 days)
+    let stage2KKPBonus = 0;
+    if (daysSinceRegistration > 60 && daysSinceRegistration <= 120) {
+      // Stage 2 calculations...
+      if (stage1TotalSales >= 80 && stage1Partners >= 15) {
+        const [stage2KKP] = await db.promise().execute(`
+          SELECT COALESCE(SUM(
+            CASE 
+              WHEN c.selected_product = 'device' THEN 1800
+              WHEN c.selected_product = 'education' THEN 100
+              ELSE 0
+            END
+          ), 0) as total_kkp
+          FROM customers c
+          WHERE c.created_by = ? AND c.created_at BETWEEN ? AND ?
+        `, [userId, stage2Start, stage2End]);
+        
+        stage2KKPBonus = stage2KKP[0].total_kkp;
+      }
+    }
+    
+    const dopingData = {
+      etap1: {
+        baslangic_tarihi: stage1Start.toLocaleDateString('tr-TR'),
+        bitis_tarihi: stage1End.toLocaleDateString('tr-TR'),
+        hedef_satis: 40,
+        yapilan_satis: stage1TotalSales,
+        kalan_satis: Math.max(40 - stage1TotalSales, 0),
+        hedef_ortak: 7,
+        yapilan_ortak: stage1Partners,
+        kalan_ortak: Math.max(7 - stage1Partners, 0),
+        kazanilacak_puan: stage1KKPBonus,
+        tamamlandi: stage1TotalSales >= 40 && stage1Partners >= 7 && daysSinceRegistration <= 60,
+        personal_sales: stage1PersonalSales,
+        team_sales: stage1TeamSales
+      },
+      etap2: {
+        baslangic_tarihi: stage2Start.toLocaleDateString('tr-TR'),
+        bitis_tarihi: stage2End.toLocaleDateString('tr-TR'),
+        hedef_satis: 80,
+        yapilan_satis: stage1TotalSales, // Cumulative
+        kalan_satis: Math.max(80 - stage1TotalSales, 0),
+        hedef_ortak: 15,
+        yapilan_ortak: stage1Partners,
+        kalan_ortak: Math.max(15 - stage1Partners, 0),
+        kazanilacak_puan: stage2KKPBonus,
+        tamamlandi: stage1TotalSales >= 80 && stage1Partners >= 15 && daysSinceRegistration > 60 && daysSinceRegistration <= 120,
+        personal_sales: stage1PersonalSales,
+        team_sales: stage1TeamSales
+      },
+      days_since_registration: daysSinceRegistration,
+      current_stage: daysSinceRegistration <= 60 ? 1 : daysSinceRegistration <= 120 ? 2 : 0
+    };
+    
+    res.json(dopingData);
+    
+  } catch (error) {
+    console.error('Doping promotion progress error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
@@ -1018,8 +1226,8 @@ app.get('/api/dashboard/stats', verifyToken, async (req, res) => {
 
 // Health Check Endpoint
 app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'OK', 
+  res.json({
+    status: 'OK',
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
     environment: process.env.NODE_ENV || 'development'
@@ -1029,7 +1237,7 @@ app.get('/api/health', (req, res) => {
 // Server Error Handler
 app.use((err, req, res, next) => {
   console.error('Server Error:', err);
-  res.status(500).json({ 
+  res.status(500).json({
     message: 'Internal Server Error',
     error: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong'
   });
@@ -1055,25 +1263,25 @@ app.get('/api/accounting/summary', verifyToken, getAccountingSummary);
 app.get('/api/global-travel/data', verifyToken, async (req, res) => {
   try {
     const userId = req.user.id;
-    
+
     const [rows] = await db.promise().execute(`
       SELECT * FROM global_travel_data WHERE user_id = ?
     `, [userId]);
-    
+
     if (rows.length === 0) {
       // Kullanıcı için varsayılan veri oluştur
       await db.promise().execute(`
         INSERT INTO global_travel_data (user_id) VALUES (?)
       `, [userId]);
-      
+
       // Yeni oluşturulan veriyi getir
       const [newRows] = await db.promise().execute(`
         SELECT * FROM global_travel_data WHERE user_id = ?
       `, [userId]);
-      
+
       return res.json(newRows[0]);
     }
-    
+
     res.json(rows[0]);
   } catch (error) {
     console.error('Global travel data fetch error:', error);
@@ -1089,34 +1297,34 @@ app.get('/api/global-travel/data', verifyToken, async (req, res) => {
 app.get('/api/doping-promotion/progress', verifyToken, async (req, res) => {
   try {
     const userId = req.user.id;
-    
+
     // Kullanıcının başlangıç tarihi
     const [userInfo] = await db.promise().execute(`
       SELECT created_at FROM users WHERE id = ?
     `, [userId]);
-    
+
     if (userInfo.length === 0) {
       return res.status(404).json({ error: 'Kullanıcı bulunamadı' });
     }
-    
+
     const startDate = new Date(userInfo[0].created_at);
     const now = new Date();
     const daysPassed = Math.floor((now - startDate) / (1000 * 60 * 60 * 24));
-    
+
     // Etap 1: İlk 60 gün
     const etap1EndDate = new Date(startDate.getTime() + (60 * 24 * 60 * 60 * 1000));
-    
+
     // Etap 2: 61-120 gün
     const etap2StartDate = new Date(startDate.getTime() + (61 * 24 * 60 * 60 * 1000));
     const etap2EndDate = new Date(startDate.getTime() + (120 * 24 * 60 * 60 * 1000));
-    
+
     // Kullanıcının sponsor_id'sini al
     const [sponsorInfo] = await db.promise().execute(`
       SELECT sponsor_id FROM users WHERE id = ?
     `, [userId]);
-    
+
     const userSponsorId = sponsorInfo[0]?.sponsor_id;
-    
+
     // Takım satış verileri (kullanıcının kendisi + takımı)
     const [teamSales] = await db.promise().execute(`
       SELECT 
@@ -1126,7 +1334,7 @@ app.get('/api/doping-promotion/progress', verifyToken, async (req, res) => {
       JOIN users u ON c.created_by = u.id
       WHERE u.id = ? OR u.sponsor_id = ?
     `, [startDate, etap1EndDate, etap2StartDate, etap2EndDate, userId, userSponsorId]);
-    
+
     // Şahsi iş ortağı sayısı (kullanıcının direkt sponsor olduğu kişiler)
     const [partners] = await db.promise().execute(`
       SELECT 
@@ -1135,11 +1343,11 @@ app.get('/api/doping-promotion/progress', verifyToken, async (req, res) => {
       FROM users 
       WHERE sponsor_id = ?
     `, [startDate, etap1EndDate, etap2StartDate, etap2EndDate, userSponsorId]);
-    
+
     // Kazanılacak puan hesaplama (şimdilik 0, ileride hesaplanacak)
     const etap1Completed = (teamSales[0].etap1_sales >= 40 && partners[0].etap1_partners >= 7);
     const etap2Completed = (teamSales[0].etap2_sales >= 80 && partners[0].etap2_partners >= 15);
-    
+
     const dopingData = {
       etap1: {
         baslangic_tarihi: startDate.toLocaleDateString('tr-TR'),
@@ -1166,13 +1374,13 @@ app.get('/api/doping-promotion/progress', verifyToken, async (req, res) => {
         tamamlandi: etap2Completed
       }
     };
-    
+
     res.json(dopingData);
   } catch (error) {
     console.error('Doping promotion data fetch error:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Doping promosyonu verileri getirilemedi',
-      message: error.message 
+      message: error.message
     });
   }
 });
@@ -1531,7 +1739,17 @@ app.get('/api/education/progress', verifyToken, async (req, res) => {
       [req.user.id]
     );
 
-    res.json(progress);
+    // Eğitim durumunu da kontrol et
+    const [user] = await db.promise().execute(
+      'SELECT education_completed, backoffice_access FROM users WHERE id = ?',
+      [req.user.id]
+    );
+
+    res.json({
+      progress,
+      education_completed: user[0]?.education_completed || false,
+      backoffice_access: user[0]?.backoffice_access || false
+    });
   } catch (error) {
     console.error('Progress error:', error);
     res.status(500).json({ message: 'Sunucu hatası' });
@@ -1612,12 +1830,25 @@ app.post('/api/education/submit-exam', verifyToken, async (req, res) => {
         'SELECT COUNT(*) as total FROM videos WHERE is_active = 1'
       );
 
+      console.log(`User ${req.user.id} progress: ${allProgress[0].total}/${totalVideos[0].total} videos completed`);
+
       if (allProgress[0].total >= totalVideos[0].total) {
         // All videos completed, grant backoffice access
         await db.promise().execute(
           'UPDATE users SET education_completed = 1, backoffice_access = 1 WHERE id = ?',
           [req.user.id]
         );
+
+        console.log(`User ${req.user.id} education completed! Backoffice access granted.`);
+
+        // Return education completion status
+        return res.json({
+          score,
+          passed,
+          total: questions.length,
+          education_completed: true,
+          message: 'Tebrikler! Tüm eğitimlerinizi başarıyla tamamladınız. Artık backoffice sistemine erişebilirsiniz.'
+        });
       }
     }
 
@@ -2621,7 +2852,7 @@ app.post('/api/customer-satisfaction/add-reference', verifyToken, async (req, re
     // Award rewards based on reference count
     let rewardName = '';
     let rewardValue = 0;
-    
+
     if (referenceCount === 1) {
       rewardName = '450 USD Değerinde Ücretsiz Filtre';
       rewardValue = 450;
@@ -2639,10 +2870,10 @@ app.post('/api/customer-satisfaction/add-reference', verifyToken, async (req, re
         INSERT INTO customer_satisfaction_rewards (
           customer_id, reward_level, reward_name, reward_description, earned_date
         ) VALUES (?, ?, ?, ?, NOW())
-      `, [customer_id, referenceCount, rewardName, `${referenceCount}. referans ödülü`, ]);
+      `, [customer_id, referenceCount, rewardName, `${referenceCount}. referans ödülü`,]);
     }
 
-    res.json({ 
+    res.json({
       success: true,
       message: 'Referans başarıyla eklendi',
       referenceCount,

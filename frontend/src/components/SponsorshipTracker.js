@@ -57,27 +57,25 @@ const SponsorshipTracker = () => {
         zIndex: 10
       }}>
         <div style={{
-          width: '80px',
-          height: '80px',
-          background: 'linear-gradient(135deg, #FFD700, #FFA500)',
-          borderRadius: '15px',
+          width: '100px',
+          height: '60px',
+          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+          borderRadius: '10px',
           display: 'flex',
-          flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          boxShadow: '0 5px 15px rgba(255, 215, 0, 0.4)',
-          border: '2px solid rgba(255, 255, 255, 0.2)'
+          boxShadow: '0 5px 15px rgba(0, 0, 0, 0.2)',
+          padding: '5px'
         }}>
-          <div style={{
-            fontSize: '12px',
-            fontWeight: 'bold',
-            color: '#0e2323',
-            textAlign: 'center',
-            lineHeight: '1.2'
-          }}>
-            <div>HOOWELL</div>
-            <div style={{ fontSize: '8px' }}>INNOVATE YOUR LIFE</div>
-          </div>
+          <img 
+            src="/hoowell-logo.png" 
+            alt="HOOWELL Logo"
+            style={{
+              width: '90px',
+              height: '50px',
+              objectFit: 'contain'
+            }}
+          />
         </div>
       </div>
 
@@ -445,27 +443,35 @@ const SponsorshipTracker = () => {
         zIndex: 10
       }}>
         <div style={{
-          width: '80px',
+          width: '100px',
           height: '80px',
-          background: 'linear-gradient(135deg, #FFD700, #FFA500)',
-          borderRadius: '15px',
+          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+          borderRadius: '10px',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          boxShadow: '0 5px 15px rgba(255, 215, 0, 0.4)',
-          border: '2px solid rgba(255, 255, 255, 0.2)'
+          boxShadow: '0 5px 15px rgba(0, 0, 0, 0.2)',
+          padding: '5px'
         }}>
+          <img 
+            src="/hoowell-logo.png" 
+            alt="HOOWELL Logo"
+            style={{
+              width: '80px',
+              height: '40px',
+              objectFit: 'contain',
+              marginBottom: '5px'
+            }}
+          />
           <div style={{
-            fontSize: '10px',
+            fontSize: '8px',
             fontWeight: 'bold',
             color: '#0e2323',
             textAlign: 'center',
             lineHeight: '1.1'
           }}>
-            <div>HOOWELL</div>
-            <div style={{ fontSize: '8px' }}>BİLGİ</div>
-            <div style={{ fontSize: '8px' }}>BANKASI</div>
+            <div>BİLGİ BANKASI</div>
           </div>
         </div>
       </div>

@@ -37,7 +37,22 @@ const Login = () => {
   return (
     <div className="login-container">
       <div className="login-card">
-        <div className="login-logo">HOOWELL</div>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginBottom: '20px'
+        }}>
+          <img 
+            src="/hoowell-logo.png" 
+            alt="HOOWELL Logo"
+            style={{
+              width: '200px',
+              height: '100px',
+              objectFit: 'contain'
+            }}
+          />
+        </div>
         <p className="login-subtitle">INNOVATE YOUR LIFE</p>
         
         <form onSubmit={handleSubmit}>

@@ -265,7 +265,7 @@ const Payment = () => {
             <h4>IBAN Bilgileri</h4>
             <p style={{ backgroundColor: '#f5f5f5', padding: '15px', borderRadius: '8px', fontFamily: 'monospace' }}>
               TR77 0011 1000 0000 0153 1671 66<br/>
-              Alıcı: HOOWELL NETWORK MARKETING LTD. ŞTİ.
+              Alıcı: HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ
             </p>
           </div>
 
@@ -277,19 +277,18 @@ const Payment = () => {
                 value={paymentType}
                 onChange={(e) => setPaymentType(e.target.value)}
               >
-                <option value="education">Eğitim Paketi - ${amounts.usdAmount}</option>
-                <option value="device">Cihaz Paketi - ${amounts.usdAmount}</option>
+                <option value="education">Eğitim Paketi - {amounts.totalAmount?.toLocaleString()} TL</option>
+                <option value="device">Cihaz Paketi - {amounts.totalAmount?.toLocaleString()} TL</option>
               </select>
             </div>
 
             <div style={{ backgroundColor: '#f8f9fa', padding: '15px', borderRadius: '8px', marginBottom: '20px' }}>
               <h4>Ödeme Detayları</h4>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                <div>USD Tutarı: ${amounts.usdAmount}</div>
-                <div>TL Tutarı: ₺{amounts.tryAmount?.toLocaleString()}</div>
-                <div>KDV (%{settings.vat_rate}): ₺{amounts.vatAmount?.toLocaleString()}</div>
-                <div style={{ fontWeight: 'bold', fontSize: '18px', color: '#1a4a3a' }}>
-                  Toplam: ₺{amounts.totalAmount?.toLocaleString()}
+                <div>Net Tutar: {amounts.tryAmount?.toLocaleString()} TL</div>
+                <div>KDV (%{settings.vat_rate}): {amounts.vatAmount?.toLocaleString()} TL</div>
+                <div style={{ fontWeight: 'bold', fontSize: '18px', color: '#1a4a3a', gridColumn: '1 / -1' }}>
+                  Toplam: {amounts.totalAmount?.toLocaleString()} TL (KDV Dahil)
                 </div>
               </div>
             </div>

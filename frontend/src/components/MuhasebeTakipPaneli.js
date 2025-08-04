@@ -71,7 +71,7 @@ const MuhasebeTakipPaneli = () => {
           <div style={{ flex: 1, padding: '10px', textAlign: 'center', color: '#FFD700', borderRight: '1px solid #444' }}>HAK EDİŞ TARİHİ</div>
           <div style={{ flex: 1, padding: '10px', textAlign: 'center', color: '#FFD700', borderRight: '1px solid #444' }}>ÖDEME TARİHİ</div>
           <div style={{ flex: 1, padding: '10px', textAlign: 'center', color: '#FFD700', borderRight: '1px solid #444' }}>KAZANÇ (USD)</div>
-          <div style={{ flex: 1, padding: '10px', textAlign: 'center', color: '#FFD700', borderRight: '1px solid #444' }}>%20 KDV'Lİ KAZANÇ</div>
+          <div style={{ flex: 1, padding: '10px', textAlign: 'center', color: '#FFD700', borderRight: '1px solid #444' }}>STOPAJLI KAZANÇ %20</div>
           <div style={{ flex: 1, padding: '10px', textAlign: 'center', color: '#FFD700', borderRight: '1px solid #444' }}>T. KURU</div>
           <div style={{ flex: 1, padding: '10px', textAlign: 'center', color: '#FFD700', borderRight: '1px solid #444' }}>NET KAZANÇ</div>
           <div style={{ flex: 1, padding: '10px', textAlign: 'center', color: '#FFD700' }}>ÖDEME DURUMU</div>
@@ -101,7 +101,7 @@ const MuhasebeTakipPaneli = () => {
               <div style={{ flex: 1, padding: '8px', textAlign: 'center', color: '#fff', borderRight: '1px solid rgba(255,215,0,0.2)' }}>{row.earn_date}</div>
               <div style={{ flex: 1, padding: '8px', textAlign: 'center', color: '#fff', borderRight: '1px solid rgba(255,215,0,0.2)' }}>{row.payment_date}</div>
               <div style={{ flex: 1, padding: '8px', textAlign: 'center', color: '#fff', borderRight: '1px solid rgba(255,215,0,0.2)' }}>{row.amount_usd} $</div>
-              <div style={{ flex: 1, padding: '8px', textAlign: 'center', color: '#fff', borderRight: '1px solid rgba(255,215,0,0.2)' }}>{row.taxed_amount} $</div>
+              <div style={{ flex: 1, padding: '8px', textAlign: 'center', color: '#fff', borderRight: '1px solid rgba(255,215,0,0.2)' }}>{row.stopaj_amount} $</div>
               <div style={{ flex: 1, padding: '8px', textAlign: 'center', color: '#fff', borderRight: '1px solid rgba(255,215,0,0.2)' }}>{row.exchange_rate} ₺</div>
               <div style={{ flex: 1, padding: '8px', textAlign: 'center', color: '#fff', borderRight: '1px solid rgba(255,215,0,0.2)' }}>{row.net_amount_tl.toLocaleString()} ₺</div>
               <div style={{ 
@@ -151,7 +151,7 @@ const MuhasebeTakipPaneli = () => {
           <div style={{ flex: 1, padding: '10px', textAlign: 'center', color: '#FFD700', borderRight: '1px solid #444' }}>HAK EDİŞ TARİHİ</div>
           <div style={{ flex: 1, padding: '10px', textAlign: 'center', color: '#FFD700', borderRight: '1px solid #444' }}>ÖDEME TARİHİ</div>
           <div style={{ flex: 1, padding: '10px', textAlign: 'center', color: '#FFD700', borderRight: '1px solid #444' }}>KAZANÇ (USD)</div>
-          <div style={{ flex: 1, padding: '10px', textAlign: 'center', color: '#FFD700', borderRight: '1px solid #444' }}>STOPAJLI KAZANÇ %20</div>
+          <div style={{ flex: 1, padding: '10px', textAlign: 'center', color: '#FFD700', borderRight: '1px solid #444' }}>%20 KDV'Lİ KAZANÇ</div>
           <div style={{ flex: 1, padding: '10px', textAlign: 'center', color: '#FFD700', borderRight: '1px solid #444' }}>T. KURU</div>
           <div style={{ flex: 1, padding: '10px', textAlign: 'center', color: '#FFD700', borderRight: '1px solid #444' }}>NET KAZANÇ</div>
           <div style={{ flex: 1, padding: '10px', textAlign: 'center', color: '#FFD700' }}>ÖDEME DURUMU</div>
@@ -181,7 +181,7 @@ const MuhasebeTakipPaneli = () => {
               <div style={{ flex: 1, padding: '8px', textAlign: 'center', color: '#fff', borderRight: '1px solid rgba(255,215,0,0.2)' }}>{row.earn_date}</div>
               <div style={{ flex: 1, padding: '8px', textAlign: 'center', color: '#fff', borderRight: '1px solid rgba(255,215,0,0.2)' }}>{row.payment_date}</div>
               <div style={{ flex: 1, padding: '8px', textAlign: 'center', color: '#fff', borderRight: '1px solid rgba(255,215,0,0.2)' }}>{row.amount_usd} $</div>
-              <div style={{ flex: 1, padding: '8px', textAlign: 'center', color: '#fff', borderRight: '1px solid rgba(255,215,0,0.2)' }}>{row.stopaj_amount} $</div>
+              <div style={{ flex: 1, padding: '8px', textAlign: 'center', color: '#fff', borderRight: '1px solid rgba(255,215,0,0.2)' }}>{row.taxed_amount} $</div>
               <div style={{ flex: 1, padding: '8px', textAlign: 'center', color: '#fff', borderRight: '1px solid rgba(255,215,0,0.2)' }}>{row.exchange_rate} ₺</div>
               <div style={{ flex: 1, padding: '8px', textAlign: 'center', color: '#fff', borderRight: '1px solid rgba(255,215,0,0.2)' }}>{row.net_amount_tl.toLocaleString()} ₺</div>
               <div style={{ 
@@ -215,32 +215,33 @@ const MuhasebeTakipPaneli = () => {
       margin: '0 -20px',
       position: 'relative'
     }}>
-      {/* Hoowell Logo - Sağ Üst */}
+      {/* HOOWELL Logo - Sağ Üst */}
       <div style={{
         position: 'absolute',
         top: '20px',
         right: '20px',
-        width: '80px',
-        height: '80px',
-        background: 'linear-gradient(135deg, #FFD700, #FFA500)',
-        borderRadius: '15px',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        boxShadow: '0 5px 15px rgba(255, 215, 0, 0.4)',
-        border: '2px solid rgba(255, 255, 255, 0.2)',
         zIndex: 10
       }}>
         <div style={{
-          fontSize: '12px',
-          fontWeight: 'bold',
-          color: '#0e2323',
-          textAlign: 'center',
-          lineHeight: '1.2'
+          width: '100px',
+          height: '60px',
+          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+          borderRadius: '10px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: '0 5px 15px rgba(0, 0, 0, 0.2)',
+          padding: '5px'
         }}>
-          <div>HOOWELL</div>
-          <div style={{ fontSize: '8px' }}>INNOVATE YOUR LIFE</div>
+          <img 
+            src="/hoowell-logo.png" 
+            alt="HOOWELL Logo"
+            style={{
+              width: '90px',
+              height: '50px',
+              objectFit: 'contain'
+            }}
+          />
         </div>
       </div>
 
