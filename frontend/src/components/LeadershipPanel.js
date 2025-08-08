@@ -27,9 +27,15 @@ const LeadershipPanel = () => {
       total_action_points: 0,
       target_points: 5,
       remaining_points: 5
-    }
+    },
+    access_level: 'bronze',
+    has_presidency_access: false
   });
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  // Suppress unused variable warnings temporarily
+  console.log('Leadership state:', { loading, error });
 
   useEffect(() => {
     fetchLeadershipData();
@@ -37,6 +43,8 @@ const LeadershipPanel = () => {
 
   const fetchLeadershipData = async () => {
     try {
+      setLoading(true);
+      setError(null);
       const response = await axios.get('/api/leadership/pools', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -45,6 +53,11 @@ const LeadershipPanel = () => {
       setLeadershipData(response.data);
     } catch (error) {
       console.error('Leadership data fetch error:', error);
+      if (error.response?.status === 403) {
+        setError('Bu özelliğe erişim yetkiniz yok. Gold seviye ve üzeri gereklidir.');
+      } else {
+        setError('Liderlik havuzu verileri yüklenirken hata oluştu. Lütfen sayfayı yenileyin.');
+      }
     } finally {
       setLoading(false);
     }

@@ -147,6 +147,19 @@ const checkPaymentBlock = async (req, res, next) => {
   }
 };
 
+// PayTR Callback Endpoint (PayTR başvurusu için gerekli)
+app.post('/api/paytr/callback', (req, res) => {
+  try {
+    // PayTR'den gelen callback'leri işleyecek endpoint
+    // Şu an için basit bir response döndürüyoruz
+    console.log('PayTR Callback received:', req.body);
+    res.status(200).send('OK');
+  } catch (error) {
+    console.error('PayTR callback error:', error);
+    res.status(500).send('ERROR');
+  }
+});
+
 // Routes will be added here
 
 // Network Tree Routes
@@ -400,20 +413,20 @@ const checkDopingPromotionMultiplier = async (userId) => {
       'SELECT created_at FROM users WHERE id = ?',
       [userId]
     );
-    
+
     if (!userInfo[0]) return 1;
-    
+
     const registrationDate = new Date(userInfo[0].created_at);
     const now = new Date();
     const daysSinceRegistration = Math.floor((now - registrationDate) / (1000 * 60 * 60 * 24));
-    
+
     // Get personal sales count
     const [personalSales] = await db.promise().execute(`
       SELECT COUNT(*) as count
       FROM customers c
       WHERE c.created_by = ? AND c.selected_product = 'device'
     `, [userId]);
-    
+
     // Get team sales count
     const [teamSales] = await db.promise().execute(`
       SELECT COUNT(*) as count
@@ -421,27 +434,27 @@ const checkDopingPromotionMultiplier = async (userId) => {
       INNER JOIN users u ON c.created_by = u.id
       WHERE u.created_by = ? AND c.selected_product = 'device'
     `, [userId]);
-    
+
     // Get personal partners count
     const [personalPartners] = await db.promise().execute(`
       SELECT COUNT(*) as count
       FROM users u
       WHERE u.created_by = ? AND u.role = 'partner'
     `, [userId]);
-    
+
     const totalSales = personalSales[0].count + teamSales[0].count;
     const totalPartners = personalPartners[0].count;
-    
+
     // Stage 1: First 60 days - 40 sales + 7 partners = 2x multiplier
     if (daysSinceRegistration <= 60 && totalSales >= 40 && totalPartners >= 7) {
       return 2;
     }
-    
+
     // Stage 2: 61-120 days - 80 sales + 15 partners = 2x multiplier
     if (daysSinceRegistration > 60 && daysSinceRegistration <= 120 && totalSales >= 80 && totalPartners >= 15) {
       return 2;
     }
-    
+
     return 1; // No multiplier
   } catch (error) {
     console.error('Check doping promotion multiplier error:', error);
@@ -783,7 +796,10 @@ app.post('/api/customers', verifyToken, async (req, res) => {
       product_vat,
       total_amount,
       contract1_accepted,
-      contract2_accepted
+      contract2_accepted,
+      contract3_accepted, // Mesafeli Satış Sözleşmesi
+      contract4_accepted, // Ön Bilgilendirme Formu
+      contract5_accepted  // Elektronik Ticaret Bilgilendirmesi
     } = req.body;
 
     // Generate customer ID
@@ -799,13 +815,15 @@ app.post('/api/customers', verifyToken, async (req, res) => {
         delivery_address, company_name, tax_office, tax_no, authorized_person,
         authorized_email, authorized_phone, selected_product, product_price,
         product_vat, total_amount, contract1_accepted, contract2_accepted,
+        contract3_accepted, contract4_accepted, contract5_accepted,
         created_by, status
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `, [
       customerId, registration_type, first_name, last_name, tc_no, email, phone,
       delivery_address, company_name, tax_office, tax_no, authorized_person,
       authorized_email, authorized_phone, selected_product, product_price,
       product_vat, total_amount, contract1_accepted, contract2_accepted,
+      contract3_accepted, contract4_accepted, contract5_accepted,
       req.user.id, 'confirmed'
     ]);
 
@@ -1001,38 +1019,38 @@ app.get('/api/career/bonuses', verifyToken, async (req, res) => {
 app.get('/api/doping-promotion/progress', verifyToken, async (req, res) => {
   try {
     const userId = req.user.id;
-    
+
     // Get user registration date
     const [userInfo] = await db.promise().execute(
       'SELECT created_at FROM users WHERE id = ?',
       [userId]
     );
-    
+
     if (!userInfo[0]) {
       return res.status(404).json({ message: 'User not found' });
     }
-    
+
     const registrationDate = new Date(userInfo[0].created_at);
     const now = new Date();
     const daysSinceRegistration = Math.floor((now - registrationDate) / (1000 * 60 * 60 * 24));
-    
+
     // Calculate stage dates
     const stage1Start = new Date(registrationDate);
     const stage1End = new Date(registrationDate);
     stage1End.setDate(stage1End.getDate() + 60);
-    
+
     const stage2Start = new Date(registrationDate);
     stage2Start.setDate(stage2Start.getDate() + 61);
     const stage2End = new Date(registrationDate);
     stage2End.setDate(stage2End.getDate() + 120);
-    
+
     // Get personal sales (direct sales by user)
     const [personalSales] = await db.promise().execute(`
       SELECT COUNT(*) as count
       FROM customers c
       WHERE c.created_by = ? AND c.selected_product = 'device'
     `, [userId]);
-    
+
     // Get team sales (sales by user's partners)
     const [teamSales] = await db.promise().execute(`
       SELECT COUNT(*) as count
@@ -1040,20 +1058,20 @@ app.get('/api/doping-promotion/progress', verifyToken, async (req, res) => {
       INNER JOIN users u ON c.created_by = u.id
       WHERE u.created_by = ? AND c.selected_product = 'device'
     `, [userId]);
-    
+
     // Get personal partners (direct partners registered by user)
     const [personalPartners] = await db.promise().execute(`
       SELECT COUNT(*) as count
       FROM users u
       WHERE u.created_by = ? AND u.role = 'partner'
     `, [userId]);
-    
+
     // Calculate stage 1 progress
     const stage1PersonalSales = personalSales[0].count;
     const stage1TeamSales = teamSales[0].count;
     const stage1TotalSales = stage1PersonalSales + stage1TeamSales;
     const stage1Partners = personalPartners[0].count;
-    
+
     // Calculate stage 1 KKP bonus
     let stage1KKPBonus = 0;
     if (daysSinceRegistration <= 60 && stage1TotalSales >= 40 && stage1Partners >= 7) {
@@ -1069,10 +1087,10 @@ app.get('/api/doping-promotion/progress', verifyToken, async (req, res) => {
         FROM customers c
         WHERE c.created_by = ? AND c.created_at BETWEEN ? AND ?
       `, [userId, registrationDate, stage1End]);
-      
+
       stage1KKPBonus = stage1KKP[0].total_kkp; // This will be doubled
     }
-    
+
     // Calculate stage 2 progress (similar logic for 61-120 days)
     let stage2KKPBonus = 0;
     if (daysSinceRegistration > 60 && daysSinceRegistration <= 120) {
@@ -1089,11 +1107,11 @@ app.get('/api/doping-promotion/progress', verifyToken, async (req, res) => {
           FROM customers c
           WHERE c.created_by = ? AND c.created_at BETWEEN ? AND ?
         `, [userId, stage2Start, stage2End]);
-        
+
         stage2KKPBonus = stage2KKP[0].total_kkp;
       }
     }
-    
+
     const dopingData = {
       etap1: {
         baslangic_tarihi: stage1Start.toLocaleDateString('tr-TR'),
@@ -1126,9 +1144,9 @@ app.get('/api/doping-promotion/progress', verifyToken, async (req, res) => {
       days_since_registration: daysSinceRegistration,
       current_stage: daysSinceRegistration <= 60 ? 1 : daysSinceRegistration <= 120 ? 2 : 0
     };
-    
+
     res.json(dopingData);
-    
+
   } catch (error) {
     console.error('Doping promotion progress error:', error);
     res.status(500).json({ message: 'Server error' });
@@ -3098,3 +3116,346 @@ app.post('/api/admin/create-sponsorship-table', verifyToken, verifyAdmin, async 
 });
 
 // Calculate and update sponsorship earnings
+
+// ==================== EKSİK API ENDPOINT'LERİ ====================
+
+// Team Tracker API
+app.get('/api/team/tracker', verifyToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Get user's career level first
+    const [userInfo] = await db.promise().execute(
+      'SELECT career_level FROM users WHERE id = ?',
+      [userId]
+    );
+
+    const userCareerLevel = userInfo[0]?.career_level || 'bronze';
+
+    // Get user's team members (direct partners)
+    const [teamMembers] = await db.promise().execute(`
+      SELECT 
+        u.id,
+        u.first_name,
+        u.last_name,
+        u.sponsor_id,
+        u.career_level,
+        u.total_kkp,
+        u.created_at,
+        u.phone,
+        u.email,
+        COALESCE(up.total_sales, 0) as total_sales,
+        COALESCE(up.monthly_sales, 0) as monthly_sales,
+        COALESCE(up.is_active_this_month, FALSE) as is_active_this_month,
+        -- Calculate franchise percentage based on user's level
+        CASE 
+          WHEN ? = 'silver' THEN 2
+          WHEN ? = 'gold' THEN 4
+          WHEN ? = 'star_leader' THEN 6
+          WHEN ? = 'super_star_leader' THEN 8
+          WHEN ? = 'presidents_team' THEN 10
+          ELSE 0
+        END as franchise_percentage
+      FROM users u
+      LEFT JOIN user_profiles up ON u.id = up.user_id
+      WHERE u.created_by = ? AND u.role = 'partner'
+      ORDER BY u.created_at DESC
+    `, [userCareerLevel, userCareerLevel, userCareerLevel, userCareerLevel, userCareerLevel, userId]);
+
+    // Calculate team statistics
+    const teamStats = {
+      total_members: teamMembers.length,
+      active_members: teamMembers.filter(member => member.is_active_this_month).length,
+      total_team_sales: teamMembers.reduce((sum, member) => sum + parseFloat(member.total_sales || 0), 0),
+      monthly_team_sales: teamMembers.reduce((sum, member) => sum + parseFloat(member.monthly_sales || 0), 0),
+      franchise_percentage: teamMembers[0]?.franchise_percentage || 0
+    };
+
+    res.json({
+      team_members: teamMembers,
+      team_stats: teamStats
+    });
+
+  } catch (error) {
+    console.error('Team tracker error:', error);
+    res.status(500).json({ message: 'Sunucu hatası' });
+  }
+});
+
+// Leadership Pools API
+app.get('/api/leadership/pools', verifyToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const currentYear = new Date().getFullYear();
+
+    // Check if user has access (Gold and above)
+    const [user] = await db.promise().execute(
+      'SELECT career_level FROM users WHERE id = ?',
+      [userId]
+    );
+
+    if (!user[0]) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const userLevel = user[0].career_level;
+    const allowedLevels = ['gold', 'star_leader', 'super_star_leader', 'presidents_team', 'country_distributor'];
+
+    if (!allowedLevels.includes(userLevel)) {
+      return res.status(403).json({ message: 'Bu özelliğe erişim yetkiniz yok. Gold seviye ve üzeri gereklidir.' });
+    }
+
+    // Calculate yearly revenue for pool calculation
+    const [revenueResult] = await db.promise().execute(`
+      SELECT SUM(total_amount) as yearly_revenue 
+      FROM payments 
+      WHERE status = 'approved' 
+      AND YEAR(created_at) = ?
+    `, [currentYear]);
+
+    const yearlyRevenue = revenueResult[0]?.yearly_revenue || 0;
+
+    // Get user's activities for current year
+    const [userActivities] = await db.promise().execute(`
+      SELECT 
+        COUNT(CASE WHEN sale_type = 'product_sale' THEN 1 END) as personal_sales,
+        COUNT(CASE WHEN sale_type = 'partner_registration' THEN 1 END) as activated_partners
+      FROM sales_tracking 
+      WHERE seller_id = ? AND YEAR(sale_date) = ?
+    `, [userId, currentYear]);
+
+    const personalSales = userActivities[0]?.personal_sales || 0;
+    const activatedPartners = userActivities[0]?.activated_partners || 0;
+    const totalActionPoints = personalSales + activatedPartners;
+
+    // Leadership Pool (2% of yearly revenue)
+    const leadershipPoolTotal = yearlyRevenue * 0.02;
+    const leadershipPoolMonthly = leadershipPoolTotal / 12;
+
+    // Presidency Pool (1% of yearly revenue) - Only for Presidents Team and above
+    const presidencyPoolTotal = yearlyRevenue * 0.01;
+    const presidencyPoolMonthly = presidencyPoolTotal / 12;
+
+    // Calculate estimated earnings (simplified calculation)
+    const totalParticipants = 100; // This should be calculated from actual data
+    const pointValue = leadershipPoolMonthly / Math.max(totalParticipants, 1);
+    const estimatedLeadershipEarning = totalActionPoints * pointValue;
+
+    const leadershipData = {
+      leadership_pool: {
+        total_amount: leadershipPoolTotal,
+        monthly_amount: leadershipPoolMonthly,
+        user_action_points: totalActionPoints,
+        total_action_points: totalParticipants * 5, // Estimated
+        point_value: pointValue,
+        estimated_earning: estimatedLeadershipEarning
+      },
+      presidency_pool: {
+        total_amount: presidencyPoolTotal,
+        monthly_amount: presidencyPoolMonthly,
+        user_action_points: totalActionPoints,
+        total_action_points: totalParticipants * 3, // Estimated
+        point_value: presidencyPoolMonthly / Math.max(totalParticipants * 3, 1),
+        estimated_earning: totalActionPoints * (presidencyPoolMonthly / Math.max(totalParticipants * 3, 1))
+      },
+      user_activities: {
+        personal_sales: personalSales,
+        activated_partners: activatedPartners,
+        total_action_points: totalActionPoints,
+        target_points: 5,
+        remaining_points: Math.max(0, 5 - totalActionPoints)
+      },
+      access_level: userLevel,
+      has_presidency_access: ['presidents_team', 'country_distributor'].includes(userLevel)
+    };
+
+    res.json(leadershipData);
+
+  } catch (error) {
+    console.error('Leadership pools error:', error);
+    res.status(500).json({ message: 'Sunucu hatası' });
+  }
+});
+
+// Global Travel Data API - İyileştirilmiş versiyon
+app.get('/api/global-travel/data', verifyToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const currentYear = new Date().getFullYear();
+
+    // Get user's sales data for current year
+    const [salesData] = await db.promise().execute(`
+      SELECT 
+        SUM(CASE WHEN sale_type = 'product_sale' THEN sale_amount ELSE 0 END) as total_sales_tl,
+        COUNT(CASE WHEN sale_type = 'product_sale' THEN 1 END) as total_sales_count
+      FROM sales_tracking 
+      WHERE seller_id = ? AND YEAR(sale_date) = ?
+    `, [userId, currentYear]);
+
+    // Get user's partnership data
+    const [partnershipData] = await db.promise().execute(`
+      SELECT COUNT(*) as active_partners 
+      FROM users 
+      WHERE created_by = ? AND is_active = TRUE
+    `, [userId]);
+
+    const totalSalesTL = salesData[0]?.total_sales_tl || 0;
+    const totalSalesCount = salesData[0]?.total_sales_count || 0;
+    const activePartners = partnershipData[0]?.active_partners || 0;
+
+    // Convert TL to USD for comparison (assuming 1 USD = 40 TL)
+    const totalSalesUSD = totalSalesTL / 40;
+
+    // Travel targets
+    const sales1Target = 40000; // USD
+    const sales2Target = 65000; // USD
+    const partnershipTarget = 5;
+
+    const travelData = {
+      startDate: 'EYLÜL 2025',
+      endDate: 'AĞUSTOS 2026',
+      sales1: {
+        target: sales1Target,
+        current: Math.min(totalSalesUSD, sales1Target),
+        remaining: Math.max(0, sales1Target - totalSalesUSD),
+        percentage: Math.min(100, (totalSalesUSD / sales1Target) * 100)
+      },
+      sales2: {
+        target: sales2Target,
+        current: Math.min(totalSalesUSD, sales2Target),
+        remaining: Math.max(0, sales2Target - totalSalesUSD),
+        percentage: Math.min(100, (totalSalesUSD / sales2Target) * 100)
+      },
+      partnership: {
+        target: partnershipTarget,
+        current: Math.min(activePartners, partnershipTarget),
+        remaining: Math.max(0, partnershipTarget - activePartners),
+        percentage: Math.min(100, (activePartners / partnershipTarget) * 100)
+      },
+      total_sales_tl: totalSalesTL,
+      total_sales_usd: totalSalesUSD,
+      total_sales_count: totalSalesCount,
+      is_qualified_level1: totalSalesUSD >= sales1Target && activePartners >= partnershipTarget,
+      is_qualified_level2: totalSalesUSD >= sales2Target && activePartners >= partnershipTarget
+    };
+
+    res.json(travelData);
+
+  } catch (error) {
+    console.error('Global travel data error:', error);
+    res.status(500).json({ message: 'Sunucu hatası' });
+  }
+});
+
+// Doping Promotion Progress API - İyileştirilmiş versiyon
+app.get('/api/doping-promotion/progress', verifyToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Get user registration date
+    const [userInfo] = await db.promise().execute(
+      'SELECT created_at FROM users WHERE id = ?',
+      [userId]
+    );
+
+    if (!userInfo[0]) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const registrationDate = new Date(userInfo[0].created_at);
+    const now = new Date();
+    const daysSinceRegistration = Math.floor((now - registrationDate) / (1000 * 60 * 60 * 24));
+
+    // Get user's sales and partnership data
+    const [salesData] = await db.promise().execute(`
+      SELECT COUNT(*) as device_sales
+      FROM customers c
+      WHERE c.created_by = ? AND c.selected_product = 'device'
+    `, [userId]);
+
+    const [teamSalesData] = await db.promise().execute(`
+      SELECT COUNT(*) as team_device_sales
+      FROM customers c
+      INNER JOIN users u ON c.created_by = u.id
+      WHERE u.created_by = ? AND c.selected_product = 'device'
+    `, [userId]);
+
+    const [partnerData] = await db.promise().execute(`
+      SELECT COUNT(*) as total_partners
+      FROM users u
+      WHERE u.created_by = ? AND u.role = 'partner'
+    `, [userId]);
+
+    const personalSales = salesData[0]?.device_sales || 0;
+    const teamSales = teamSalesData[0]?.team_device_sales || 0;
+    const totalSales = personalSales + teamSales;
+    const totalPartners = partnerData[0]?.total_partners || 0;
+
+    // Calculate stages
+    const etap1 = {
+      baslangic_tarihi: new Date(registrationDate).toLocaleDateString('tr-TR'),
+      bitis_tarihi: new Date(registrationDate.getTime() + (60 * 24 * 60 * 60 * 1000)).toLocaleDateString('tr-TR'),
+      hedef_satis: 40,
+      yapilan_satis: Math.min(totalSales, 40),
+      kalan_satis: Math.max(0, 40 - totalSales),
+      hedef_ortak: 7,
+      yapilan_ortak: Math.min(totalPartners, 7),
+      kalan_ortak: Math.max(0, 7 - totalPartners),
+      kazanilacak_puan: totalSales * 2, // 2x multiplier
+      tamamlandi: daysSinceRegistration <= 60 && totalSales >= 40 && totalPartners >= 7,
+      aktif: daysSinceRegistration <= 60,
+      kalan_gun: Math.max(0, 60 - daysSinceRegistration)
+    };
+
+    const etap2 = {
+      baslangic_tarihi: new Date(registrationDate.getTime() + (61 * 24 * 60 * 60 * 1000)).toLocaleDateString('tr-TR'),
+      bitis_tarihi: new Date(registrationDate.getTime() + (120 * 24 * 60 * 60 * 1000)).toLocaleDateString('tr-TR'),
+      hedef_satis: 80,
+      yapilan_satis: Math.min(totalSales, 80),
+      kalan_satis: Math.max(0, 80 - totalSales),
+      hedef_ortak: 15,
+      yapilan_ortak: Math.min(totalPartners, 15),
+      kalan_ortak: Math.max(0, 15 - totalPartners),
+      kazanilacak_puan: totalSales * 2, // 2x multiplier
+      tamamlandi: daysSinceRegistration > 60 && daysSinceRegistration <= 120 && totalSales >= 80 && totalPartners >= 15,
+      aktif: daysSinceRegistration > 60 && daysSinceRegistration <= 120,
+      kalan_gun: daysSinceRegistration > 60 ? Math.max(0, 120 - daysSinceRegistration) : 0
+    };
+
+    // Determine current stage
+    let currentStage = 0;
+    if (daysSinceRegistration <= 60) {
+      currentStage = 1;
+    } else if (daysSinceRegistration <= 120) {
+      currentStage = 2;
+    }
+
+    // Calculate current multiplier
+    let currentMultiplier = 1;
+    if (etap1.tamamlandi || etap2.tamamlandi) {
+      currentMultiplier = 2;
+    }
+
+    const dopingData = {
+      etap1,
+      etap2,
+      days_since_registration: daysSinceRegistration,
+      current_stage: currentStage,
+      current_multiplier: currentMultiplier,
+      total_sales: totalSales,
+      total_partners: totalPartners,
+      personal_sales: personalSales,
+      team_sales: teamSales,
+      registration_date: registrationDate.toLocaleDateString('tr-TR')
+    };
+
+    res.json(dopingData);
+
+  } catch (error) {
+    console.error('Doping promotion progress error:', error);
+    res.status(500).json({ message: 'Sunucu hatası' });
+  }
+});
+
+// ==================== DUPLICATE API'LERİ TEMİZLEME ====================
+// Not: Duplicate API'ler manuel olarak temizlenecek

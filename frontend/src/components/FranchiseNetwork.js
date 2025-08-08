@@ -368,15 +368,12 @@ const FranchiseNetwork = () => {
           FRANCHISE AĞI YAPISI
         </h1>
         
-        {/* Hoowell Logo */}
+        {/* HOOWELL Logo - Sağ Üst */}
         <div style={{
           position: 'absolute',
           top: '20px',
           right: '20px',
-          backgroundColor: 'rgba(255, 255, 255, 0.95)',
-          borderRadius: '10px',
-          padding: '5px',
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+          zIndex: 10
         }}>
           <img 
             src="/hoowell-logo.png" 

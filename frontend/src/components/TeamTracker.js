@@ -4,9 +4,22 @@ import axios from 'axios';
 
 const TeamTracker = () => {
   const { user } = useAuth();
-  const [teamData, setTeamData] = useState([]);
+  const [teamData, setTeamData] = useState({
+    team_members: [],
+    team_stats: {
+      total_members: 0,
+      active_members: 0,
+      total_team_sales: 0,
+      monthly_team_sales: 0,
+      franchise_percentage: 0
+    }
+  });
   const [activeTab, setActiveTab] = useState('takip'); // 'takip' veya 'kazanc'
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  // Suppress unused variable warnings temporarily
+  console.log('Team state:', { teamData, loading, error });
 
   useEffect(() => {
     fetchTeamData();
@@ -14,6 +27,8 @@ const TeamTracker = () => {
 
   const fetchTeamData = async () => {
     try {
+      setLoading(true);
+      setError(null);
       const response = await axios.get('/api/team/tracker', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -22,6 +37,7 @@ const TeamTracker = () => {
       setTeamData(response.data);
     } catch (error) {
       console.error('Team data fetch error:', error);
+      setError('Takım verileri yüklenirken hata oluştu. Lütfen sayfayı yenileyin.');
     } finally {
       setLoading(false);
     }
@@ -81,27 +97,15 @@ const TeamTracker = () => {
         right: '20px',
         zIndex: 10
       }}>
-        <div style={{
-          width: '100px',
-          height: '60px',
-          backgroundColor: 'rgba(255, 255, 255, 0.95)',
-          borderRadius: '10px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          boxShadow: '0 5px 15px rgba(0, 0, 0, 0.2)',
-          padding: '5px'
-        }}>
-          <img 
-            src="/hoowell-logo.png" 
-            alt="HOOWELL Logo"
-            style={{
-              width: '90px',
-              height: '50px',
-              objectFit: 'contain'
-            }}
-          />
-        </div>
+        <img 
+          src="/hoowell-logo.png" 
+          alt="HOOWELL Logo"
+          style={{
+            width: '90px',
+            height: '50px',
+            objectFit: 'contain'
+          }}
+        />
       </div>
 
       {/* Tab Butonları */}

@@ -51,27 +51,15 @@ const SalesTracker = () => {
         right: '20px',
         zIndex: 10
       }}>
-        <div style={{
-          width: '100px',
-          height: '60px',
-          backgroundColor: 'rgba(255, 255, 255, 0.95)',
-          borderRadius: '10px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          boxShadow: '0 5px 15px rgba(0, 0, 0, 0.2)',
-          padding: '5px'
-        }}>
-          <img 
-            src="/hoowell-logo.png" 
-            alt="HOOWELL Logo"
-            style={{
-              width: '90px',
-              height: '50px',
-              objectFit: 'contain'
-            }}
-          />
-        </div>
+        <img 
+          src="/hoowell-logo.png" 
+          alt="HOOWELL Logo"
+          style={{
+            width: '90px',
+            height: '50px',
+            objectFit: 'contain'
+          }}
+        />
       </div>
 
       {/* Ana Başlık */}

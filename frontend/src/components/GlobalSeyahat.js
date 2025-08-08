@@ -3,12 +3,21 @@ import axios from 'axios';
 
 const GlobalSeyahat = () => {
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  // Suppress unused variable warnings temporarily
+  console.log('Global travel state:', { loading, error });
   const [travelData, setTravelData] = useState({
     startDate: 'EYLÜL 2025',
     endDate: 'AĞUSTOS 2026',
-    sales1: { target: 40000, current: 0, remaining: 40000 },
-    sales2: { target: 65000, current: 0, remaining: 65000 },
-    partnership: { target: 5, current: 0, remaining: 5 }
+    sales1: { target: 40000, current: 0, remaining: 40000, percentage: 0 },
+    sales2: { target: 65000, current: 0, remaining: 65000, percentage: 0 },
+    partnership: { target: 5, current: 0, remaining: 5, percentage: 0 },
+    total_sales_tl: 0,
+    total_sales_usd: 0,
+    total_sales_count: 0,
+    is_qualified_level1: false,
+    is_qualified_level2: false
   });
 
   useEffect(() => {
@@ -17,6 +26,8 @@ const GlobalSeyahat = () => {
 
   const fetchTravelData = async () => {
     try {
+      setLoading(true);
+      setError(null);
       const response = await axios.get('/api/global-travel/data', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -25,6 +36,7 @@ const GlobalSeyahat = () => {
       setTravelData(response.data);
     } catch (error) {
       console.error('Global travel data fetch error:', error);
+      setError('Global seyahat verileri yüklenirken hata oluştu. Lütfen sayfayı yenileyin.');
     } finally {
       setLoading(false);
     }
@@ -59,15 +71,6 @@ const GlobalSeyahat = () => {
         position: 'absolute',
         top: '20px',
         right: '20px',
-        width: '100px',
-        height: '60px',
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        borderRadius: '10px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        boxShadow: '0 5px 15px rgba(0, 0, 0, 0.2)',
-        padding: '5px',
         zIndex: 10
       }}>
         <img 

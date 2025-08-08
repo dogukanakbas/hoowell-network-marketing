@@ -43,20 +43,11 @@ const AdminCompanyManagement = () => {
       padding: '20px',
       margin: '0 -20px'
     }}>
-      {/* Hoowell Logo - Sağ Üst */}
+      {/* HOOWELL Logo - Sağ Üst */}
       <div style={{
         position: 'absolute',
         top: '20px',
         right: '20px',
-        width: '100px',
-        height: '60px',
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        borderRadius: '10px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        boxShadow: '0 5px 15px rgba(0, 0, 0, 0.2)',
-        padding: '5px',
         zIndex: 10
       }}>
         <img 

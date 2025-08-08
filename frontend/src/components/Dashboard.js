@@ -11,9 +11,17 @@ const Dashboard = () => {
     monthlyEarnings: 0,
     pendingCommissions: 0
   });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Responsive state
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  
+  // Modal state for fullscreen image
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  // Suppress unused variable warnings temporarily
+  console.log('Dashboard state:', { loading, error });
 
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
@@ -21,17 +29,42 @@ const Dashboard = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // ESC tuşu ile modal kapatma
+  useEffect(() => {
+    const handleEscKey = (event) => {
+      if (event.key === 'Escape' && isModalOpen) {
+        setIsModalOpen(false);
+      }
+    };
+
+    if (isModalOpen) {
+      document.addEventListener('keydown', handleEscKey);
+      // Body scroll'unu engelle
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscKey);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isModalOpen]);
+
   // Responsive breakpoints
   const isMobile = windowWidth <= 768;
   const isTablet = windowWidth > 768 && windowWidth <= 1024;
-  const isDesktop = windowWidth > 1024;
+  // const isDesktop = windowWidth > 1024; // Temporarily commented out
 
   const fetchDashboardData = useCallback(async () => {
     try {
+      setLoading(true);
+      setError(null);
       const statsResponse = await axios.get('/api/dashboard/stats');
       setStats(statsResponse.data);
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
+      setError('Dashboard verileri yüklenirken hata oluştu. Lütfen sayfayı yenileyin.');
+    } finally {
+      setLoading(false);
     }
   }, []);
 
@@ -183,20 +216,107 @@ const Dashboard = () => {
           gap: isMobile ? '20px' : '25px',
           order: isMobile ? 1 : 0
         }}>
-          {/* Ana Promosyon Görseli - Responsive */}
-          <div style={{
-            width: isMobile ? '100%' : isTablet ? '400px' : '500px',
-            height: isMobile ? '200px' : isTablet ? '220px' : '280px',
-            maxWidth: isMobile ? '350px' : 'none',
-            backgroundImage: 'url(./anasayfa.jpeg)',
-            backgroundSize: 'contain',
-            backgroundRepeat: 'no-repeat',
-            backgroundPosition: 'center',
-            borderRadius: isMobile ? '12px' : '15px',
-            border: `${isMobile ? '2px' : '3px'} solid #FFD700`,
-            boxShadow: '0 15px 40px rgba(255, 215, 0, 0.3)',
-            backgroundColor: 'rgba(255, 215, 0, 0.1)'
-          }}>
+          {/* Ana Promosyon Görseli - Responsive ve Tıklanabilir */}
+          <div 
+            onClick={() => setIsModalOpen(true)}
+            style={{
+              width: isMobile ? '100%' : isTablet ? '600px' : windowWidth > 1600 ? '900px' : windowWidth > 1400 ? '800px' : '700px',
+              height: isMobile ? '200px' : isTablet ? '350px' : windowWidth > 1600 ? '520px' : windowWidth > 1400 ? '460px' : '400px',
+              maxWidth: isMobile ? '350px' : 'none',
+              backgroundImage: 'url(./anasayfa.jpeg)',
+              backgroundSize: 'contain',
+              backgroundRepeat: 'no-repeat',
+              backgroundPosition: 'center',
+              borderRadius: isMobile ? '12px' : '15px',
+              border: `${isMobile ? '2px' : '3px'} solid #FFD700`,
+              boxShadow: '0 15px 40px rgba(255, 215, 0, 0.3)',
+              backgroundColor: 'rgba(255, 215, 0, 0.1)',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              position: 'relative'
+            }}
+            onMouseEnter={(e) => {
+              if (!isMobile) {
+                e.target.style.transform = 'scale(1.02)';
+                e.target.style.boxShadow = '0 20px 50px rgba(255, 215, 0, 0.4)';
+                // Büyütme ikonunu göster
+                const zoomIcon = e.target.querySelector('.zoom-icon');
+                if (zoomIcon) zoomIcon.style.opacity = '1';
+                // Tam ekran yazısını göster
+                const fullscreenText = e.target.querySelector('.fullscreen-text');
+                if (fullscreenText) fullscreenText.style.opacity = '1';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!isMobile) {
+                e.target.style.transform = 'scale(1)';
+                e.target.style.boxShadow = '0 15px 40px rgba(255, 215, 0, 0.3)';
+                // Büyütme ikonunu gizle
+                const zoomIcon = e.target.querySelector('.zoom-icon');
+                if (zoomIcon) zoomIcon.style.opacity = '0';
+                // Tam ekran yazısını gizle
+                const fullscreenText = e.target.querySelector('.fullscreen-text');
+                if (fullscreenText) fullscreenText.style.opacity = '0';
+              }
+            }}
+          >
+            {/* Büyütme İkonu */}
+            <div style={{
+              position: 'absolute',
+              top: '15px',
+              right: '15px',
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              color: '#FFD700',
+              borderRadius: '50%',
+              width: '50px',
+              height: '50px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '20px',
+              opacity: isMobile ? 1 : 0,
+              transition: 'all 0.3s ease',
+              backdropFilter: 'blur(5px)',
+              border: '2px solid rgba(255, 215, 0, 0.5)',
+              cursor: 'pointer'
+            }}
+            className="zoom-icon"
+            onMouseEnter={(e) => {
+              e.target.style.transform = 'scale(1.1)';
+              e.target.style.backgroundColor = 'rgba(255, 215, 0, 0.9)';
+              e.target.style.color = '#000';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = 'scale(1)';
+              e.target.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+              e.target.style.color = '#FFD700';
+            }}
+            >
+              🔍
+            </div>
+
+            {/* Tam Ekran Göster Yazısı */}
+            <div style={{
+              position: 'absolute',
+              bottom: '15px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              color: '#FFD700',
+              padding: '8px 16px',
+              borderRadius: '20px',
+              fontSize: '12px',
+              fontWeight: 'bold',
+              opacity: isMobile ? 1 : 0,
+              transition: 'opacity 0.3s ease',
+              backdropFilter: 'blur(5px)',
+              border: '1px solid rgba(255, 215, 0, 0.3)',
+              whiteSpace: 'nowrap'
+            }}
+            className="fullscreen-text"
+            >
+              📱 Tam Ekran İçin Tıklayın
+            </div>
           </div>
 
           {/* Alt Butonlar - Responsive */}
@@ -356,7 +476,7 @@ const Dashboard = () => {
               {((stats.totalCommission || 0) * 40).toLocaleString()} TL
             </div>
             <Link 
-              to="/sponsorluk-takip"
+              to="/muhasebe-takip-paneli"
               style={{
                 display: 'inline-block',
                 marginTop: '10px',
@@ -464,6 +584,145 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Tam Ekran Modal */}
+      {isModalOpen && (
+        <div 
+          className="modal-overlay"
+          style={{ padding: '20px' }}
+          onClick={() => setIsModalOpen(false)}
+        >
+          {/* Modal İçeriği */}
+          <div 
+            className="modal-content"
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Kapatma Butonu */}
+            <button
+              className="modal-close-btn"
+              onClick={() => setIsModalOpen(false)}
+              title="Kapat (ESC)"
+            >
+              ✕
+            </button>
+
+            {/* Ana Görsel */}
+            <img 
+              src="./anasayfa.jpeg"
+              alt="HOOWELL Ana Sayfa Görseli - Tam Ekran Görünüm"
+              className="modal-image"
+              onError={(e) => {
+                // Fallback görsel yüklenemezse
+                e.target.style.display = 'none';
+                e.target.nextSibling.style.display = 'flex';
+              }}
+              onLoad={(e) => {
+                // Görsel yüklendiğinde animasyon ekle
+                e.target.style.opacity = '0';
+                setTimeout(() => {
+                  e.target.style.transition = 'opacity 0.5s ease';
+                  e.target.style.opacity = '1';
+                }, 100);
+              }}
+            />
+
+            {/* Fallback İçerik */}
+            <div style={{
+              display: 'none',
+              width: isMobile ? '90vw' : '80vw',
+              height: isMobile ? '50vh' : '60vh',
+              maxWidth: '800px',
+              backgroundColor: 'rgba(255, 215, 0, 0.1)',
+              border: '3px solid #FFD700',
+              borderRadius: '15px',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexDirection: 'column',
+              color: '#FFD700',
+              fontSize: isMobile ? '20px' : '24px',
+              fontWeight: 'bold',
+              textAlign: 'center',
+              padding: isMobile ? '20px' : '40px'
+            }}>
+              <div style={{ fontSize: isMobile ? '40px' : '60px', marginBottom: '20px' }}>🏢</div>
+              <div>HOOWELL GLOBAL</div>
+              <div style={{ fontSize: isMobile ? '14px' : '18px', marginTop: '10px', opacity: 0.8 }}>
+                Su Arıtma Sistemleri
+              </div>
+              <div style={{ fontSize: '12px', marginTop: '20px', opacity: 0.6 }}>
+                Ana sayfa görseli yüklenemedi
+              </div>
+              <div style={{ 
+                fontSize: '10px', 
+                marginTop: '15px', 
+                opacity: 0.5,
+                lineHeight: '1.4'
+              }}>
+                • Network Marketing Sistemi<br/>
+                • Eğitim ve Satış Platformu<br/>
+                • Kariyer Gelişim Programı
+              </div>
+            </div>
+
+            {/* Alt Bilgi */}
+            <div style={{
+              marginTop: '15px',
+              color: '#FFD700',
+              fontSize: isMobile ? '12px' : '14px',
+              textAlign: 'center',
+              opacity: 0.8,
+              fontWeight: 'bold',
+              lineHeight: '1.4'
+            }}>
+              {isMobile ? (
+                <>📱 Parmağınızla yakınlaştırabilirsiniz</>
+              ) : (
+                <>
+                  📱 Mobilde: Parmağınızla yakınlaştırabilirsiniz
+                  <br />
+                  🖥️ Masaüstünde: Mouse tekerleği ile yakınlaştırabilirsiniz
+                </>
+              )}
+            </div>
+
+            {/* Navigasyon İpuçları */}
+            {!isMobile && (
+              <div style={{
+                position: 'absolute',
+                bottom: '-60px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                display: 'flex',
+                gap: '20px',
+                fontSize: '12px',
+                color: 'rgba(255, 215, 0, 0.7)',
+                whiteSpace: 'nowrap'
+              }}>
+                <span>🖱️ Tıklayarak kapat</span>
+                <span>⌨️ ESC tuşu ile kapat</span>
+                <span>🔍 Yakınlaştırma desteklenir</span>
+              </div>
+            )}
+
+            {/* Mobil için alt ipuçları */}
+            {isMobile && (
+              <div style={{
+                marginTop: '10px',
+                fontSize: '10px',
+                color: 'rgba(255, 215, 0, 0.6)',
+                textAlign: 'center'
+              }}>
+                Kapatmak için boş alana dokunun
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

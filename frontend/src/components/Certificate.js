@@ -68,150 +68,216 @@ const Certificate = ({ onClose }) => {
             justifyContent: 'center',
             color: 'white',
             fontFamily: 'Arial, sans-serif',
-            border: '10px solid #FFD700',
-            borderRadius: '20px',
-            boxShadow: '0 0 30px rgba(255, 215, 0, 0.3)'
+            overflow: 'hidden'
           }}
         >
-          {/* Üst Logo ve Başlık */}
+          {/* Üst Sol Logo */}
           <div style={{
             position: 'absolute',
-            top: '40px',
-            textAlign: 'center'
+            top: '30px',
+            left: '40px',
+            width: '80px',
+            height: '80px',
+            background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '40px',
+            fontWeight: 'bold',
+            color: '#0e2323',
+            boxShadow: '0 5px 15px rgba(255, 215, 0, 0.4)'
+          }}>
+            H
+          </div>
+
+          {/* Altın Çizgiler - Üst */}
+          <div style={{
+            position: 'absolute',
+            top: '0',
+            left: '0',
+            right: '0',
+            height: '120px',
+            background: 'linear-gradient(135deg, transparent 0%, rgba(255, 215, 0, 0.3) 30%, rgba(255, 215, 0, 0.1) 70%, transparent 100%)',
+            clipPath: 'polygon(0 0, 100% 0, 85% 100%, 15% 100%)'
+          }} />
+
+          {/* Altın Çizgiler - Alt */}
+          <div style={{
+            position: 'absolute',
+            bottom: '0',
+            left: '0',
+            right: '0',
+            height: '120px',
+            background: 'linear-gradient(135deg, transparent 0%, rgba(255, 215, 0, 0.3) 30%, rgba(255, 215, 0, 0.1) 70%, transparent 100%)',
+            clipPath: 'polygon(15% 0, 85% 0, 100% 100%, 0 100%)'
+          }} />
+
+          {/* Merkez Logo ve Kep */}
+          <div style={{
+            position: 'absolute',
+            top: '80px',
+            textAlign: 'center',
+            zIndex: 2
+          }}>
+            {/* Mezuniyet Kepçesi */}
+            <div style={{
+              fontSize: '60px',
+              marginBottom: '10px',
+              filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.5))'
+            }}>
+              🎓
+            </div>
+
+            {/* HOOWELL Logo Çemberi */}
+            <div style={{
+              width: '120px',
+              height: '120px',
+              background: 'linear-gradient(135deg, #000, #333)',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 20px',
+              border: '4px solid #FFD700',
+              boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5)',
+              position: 'relative'
+            }}>
+              {/* İç Logo */}
+              <div style={{
+                width: '80px',
+                height: '80px',
+                background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '32px',
+                fontWeight: 'bold',
+                color: '#000'
+              }}>
+                H
+              </div>
+
+              {/* HOOWELL Yazısı - Çember Etrafında */}
+              <div style={{
+                position: 'absolute',
+                top: '-15px',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                color: '#FFD700',
+                letterSpacing: '2px'
+              }}>
+                HOOWELL
+              </div>
+
+              <div style={{
+                position: 'absolute',
+                bottom: '-15px',
+                fontSize: '10px',
+                color: '#FFD700',
+                letterSpacing: '1px'
+              }}>
+                FRANCHISE SERTİFİKASI
+              </div>
+            </div>
+          </div>
+
+          {/* Kişi Adı - Büyük ve Belirgin */}
+          <div style={{
+            position: 'absolute',
+            top: '280px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            fontSize: '36px',
+            fontWeight: 'bold',
+            color: '#FFD700',
+            textShadow: '3px 3px 6px rgba(0,0,0,0.7)',
+            textAlign: 'center',
+            letterSpacing: '2px',
+            zIndex: 2
+          }}>
+            {user.first_name} {user.last_name}
+          </div>
+
+          {/* Ana Metin */}
+          <div style={{
+            position: 'absolute',
+            top: '340px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            textAlign: 'center',
+            fontSize: '18px',
+            lineHeight: '1.6',
+            maxWidth: '600px',
+            color: '#fff',
+            zIndex: 2
+          }}>
+            <div style={{ marginBottom: '15px' }}>
+              Hoowell Franchise Eğitim Programını başarı ile bitirdiniz.
+            </div>
+            <div>
+              Hoowell Ticaretinizde başarılar dileriz.
+            </div>
+          </div>
+
+          {/* Alt Sağ Logo ve Slogan */}
+          <div style={{
+            position: 'absolute',
+            bottom: '30px',
+            right: '40px',
+            textAlign: 'right',
+            zIndex: 2
           }}>
             <div style={{
-              fontSize: '48px',
+              fontSize: '24px',
               fontWeight: 'bold',
               color: '#FFD700',
-              textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
-              marginBottom: '10px'
+              marginBottom: '5px',
+              letterSpacing: '1px'
             }}>
               HOOWELL
             </div>
             <div style={{
-              fontSize: '16px',
+              fontSize: '12px',
               color: '#FFD700',
-              letterSpacing: '2px'
+              letterSpacing: '1px'
             }}>
-              SU ARITMA SİSTEMLERİ
+              INNOVATE YOUR LIFE
             </div>
           </div>
 
-          {/* Sertifika Başlığı */}
-          <div style={{
-            fontSize: '36px',
-            fontWeight: 'bold',
-            color: '#FFD700',
-            textAlign: 'center',
-            marginBottom: '30px',
-            textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
-          }}>
-            EĞİTİM TAMAMLAMA SERTİFİKASI
-          </div>
-
-          {/* Ana İçerik */}
-          <div style={{
-            textAlign: 'center',
-            fontSize: '18px',
-            lineHeight: '1.8',
-            maxWidth: '600px'
-          }}>
-            <div style={{ marginBottom: '20px' }}>
-              Bu sertifika ile
-            </div>
-            
-            <div style={{
-              fontSize: '32px',
-              fontWeight: 'bold',
-              color: '#FFD700',
-              margin: '20px 0',
-              textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
-              borderBottom: '2px solid #FFD700',
-              paddingBottom: '10px'
-            }}>
-              {user.first_name} {user.last_name}
-            </div>
-
-            <div style={{ marginBottom: '20px' }}>
-              HOOWELL Su Arıtma Sistemleri Eğitim Programını başarıyla tamamladığını
-              ve iş ortaklığı yapmaya hak kazandığını beyan ederiz.
-            </div>
-
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginTop: '40px',
-              fontSize: '14px'
-            }}>
-              <div>
-                <div style={{ marginBottom: '5px' }}>Partner ID:</div>
-                <div style={{ 
-                  color: '#FFD700', 
-                  fontWeight: 'bold',
-                  fontSize: '16px'
-                }}>
-                  {user.sponsor_id}
-                </div>
-              </div>
-
-              <div>
-                <div style={{ marginBottom: '5px' }}>Tarih:</div>
-                <div style={{ 
-                  color: '#FFD700', 
-                  fontWeight: 'bold',
-                  fontSize: '16px'
-                }}>
-                  {getCurrentDate()}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Alt Logo */}
+          {/* Tarih ve Partner ID - Alt Sol */}
           <div style={{
             position: 'absolute',
-            bottom: '20px',
+            bottom: '30px',
+            left: '40px',
             fontSize: '12px',
-            color: '#FFD700',
-            textAlign: 'center'
+            color: '#ccc',
+            zIndex: 2
           }}>
-            <div style={{ fontWeight: 'bold' }}>HOOWELL TEKNOLOJİ A.Ş.</div>
-            <div>www.hoowell.com</div>
+            <div style={{ marginBottom: '5px' }}>
+              Partner ID: <span style={{ color: '#FFD700', fontWeight: 'bold' }}>{user.sponsor_id}</span>
+            </div>
+            <div>
+              Tarih: <span style={{ color: '#FFD700', fontWeight: 'bold' }}>{getCurrentDate()}</span>
+            </div>
           </div>
 
-          {/* Dekoratif Elementler */}
+          {/* Arka Plan Deseni */}
           <div style={{
             position: 'absolute',
-            top: '20px',
-            left: '20px',
-            width: '60px',
-            height: '60px',
-            border: '3px solid #FFD700',
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '24px'
-          }}>
-            🏆
-          </div>
-
-          <div style={{
-            position: 'absolute',
-            top: '20px',
-            right: '20px',
-            width: '60px',
-            height: '60px',
-            border: '3px solid #FFD700',
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '24px'
-          }}>
-            ⭐
-          </div>
+            top: '0',
+            left: '0',
+            right: '0',
+            bottom: '0',
+            backgroundImage: `
+              radial-gradient(circle at 20% 20%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+              radial-gradient(circle at 80% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+              radial-gradient(circle at 40% 60%, rgba(255, 215, 0, 0.05) 0%, transparent 50%)
+            `,
+            zIndex: 1
+          }} />
         </div>
 
         {/* Butonlar */}

@@ -222,11 +222,40 @@ const Welcome = () => {
           fontSize: '22px',
           fontWeight: 'bold',
           color: '#FFD700',
-          marginBottom: '20px',
+          marginBottom: '15px',
           textShadow: '1px 1px 2px rgba(0, 0, 0, 0.2)'
         }}>
           HOOWELL AİLESİNE HOŞGELDİNİZ !
         </h2>
+
+        {/* Şirket Tanıtımı */}
+        <div style={{
+          backgroundColor: 'rgba(14, 35, 35, 0.1)',
+          padding: '15px',
+          borderRadius: '10px',
+          marginBottom: '20px',
+          border: '1px solid rgba(255, 215, 0, 0.2)'
+        }}>
+          <p style={{
+            fontSize: '14px',
+            color: '#333',
+            lineHeight: '1.6',
+            margin: '0 0 10px 0',
+            fontWeight: '500'
+          }}>
+            <strong>Hoowell firması bir Waterlove kuruluşudur.</strong> 15 yıllık tecrübemizle 120'den fazla marka için 500.000'den fazla cihaz ürettik.
+          </p>
+          <p style={{
+            fontSize: '14px',
+            color: '#0e2323',
+            lineHeight: '1.6',
+            margin: '0',
+            fontWeight: 'bold',
+            textAlign: 'center'
+          }}>
+            🌟 ALKALİ İONİZER CİHAZI ile GENÇLEŞTİRİCİ SU TEKNOLOJİSİ 🌟
+          </p>
+        </div>
 
         {/* Bilgilendirme Listesi */}
         <div style={{

@@ -4,6 +4,11 @@ import axios from 'axios';
 
 const DopingPromosyonu = () => {
   const { user } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  // Suppress unused variable warnings temporarily
+  console.log('Doping state:', { user, loading, error });
   const [dopingData, setDopingData] = useState({
     etap1: {
       baslangic_tarihi: '26.07.2025',
@@ -15,7 +20,9 @@ const DopingPromosyonu = () => {
       yapilan_ortak: 0,
       kalan_ortak: 7,
       kazanilacak_puan: 0,
-      tamamlandi: false
+      tamamlandi: false,
+      aktif: false,
+      kalan_gun: 0
     },
     etap2: {
       baslangic_tarihi: '26.09.2025',
@@ -27,10 +34,18 @@ const DopingPromosyonu = () => {
       yapilan_ortak: 0,
       kalan_ortak: 15,
       kazanilacak_puan: 0,
-      tamamlandi: false
+      tamamlandi: false,
+      aktif: false,
+      kalan_gun: 0
     },
     days_since_registration: 0,
-    current_stage: 1
+    current_stage: 1,
+    current_multiplier: 1,
+    total_sales: 0,
+    total_partners: 0,
+    personal_sales: 0,
+    team_sales: 0,
+    registration_date: ''
   });
 
   useEffect(() => {
@@ -39,6 +54,8 @@ const DopingPromosyonu = () => {
 
   const fetchDopingData = async () => {
     try {
+      setLoading(true);
+      setError(null);
       const response = await axios.get('/api/doping-promotion/progress', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -49,6 +66,9 @@ const DopingPromosyonu = () => {
       }
     } catch (error) {
       console.error('Doping promotion data fetch error:', error);
+      setError('Doping promosyonu verileri yüklenirken hata oluştu. Lütfen sayfayı yenileyin.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -66,27 +86,15 @@ const DopingPromosyonu = () => {
         right: '20px',
         zIndex: 10
       }}>
-        <div style={{
-          width: '100px',
-          height: '60px',
-          backgroundColor: 'rgba(255, 255, 255, 0.95)',
-          borderRadius: '10px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          boxShadow: '0 5px 15px rgba(0, 0, 0, 0.2)',
-          padding: '5px'
-        }}>
-          <img 
-            src="/hoowell-logo.png" 
-            alt="HOOWELL Logo"
-            style={{
-              width: '90px',
-              height: '50px',
-              objectFit: 'contain'
-            }}
-          />
-        </div>
+        <img 
+          src="/hoowell-logo.png" 
+          alt="HOOWELL Logo"
+          style={{
+            width: '90px',
+            height: '50px',
+            objectFit: 'contain'
+          }}
+        />
       </div>
 
       {/* Ana Başlık */}

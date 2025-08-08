@@ -23,8 +23,20 @@ import GlobalSeyahat from './components/GlobalSeyahat';
 import TeamTracker from './components/TeamTracker';
 import LeadershipPanel from './components/LeadershipPanel';
 import MuhasebeTakipPaneli from './components/MuhasebeTakipPaneli';
+import KisiselYonetim from './components/KisiselYonetim';
 // import AdminPayment from './components/AdminPayment'; // Şu an kullanılmıyor
 import Welcome from './components/Welcome';
+
+// Legal Pages
+import PrivacyPolicy from './components/legal/PrivacyPolicy';
+import TermsOfService from './components/legal/TermsOfService';
+import RefundPolicy from './components/legal/RefundPolicy';
+import KVKKPolicy from './components/legal/KVKKPolicy';
+import AboutUs from './components/legal/AboutUs';
+import ContactUs from './components/legal/ContactUs';
+import Products from './components/legal/Products';
+import ShippingInfo from './components/legal/ShippingInfo';
+import CookiePolicy from './components/legal/CookiePolicy';
 
 // Context
 import { AuthProvider } from './context/AuthContext';
@@ -58,6 +70,18 @@ function App() {
               <Route path="global-seyahat-promosyonu" element={<GlobalSeyahat />} />
               <Route path="muhasebe-takip-paneli" element={<MuhasebeTakipPaneli />} />
               <Route path="bilgi-bankasi" element={<AccessRestricted pageName="Bilgi Bankası" icon="📚" />} />
+              <Route path="kisisel-yonetim" element={<KisiselYonetim />} />
+              
+              {/* Legal Pages */}
+              <Route path="privacy" element={<PrivacyPolicy />} />
+              <Route path="terms" element={<TermsOfService />} />
+              <Route path="refund" element={<RefundPolicy />} />
+              <Route path="kvkk" element={<KVKKPolicy />} />
+              <Route path="about" element={<AboutUs />} />
+              <Route path="contact" element={<ContactUs />} />
+              <Route path="products" element={<Products />} />
+              <Route path="shipping" element={<ShippingInfo />} />
+              <Route path="cookies" element={<CookiePolicy />} />
             </Route>
           </Routes>
         </div>

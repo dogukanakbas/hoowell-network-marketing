@@ -262,12 +262,7 @@ const Education = () => {
             margin: '0 auto 10px',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 5px 15px rgba(255, 215, 0, 0.4)',
-            borderRadius: '15px',
-            background: 'rgba(255, 255, 255, 0.1)',
-            backdropFilter: 'blur(10px)',
-            border: '2px solid rgba(255, 215, 0, 0.3)'
+            justifyContent: 'center'
           }}>
             <img 
               src="/hoowell-logo.png" 
@@ -888,25 +883,33 @@ const Education = () => {
                       }}>
                         Soru {index + 1}
                       </h5>
-                      <p style={{
+                      <div style={{
                         color: '#fff',
-                        fontSize: '14px',
+                        fontSize: '15px',
                         marginBottom: '20px',
-                        lineHeight: '1.5'
+                        lineHeight: '1.6',
+                        padding: '15px',
+                        backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                        borderRadius: '10px',
+                        border: '1px solid rgba(255, 215, 0, 0.1)',
+                        whiteSpace: 'pre-wrap',
+                        wordWrap: 'break-word'
                       }}>
                         {question.question_text}
-                      </p>
+                      </div>
                       
                       {['a', 'b', 'c', 'd'].map(option => (
                         <label key={option} style={{
                           display: 'flex',
-                          alignItems: 'center',
-                          marginBottom: '12px',
+                          alignItems: 'flex-start',
+                          marginBottom: '15px',
                           cursor: 'pointer',
-                          padding: '10px',
-                          borderRadius: '8px',
-                          transition: 'background-color 0.2s',
-                          backgroundColor: answers[question.id] === option ? 'rgba(255, 215, 0, 0.2)' : 'transparent'
+                          padding: '12px',
+                          borderRadius: '10px',
+                          transition: 'all 0.3s ease',
+                          backgroundColor: answers[question.id] === option ? 'rgba(255, 215, 0, 0.2)' : 'rgba(255, 255, 255, 0.03)',
+                          border: answers[question.id] === option ? '2px solid rgba(255, 215, 0, 0.5)' : '1px solid rgba(255, 255, 255, 0.1)',
+                          minHeight: '50px'
                         }}
                         onMouseEnter={(e) => {
                           if (answers[question.id] !== option) {
@@ -925,16 +928,25 @@ const Education = () => {
                             value={option}
                             onChange={(e) => handleAnswerChange(question.id, e.target.value)}
                             style={{
-                              marginRight: '12px',
-                              transform: 'scale(1.2)'
+                              marginRight: '15px',
+                              marginTop: '2px',
+                              transform: 'scale(1.3)',
+                              accentColor: '#FFD700',
+                              flexShrink: 0
                             }}
                           />
                           <span style={{
                             color: answers[question.id] === option ? '#FFD700' : '#ccc',
                             fontSize: '14px',
-                            fontWeight: answers[question.id] === option ? 'bold' : 'normal'
+                            fontWeight: answers[question.id] === option ? 'bold' : 'normal',
+                            lineHeight: '1.5',
+                            whiteSpace: 'pre-wrap',
+                            wordWrap: 'break-word',
+                            flex: 1
                           }}>
-                            {option.toUpperCase()}) {question[`option_${option}`]}
+                            <strong style={{ color: answers[question.id] === option ? '#FFD700' : '#fff' }}>
+                              {option.toUpperCase()})
+                            </strong> {question[`option_${option}`]}
                           </span>
                         </label>
                       ))}
