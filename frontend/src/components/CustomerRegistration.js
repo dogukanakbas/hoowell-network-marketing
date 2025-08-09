@@ -2,6 +2,38 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+// Ülke kodları listesi
+const countryCodes = [
+  { code: '+90', name: 'Türkiye', flag: '🇹🇷' },
+  { code: '+1', name: 'ABD/Kanada', flag: '🇺🇸' },
+  { code: '+44', name: 'İngiltere', flag: '🇬🇧' },
+  { code: '+49', name: 'Almanya', flag: '🇩🇪' },
+  { code: '+33', name: 'Fransa', flag: '🇫🇷' },
+  { code: '+39', name: 'İtalya', flag: '🇮🇹' },
+  { code: '+34', name: 'İspanya', flag: '🇪🇸' },
+  { code: '+31', name: 'Hollanda', flag: '🇳🇱' },
+  { code: '+32', name: 'Belçika', flag: '🇧🇪' },
+  { code: '+41', name: 'İsviçre', flag: '🇨🇭' },
+  { code: '+43', name: 'Avusturya', flag: '🇦🇹' },
+  { code: '+46', name: 'İsveç', flag: '🇸🇪' },
+  { code: '+47', name: 'Norveç', flag: '🇳🇴' },
+  { code: '+45', name: 'Danimarka', flag: '🇩🇰' },
+  { code: '+358', name: 'Finlandiya', flag: '🇫🇮' },
+  { code: '+7', name: 'Rusya', flag: '🇷🇺' },
+  { code: '+86', name: 'Çin', flag: '🇨🇳' },
+  { code: '+81', name: 'Japonya', flag: '🇯🇵' },
+  { code: '+82', name: 'Güney Kore', flag: '🇰🇷' },
+  { code: '+91', name: 'Hindistan', flag: '🇮🇳' },
+  { code: '+61', name: 'Avustralya', flag: '🇦🇺' },
+  { code: '+55', name: 'Brezilya', flag: '🇧🇷' },
+  { code: '+52', name: 'Meksika', flag: '🇲🇽' },
+  { code: '+54', name: 'Arjantin', flag: '🇦🇷' },
+  { code: '+971', name: 'BAE', flag: '🇦🇪' },
+  { code: '+966', name: 'Suudi Arabistan', flag: '🇸🇦' },
+  { code: '+20', name: 'Mısır', flag: '🇪🇬' },
+  { code: '+27', name: 'Güney Afrika', flag: '🇿🇦' }
+];
+
 // Türkiye İl ve İlçe verileri (Tam kapsamlı 81 il)
 const turkeyData = {
   "Adana": ["Aladağ", "Ceyhan", "Çukurova", "Feke", "İmamoğlu", "Karaisalı", "Karataş", "Kozan", "Pozantı", "Saimbeyli", "Sarıçam", "Seyhan", "Tufanbeyli", "Yumurtalık", "Yüreğir"],
@@ -98,6 +130,7 @@ const CustomerRegistration = () => {
     tc_no: '',
     email: '',
     phone: '',
+    country_code: '+90',
     city: '',
     district: '',
     delivery_address: '',
@@ -107,6 +140,7 @@ const CustomerRegistration = () => {
     authorized_person: '',
     authorized_email: '',
     authorized_phone: '',
+    authorized_country_code: '+90',
     selected_product: '',
     contract1_accepted: false,
     contract2_accepted: false,
@@ -406,18 +440,39 @@ const CustomerRegistration = () => {
 
                 <div>
                   <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Telefon *</label>
-                  <input
-                    type="tel"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    style={{
-                      width: '100%',
-                      padding: '12px',
-                      border: '2px solid #ddd',
-                      borderRadius: '8px',
-                      fontSize: '16px'
-                    }}
-                  />
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    <select
+                      value={formData.country_code}
+                      onChange={(e) => setFormData({ ...formData, country_code: e.target.value })}
+                      style={{
+                        width: '120px',
+                        padding: '12px',
+                        border: '2px solid #ddd',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        backgroundColor: '#fff'
+                      }}
+                    >
+                      {countryCodes.map(country => (
+                        <option key={country.code} value={country.code}>
+                          {country.flag} {country.code}
+                        </option>
+                      ))}
+                    </select>
+                    <input
+                      type="tel"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      placeholder="5XX XXX XX XX"
+                      style={{
+                        flex: 1,
+                        padding: '12px',
+                        border: '2px solid #ddd',
+                        borderRadius: '8px',
+                        fontSize: '16px'
+                      }}
+                    />
+                  </div>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
@@ -571,19 +626,39 @@ const CustomerRegistration = () => {
 
                 <div>
                   <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Yetkili Telefon *</label>
-                  <input
-                    type="tel"
-                    value={formData.authorized_phone}
-                    onChange={(e) => setFormData({ ...formData, authorized_phone: e.target.value })}
-                    style={{
-                      width: '100%',
-                      padding: '12px',
-                      border: '2px solid #ddd',
-                      borderRadius: '8px',
-                      fontSize: '16px'
-                    }}
-                    placeholder="0555 123 45 67"
-                  />
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    <select
+                      value={formData.authorized_country_code}
+                      onChange={(e) => setFormData({ ...formData, authorized_country_code: e.target.value })}
+                      style={{
+                        width: '120px',
+                        padding: '12px',
+                        border: '2px solid #ddd',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        backgroundColor: '#fff'
+                      }}
+                    >
+                      {countryCodes.map(country => (
+                        <option key={country.code} value={country.code}>
+                          {country.flag} {country.code}
+                        </option>
+                      ))}
+                    </select>
+                    <input
+                      type="tel"
+                      value={formData.authorized_phone}
+                      onChange={(e) => setFormData({ ...formData, authorized_phone: e.target.value })}
+                      placeholder="5XX XXX XX XX"
+                      style={{
+                        flex: 1,
+                        padding: '12px',
+                        border: '2px solid #ddd',
+                        borderRadius: '8px',
+                        fontSize: '16px'
+                      }}
+                    />
+                  </div>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>

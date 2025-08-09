@@ -72,6 +72,140 @@ const Dashboard = () => {
     fetchDashboardData();
   }, [fetchDashboardData]);
 
+  // Paylaşım fonksiyonu
+  const handleShare = (title, url) => {
+    const shareText = `🎥 ${title}\n\n${url}\n\n💧 HOOWELL - Su Arıtma Sistemleri`;
+    
+    if (navigator.share) {
+      // Web Share API destekleniyorsa (mobil cihazlar)
+      navigator.share({
+        title: title,
+        text: shareText,
+        url: url
+      }).catch(console.error);
+    } else {
+      // Web Share API desteklenmiyorsa paylaşım seçenekleri göster
+      const shareOptions = [
+        {
+          name: 'WhatsApp',
+          url: `https://wa.me/?text=${encodeURIComponent(shareText)}`,
+          color: '#25D366'
+        },
+        {
+          name: 'Telegram',
+          url: `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`,
+          color: '#0088cc'
+        },
+        {
+          name: 'Facebook',
+          url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+          color: '#1877f2'
+        },
+        {
+          name: 'Twitter',
+          url: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`,
+          color: '#1da1f2'
+        },
+        {
+          name: 'LinkedIn',
+          url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+          color: '#0077b5'
+        },
+        {
+          name: 'Kopyala',
+          action: () => {
+            navigator.clipboard.writeText(shareText).then(() => {
+              alert('Link kopyalandı!');
+            });
+          },
+          color: '#6c757d'
+        }
+      ];
+
+      // Modal oluştur
+      const modal = document.createElement('div');
+      modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        backdrop-filter: blur(5px);
+      `;
+
+      const modalContent = document.createElement('div');
+      modalContent.style.cssText = `
+        background: linear-gradient(135deg, #0e2323, #1a3333);
+        border-radius: 20px;
+        padding: 30px;
+        max-width: 400px;
+        width: 90%;
+        border: 2px solid #FFD700;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      `;
+
+      modalContent.innerHTML = `
+        <div style="text-align: center; margin-bottom: 25px;">
+          <h3 style="color: #FFD700; margin: 0 0 10px 0; font-size: 18px;">Paylaş</h3>
+          <p style="color: #ccc; margin: 0; font-size: 14px;">${title}</p>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+          ${shareOptions.map(option => `
+            <button onclick="${option.action ? 'this.onclick()' : `window.open('${option.url}', '_blank')`}" 
+                    style="
+                      background: ${option.color};
+                      color: white;
+                      border: none;
+                      border-radius: 10px;
+                      padding: 12px;
+                      font-size: 14px;
+                      font-weight: bold;
+                      cursor: pointer;
+                      transition: transform 0.2s;
+                    "
+                    onmouseover="this.style.transform='scale(1.05)'"
+                    onmouseout="this.style.transform='scale(1)'"
+                    ${option.action ? `onclick="(${option.action.toString()})()"` : ''}>
+              ${option.name}
+            </button>
+          `).join('')}
+        </div>
+        <button onclick="document.body.removeChild(this.closest('.share-modal'))" 
+                style="
+                  background: #6c757d;
+                  color: white;
+                  border: none;
+                  border-radius: 10px;
+                  padding: 12px;
+                  width: 100%;
+                  margin-top: 15px;
+                  font-size: 14px;
+                  font-weight: bold;
+                  cursor: pointer;
+                ">
+          Kapat
+        </button>
+      `;
+
+      modal.appendChild(modalContent);
+      modal.className = 'share-modal';
+      
+      // Modal'ı kapatma
+      modal.onclick = (e) => {
+        if (e.target === modal) {
+          document.body.removeChild(modal);
+        }
+      };
+
+      document.body.appendChild(modal);
+    }
+  };
+
   return (
     <div style={{ 
       minHeight: '100vh',
@@ -167,10 +301,19 @@ const Dashboard = () => {
 
           {/* Video Kartları */}
           {[
-            'Hybrid Alkali İyonizer DEMO VİDEOSU',
-            'Hoowell Franchise SUNUM VİDEOSU', 
-            'Hoowell Pazarlama Planı VİDEOSU'
-          ].map((title, index) => (
+            {
+              title: 'Hybrid Alkali İyonizer DEMO VİDEOSU',
+              url: 'https://youtu.be/hC_3ix9sCJA'
+            },
+            {
+              title: 'Hoowell Franchise SUNUM VİDEOSU',
+              url: 'https://youtu.be/JoN_w2RUyNw'
+            },
+            {
+              title: 'Hoowell Pazarlama Planı VİDEOSU',
+              url: 'https://youtu.be/OUi-m4QBzgk'
+            }
+          ].map((video, index) => (
             <div key={index} style={{
               background: 'linear-gradient(135deg, #1a1a1a 0%, #333333 50%, #1a1a1a 100%)',
               borderRadius: '12px',
@@ -184,22 +327,24 @@ const Dashboard = () => {
                 marginBottom: '10px',
                 lineHeight: '1.3'
               }}>
-                {title}
+                {video.title}
               </div>
-              <button style={{
-                background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)',
-                color: '#000',
-                border: 'none',
-                borderRadius: '8px',
-                padding: '6px 12px',
-                fontSize: '10px',
-                fontWeight: 'bold',
-                cursor: 'pointer',
-                boxShadow: '0 4px 12px rgba(255, 215, 0, 0.3)',
-                transition: 'transform 0.2s'
-              }}
-              onMouseEnter={(e) => e.target.style.transform = 'translateY(-1px)'}
-              onMouseLeave={(e) => e.target.style.transform = 'translateY(0px)'}
+              <button 
+                onClick={() => handleShare(video.title, video.url)}
+                style={{
+                  background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)',
+                  color: '#000',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '6px 12px',
+                  fontSize: '10px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 12px rgba(255, 215, 0, 0.3)',
+                  transition: 'transform 0.2s'
+                }}
+                onMouseEnter={(e) => e.target.style.transform = 'translateY(-1px)'}
+                onMouseLeave={(e) => e.target.style.transform = 'translateY(0px)'}
               >
                 Paylaş
               </button>

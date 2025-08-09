@@ -863,37 +863,63 @@ const Education = () => {
                 </div>
 
                 <div style={{
-                  maxHeight: '400px',
+                  maxHeight: '500px',
                   overflowY: 'auto',
-                  paddingRight: '10px'
+                  paddingRight: '15px',
+                  marginBottom: '20px'
                 }}>
                   {questions.map((question, index) => (
                     <div key={question.id} style={{
-                      background: 'rgba(0, 0, 0, 0.3)',
+                      background: 'rgba(0, 0, 0, 0.4)',
                       borderRadius: '15px',
-                      padding: '20px',
-                      marginBottom: '20px',
-                      border: '1px solid rgba(255, 215, 0, 0.2)'
+                      padding: '25px',
+                      marginBottom: '25px',
+                      border: '1px solid rgba(255, 215, 0, 0.3)',
+                      boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)',
+                      width: '100%',
+                      boxSizing: 'border-box'
                     }}>
                       <h5 style={{
                         color: '#FFD700',
-                        fontSize: '16px',
+                        fontSize: '18px',
                         fontWeight: 'bold',
-                        marginBottom: '15px'
+                        marginBottom: '18px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px'
                       }}>
+                        <span style={{
+                          background: '#FFD700',
+                          color: '#000',
+                          borderRadius: '50%',
+                          width: '30px',
+                          height: '30px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '14px',
+                          fontWeight: 'bold'
+                        }}>
+                          {index + 1}
+                        </span>
                         Soru {index + 1}
                       </h5>
                       <div style={{
                         color: '#fff',
                         fontSize: '15px',
                         marginBottom: '20px',
-                        lineHeight: '1.6',
-                        padding: '15px',
-                        backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                        borderRadius: '10px',
-                        border: '1px solid rgba(255, 215, 0, 0.1)',
+                        lineHeight: '1.7',
+                        padding: '18px',
+                        backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                        borderRadius: '12px',
+                        border: '1px solid rgba(255, 215, 0, 0.2)',
                         whiteSpace: 'pre-wrap',
-                        wordWrap: 'break-word'
+                        wordWrap: 'break-word',
+                        wordBreak: 'break-word',
+                        minHeight: 'auto',
+                        display: 'block',
+                        width: '100%',
+                        boxSizing: 'border-box'
                       }}>
                         {question.question_text}
                       </div>
@@ -904,12 +930,14 @@ const Education = () => {
                           alignItems: 'flex-start',
                           marginBottom: '15px',
                           cursor: 'pointer',
-                          padding: '12px',
+                          padding: '15px',
                           borderRadius: '10px',
                           transition: 'all 0.3s ease',
                           backgroundColor: answers[question.id] === option ? 'rgba(255, 215, 0, 0.2)' : 'rgba(255, 255, 255, 0.03)',
                           border: answers[question.id] === option ? '2px solid rgba(255, 215, 0, 0.5)' : '1px solid rgba(255, 255, 255, 0.1)',
-                          minHeight: '50px'
+                          minHeight: 'auto',
+                          width: '100%',
+                          boxSizing: 'border-box'
                         }}
                         onMouseEnter={(e) => {
                           if (answers[question.id] !== option) {
@@ -918,7 +946,7 @@ const Education = () => {
                         }}
                         onMouseLeave={(e) => {
                           if (answers[question.id] !== option) {
-                            e.target.style.backgroundColor = 'transparent';
+                            e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.03)';
                           }
                         }}
                         >
@@ -929,25 +957,38 @@ const Education = () => {
                             onChange={(e) => handleAnswerChange(question.id, e.target.value)}
                             style={{
                               marginRight: '15px',
-                              marginTop: '2px',
+                              marginTop: '3px',
                               transform: 'scale(1.3)',
                               accentColor: '#FFD700',
                               flexShrink: 0
                             }}
                           />
-                          <span style={{
+                          <div style={{
                             color: answers[question.id] === option ? '#FFD700' : '#ccc',
                             fontSize: '14px',
                             fontWeight: answers[question.id] === option ? 'bold' : 'normal',
-                            lineHeight: '1.5',
+                            lineHeight: '1.6',
                             whiteSpace: 'pre-wrap',
                             wordWrap: 'break-word',
-                            flex: 1
+                            flex: 1,
+                            display: 'block',
+                            width: '100%'
                           }}>
-                            <strong style={{ color: answers[question.id] === option ? '#FFD700' : '#fff' }}>
+                            <strong style={{ 
+                              color: answers[question.id] === option ? '#FFD700' : '#fff',
+                              marginRight: '8px'
+                            }}>
                               {option.toUpperCase()})
-                            </strong> {question[`option_${option}`]}
-                          </span>
+                            </strong>
+                            <span style={{
+                              display: 'inline',
+                              lineHeight: '1.6',
+                              wordBreak: 'break-word',
+                              whiteSpace: 'pre-wrap'
+                            }}>
+                              {question[`option_${option}`]}
+                            </span>
+                          </div>
                         </label>
                       ))}
                     </div>

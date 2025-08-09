@@ -335,21 +335,7 @@ const TeamTracker = () => {
               marginTop: '20px',
               textAlign: 'center'
             }}>
-              <div style={{
-                background: 'linear-gradient(135deg, #8B008B, #DA70D6)',
-                borderRadius: '15px',
-                padding: '20px',
-                color: 'white',
-                fontSize: '16px',
-                fontWeight: 'bold',
-                maxWidth: '600px',
-                margin: '0 auto'
-              }}>
-                Bu rapor her ay<br />
-                Yenilenecek.<br />
-                Kazanç oluşmazsa listeye<br />
-                isim koymayacağız.
-              </div>
+
               <div style={{
                 backgroundColor: 'rgba(0,0,0,0.8)',
                 borderRadius: '10px',
@@ -545,18 +531,7 @@ const TeamTracker = () => {
               marginTop: '20px',
               textAlign: 'center'
             }}>
-              <div style={{
-                background: 'linear-gradient(135deg, #8B008B, #DA70D6)',
-                borderRadius: '15px',
-                padding: '20px',
-                color: 'white',
-                fontSize: '18px',
-                fontWeight: 'bold',
-                maxWidth: '400px',
-                margin: '0 auto'
-              }}>
-                Bu rapor anlık İŞLENECEK
-              </div>
+
             </div>
           </div>
         )}

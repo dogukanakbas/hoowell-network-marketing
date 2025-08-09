@@ -85,15 +85,15 @@ const Layout = () => {
     { path: '/kariyerim', label: 'Kariyer Durumu', requiresEducation: true },
     { path: '/doping-promosyonu', label: 'Doping Promosyonu', requiresEducation: true },
     { path: '/satislarim', label: 'Şahsi Satışlar', requiresEducation: true },
-    { path: '/memnun-musteri-takip', label: 'Memnun Müşteri Takibi', requiresEducation: true },
-    { path: '/sponsorluk-takip', label: 'Sponsorluk Takip Paneli', requiresEducation: true },
+    { path: '/memnun-musteri-takip', label: 'Memnun Müşteriler', requiresEducation: true },
+    { path: '/sponsorluk-takip', label: 'Sponsorluk Takibi', requiresEducation: true },
     { path: '/takim-takip', label: 'Takım Takip Paneli', requiresEducation: true },
     { path: '/liderlik-baskanlik-takip', label: 'Liderlik Havuzları', requiresEducation: true },
     { path: '/kar-paylasimi-promosyon', label: 'Kar Paylaşımı', requiresEducation: true },
     { path: '/global-seyahat-promosyonu', label: 'Global Seyahatler', requiresEducation: true },
-    { path: '/muhasebe-takip-paneli', label: 'Muhasebe Takip Paneli', requiresEducation: true },
+    { path: '/muhasebe-takip-paneli', label: 'Muhasebe Takibi', requiresEducation: true },
     { path: '/bilgi-bankasi', label: 'Bilgi Bankası', requiresEducation: true },
-    { path: '/kisisel-yonetim', label: 'Kişisel Yönetim Paneli', requiresEducation: true }
+    { path: '/kisisel-yonetim', label: 'Kişisel Yönetim', requiresEducation: true }
   ];
 
   // Partner kullanıcıları için menu filtreleme
@@ -232,9 +232,9 @@ const Layout = () => {
             {menuItems.map((item, index) => {
               // Fotoğraftaki gibi bazı butonlar altın sarısı, bazıları koyu renkli
               const isGoldButton = [
-                'Muhasebe Takip Paneli',
+                'Muhasebe Takibi',
                 'Bilgi Bankası',
-                'Kişisel Yönetim Paneli'
+                'Kişisel Yönetim'
               ].includes(item.label);
 
               const isActive = location.pathname === item.path;

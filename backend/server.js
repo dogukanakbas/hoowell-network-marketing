@@ -774,6 +774,155 @@ const updateDownlineCounts = async (sponsorId) => {
   }
 };
 
+// Personal Management API Endpoints
+
+// Get user profile
+app.get('/api/user/profile', verifyToken, async (req, res) => {
+  try {
+    const [users] = await db.promise().execute(
+      'SELECT first_name, last_name, email, phone, country_code, city, district, full_address FROM users WHERE id = ?',
+      [req.user.id]
+    );
+
+    if (users.length === 0) {
+      return res.status(404).json({ message: 'Kullanıcı bulunamadı' });
+    }
+
+    res.json({ success: true, profile: users[0] });
+  } catch (error) {
+    console.error('Profile fetch error:', error);
+    res.status(500).json({ message: 'Profil bilgileri alınırken hata oluştu' });
+  }
+});
+
+// Update user profile
+app.put('/api/user/profile', verifyToken, async (req, res) => {
+  try {
+    const { first_name, last_name, email, phone, country_code, city, district, full_address } = req.body;
+
+    // Email uniqueness check (excluding current user)
+    const [existingUsers] = await db.promise().execute(
+      'SELECT id FROM users WHERE email = ? AND id != ?',
+      [email, req.user.id]
+    );
+
+    if (existingUsers.length > 0) {
+      return res.status(400).json({ message: 'Bu e-posta adresi başka bir kullanıcı tarafından kullanılıyor' });
+    }
+
+    await db.promise().execute(`
+      UPDATE users 
+      SET first_name = ?, last_name = ?, email = ?, phone = ?, country_code = ?, 
+          city = ?, district = ?, full_address = ?, updated_at = NOW()
+      WHERE id = ?
+    `, [first_name, last_name, email, phone, country_code || '+90', city, district, full_address, req.user.id]);
+
+    res.json({ success: true, message: 'Profil başarıyla güncellendi' });
+  } catch (error) {
+    console.error('Profile update error:', error);
+    res.status(500).json({ message: 'Profil güncellenirken hata oluştu' });
+  }
+});
+
+// Change password
+app.put('/api/user/password', verifyToken, async (req, res) => {
+  try {
+    const { current_password, new_password } = req.body;
+
+    // Get current user
+    const [users] = await db.promise().execute(
+      'SELECT password_hash FROM users WHERE id = ?',
+      [req.user.id]
+    );
+
+    if (users.length === 0) {
+      return res.status(404).json({ message: 'Kullanıcı bulunamadı' });
+    }
+
+    // Verify current password
+    const isCurrentPasswordValid = await bcrypt.compare(current_password, users[0].password_hash);
+    if (!isCurrentPasswordValid) {
+      return res.status(400).json({ message: 'Mevcut şifre yanlış' });
+    }
+
+    // Hash new password
+    const hashedNewPassword = await bcrypt.hash(new_password, 10);
+
+    // Update password
+    await db.promise().execute(
+      'UPDATE users SET password_hash = ?, updated_at = NOW() WHERE id = ?',
+      [hashedNewPassword, req.user.id]
+    );
+
+    res.json({ success: true, message: 'Şifre başarıyla değiştirildi' });
+  } catch (error) {
+    console.error('Password change error:', error);
+    res.status(500).json({ message: 'Şifre değiştirilirken hata oluştu' });
+  }
+});
+
+// Update user settings
+app.put('/api/user/settings', verifyToken, async (req, res) => {
+  try {
+    const { email_notifications, sms_notifications, marketing_emails, system_notifications } = req.body;
+
+    // Check if user_settings table exists, if not create it
+    await db.promise().execute(`
+      CREATE TABLE IF NOT EXISTS user_settings (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        email_notifications BOOLEAN DEFAULT TRUE,
+        sms_notifications BOOLEAN DEFAULT FALSE,
+        marketing_emails BOOLEAN DEFAULT TRUE,
+        system_notifications BOOLEAN DEFAULT TRUE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        UNIQUE KEY unique_user_settings (user_id)
+      )
+    `);
+
+    // Insert or update settings
+    await db.promise().execute(`
+      INSERT INTO user_settings (user_id, email_notifications, sms_notifications, marketing_emails, system_notifications)
+      VALUES (?, ?, ?, ?, ?)
+      ON DUPLICATE KEY UPDATE
+      email_notifications = VALUES(email_notifications),
+      sms_notifications = VALUES(sms_notifications),
+      marketing_emails = VALUES(marketing_emails),
+      system_notifications = VALUES(system_notifications),
+      updated_at = NOW()
+    `, [req.user.id, email_notifications, sms_notifications, marketing_emails, system_notifications]);
+
+    res.json({ success: true, message: 'Ayarlar başarıyla kaydedildi' });
+  } catch (error) {
+    console.error('Settings update error:', error);
+    res.status(500).json({ message: 'Ayarlar kaydedilirken hata oluştu' });
+  }
+});
+
+// Get user settings
+app.get('/api/user/settings', verifyToken, async (req, res) => {
+  try {
+    const [settings] = await db.promise().execute(
+      'SELECT email_notifications, sms_notifications, marketing_emails, system_notifications FROM user_settings WHERE user_id = ?',
+      [req.user.id]
+    );
+
+    const userSettings = settings.length > 0 ? settings[0] : {
+      email_notifications: true,
+      sms_notifications: false,
+      marketing_emails: true,
+      system_notifications: true
+    };
+
+    res.json({ success: true, settings: userSettings });
+  } catch (error) {
+    console.error('Settings fetch error:', error);
+    res.status(500).json({ message: 'Ayarlar alınırken hata oluştu' });
+  }
+});
+
 // Customer Registration API
 app.post('/api/customers', verifyToken, async (req, res) => {
   try {
@@ -791,6 +940,7 @@ app.post('/api/customers', verifyToken, async (req, res) => {
       authorized_person,
       authorized_email,
       authorized_phone,
+      authorized_country_code,
       selected_product,
       product_price,
       product_vat,
@@ -2058,6 +2208,7 @@ app.post('/api/partner/register-new', verifyToken, async (req, res) => {
       tc_no,
       email,
       phone,
+      country_code,
       city,
       district,
       address,
@@ -2069,6 +2220,9 @@ app.post('/api/partner/register-new', verifyToken, async (req, res) => {
       authorized_last_name,
       contract1_accepted,
       contract2_accepted,
+      contract3_accepted,
+      contract4_accepted,
+      contract5_accepted,
       total_amount,
       contracts_accepted
     } = req.body;
@@ -2090,8 +2244,8 @@ app.post('/api/partner/register-new', verifyToken, async (req, res) => {
     }
 
     // Validate contracts
-    if (!contracts_accepted || !contract1_accepted || !contract2_accepted) {
-      return res.status(400).json({ message: 'Sözleşme onayları gerekli' });
+    if (!contracts_accepted || !contract1_accepted || !contract2_accepted || !contract3_accepted || !contract4_accepted || !contract5_accepted) {
+      return res.status(400).json({ message: 'Tüm sözleşme onayları gerekli' });
     }
 
     // Check if email already exists
@@ -2125,6 +2279,7 @@ app.post('/api/partner/register-new', verifyToken, async (req, res) => {
       first_name: registration_type === 'individual' ? first_name : authorized_first_name,
       last_name: registration_type === 'individual' ? last_name : authorized_last_name,
       phone,
+      country_code: country_code || '+90',
       role: 'partner',
       sponsor_id: newSponsorId,
       created_by: req.user.id, // Kayıt eden kişinin ID'si
@@ -2143,6 +2298,9 @@ app.post('/api/partner/register-new', verifyToken, async (req, res) => {
       billing_address: full_address || `${address}, ${district}/${city}`,
       contract1_accepted,
       contract2_accepted,
+      contract3_accepted,
+      contract4_accepted,
+      contract5_accepted,
       total_amount: total_amount || 4800,
       registration_step: 6,
       registration_completed: true,
@@ -2156,22 +2314,24 @@ app.post('/api/partner/register-new', verifyToken, async (req, res) => {
     // Insert new user
     const [result] = await db.promise().execute(`
       INSERT INTO users (
-        username, email, password_hash, first_name, last_name, phone, role, sponsor_id, created_by,
+        username, email, password_hash, first_name, last_name, phone, country_code, role, sponsor_id, created_by,
         partner_type, registration_type, tc_no, company_name, tax_office, tax_no,
         authorized_first_name, authorized_last_name, city, district, full_address,
         delivery_address, billing_address, contract1_accepted, contract2_accepted,
+        contract3_accepted, contract4_accepted, contract5_accepted,
         total_amount, registration_step, registration_completed, payment_confirmed,
         education_completed, education_deadline, is_active, backoffice_access, created_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())`,
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())`,
       [
         userData.username, userData.email, userData.password_hash,
-        userData.first_name, userData.last_name, userData.phone, userData.role,
+        userData.first_name, userData.last_name, userData.phone, userData.country_code, userData.role,
         userData.sponsor_id, userData.created_by, userData.partner_type, userData.registration_type,
         userData.tc_no, userData.company_name, userData.tax_office, userData.tax_no,
         userData.authorized_first_name, userData.authorized_last_name,
         userData.city, userData.district, userData.full_address,
         userData.delivery_address, userData.billing_address,
         userData.contract1_accepted, userData.contract2_accepted,
+        userData.contract3_accepted, userData.contract4_accepted, userData.contract5_accepted,
         userData.total_amount, userData.registration_step, userData.registration_completed,
         userData.payment_confirmed, userData.education_completed, userData.education_deadline,
         userData.is_active, userData.backoffice_access

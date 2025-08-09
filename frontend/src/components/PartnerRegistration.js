@@ -3,6 +3,38 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+// Ülke kodları listesi
+const countryCodes = [
+  { code: '+90', name: 'Türkiye', flag: '🇹🇷' },
+  { code: '+1', name: 'ABD/Kanada', flag: '🇺🇸' },
+  { code: '+44', name: 'İngiltere', flag: '🇬🇧' },
+  { code: '+49', name: 'Almanya', flag: '🇩🇪' },
+  { code: '+33', name: 'Fransa', flag: '🇫🇷' },
+  { code: '+39', name: 'İtalya', flag: '🇮🇹' },
+  { code: '+34', name: 'İspanya', flag: '🇪🇸' },
+  { code: '+31', name: 'Hollanda', flag: '🇳🇱' },
+  { code: '+32', name: 'Belçika', flag: '🇧🇪' },
+  { code: '+41', name: 'İsviçre', flag: '🇨🇭' },
+  { code: '+43', name: 'Avusturya', flag: '🇦🇹' },
+  { code: '+46', name: 'İsveç', flag: '🇸🇪' },
+  { code: '+47', name: 'Norveç', flag: '🇳🇴' },
+  { code: '+45', name: 'Danimarka', flag: '🇩🇰' },
+  { code: '+358', name: 'Finlandiya', flag: '🇫🇮' },
+  { code: '+7', name: 'Rusya', flag: '🇷🇺' },
+  { code: '+86', name: 'Çin', flag: '🇨🇳' },
+  { code: '+81', name: 'Japonya', flag: '🇯🇵' },
+  { code: '+82', name: 'Güney Kore', flag: '🇰🇷' },
+  { code: '+91', name: 'Hindistan', flag: '🇮🇳' },
+  { code: '+61', name: 'Avustralya', flag: '🇦🇺' },
+  { code: '+55', name: 'Brezilya', flag: '🇧🇷' },
+  { code: '+52', name: 'Meksika', flag: '🇲🇽' },
+  { code: '+54', name: 'Arjantin', flag: '🇦🇷' },
+  { code: '+971', name: 'BAE', flag: '🇦🇪' },
+  { code: '+966', name: 'Suudi Arabistan', flag: '🇸🇦' },
+  { code: '+20', name: 'Mısır', flag: '🇪🇬' },
+  { code: '+27', name: 'Güney Afrika', flag: '🇿🇦' }
+];
+
 // Türkiye İl ve İlçe verileri
 const turkeyData = {
   "Adana": ["Aladağ", "Ceyhan", "Çukurova", "Feke", "İmamoğlu", "Karaisalı", "Karataş", "Kozan", "Pozantı", "Saimbeyli", "Sarıçam", "Seyhan", "Tufanbeyli", "Yumurtalık", "Yüreğir"],
@@ -105,6 +137,7 @@ const PartnerRegistration = () => {
     tc_no: '',
     email: '',
     phone: '',
+    country_code: '+90',
     city: '',
     district: '',
     address: '',
@@ -114,7 +147,10 @@ const PartnerRegistration = () => {
     authorized_first_name: '',
     authorized_last_name: '',
     contract1_accepted: false,
-    contract2_accepted: false
+    contract2_accepted: false,
+    contract3_accepted: false, // Mesafeli Satış Sözleşmesi
+    contract4_accepted: false, // Ön Bilgilendirme Formu
+    contract5_accepted: false  // Elektronik Ticaret Bilgilendirmesi
   });
 
   // Eğitim tamamlanmamışsa erişim engelle (Admin hariç)
@@ -922,7 +958,7 @@ const PartnerRegistration = () => {
             Sözleşme Onayları
           </h2>
           
-          {/* Sözleşme 1 */}
+          {/* Sözleşme 1 - Satış Sözleşmesi */}
           <div style={{
             backgroundColor: 'var(--white)',
             borderRadius: '15px',
@@ -931,7 +967,7 @@ const PartnerRegistration = () => {
             boxShadow: '0 5px 15px rgba(0,0,0,0.1)'
           }}>
             <h3 style={{ color: 'var(--primary-dark)', marginBottom: '20px' }}>
-              1. Uzaktan Satın Alma Sözleşmesi
+              1. Satış Sözleşmesi
             </h3>
             <div style={{
               maxHeight: '200px',
@@ -943,16 +979,12 @@ const PartnerRegistration = () => {
               lineHeight: '1.5',
               marginBottom: '20px'
             }}>
-              <p><strong>UZAKTAN SATIN ALMA SÖZLEŞMESİ</strong></p>
-              <p>İşbu sözleşme, 6502 sayılı Tüketicinin Korunması Hakkında Kanun ve Mesafeli Sözleşmeler Yönetmeliği hükümleri gereğince düzenlenmiştir.</p>
-              <p><strong>SATICI BİLGİLERİ:</strong></p>
-              <p>Ünvan: HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ</p>
-              <p>Adres: [Şirket Adresi]</p>
-              <p>Telefon: [Telefon Numarası]</p>
-              <p>E-posta: info@hoowell.com</p>
-              <p><strong>ÜRÜN/HİZMET BİLGİLERİ:</strong></p>
-              <p>Franchise Satış Paketi - Su Arıtma Sistemleri Franchise Hakkı</p>
-              <p>Fiyat: 4.800 TL (KDV Dahil)</p>
+              <h4>SATIŞ SÖZLEŞMESİ</h4>
+              <p>İşbu sözleşme, 6502 sayılı Tüketicinin Korunması Hakkında Kanun çerçevesinde düzenlenmiştir.</p>
+              <p><strong>SATICI:</strong> HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ</p>
+              <p><strong>ÜRÜN:</strong> İş Ortaklığı Paketi</p>
+              <p><strong>FİYAT:</strong> 4.800 TL (KDV Dahil)</p>
+              <p>Ürün, sipariş onayından sonra 7-14 iş günü içinde teslim edilecektir.</p>
               <p><strong>CAYMA HAKKI:</strong></p>
               <p>Tüketici, 14 gün içerisinde herhangi bir gerekçe göstermeksizin ve cezai şart ödemeksizin sözleşmeden cayma hakkına sahiptir.</p>
               <p><strong>TESLİMAT:</strong></p>
@@ -967,12 +999,12 @@ const PartnerRegistration = () => {
                 style={{ marginRight: '10px', transform: 'scale(1.2)' }}
               />
               <span style={{ fontSize: '14px', color: 'var(--text-dark)' }}>
-                Uzaktan Satın Alma Sözleşmesi'ni okudum, anladım ve kabul ediyorum.
+                Satış sözleşmesini okudum, anladım ve kabul ediyorum.
               </span>
             </label>
           </div>
 
-          {/* Sözleşme 2 */}
+          {/* Sözleşme 2 - KVKK */}
           <div style={{
             backgroundColor: 'var(--white)',
             borderRadius: '15px',
@@ -981,7 +1013,7 @@ const PartnerRegistration = () => {
             boxShadow: '0 5px 15px rgba(0,0,0,0.1)'
           }}>
             <h3 style={{ color: 'var(--primary-dark)', marginBottom: '20px' }}>
-              2. Şirket İlkeleri Sözleşmesi
+              2. Kişisel Verilerin Korunması
             </h3>
             <div style={{
               maxHeight: '200px',
@@ -993,21 +1025,24 @@ const PartnerRegistration = () => {
               lineHeight: '1.5',
               marginBottom: '20px'
             }}>
-              <p><strong>HOOWELL ŞİRKET İLKELERİ VE ETİK KURALLARI</strong></p>
-              <p><strong>1. GENEL İLKELER:</strong></p>
-              <p>• Dürüstlük ve şeffaflık ilkelerine bağlı kalınacaktır.</p>
-              <p>• Müşteri memnuniyeti öncelikli hedefimizdir.</p>
-              <p>• Yasal düzenlemelere tam uyum sağlanacaktır.</p>
-              <p><strong>2. İŞ ORTAĞI SORUMLULUKLARI:</strong></p>
-              <p>• Ürün ve hizmetler hakkında doğru bilgi verilecektir.</p>
-              <p>• Yanıltıcı reklam ve pazarlama yapılmayacaktır.</p>
-              <p>• Şirket imajına zarar verecek davranışlardan kaçınılacaktır.</p>
-              <p><strong>3. ETİK KURALLAR:</strong></p>
-              <p>• Adil rekabet kurallarına uyulacaktır.</p>
-              <p>• Kişisel verilerin korunması sağlanacaktır.</p>
-              <p>• Çıkar çatışmalarından kaçınılacaktır.</p>
-              <p><strong>4. CEZAI HÜKÜMLER:</strong></p>
-              <p>Bu kurallara aykırı davranış durumunda iş ortaklığı feshedilebilir.</p>
+              <h4>KİŞİSEL VERİLERİN KORUNMASI</h4>
+              <p>6698 sayılı KVKK kapsamında kişisel verileriniz işlenmektedir.</p>
+              <p>Verileriniz hizmet sunumu ve müşteri ilişkileri yönetimi amacıyla kullanılacaktır.</p>
+              <p><strong>VERİ SORUMLUSU:</strong></p>
+              <p>HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ</p>
+              <p><strong>İŞLENEN VERİLER:</strong></p>
+              <p>• Kimlik bilgileri (Ad, soyad, TC No)</p>
+              <p>• İletişim bilgileri (Telefon, e-posta, adres)</p>
+              <p>• Finansal bilgiler (Banka hesap bilgileri)</p>
+              <p><strong>İŞLEME AMAÇLARI:</strong></p>
+              <p>• İş ortaklığı süreçlerinin yürütülmesi</p>
+              <p>• Yasal yükümlülüklerin yerine getirilmesi</p>
+              <p>• İletişim ve bilgilendirme</p>
+              <p><strong>HAKLARINIZ:</strong></p>
+              <p>• Bilgi alma hakkı</p>
+              <p>• Düzeltme hakkı</p>
+              <p>• Silme hakkı</p>
+              <p>• İtiraz hakkı</p>
             </div>
             
             <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
@@ -1018,7 +1053,160 @@ const PartnerRegistration = () => {
                 style={{ marginRight: '10px', transform: 'scale(1.2)' }}
               />
               <span style={{ fontSize: '14px', color: 'var(--text-dark)' }}>
-                Şirket İlkeleri Sözleşmesi'ni okudum, anladım ve kabul ediyorum.
+                KVKK aydınlatma metnini okudum, anladım ve kabul ediyorum.
+              </span>
+            </label>
+          </div>
+
+          {/* Sözleşme 3 - Mesafeli Satış Sözleşmesi */}
+          <div style={{
+            backgroundColor: 'var(--white)',
+            borderRadius: '15px',
+            padding: '30px',
+            marginBottom: '30px',
+            boxShadow: '0 5px 15px rgba(0,0,0,0.1)'
+          }}>
+            <h3 style={{ color: 'var(--primary-dark)', marginBottom: '20px' }}>
+              3. Mesafeli Satış Sözleşmesi
+            </h3>
+            <div style={{
+              maxHeight: '200px',
+              overflowY: 'auto',
+              padding: '15px',
+              backgroundColor: 'var(--card-gray)',
+              borderRadius: '10px',
+              fontSize: '14px',
+              lineHeight: '1.5',
+              marginBottom: '20px'
+            }}>
+              <h4>MESAFELİ SATIŞ SÖZLEŞMESİ</h4>
+              <p><strong>MADDE 1 - TARAFLAR</strong></p>
+              <p><strong>SATICI:</strong> HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ</p>
+              <p>Adres: AOSB MAH. 10035 SK. NO 5 ÇİĞİLİ İZMİR</p>
+              <p>Telefon: info@hoowell.com.tr</p>
+              <p><strong>MADDE 2 - KONU</strong></p>
+              <p>İşbu sözleşme, 6502 sayılı Tüketicinin Korunması Hakkında Kanun'un 48-84. maddeleri gereğince düzenlenmiştir.</p>
+              <p><strong>MADDE 3 - CAYMA HAKKI</strong></p>
+              <p>Tüketici, ürünü teslim aldığı tarihten itibaren 14 gün içinde herhangi bir gerekçe göstermeksizin ve cezai şart ödemeksizin sözleşmeden cayabilir.</p>
+              <p><strong>MADDE 4 - TESLİMAT</strong></p>
+              <p>İş ortaklığı paketi, sipariş onayından sonra 7-14 iş günü içinde belirtilen adrese teslim edilecektir.</p>
+              <p><strong>MADDE 5 - ÖDEME</strong></p>
+              <p>Ödeme IBAN ile havale/EFT yoluyla yapılacaktır.</p>
+            </div>
+            
+            <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+              <input
+                type="checkbox"
+                checked={formData.contract3_accepted}
+                onChange={(e) => setFormData({...formData, contract3_accepted: e.target.checked})}
+                style={{ marginRight: '10px', transform: 'scale(1.2)' }}
+              />
+              <span style={{ fontSize: '14px', color: 'var(--text-dark)' }}>
+                Mesafeli satış sözleşmesini okudum, anladım ve kabul ediyorum.
+              </span>
+            </label>
+          </div>
+
+          {/* Sözleşme 4 - Ön Bilgilendirme Formu */}
+          <div style={{
+            backgroundColor: 'var(--white)',
+            borderRadius: '15px',
+            padding: '30px',
+            marginBottom: '30px',
+            boxShadow: '0 5px 15px rgba(0,0,0,0.1)'
+          }}>
+            <h3 style={{ color: 'var(--primary-dark)', marginBottom: '20px' }}>
+              4. Ön Bilgilendirme Formu
+            </h3>
+            <div style={{
+              maxHeight: '200px',
+              overflowY: 'auto',
+              padding: '15px',
+              backgroundColor: 'var(--card-gray)',
+              borderRadius: '10px',
+              fontSize: '14px',
+              lineHeight: '1.5',
+              marginBottom: '20px'
+            }}>
+              <h4>ÖN BİLGİLENDİRME FORMU</h4>
+              <p><strong>1. SATICI BİLGİLERİ</strong></p>
+              <p>Ticaret Unvanı: HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ</p>
+              <p>Ticaret Sicil No: 264080</p>
+              <p>Adres: AOSB MAH. 10035 SK. NO 5 ÇİĞİLİ İZMİR</p>
+              <p>E-posta: info@hoowell.com.tr</p>
+              <p><strong>2. ÜRÜN BİLGİLERİ</strong></p>
+              <p>Ürün: İş Ortaklığı Paketi</p>
+              <p>Fiyat: 4.800 TL (KDV Dahil)</p>
+              <p><strong>3. ÖDEME VE TESLİMAT</strong></p>
+              <p>Ödeme: IBAN ile havale/EFT</p>
+              <p>IBAN: TR77 0011 1000 0000 0153 1671 66</p>
+              <p>Teslimat: 7-14 iş günü</p>
+              <p><strong>4. CAYMA HAKKI</strong></p>
+              <p>14 günlük cayma hakkınız bulunmaktadır.</p>
+              <p><strong>5. ŞİKAYET VE İTİRAZ</strong></p>
+              <p>Tüketici sorunları için: info@hoowell.com.tr</p>
+            </div>
+            
+            <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+              <input
+                type="checkbox"
+                checked={formData.contract4_accepted}
+                onChange={(e) => setFormData({...formData, contract4_accepted: e.target.checked})}
+                style={{ marginRight: '10px', transform: 'scale(1.2)' }}
+              />
+              <span style={{ fontSize: '14px', color: 'var(--text-dark)' }}>
+                Ön bilgilendirme formunu okudum, anladım ve kabul ediyorum.
+              </span>
+            </label>
+          </div>
+
+          {/* Sözleşme 5 - Elektronik Ticaret Bilgilendirmesi */}
+          <div style={{
+            backgroundColor: 'var(--white)',
+            borderRadius: '15px',
+            padding: '30px',
+            marginBottom: '30px',
+            boxShadow: '0 5px 15px rgba(0,0,0,0.1)'
+          }}>
+            <h3 style={{ color: 'var(--primary-dark)', marginBottom: '20px' }}>
+              5. Elektronik Ticaret Bilgilendirmesi
+            </h3>
+            <div style={{
+              maxHeight: '200px',
+              overflowY: 'auto',
+              padding: '15px',
+              backgroundColor: 'var(--card-gray)',
+              borderRadius: '10px',
+              fontSize: '14px',
+              lineHeight: '1.5',
+              marginBottom: '20px'
+            }}>
+              <h4>ELEKTRONİK TİCARET BİLGİLENDİRMESİ</h4>
+              <p><strong>6563 SAYILI ELEKTRONİK TİCARET KANUNU KAPSAMINDA</strong></p>
+              <p><strong>1. HİZMET SAĞLAYICI</strong></p>
+              <p>HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ</p>
+              <p>Web sitesi üzerinden elektronik ticaret faaliyeti yürütmektedir.</p>
+              <p><strong>2. GÜVENLİ ÖDEME</strong></p>
+              <p>Ödeme bilgileriniz SSL sertifikası ile korunmaktadır.</p>
+              <p>Kredi kartı bilgileri saklanmamaktadır.</p>
+              <p><strong>3. TEKNİK GEREKSİNİMLER</strong></p>
+              <p>Modern web tarayıcısı gereklidir.</p>
+              <p>JavaScript aktif olmalıdır.</p>
+              <p><strong>4. ÇEREZ KULLANIMI</strong></p>
+              <p>Site deneyimini iyileştirmek için çerezler kullanılmaktadır.</p>
+              <p><strong>5. FİKRİ MÜLKİYET</strong></p>
+              <p>Site içeriği telif hakları ile korunmaktadır.</p>
+            </div>
+            
+            <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+              <input
+                type="checkbox"
+                checked={formData.contract5_accepted}
+                onChange={(e) => setFormData({...formData, contract5_accepted: e.target.checked})}
+                style={{ marginRight: '10px', transform: 'scale(1.2)' }}
+              />
+              <span style={{ fontSize: '14px', color: 'var(--text-dark)' }}>
+                Elektronik ticaret koşullarını okudum, anladım ve kabul ediyorum.
               </span>
             </label>
           </div>
@@ -1042,17 +1230,17 @@ const PartnerRegistration = () => {
             </button>
             <button
               onClick={() => setCurrentStep(6)}
-              disabled={!formData.contract1_accepted || !formData.contract2_accepted}
+              disabled={!formData.contract1_accepted || !formData.contract2_accepted || !formData.contract3_accepted || !formData.contract4_accepted || !formData.contract5_accepted}
               style={{
                 flex: 2,
                 padding: '15px',
-                backgroundColor: (formData.contract1_accepted && formData.contract2_accepted) ? 'var(--primary-dark)' : 'var(--card-gray)',
-                color: (formData.contract1_accepted && formData.contract2_accepted) ? 'var(--white)' : 'var(--text-light)',
+                backgroundColor: (formData.contract1_accepted && formData.contract2_accepted && formData.contract3_accepted && formData.contract4_accepted && formData.contract5_accepted) ? 'var(--primary-dark)' : 'var(--card-gray)',
+                color: (formData.contract1_accepted && formData.contract2_accepted && formData.contract3_accepted && formData.contract4_accepted && formData.contract5_accepted) ? 'var(--white)' : 'var(--text-light)',
                 border: 'none',
                 borderRadius: '10px',
                 fontSize: '16px',
                 fontWeight: 'bold',
-                cursor: (formData.contract1_accepted && formData.contract2_accepted) ? 'pointer' : 'not-allowed'
+                cursor: (formData.contract1_accepted && formData.contract2_accepted && formData.contract3_accepted && formData.contract4_accepted && formData.contract5_accepted) ? 'pointer' : 'not-allowed'
               }}
             >
               Ödeme Sayfasına Git →
@@ -1090,7 +1278,12 @@ const PartnerRegistration = () => {
                       ...formData,
                       full_address: `${formData.address}, ${formData.district}/${formData.city}`,
                       total_amount: 4800,
-                      contracts_accepted: true
+                      contracts_accepted: true,
+                      contract1_accepted: formData.contract1_accepted,
+                      contract2_accepted: formData.contract2_accepted,
+                      contract3_accepted: formData.contract3_accepted,
+                      contract4_accepted: formData.contract4_accepted,
+                      contract5_accepted: formData.contract5_accepted
                     });
 
                     setMessage(`✅ Kayıt başarıyla tamamlandı!|${JSON.stringify(response.data)}`);
