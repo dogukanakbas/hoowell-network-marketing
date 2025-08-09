@@ -2320,8 +2320,8 @@ app.post('/api/partner/register-new', verifyToken, async (req, res) => {
         delivery_address, billing_address, contract1_accepted, contract2_accepted,
         contract3_accepted, contract4_accepted, contract5_accepted,
         total_amount, registration_step, registration_completed, payment_confirmed,
-        education_completed, education_deadline, is_active, backoffice_access, created_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())`,
+        education_completed, education_deadline, is_active, backoffice_access
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         userData.username, userData.email, userData.password_hash,
         userData.first_name, userData.last_name, userData.phone, userData.country_code, userData.role,

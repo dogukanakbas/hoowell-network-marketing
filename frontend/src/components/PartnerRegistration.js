@@ -430,19 +430,40 @@ const PartnerRegistration = () => {
                 <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: 'var(--text-dark)' }}>
                   Telefon *
                 </label>
-                <input
-                  type="tel"
-                  required
-                  value={formData.phone}
-                  onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                  style={{
-                    width: '100%',
-                    padding: '12px 15px',
-                    border: '2px solid var(--border-color)',
-                    borderRadius: '10px',
-                    fontSize: '14px'
-                  }}
-                />
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <select
+                    value={formData.country_code}
+                    onChange={(e) => setFormData({ ...formData, country_code: e.target.value })}
+                    style={{
+                      width: '120px',
+                      padding: '12px 15px',
+                      border: '2px solid var(--border-color)',
+                      borderRadius: '10px',
+                      fontSize: '14px',
+                      backgroundColor: '#fff'
+                    }}
+                  >
+                    {countryCodes.map(country => (
+                      <option key={country.code} value={country.code}>
+                        {country.flag} {country.code}
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    type="tel"
+                    required
+                    value={formData.phone}
+                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                    placeholder="5XX XXX XX XX"
+                    style={{
+                      flex: 1,
+                      padding: '12px 15px',
+                      border: '2px solid var(--border-color)',
+                      borderRadius: '10px',
+                      fontSize: '14px'
+                    }}
+                  />
+                </div>
               </div>
 
               {/* Adres Seçimi */}
@@ -650,19 +671,40 @@ const PartnerRegistration = () => {
                 <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: 'var(--text-dark)' }}>
                   Telefon *
                 </label>
-                <input
-                  type="tel"
-                  required
-                  value={formData.phone}
-                  onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                  style={{
-                    width: '100%',
-                    padding: '12px 15px',
-                    border: '2px solid var(--border-color)',
-                    borderRadius: '10px',
-                    fontSize: '14px'
-                  }}
-                />
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <select
+                    value={formData.country_code}
+                    onChange={(e) => setFormData({ ...formData, country_code: e.target.value })}
+                    style={{
+                      width: '120px',
+                      padding: '12px 15px',
+                      border: '2px solid var(--border-color)',
+                      borderRadius: '10px',
+                      fontSize: '14px',
+                      backgroundColor: '#fff'
+                    }}
+                  >
+                    {countryCodes.map(country => (
+                      <option key={country.code} value={country.code}>
+                        {country.flag} {country.code}
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    type="tel"
+                    required
+                    value={formData.phone}
+                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                    placeholder="5XX XXX XX XX"
+                    style={{
+                      flex: 1,
+                      padding: '12px 15px',
+                      border: '2px solid var(--border-color)',
+                      borderRadius: '10px',
+                      fontSize: '14px'
+                    }}
+                  />
+                </div>
               </div>
 
               {/* Adres Seçimi */}

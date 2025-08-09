@@ -41,14 +41,14 @@ const QuestionManager = () => {
 
       for (let i = 0; i < questionLines.length; i++) {
         const line = questionLines[i];
-        
+
         // Soru tespiti - soru işareti ile biten satırlar
         if (line.includes('?')) {
           // Önceki soruyu kaydet
           if (currentQuestion && currentQuestion.text && currentQuestion.a && currentQuestion.b && currentQuestion.c && currentQuestion.d && currentQuestion.correct) {
             parsedQuestions.push(currentQuestion);
           }
-          
+
           // Yeni soru başlat
           currentQuestion = {
             text: line,
@@ -63,7 +63,7 @@ const QuestionManager = () => {
         // Seçenek tespiti
         else if (line.match(/^[a-dA-D][\-\)\.]?\s*/)) {
           if (!currentQuestion) continue;
-          
+
           const optionMatch = line.match(/^([a-dA-D])[\-\)\.]?\s*(.+)$/);
           if (optionMatch) {
             const option = optionMatch[1].toLowerCase();
@@ -75,7 +75,7 @@ const QuestionManager = () => {
         // Cevap tespiti
         else if (line.match(/^(cevap|Cevap|CEVAP|doğru|Doğru|DOĞRU|answer)[\s\:]+([a-dA-D])/i)) {
           if (!currentQuestion) continue;
-          
+
           const answerMatch = line.match(/^(?:cevap|Cevap|CEVAP|doğru|Doğru|DOĞRU|answer)[\s\:]+([a-dA-D])/i);
           if (answerMatch) {
             currentQuestion.correct = answerMatch[1].toLowerCase();
@@ -207,7 +207,7 @@ NOTLAR:
 
       <div style={{ marginTop: '30px', padding: '20px', backgroundColor: '#f8f9fa', borderRadius: '12px', border: '2px solid #e9ecef' }}>
         <h4 style={{ color: '#495057', marginBottom: '15px' }}>📝 Gelişmiş Soru Formatı Rehberi:</h4>
-        
+
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
           <div>
             <h5 style={{ color: '#28a745' }}>✅ Desteklenen Formatlar:</h5>
@@ -219,7 +219,7 @@ NOTLAR:
               <li><strong>Boş Satırlar:</strong> Sorular arası boşluk bırakabilirsiniz</li>
             </ul>
           </div>
-          
+
           <div>
             <h5 style={{ color: '#dc3545' }}>❌ Dikkat Edilecekler:</h5>
             <ul style={{ fontSize: '14px', lineHeight: '1.6' }}>
@@ -231,9 +231,9 @@ NOTLAR:
             </ul>
           </div>
         </div>
-        
+
         <div style={{ marginTop: '15px', padding: '10px', backgroundColor: '#d1ecf1', borderRadius: '8px', border: '1px solid #bee5eb' }}>
-          <strong style={{ color: '#0c5460' }}>💡 İpucu:</strong> 
+          <strong style={{ color: '#0c5460' }}>💡 İpucu:</strong>
           <span style={{ color: '#0c5460', fontSize: '14px' }}> Soruları yapıştırmadan önce bir metin editöründe kontrol edin. Sistem otomatik olarak geçersiz soruları filtreler ve size bilgi verir.</span>
         </div>
       </div>
