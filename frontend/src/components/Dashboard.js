@@ -319,13 +319,15 @@ const Dashboard = () => {
               borderRadius: '12px',
               padding: '15px',
               border: '2px solid #FFD700',
-              boxShadow: '0 8px 25px rgba(0, 0, 0, 0.3)'
+              boxShadow: '0 8px 25px rgba(0, 0, 0, 0.3)',
+              textAlign: 'center'
             }}>
               <div style={{ 
                 color: '#FFD700', 
                 fontSize: '11px', 
                 marginBottom: '10px',
-                lineHeight: '1.3'
+                lineHeight: '1.3',
+                textAlign: 'center'
               }}>
                 {video.title}
               </div>
