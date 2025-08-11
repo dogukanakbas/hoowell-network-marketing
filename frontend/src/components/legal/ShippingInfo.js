@@ -31,6 +31,7 @@ const ShippingInfo = () => {
               <p><strong>Şirket:</strong> HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ</p>
               <p><strong>Teslimat Adresi:</strong> AOSB MAH. 10035 SK. NO 5 ÇİĞİLİ İZMİR</p>
               <p><strong>Ticaret Sicil No:</strong> 264080</p>
+              <p><strong>Telefon:</strong> 0232 905 55 55</p>
               <p><strong>İletişim:</strong> info@hoowell.com.tr</p>
             </div>
           </section>
@@ -285,6 +286,7 @@ const ShippingInfo = () => {
             <h2 style={{ color: 'var(--primary-dark)', marginBottom: '15px' }}>10. İletişim</h2>
             <p>Teslimat ile ilgili sorularınız için bizimle iletişime geçebilirsiniz:</p>
             <div style={{ backgroundColor: '#f8f9fa', padding: '20px', borderRadius: '10px' }}>
+              <p><strong>Telefon:</strong> 0232 905 55 55</p>
               <p><strong>E-posta:</strong> info@hoowell.com.tr</p>
               <p><strong>Konu:</strong> "Teslimat Bilgisi - Sipariş Numaranız"</p>
               <p><strong>Adres:</strong> AOSB MAH. 10035 SK. NO 5 ÇİĞİLİ İZMİR</p>

@@ -45,6 +45,7 @@ frontend/src/components/legal/
 #### **B) Footer İçeriği:**
 ```
 📍 Adres: AOSB MAH. 10035 SK. NO 5 ÇİĞİLİ İZMİR
+📞 Telefon: 0232 905 55 55
 📧 E-posta: info@hoowell.com.tr
 🏢 Ticaret Sicil No: 264080
 🏦 IBAN: TR77 0011 1000 0000 0153 1671 66

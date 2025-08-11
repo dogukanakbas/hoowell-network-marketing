@@ -86,6 +86,7 @@ const AboutUs = () => {
                             <p><strong>Kuruluş Yılı:</strong> 2024</p>
                             <p><strong>Ticaret Sicil No:</strong> 264080</p>
                             <p><strong>Adres:</strong> AOSB MAH. 10035 SK. NO 5 ÇİĞİLİ İZMİR</p>
+                            <p><strong>Telefon:</strong> 0232 905 55 55</p>
                             <p><strong>E-posta:</strong> info@hoowell.com.tr</p>
                             <p><strong>IBAN:</strong> TR77 0011 1000 0000 0153 1671 66</p>
                         </div>

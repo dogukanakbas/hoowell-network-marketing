@@ -207,6 +207,7 @@ PayTR başvurusu için yasal sayfalarda "Network Marketing" ifadeleri bulunuyord
 - ✅ **Tam Unvan:** HOOWELL GLOBAL SU ARITMA SİSTEMLERİ A.Ş.
 - ✅ **Ticaret Sicil:** 264080
 - ✅ **Adres:** AOSB MAH. 10035 SK. NO 5 ÇİĞİLİ İZMİR
+- ✅ **Telefon:** 0232 905 55 55
 - ✅ **IBAN:** TR77 0011 1000 0000 0153 1671 66
 
 #### **3. Teknik Gereksinimler:**

@@ -81,6 +81,7 @@ const PrivacyPolicy = () => {
                     📍 İLETİŞİM BİLGİLERİ
                   </h4>
                   <p><strong>Adres:</strong> AOSB MAH. 10035 SK. NO 5 ÇİĞİLİ İZMİR</p>
+                  <p><strong>Telefon:</strong> 0232 905 55 55</p>
                   <p><strong>E-posta:</strong> info@hoowell.com.tr</p>
                   <p><strong>KVKK Sorumlusu:</strong> kvkk@hoowell.com.tr</p>
                   <p><strong>Web Sitesi:</strong> www.hoowell.com.tr</p>

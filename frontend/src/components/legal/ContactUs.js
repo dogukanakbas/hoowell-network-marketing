@@ -102,6 +102,8 @@ const ContactUs = () => {
                 <div style={{ fontSize: '48px', marginBottom: '15px' }}>📞</div>
                 <h3 style={{ color: '#7b1fa2', marginBottom: '15px' }}>İletişim</h3>
                 <p style={{ color: '#7b1fa2', fontWeight: '500' }}>
+                  <strong>Telefon:</strong><br/>
+                  0232 905 55 55<br/><br/>
                   <strong>E-posta:</strong><br/>
                   info@hoowell.com.tr<br/><br/>
                   <strong>Çalışma Saatleri:</strong><br/>
@@ -130,6 +132,8 @@ const ContactUs = () => {
                 <p style={{ color: '#f57c00', fontWeight: '500' }}>
                   <strong>Ticaret Sicil No:</strong><br/>
                   264080<br/><br/>
+                  <strong>Telefon:</strong><br/>
+                  0232 905 55 55<br/><br/>
                   <strong>E-posta:</strong><br/>
                   info@hoowell.com.tr
                 </p>

@@ -49,9 +49,17 @@ const sendWelcomeEmail = async (user, password) => {
       
       <a href="http://localhost:3000" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Sisteme Giriş Yap</a>
       
-      <p style="margin-top: 30px; color: #6c757d; font-size: 12px;">
-        Bu email otomatik olarak gönderilmiştir. Lütfen yanıtlamayın.
-      </p>
+      <div style="margin-top: 30px; padding: 15px; background-color: #f8f9fa; border-radius: 5px;">
+        <p style="color: #0e2323; font-size: 12px; margin: 0; font-weight: bold;">
+          HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ
+        </p>
+        <p style="color: #6c757d; font-size: 11px; margin: 5px 0;">
+          📍 AOSB MAH. 10035 SK. NO 5 ÇİĞİLİ İZMİR | 📞 0232 905 55 55 | 📧 info@hoowell.com.tr
+        </p>
+        <p style="color: #6c757d; font-size: 11px; margin: 5px 0 0 0;">
+          Bu email otomatik olarak gönderilmiştir. Lütfen yanıtlamayın.
+        </p>
+      </div>
     </div>
   `;
   
@@ -73,9 +81,17 @@ const sendPasswordResetEmail = async (user, resetToken) => {
       
       <p style="margin-top: 20px;">Bu link 1 saat geçerlidir. Eğer şifre sıfırlama talebinde bulunmadıysanız bu emaili görmezden gelebilirsiniz.</p>
       
-      <p style="margin-top: 30px; color: #6c757d; font-size: 12px;">
-        Bu email otomatik olarak gönderilmiştir. Lütfen yanıtlamayın.
-      </p>
+      <div style="margin-top: 30px; padding: 15px; background-color: #f8f9fa; border-radius: 5px;">
+        <p style="color: #0e2323; font-size: 12px; margin: 0; font-weight: bold;">
+          HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ
+        </p>
+        <p style="color: #6c757d; font-size: 11px; margin: 5px 0;">
+          📍 AOSB MAH. 10035 SK. NO 5 ÇİĞİLİ İZMİR | 📞 0232 905 55 55 | 📧 info@hoowell.com.tr
+        </p>
+        <p style="color: #6c757d; font-size: 11px; margin: 5px 0 0 0;">
+          Bu email otomatik olarak gönderilmiştir. Lütfen yanıtlamayın.
+        </p>
+      </div>
     </div>
   `;
   
@@ -162,7 +178,13 @@ const sendNewRegistrationEmail = async (user, password) => {
       <!-- Footer -->
       <div style="background-color: #0e2323; padding: 20px; text-align: center;">
         <p style="color: #FFD700; margin: 0; font-size: 14px;">
-          HOOWELL Teknoloji A.Ş.
+          HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ
+        </p>
+        <p style="color: #ccc; margin: 5px 0; font-size: 12px;">
+          📍 AOSB MAH. 10035 SK. NO 5 ÇİĞİLİ İZMİR
+        </p>
+        <p style="color: #ccc; margin: 5px 0; font-size: 12px;">
+          📞 0232 905 55 55 | 📧 info@hoowell.com.tr
         </p>
         <p style="color: #ccc; margin: 5px 0 0 0; font-size: 12px;">
           Bu email otomatik olarak gönderilmiştir. Lütfen yanıtlamayın.

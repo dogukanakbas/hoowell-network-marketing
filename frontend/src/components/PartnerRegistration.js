@@ -1125,7 +1125,8 @@ const PartnerRegistration = () => {
               <p><strong>MADDE 1 - TARAFLAR</strong></p>
               <p><strong>SATICI:</strong> HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ</p>
               <p>Adres: AOSB MAH. 10035 SK. NO 5 ÇİĞİLİ İZMİR</p>
-              <p>Telefon: info@hoowell.com.tr</p>
+              <p>Telefon: 0232 905 55 55</p>
+              <p>E-posta: info@hoowell.com.tr</p>
               <p><strong>MADDE 2 - KONU</strong></p>
               <p>İşbu sözleşme, 6502 sayılı Tüketicinin Korunması Hakkında Kanun'un 48-84. maddeleri gereğince düzenlenmiştir.</p>
               <p><strong>MADDE 3 - CAYMA HAKKI</strong></p>
@@ -1175,6 +1176,7 @@ const PartnerRegistration = () => {
               <p>Ticaret Unvanı: HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ</p>
               <p>Ticaret Sicil No: 264080</p>
               <p>Adres: AOSB MAH. 10035 SK. NO 5 ÇİĞİLİ İZMİR</p>
+              <p>Telefon: 0232 905 55 55</p>
               <p>E-posta: info@hoowell.com.tr</p>
               <p><strong>2. ÜRÜN BİLGİLERİ</strong></p>
               <p>Ürün: İş Ortaklığı Paketi</p>
@@ -1186,7 +1188,7 @@ const PartnerRegistration = () => {
               <p><strong>4. CAYMA HAKKI</strong></p>
               <p>14 günlük cayma hakkınız bulunmaktadır.</p>
               <p><strong>5. ŞİKAYET VE İTİRAZ</strong></p>
-              <p>Tüketici sorunları için: info@hoowell.com.tr</p>
+              <p>Tüketici sorunları için: 0232 905 55 55 - info@hoowell.com.tr</p>
             </div>
             
             <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>

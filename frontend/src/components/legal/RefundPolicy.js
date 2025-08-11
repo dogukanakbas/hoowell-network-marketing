@@ -112,6 +112,7 @@ const RefundPolicy = () => {
                   <div style={{ fontSize: '14px', color: '#333' }}>
                     <p><strong>Unvan:</strong> HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ</p>
                     <p><strong>Ticaret Sicil No:</strong> 264080</p>
+                    <p><strong>Telefon:</strong> 0232 905 55 55</p>
                     <p><strong>E-posta:</strong> info@hoowell.com.tr</p>
                     <p><strong>Web:</strong> www.hoowell.com.tr</p>
                   </div>
@@ -120,6 +121,7 @@ const RefundPolicy = () => {
                   <h5 style={{ color: 'var(--primary-dark)', marginBottom: '10px' }}>📍 İletişim Bilgileri</h5>
                   <div style={{ fontSize: '14px', color: '#333' }}>
                     <p><strong>Adres:</strong> AOSB MAH. 10035 SK. NO 5 ÇİĞİLİ İZMİR</p>
+                    <p><strong>Telefon:</strong> 0232 905 55 55</p>
                     <p><strong>E-posta:</strong> info@hoowell.com.tr</p>
                     <p><strong>İade E-posta:</strong> iade@hoowell.com.tr</p>
                     <p><strong>Web:</strong> www.hoowell.com.tr</p>
@@ -340,6 +342,7 @@ const RefundPolicy = () => {
             <h2 style={{ color: 'var(--primary-dark)', marginBottom: '15px' }}>10. İletişim Bilgileri</h2>
             <p>İade ve değişim işlemleri için bizimle iletişime geçebilirsiniz:</p>
             <div style={{ backgroundColor: '#f8f9fa', padding: '20px', borderRadius: '10px' }}>
+              <p><strong>Telefon:</strong> 0232 905 55 55</p>
               <p><strong>E-posta:</strong> info@hoowell.com.tr</p>
               <p><strong>Konu:</strong> "İade Talebi - Sipariş Numaranız"</p>
               <p><strong>Adres:</strong> AOSB MAH. 10035 SK. NO 5 ÇİĞİLİ İZMİR</p>
