@@ -3,6 +3,7 @@ import { Outlet, Navigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import PaymentBlockedWarning from './PaymentBlockedWarning';
 
+
 const Layout = () => {
   const { user, logout, loading, refreshUser } = useAuth();
   const location = useLocation();
@@ -159,7 +160,7 @@ const Layout = () => {
             <div style={{
               width: '45px',
               height: '45px',
-              backgroundColor: 'var(--accent-gold)',
+              backgroundColor: (user.career_level?.toLowerCase() === 'bronze' || user.career_level?.toLowerCase() === 'silver') ? 'transparent' : 'var(--accent-gold)',
               borderRadius: '50%',
               display: 'flex',
               alignItems: 'center',
@@ -168,9 +169,23 @@ const Layout = () => {
               fontSize: '16px',
               fontWeight: 'bold',
               color: '#0e2323',
-              border: '2px solid #ffffff'
+              border: '2px solid #ffffff',
+              overflow: 'hidden'
             }}>
-              🏠
+              {user.career_level?.toLowerCase() === 'bronze' ? (
+                <img 
+                  src="/images/products/bronze_logo.jpeg" 
+                  alt="Bronze Logo"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    borderRadius: '50%'
+                  }}
+                />
+              ) : (
+                user.first_name?.charAt(0)?.toUpperCase() + user.last_name?.charAt(0)?.toUpperCase() || '🏠'
+              )}
             </div>
             <div style={{ flex: 1 }}>
               <div style={{

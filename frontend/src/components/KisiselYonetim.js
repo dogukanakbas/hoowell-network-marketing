@@ -283,6 +283,44 @@ const KisiselYonetim = () => {
         {/* Profil Sekmesi */}
         {activeTab === 'profile' && (
           <form onSubmit={handleProfileUpdate}>
+            {/* Profil Avatar */}
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center',
+              marginBottom: '20px'
+            }}>
+              <div style={{
+                width: '80px',
+                height: '80px',
+                backgroundColor: user.career_level?.toLowerCase() === 'bronze' ? 'transparent' : 'var(--accent-gold)',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '24px',
+                fontWeight: 'bold',
+                color: '#0e2323',
+                border: '3px solid #FFD700',
+                overflow: 'hidden',
+                boxShadow: '0 4px 15px rgba(255, 215, 0, 0.3)'
+              }}>
+                {user.career_level?.toLowerCase() === 'bronze' ? (
+                  <img 
+                    src="/images/products/bronze_logo.jpeg" 
+                    alt="Bronze Logo"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      borderRadius: '50%'
+                    }}
+                  />
+                ) : (
+                  user.first_name?.charAt(0)?.toUpperCase() + user.last_name?.charAt(0)?.toUpperCase() || '👤'
+                )}
+              </div>
+            </div>
+
             <h3 style={{
               color: '#0e2323',
               fontSize: '24px',

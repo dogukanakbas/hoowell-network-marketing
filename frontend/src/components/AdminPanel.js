@@ -517,7 +517,41 @@ const UserManagement = () => {
             {users.map((user) => (
               <tr key={user.id}>
                 <td>{user.sponsor_id || 'Atanmamış'}</td>
-                <td>{user.first_name} {user.last_name}</td>
+                <td>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{
+                      width: '30px',
+                      height: '30px',
+                      backgroundColor: user.career_level?.toLowerCase() === 'bronze' ? 'transparent' : 'var(--accent-gold)',
+                      borderRadius: '50%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '12px',
+                      fontWeight: 'bold',
+                      color: '#0e2323',
+                      border: '1px solid #ddd',
+                      overflow: 'hidden',
+                      flexShrink: 0
+                    }}>
+                      {user.career_level?.toLowerCase() === 'bronze' ? (
+                        <img 
+                          src="/images/products/bronze_logo.jpeg" 
+                          alt="Bronze Logo"
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            borderRadius: '50%'
+                          }}
+                        />
+                      ) : (
+                        user.first_name?.charAt(0)?.toUpperCase() + user.last_name?.charAt(0)?.toUpperCase() || '?'
+                      )}
+                    </div>
+                    <span>{user.first_name} {user.last_name}</span>
+                  </div>
+                </td>
                 <td>{user.username}</td>
                 <td>{user.email}</td>
                 <td>{user.career_level?.toUpperCase()}</td>

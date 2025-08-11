@@ -149,7 +149,18 @@ const FranchiseNetwork = () => {
             color: isCurrentUser ? '#FFD700' : '#0e2323',
             border: '2px solid rgba(255,255,255,0.3)'
           }}>
-            {nodeData.profile_photo ? (
+            {nodeData.career_level?.toLowerCase() === 'bronze' ? (
+              <img 
+                src="/images/products/bronze_logo.jpeg" 
+                alt="Bronze Logo"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: '50%',
+                  objectFit: 'cover'
+                }}
+              />
+            ) : nodeData.profile_photo ? (
               <img 
                 src={nodeData.profile_photo} 
                 alt="Profile" 
@@ -539,7 +550,18 @@ const FranchiseNetwork = () => {
                 color: '#0e2323',
                 border: '3px solid rgba(255,255,255,0.3)'
               }}>
-                {selectedUser.profile_photo ? (
+                {selectedUser.career_level?.toLowerCase() === 'bronze' ? (
+                  <img 
+                    src="/images/products/bronze_logo.jpeg" 
+                    alt="Bronze Logo"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      borderRadius: '50%',
+                      objectFit: 'cover'
+                    }}
+                  />
+                ) : selectedUser.profile_photo ? (
                   <img 
                     src={selectedUser.profile_photo} 
                     alt="Profile" 

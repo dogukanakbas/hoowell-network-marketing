@@ -45,16 +45,30 @@ const MobileHeader = ({ title, showUserInfo = true }) => {
           <div style={{
             width: '35px',
             height: '35px',
-            backgroundColor: 'var(--accent-gold)',
+            backgroundColor: user.career_level?.toLowerCase() === 'bronze' ? 'transparent' : 'var(--accent-gold)',
             borderRadius: '50%',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: '14px',
             fontWeight: 'bold',
-            color: 'var(--primary-dark)'
+            color: 'var(--primary-dark)',
+            overflow: 'hidden'
           }}>
-            {user.first_name?.charAt(0)}{user.last_name?.charAt(0)}
+            {user.career_level?.toLowerCase() === 'bronze' ? (
+              <img 
+                src="/images/products/bronze_logo.jpeg" 
+                alt="Bronze Logo"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  borderRadius: '50%'
+                }}
+              />
+            ) : (
+              user.first_name?.charAt(0) + user.last_name?.charAt(0)
+            )}
           </div>
           <div style={{ textAlign: 'center' }}>
             <div style={{ 

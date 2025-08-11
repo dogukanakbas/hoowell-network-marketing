@@ -285,17 +285,31 @@ const CareerTracker = () => {
             border: `3px solid ${design.badgeColor}`,
             position: 'relative'
           }}>
-            <div style={{
-              fontSize: '48px',
-              filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.5))'
-            }}>
-              {careerData.current_level === 'country_distributor' ? '🌍' :
-               careerData.current_level === 'presidents_team' ? '👑' :
-               careerData.current_level === 'super_star_leader' ? '⭐' :
-               careerData.current_level === 'star_leader' ? '🌟' :
-               careerData.current_level === 'gold' ? '🥇' :
-               careerData.current_level === 'silver' ? '🥈' : '🥉'}
-            </div>
+            {careerData.current_level?.toLowerCase() === 'bronze' ? (
+              <img 
+                src="/images/products/bronze_logo.jpeg" 
+                alt="Bronze Logo"
+                style={{
+                  width: '80px',
+                  height: '80px',
+                  objectFit: 'cover',
+                  borderRadius: '50%',
+                  filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.5))'
+                }}
+              />
+            ) : (
+              <div style={{
+                fontSize: '48px',
+                filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.5))'
+              }}>
+                {careerData.current_level === 'country_distributor' ? '🌍' :
+                 careerData.current_level === 'presidents_team' ? '👑' :
+                 careerData.current_level === 'super_star_leader' ? '⭐' :
+                 careerData.current_level === 'star_leader' ? '🌟' :
+                 careerData.current_level === 'gold' ? '🥇' :
+                 careerData.current_level === 'silver' ? '🥈' : '🥉'}
+              </div>
+            )}
             
             {/* Seviye Yıldızları */}
             <div style={{
