@@ -206,15 +206,7 @@ const Welcome = () => {
             HOOWELL
           </h1>
 
-          <p style={{
-            fontSize: '14px',
-            color: '#666',
-            margin: '0 0 15px 0',
-            fontWeight: '500',
-            letterSpacing: '1px'
-          }}>
-            INNOVATE YOUR LIFE
-          </p>
+
         </div>
 
         {/* Hoşgeldin Mesajı */}

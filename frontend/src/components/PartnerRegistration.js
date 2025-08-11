@@ -938,7 +938,7 @@ const PartnerRegistration = () => {
                   Franchise Satış Paketi
                 </div>
                 <div style={{ fontSize: '14px', color: 'var(--text-light)' }}>
-                  Su arıtma sistemleri franchise hakkı
+                  Alkali iyonizer sistemleri franchise hakkı
                 </div>
               </div>
               <div style={{ textAlign: 'right' }}>
@@ -1023,7 +1023,7 @@ const PartnerRegistration = () => {
             }}>
               <h4>SATIŞ SÖZLEŞMESİ</h4>
               <p>İşbu sözleşme, 6502 sayılı Tüketicinin Korunması Hakkında Kanun çerçevesinde düzenlenmiştir.</p>
-              <p><strong>SATICI:</strong> HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ</p>
+              <p><strong>SATICI:</strong> HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ</p>
               <p><strong>ÜRÜN:</strong> İş Ortaklığı Paketi</p>
               <p><strong>FİYAT:</strong> 4.800 TL (KDV Dahil)</p>
               <p>Ürün, sipariş onayından sonra 7-14 iş günü içinde teslim edilecektir.</p>
@@ -1071,7 +1071,7 @@ const PartnerRegistration = () => {
               <p>6698 sayılı KVKK kapsamında kişisel verileriniz işlenmektedir.</p>
               <p>Verileriniz hizmet sunumu ve müşteri ilişkileri yönetimi amacıyla kullanılacaktır.</p>
               <p><strong>VERİ SORUMLUSU:</strong></p>
-              <p>HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ</p>
+              <p>HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ</p>
               <p><strong>İŞLENEN VERİLER:</strong></p>
               <p>• Kimlik bilgileri (Ad, soyad, TC No)</p>
               <p>• İletişim bilgileri (Telefon, e-posta, adres)</p>
@@ -1123,7 +1123,7 @@ const PartnerRegistration = () => {
             }}>
               <h4>MESAFELİ SATIŞ SÖZLEŞMESİ</h4>
               <p><strong>MADDE 1 - TARAFLAR</strong></p>
-              <p><strong>SATICI:</strong> HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ</p>
+              <p><strong>SATICI:</strong> HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ</p>
               <p>Adres: AOSB MAH. 10035 SK. NO 5 ÇİĞİLİ İZMİR</p>
               <p>Telefon: info@hoowell.com.tr</p>
               <p><strong>MADDE 2 - KONU</strong></p>
@@ -1172,7 +1172,7 @@ const PartnerRegistration = () => {
             }}>
               <h4>ÖN BİLGİLENDİRME FORMU</h4>
               <p><strong>1. SATICI BİLGİLERİ</strong></p>
-              <p>Ticaret Unvanı: HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ</p>
+              <p>Ticaret Unvanı: HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ</p>
               <p>Ticaret Sicil No: 264080</p>
               <p>Adres: AOSB MAH. 10035 SK. NO 5 ÇİĞİLİ İZMİR</p>
               <p>E-posta: info@hoowell.com.tr</p>
@@ -1226,7 +1226,7 @@ const PartnerRegistration = () => {
               <h4>ELEKTRONİK TİCARET BİLGİLENDİRMESİ</h4>
               <p><strong>6563 SAYILI ELEKTRONİK TİCARET KANUNU KAPSAMINDA</strong></p>
               <p><strong>1. HİZMET SAĞLAYICI</strong></p>
-              <p>HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ</p>
+              <p>HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ</p>
               <p>Web sitesi üzerinden elektronik ticaret faaliyeti yürütmektedir.</p>
               <p><strong>2. GÜVENLİ ÖDEME</strong></p>
               <p>Ödeme bilgileriniz SSL sertifikası ile korunmaktadır.</p>
@@ -1445,7 +1445,7 @@ const PartnerRegistration = () => {
                     TR77 0011 1000 0000 0153 1671 66
                   </div>
                   <div style={{ fontSize: '14px', color: 'var(--text-light)', marginTop: '5px' }}>
-                    HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ
+                    HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ
                   </div>
                 </div>
               </div>

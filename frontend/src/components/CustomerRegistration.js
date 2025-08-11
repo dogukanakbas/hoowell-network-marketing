@@ -142,6 +142,7 @@ const CustomerRegistration = () => {
     authorized_phone: '',
     authorized_country_code: '+90',
     selected_product: '',
+    selected_color: '',
     contract1_accepted: false,
     contract2_accepted: false,
     contract3_accepted: false, // Mesafeli Satış Sözleşmesi
@@ -152,20 +153,46 @@ const CustomerRegistration = () => {
 
   const products = [
     {
-      id: 'education',
-      name: 'Eğitim Paketi',
-      price: 4000, // 100 USD * 40 TL
-      vat: 800,    // 20% KDV
-      total: 4800, // KDV dahil
-      description: 'Su Arıtma Eğitim Sistemi'
+      id: 'product1',
+      name: 'HOOWELL Premium El Terminali',
+      price: 16400,  // Perakende satış fiyatı
+      vat: 3280,     // 20% KDV
+      total: 19680,  // KDV dahil
+      description: 'PERAKENDE SATIŞ FİYATI',
+      image: '/images/products/hoowell-premium.jpg',
+      hasColorOptions: true,
+      colors: [
+        { id: 'black', name: 'Siyah', color: '#000000' },
+        { id: 'blue', name: 'Mavi', color: '#0066CC' },
+        { id: 'gold', name: 'Gold', color: '#FFD700' },
+        { id: 'bronze', name: 'Bronz', color: '#CD7F32' }
+      ]
     },
     {
-      id: 'device',
-      name: 'Cihaz Paketi',
-      price: 72000,  // 1800 USD * 40 TL
+      id: 'product2',
+      name: 'HOOWELL Professional Alkali İyonizer Cihazı',
+      price: 72000,  // Perakende satış fiyatı
       vat: 14400,    // 20% KDV
       total: 86400,  // KDV dahil
-      description: 'HOOWELL Cihazı + Eğitim Sistemi'
+      description: 'PERAKENDE SATIŞ FİYATI',
+      image: '/images/products/hoowell-professional.jpg',
+      hasColorOptions: false
+    },
+    {
+      id: 'product3',
+      name: 'HOOWELL Elite Alkali İyonizer Sistemi',
+      price: 82000,  // Perakende satış fiyatı
+      vat: 16400,    // 20% KDV
+      total: 98400,  // KDV dahil
+      description: 'PERAKENDE SATIŞ FİYATI',
+      image: '/images/products/hoowell-elite.jpg',
+      hasColorOptions: true,
+      colors: [
+        { id: 'black', name: 'Siyah', color: '#000000' },
+        { id: 'blue', name: 'Mavi', color: '#0066CC' },
+        { id: 'gold', name: 'Gold', color: '#FFD700' },
+        { id: 'bronze', name: 'Bronz', color: '#CD7F32' }
+      ]
     }
   ];
 
@@ -769,35 +796,237 @@ const CustomerRegistration = () => {
           borderRadius: '15px',
           padding: '40px'
         }}>
-          <h2 style={{ textAlign: 'center', marginBottom: '30px', color: 'var(--primary-dark)' }}>
-            Ürün Seçimi
-          </h2>
+          <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+            <h2 style={{ color: 'var(--primary-dark)', marginBottom: '10px', fontSize: '28px' }}>
+              🏠 Ürün Seçimi
+            </h2>
+            <p style={{ color: 'var(--text-light)', fontSize: '16px', maxWidth: '600px', margin: '0 auto' }}>
+              HOOWELL ürün gamımızdan size en uygun olanı seçin. 
+              Tüm ürünlerimiz yüksek kalite standartlarında üretilmiştir.
+            </p>
+          </div>
 
-          <div className="product-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px', maxWidth: '800px', margin: '0 auto' }}>
+          <div className="product-grid" style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
+            gap: '25px', 
+            maxWidth: '1200px', 
+            margin: '0 auto',
+            padding: '0 15px'
+          }}>
             {products.map((product) => (
               <div
                 key={product.id}
-                onClick={() => setFormData({ ...formData, selected_product: product.id })}
                 style={{
                   backgroundColor: formData.selected_product === product.id ? 'var(--primary-dark)' : 'white',
                   color: formData.selected_product === product.id ? 'white' : 'var(--text-dark)',
-                  padding: '30px',
-                  borderRadius: '15px',
-                  border: '2px solid ' + (formData.selected_product === product.id ? 'var(--primary-dark)' : '#ddd'),
+                  padding: '20px',
+                  borderRadius: '16px',
+                  border: product.id === 'product3' 
+                    ? '3px solid #ff6b35' 
+                    : '3px solid ' + (formData.selected_product === product.id ? 'var(--primary-dark)' : '#e9ecef'),
+                  textAlign: 'center',
+                  boxShadow: product.id === 'product3'
+                    ? '0 8px 25px rgba(255,107,53,0.3)'
+                    : formData.selected_product === product.id 
+                      ? '0 8px 25px rgba(0,123,255,0.3)' 
+                      : '0 4px 15px rgba(0,0,0,0.08)',
+                  transition: 'all 0.3s ease',
                   cursor: 'pointer',
-                  textAlign: 'center'
+                  transform: formData.selected_product === product.id ? 'translateY(-5px)' : 'translateY(0)',
+                  minHeight: '450px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}
+                onMouseEnter={(e) => {
+                  if (formData.selected_product !== product.id) {
+                    e.target.style.transform = 'translateY(-3px)';
+                    e.target.style.boxShadow = '0 6px 20px rgba(0,0,0,0.15)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (formData.selected_product !== product.id) {
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = '0 4px 15px rgba(0,0,0,0.08)';
+                  }
                 }}
               >
-                <h3 style={{ marginBottom: '15px' }}>{product.name}</h3>
-                <p style={{ fontSize: '14px', opacity: 0.8, marginBottom: '20px' }}>
-                  {product.description}
-                </p>
-                <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '10px' }}>
-                  {product.total.toLocaleString()} TL
+                <div
+                  onClick={() => setFormData({ ...formData, selected_product: product.id, selected_color: '' })}
+                  style={{ cursor: 'pointer', flex: '1', display: 'flex', flexDirection: 'column' }}
+                >
+                  {/* Ürün Fotoğrafı */}
+                  <div style={{ 
+                    width: '100%', 
+                    height: '200px', 
+                    marginBottom: '20px',
+                    borderRadius: '12px',
+                    overflow: 'hidden',
+                    backgroundColor: '#f8f9fa',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    border: '1px solid #e9ecef',
+                    position: 'relative'
+                  }}>
+                    <img 
+                      src={product.image} 
+                      alt={product.name}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'contain',
+                        transition: 'transform 0.3s ease',
+                        padding: '10px'
+                      }}
+                      onError={(e) => {
+                        // Fotoğraf yüklenemezse placeholder göster
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
+                      }}
+                      onMouseEnter={(e) => {
+                        if (formData.selected_product !== product.id) {
+                          e.target.style.transform = 'scale(1.05)';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.transform = 'scale(1)';
+                      }}
+                    />
+                    <div style={{
+                      display: 'none',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: '100%',
+                      height: '100%',
+                      backgroundColor: '#e9ecef',
+                      color: '#6c757d',
+                      fontSize: '14px',
+                      flexDirection: 'column'
+                    }}>
+                      <div style={{ fontSize: '32px', marginBottom: '8px' }}>🏠</div>
+                      <div style={{ fontWeight: 'bold' }}>HOOWELL</div>
+                      <div style={{ fontSize: '12px' }}>Alkali İyonizer Sistemi</div>
+                    </div>
+                    
+                    {/* Seçili ürün için işaret */}
+                    {formData.selected_product === product.id && (
+                      <div style={{
+                        position: 'absolute',
+                        top: '10px',
+                        right: '10px',
+                        backgroundColor: 'white',
+                        color: 'var(--primary-dark)',
+                        borderRadius: '50%',
+                        width: '30px',
+                        height: '30px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+                      }}>
+                        ✓
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Kampanya Badge - Sadece Elite için */}
+                  {product.id === 'product3' && (
+                    <div style={{
+                      position: 'absolute',
+                      top: '10px',
+                      right: '-30px',
+                      backgroundColor: '#ff6b35',
+                      color: 'white',
+                      padding: '5px 40px',
+                      fontSize: '12px',
+                      fontWeight: 'bold',
+                      transform: 'rotate(45deg)',
+                      boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+                      zIndex: 10
+                    }}>
+                      KAMPANYA
+                    </div>
+                  )}
+                  
+                  <h3 style={{ marginBottom: '12px', fontSize: '18px', fontWeight: 'bold' }}>
+                    {product.id === 'product3' ? '⭐ ' : product.id === 'product1' ? '📱 ' : '🏆 '}{product.name}
+                  </h3>
+                  <p style={{ fontSize: '14px', opacity: 0.8, marginBottom: '15px', lineHeight: '1.4' }}>
+                    {product.description}
+                  </p>
+                  
+                  {/* Fiyat Bilgileri */}
+                  <div style={{ marginTop: 'auto', marginBottom: '15px' }}>
+                    <div style={{ fontSize: '14px', marginBottom: '5px', opacity: 0.7 }}>
+                      Net Fiyat: {product.price.toLocaleString()} ₺
+                    </div>
+                    <div style={{ fontSize: '12px', marginBottom: '8px', opacity: 0.6 }}>
+                      KDV (%20): {product.vat.toLocaleString()} ₺
+                    </div>
+                    <div style={{ 
+                      fontSize: '20px', 
+                      fontWeight: 'bold', 
+                      color: formData.selected_product === product.id ? 'white' : 'var(--primary-dark)',
+                      padding: '8px',
+                      backgroundColor: formData.selected_product === product.id ? 'rgba(255,255,255,0.1)' : 'rgba(0,123,255,0.1)',
+                      borderRadius: '8px',
+                      border: formData.selected_product === product.id ? '1px solid rgba(255,255,255,0.2)' : '1px solid var(--primary-dark)'
+                    }}>
+                      TOPLAM: {product.total.toLocaleString()} ₺
+                    </div>
+                  </div>
                 </div>
-                <div style={{ fontSize: '12px', opacity: 0.7 }}>
-                  (KDV Dahil)
-                </div>
+
+                {/* Renk Seçimi */}
+                {product.hasColorOptions && formData.selected_product === product.id && (
+                  <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px solid rgba(255,255,255,0.2)' }}>
+                    <div style={{ fontSize: '14px', marginBottom: '10px', fontWeight: 'bold' }}>
+                      Renk Seçimi:
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                      {product.colors.map((color) => (
+                        <div
+                          key={color.id}
+                          onClick={() => setFormData({ ...formData, selected_color: color.id })}
+                          style={{
+                            width: '30px',
+                            height: '30px',
+                            borderRadius: '50%',
+                            backgroundColor: color.color,
+                            border: formData.selected_color === color.id ? '3px solid #FFD700' : '2px solid #ccc',
+                            cursor: 'pointer',
+                            position: 'relative',
+                            boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
+                          }}
+                          title={color.name}
+                        >
+                          {formData.selected_color === color.id && (
+                            <div style={{
+                              position: 'absolute',
+                              top: '50%',
+                              left: '50%',
+                              transform: 'translate(-50%, -50%)',
+                              color: color.id === 'black' ? 'white' : 'black',
+                              fontSize: '16px'
+                            }}>
+                              ✓
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    {formData.selected_color && (
+                      <div style={{ fontSize: '12px', marginTop: '10px', opacity: 0.8 }}>
+                        Seçilen: {product.colors.find(c => c.id === formData.selected_color)?.name}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -820,15 +1049,15 @@ const CustomerRegistration = () => {
 
             <button
               onClick={handleNext}
-              disabled={!formData.selected_product}
+              disabled={!formData.selected_product || (products.find(p => p.id === formData.selected_product)?.hasColorOptions && !formData.selected_color)}
               style={{
-                backgroundColor: formData.selected_product ? 'var(--primary-dark)' : '#ccc',
+                backgroundColor: (formData.selected_product && (!products.find(p => p.id === formData.selected_product)?.hasColorOptions || formData.selected_color)) ? 'var(--primary-dark)' : '#ccc',
                 color: 'white',
                 border: 'none',
                 borderRadius: '10px',
                 padding: '15px 30px',
                 fontSize: '16px',
-                cursor: formData.selected_product ? 'pointer' : 'not-allowed'
+                cursor: (formData.selected_product && (!products.find(p => p.id === formData.selected_product)?.hasColorOptions || formData.selected_color)) ? 'pointer' : 'not-allowed'
               }}
             >
               Devam Et →
@@ -953,7 +1182,7 @@ const CustomerRegistration = () => {
             }}>
               <h4>SATIŞ SÖZLEŞMESİ</h4>
               <p>İşbu sözleşme, 6502 sayılı Tüketicinin Korunması Hakkında Kanun çerçevesinde düzenlenmiştir.</p>
-              <p><strong>SATICI:</strong> HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ</p>
+              <p><strong>SATICI:</strong> HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ</p>
               <p><strong>ÜRÜN:</strong> {products.find(p => p.id === formData.selected_product)?.name}</p>
               <p><strong>FİYAT:</strong> {products.find(p => p.id === formData.selected_product)?.total.toLocaleString()} TL (KDV Dahil)</p>
               <p>Ürün, sipariş onayından sonra 7-14 iş günü içinde teslim edilecektir.</p>
@@ -1008,7 +1237,7 @@ const CustomerRegistration = () => {
             }}>
               <h4>MESAFELİ SATIŞ SÖZLEŞMESİ</h4>
               <p><strong>MADDE 1 - TARAFLAR</strong></p>
-              <p><strong>SATICI:</strong> HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ</p>
+              <p><strong>SATICI:</strong> HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ</p>
               <p>Adres: AOSB MAH. 10035 SK. NO 5 ÇİĞİLİ İZMİR</p>
               <p>Telefon: info@hoowell.com.tr</p>
               <p><strong>MADDE 2 - KONU</strong></p>
@@ -1042,7 +1271,7 @@ const CustomerRegistration = () => {
             }}>
               <h4>ÖN BİLGİLENDİRME FORMU</h4>
               <p><strong>1. SATICI BİLGİLERİ</strong></p>
-              <p>Ticaret Unvanı: HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ</p>
+              <p>Ticaret Unvanı: HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ</p>
               <p>Ticaret Sicil No: 264080</p>
               <p><strong>2. ÜRÜN BİLGİLERİ</strong></p>
               <p>Ürün: {products.find(p => p.id === formData.selected_product)?.name}</p>
@@ -1080,7 +1309,7 @@ const CustomerRegistration = () => {
               <h4>ELEKTRONİK TİCARET BİLGİLENDİRMESİ</h4>
               <p><strong>6563 SAYILI ELEKTRONİK TİCARET KANUNU KAPSAMINDA</strong></p>
               <p><strong>1. HİZMET SAĞLAYICI</strong></p>
-              <p>HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ</p>
+              <p>HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ</p>
               <p>Web sitesi üzerinden elektronik ticaret faaliyeti yürütmektedir.</p>
               <p><strong>2. GÜVENLİ ÖDEME</strong></p>
               <p>Ödeme bilgileriniz SSL sertifikası ile korunmaktadır.</p>

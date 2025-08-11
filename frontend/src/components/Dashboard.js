@@ -74,7 +74,7 @@ const Dashboard = () => {
 
   // Paylaşım fonksiyonu
   const handleShare = (title, url) => {
-    const shareText = `🎥 ${title}\n\n${url}\n\n💧 HOOWELL - Su Arıtma Sistemleri`;
+    const shareText = `🎥 ${title}\n\n${url}\n\n💧 HOOWELL - Alkali İyonizer Sistemleri`;
     
     if (navigator.share) {
       // Web Share API destekleniyorsa (mobil cihazlar)
@@ -243,15 +243,7 @@ const Dashboard = () => {
             }}
           />
         </div>
-        <div style={{
-          color: '#FFD700',
-          fontSize: isMobile ? '12px' : '14px',
-          textAlign: 'center',
-          opacity: 0.8,
-          fontWeight: '500'
-        }}>
-          INNOVATE YOUR LIFE
-        </div>
+
       </div>
 
       {/* Ana Container */}
@@ -799,7 +791,7 @@ const Dashboard = () => {
               <div style={{ fontSize: isMobile ? '40px' : '60px', marginBottom: '20px' }}>🏢</div>
               <div>HOOWELL GLOBAL</div>
               <div style={{ fontSize: isMobile ? '14px' : '18px', marginTop: '10px', opacity: 0.8 }}>
-                Su Arıtma Sistemleri
+                Alkali İyonizer Sistemleri
               </div>
               <div style={{ fontSize: '12px', marginTop: '20px', opacity: 0.6 }}>
                 Ana sayfa görseli yüklenemedi

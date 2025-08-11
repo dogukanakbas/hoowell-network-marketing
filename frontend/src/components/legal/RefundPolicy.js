@@ -35,7 +35,7 @@ const RefundPolicy = () => {
             İADE VE DEĞİŞİM POLİTİKASI
           </h1>
           <p style={{ color: 'var(--accent-gold)', fontSize: '16px', fontWeight: '500' }}>
-            HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ
+            HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ
           </p>
         </div>
 
@@ -67,7 +67,7 @@ const RefundPolicy = () => {
             <div style={{ backgroundColor: '#e3f2fd', padding: '25px', borderRadius: '15px', marginBottom: '25px', border: '2px solid #2196f3' }}>
               <h4 style={{ color: '#1565c0', marginBottom: '15px' }}>📋 POLİTİKANIN AMACI</h4>
               <p style={{ color: '#1565c0', marginBottom: '15px', fontSize: '14px' }}>
-                HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ olarak, müşteri memnuniyetini ve 
+                HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ olarak, müşteri memnuniyetini ve 
                 tüketici haklarını korumayı öncelik olarak benimsiyoruz. Bu İade ve Değişim Politikası, 
                 satın aldığınız ürün ve hizmetlerle ilgili iade, değişim ve cayma haklarınızı düzenler.
               </p>
@@ -84,7 +84,7 @@ const RefundPolicy = () => {
                 <div style={{ backgroundColor: 'white', padding: '15px', borderRadius: '10px' }}>
                   <h5 style={{ color: '#1565c0', marginBottom: '8px', fontSize: '14px' }}>🎯 Kapsam</h5>
                   <ul style={{ paddingLeft: '15px', fontSize: '12px', color: '#1565c0' }}>
-                    <li>Fiziksel ürünler (Su arıtma cihazları)</li>
+                    <li>Fiziksel ürünler (Alkali iyonizer cihazları)</li>
                     <li>Dijital hizmetler (Eğitim paketleri)</li>
                     <li>İş ortaklığı hizmetleri</li>
                     <li>Destek ve kurulum hizmetleri</li>
@@ -110,7 +110,7 @@ const RefundPolicy = () => {
                 <div>
                   <h5 style={{ color: 'var(--primary-dark)', marginBottom: '10px' }}>📋 Resmi Bilgiler</h5>
                   <div style={{ fontSize: '14px', color: '#333' }}>
-                    <p><strong>Unvan:</strong> HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ</p>
+                    <p><strong>Unvan:</strong> HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ</p>
                     <p><strong>Ticaret Sicil No:</strong> 264080</p>
                     <p><strong>E-posta:</strong> info@hoowell.com.tr</p>
                     <p><strong>Web:</strong> www.hoowell.com.tr</p>
@@ -151,27 +151,89 @@ const RefundPolicy = () => {
             
             <div style={{ marginBottom: '20px' }}>
               <h3 style={{ color: 'var(--primary-dark)', fontSize: '18px', marginBottom: '10px' }}>
-                3.1. Su Arıtma Cihazları
+                3.1. HOOWELL Alkali İyonizer Cihazları ve El Terminalleri
               </h3>
+              <div style={{ backgroundColor: '#f8f9fa', padding: '15px', borderRadius: '10px', marginBottom: '15px' }}>
+                <h4 style={{ color: 'var(--primary-dark)', marginBottom: '10px', fontSize: '16px' }}>
+                  📦 Ürün Modelleri:
+                </h4>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '10px', fontSize: '14px' }}>
+                  <div><strong>📱 Premium El Terminali:</strong> 19.680 TL</div>
+                  <div><strong>🏆 Professional Alkali İyonizer Cihazı:</strong> 86.400 TL</div>
+                  <div style={{ backgroundColor: '#fff3e0', padding: '8px', borderRadius: '5px', border: '1px solid #ff6b35' }}>
+                    <strong>⭐ Elite Alkali İyonizer Sistemi:</strong> 98.400 TL<br/>
+                    <span style={{ color: '#ff6b35', fontSize: '12px', fontWeight: 'bold' }}>🔥 KAMPANYALI ÜRÜN</span>
+                  </div>
+                </div>
+              </div>
+              <h4 style={{ color: 'var(--primary-dark)', marginBottom: '10px' }}>İade Koşulları:</h4>
               <ul style={{ paddingLeft: '20px' }}>
                 <li>Ürün orijinal ambalajında olmalıdır</li>
                 <li>Tüm aksesuarlar ve belgeler eksiksiz olmalıdır</li>
                 <li>Cihaz kullanılmamış ve hasarsız olmalıdır</li>
                 <li>Garanti belgesi ve fatura bulunmalıdır</li>
                 <li>Hijyen koşulları nedeniyle su ile temas etmiş cihazlar iade edilemez</li>
+                <li>Renk seçenekli modellerde (Premium El Terminali, Elite Alkali İyonizer Sistemi) renk değişikliği mümkündür</li>
+                <li>Elite Alkali İyonizer Sistemi kampanyalı ürün olduğu için özel iade koşulları geçerlidir</li>
               </ul>
             </div>
 
             <div style={{ marginBottom: '20px' }}>
               <h3 style={{ color: 'var(--primary-dark)', fontSize: '18px', marginBottom: '10px' }}>
-                3.2. Eğitim Paketleri
+                3.2. Eğitim Paketleri (4.800 TL - 100 USD + KDV)
               </h3>
               <div style={{ backgroundColor: '#fff3cd', padding: '15px', borderRadius: '10px' }}>
                 <p style={{ color: '#856404', margin: 0 }}>
                   <strong>⚠️ Önemli:</strong> Eğitim videolarına erişim sağlandıktan sonra cayma hakkı kullanılamaz. 
-                  Dijital içerik teslim edildiği anda cayma hakkı sona erer.
+                  Dijital içerik teslim edildiği anda cayma hakkı sona erer. Eğitim paketi 100 USD (4.000 TL) + %20 KDV = 4.800 TL'dir.
                 </p>
               </div>
+            </div>
+
+            <div style={{ marginBottom: '20px' }}>
+              <h3 style={{ color: 'var(--primary-dark)', fontSize: '18px', marginBottom: '10px' }}>
+                3.3. Yedek Parçalar ve Aksesuarlar
+              </h3>
+              <ul style={{ paddingLeft: '20px' }}>
+                <li>Filtreler orijinal ambalajında olmalıdır</li>
+                <li>Kullanılmamış ve mühürlü olmalıdır</li>
+                <li>Fatura ve garanti belgesi bulunmalıdır</li>
+                <li>Hijyen koşulları nedeniyle açılmış filtreler iade edilemez</li>
+              </ul>
+            </div>
+
+            <div style={{ marginBottom: '20px' }}>
+              <h3 style={{ color: 'var(--primary-dark)', fontSize: '18px', marginBottom: '10px' }}>
+                3.4. Teknik Servis Hizmetleri
+              </h3>
+              <ul style={{ paddingLeft: '20px' }}>
+                <li>Hizmet alınmadan önce cayma hakkı kullanılabilir</li>
+                <li>Hizmet başladıktan sonra cayma hakkı sona erer</li>
+                <li>Kurulum hizmeti tamamlandıktan sonra iade edilemez</li>
+                <li>Bakım hizmetleri için ayrı şartlar geçerlidir</li>
+              </ul>
+            </div>
+
+            <div style={{ marginBottom: '20px' }}>
+              <h3 style={{ color: 'var(--primary-dark)', fontSize: '18px', marginBottom: '10px' }}>
+                3.5. İş Ortaklığı Paketleri
+              </h3>
+              <div style={{ backgroundColor: '#e3f2fd', padding: '15px', borderRadius: '10px', marginBottom: '15px' }}>
+                <h4 style={{ color: '#1565c0', marginBottom: '10px', fontSize: '16px' }}>
+                  🤝 İş Ortaklığı Paketleri:
+                </h4>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', fontSize: '14px' }}>
+                  <div><strong>📚 Eğitim Paketi:</strong> 4.800 TL</div>
+                  <div><strong>🤝 Franchise Paketi:</strong> 86.400 TL</div>
+                </div>
+              </div>
+              <h4 style={{ color: 'var(--primary-dark)', marginBottom: '10px' }}>İade Koşulları:</h4>
+              <ul style={{ paddingLeft: '20px' }}>
+                <li><strong>Eğitim Paketi:</strong> Videolara erişim sağlanmadan önce iade edilebilir</li>
+                <li><strong>Franchise Paketi:</strong> Cihaz teslim alınmadan ve eğitime başlanmadan önce iade edilebilir</li>
+                <li>İş ortaklığı hakları kullanılmaya başlandıktan sonra iade edilemez</li>
+                <li>Komisyon ödemeleri yapıldıktan sonra iade edilemez</li>
+              </ul>
             </div>
           </section>
 
@@ -227,7 +289,7 @@ const RefundPolicy = () => {
               <p><strong>İade Yöntemi:</strong> Ödeme hangi yöntemle yapıldıysa aynı yöntemle iade edilir</p>
               <p><strong>İade Süresi:</strong> Ürün onaylandıktan sonra 5-7 iş günü</p>
               <p><strong>Banka Hesabı:</strong> IBAN: TR77 0011 1000 0000 0153 1671 66</p>
-              <p><strong>Hesap Sahibi:</strong> HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ</p>
+              <p><strong>Hesap Sahibi:</strong> HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ</p>
             </div>
           </section>
 
@@ -241,6 +303,8 @@ const RefundPolicy = () => {
                 <li>Orijinal ambalajı olmayan ürünler</li>
                 <li>Özel sipariş üzerine üretilen ürünler</li>
                 <li>Dijital içerik (eğitim videoları) - erişim sağlandıktan sonra</li>
+                <li>Açılmış filtreler ve yedek parçalar</li>
+                <li>Kullanılmış teknik servis hizmetleri</li>
                 <li>14 günlük süre geçmiş ürünler</li>
               </ul>
             </div>
@@ -261,9 +325,12 @@ const RefundPolicy = () => {
             <div style={{ backgroundColor: '#d4edda', padding: '20px', borderRadius: '10px' }}>
               <h4 style={{ color: '#155724', marginBottom: '10px' }}>🛡️ Garanti Koşulları:</h4>
               <ul style={{ paddingLeft: '20px', color: '#155724' }}>
-                <li><strong>Su Arıtma Cihazları:</strong> 2 yıl garanti</li>
-                <li><strong>Yedek Parçalar:</strong> 1 yıl garanti</li>
-                <li><strong>İşçilik:</strong> 1 yıl garanti</li>
+                <li><strong>HOOWELL Premium El Terminali:</strong> 2 yıl garanti</li>
+                <li><strong>HOOWELL Professional Alkali İyonizer Cihazı:</strong> 2 yıl garanti</li>
+                <li><strong>HOOWELL Elite Alkali İyonizer Sistemi:</strong> 2 yıl garanti + kampanya avantajları</li>
+                <li><strong>Filtreler ve Yedek Parçalar:</strong> 1 yıl garanti</li>
+                <li><strong>Kurulum ve İşçilik:</strong> 1 yıl garanti</li>
+                <li><strong>Teknik Servis Hizmetleri:</strong> 6 ay garanti</li>
                 <li><strong>Garanti Belgesi:</strong> Mutlaka saklanmalıdır</li>
               </ul>
             </div>

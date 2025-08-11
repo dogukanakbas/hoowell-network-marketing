@@ -74,7 +74,7 @@ const ContactUs = () => {
                 }}
               />
               <h2 style={{ color: 'var(--primary-dark)', marginBottom: '5px' }}>
-                HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ
+                HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ
               </h2>
               <p style={{ color: 'var(--accent-gold)', fontStyle: 'italic' }}>
                 INNOVATE YOUR LIFE
@@ -118,7 +118,7 @@ const ContactUs = () => {
                   <strong>IBAN:</strong><br/>
                   TR77 0011 1000 0000 0153 1671 66<br/><br/>
                   <strong>Hesap Sahibi:</strong><br/>
-                  HOOWELL GLOBAL SU ARITMA<br/>
+                  HOOWELL GLOBAL ALKALİ İYONİZER<br/>
                   SİSTEMLERİ ANONİM ŞİRKETİ
                 </p>
               </div>

@@ -42,13 +42,7 @@ const AccessRestricted = ({ pageName, icon }) => {
           HOOWELL
         </div>
 
-        <div style={{
-          color: 'var(--text-light)',
-          fontSize: '14px',
-          marginBottom: '30px'
-        }}>
-          INNOVATE YOUR LIFE
-        </div>
+
 
         {/* Page Title */}
         <h2 style={{

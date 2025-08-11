@@ -35,7 +35,7 @@ const PrivacyPolicy = () => {
             GİZLİLİK POLİTİKASI
           </h1>
           <p style={{ color: 'var(--accent-gold)', fontSize: '16px', fontWeight: '500' }}>
-            HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ
+            HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ
           </p>
         </div>
 
@@ -70,7 +70,7 @@ const PrivacyPolicy = () => {
                   <h4 style={{ color: 'var(--primary-dark)', marginBottom: '15px', fontSize: '18px' }}>
                     🏢 ŞİRKET BİLGİLERİ
                   </h4>
-                  <p><strong>Unvan:</strong> HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ</p>
+                  <p><strong>Unvan:</strong> HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ</p>
                   <p><strong>Ticaret Sicil No:</strong> 264080</p>
                   <p><strong>E-posta:</strong> info@hoowell.com.tr</p>
                   <p><strong>Web:</strong> www.hoowell.com.tr</p>
@@ -97,7 +97,7 @@ const PrivacyPolicy = () => {
             <div style={{ backgroundColor: '#e3f2fd', padding: '25px', borderRadius: '15px', marginBottom: '20px' }}>
               <h4 style={{ color: '#1565c0', marginBottom: '15px' }}>📋 Politikanın Amacı</h4>
               <p style={{ color: '#1565c0', marginBottom: '15px' }}>
-                Bu Gizlilik Politikası, HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ ("Şirket", "Biz", "HOOWELL") 
+                Bu Gizlilik Politikası, HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ ("Şirket", "Biz", "HOOWELL") 
                 tarafından işlenen kişisel verilerin korunması, işlenmesi, saklanması ve aktarılması konularında 
                 veri sahiplerinin bilgilendirilmesi amacıyla hazırlanmıştır.
               </p>
@@ -182,9 +182,10 @@ const PrivacyPolicy = () => {
                 </h4>
                 <ul style={{ paddingLeft: '20px', fontSize: '14px', color: '#c2185b' }}>
                   <li><strong>Bayi Bilgileri:</strong> Bayi kodu, seviye, performans verileri</li>
-                  <li><strong>Komisyon Bilgileri:</strong> Kazanç geçmişi, ödeme bilgileri</li>
+                  <li><strong>Komisyon Bilgileri:</strong> Satış komisyonu geçmişi, ödeme bilgileri</li>
                   <li><strong>Eğitim Bilgileri:</strong> Tamamlanan eğitimler, sertifikalar</li>
-                  <li><strong>Network Bilgileri:</strong> Sponsor bilgileri, alt bayi ağı</li>
+                  <li><strong>Bayi Ağı Bilgileri:</strong> Sponsor bilgileri, alt bayi yapısı</li>
+                  <li><strong>Satış Bilgileri:</strong> Ürün satış geçmişi, müşteri bilgileri</li>
                 </ul>
               </div>
 
@@ -292,16 +293,17 @@ const PrivacyPolicy = () => {
 
               <div style={{ backgroundColor: '#fff3e0', padding: '25px', borderRadius: '15px', border: '2px solid #ff9800' }}>
                 <h4 style={{ color: '#f57c00', marginBottom: '15px', fontSize: '18px' }}>
-                  🤝 İŞ ORTAKLIĞI VE NETWORK YÖNETİMİ
+                  🤝 İŞ ORTAKLIĞI VE BAYI YÖNETİMİ
                 </h4>
                 <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '20px', alignItems: 'start' }}>
                   <ul style={{ paddingLeft: '20px', fontSize: '14px', color: '#f57c00', margin: 0 }}>
                     <li>Bayi ve distribütör kayıt işlemleri</li>
-                    <li>Komisyon hesaplama ve ödeme işlemleri</li>
+                    <li>Satış komisyonu hesaplama ve ödeme işlemleri</li>
                     <li>Eğitim programlarının yürütülmesi</li>
                     <li>Performans değerlendirme ve raporlama</li>
-                    <li>Network ağı yönetimi ve takibi</li>
+                    <li>Bayi ağı yönetimi ve takibi</li>
                     <li>İş ortaklığı sözleşmelerinin yönetimi</li>
+                    <li>Teknik destek ve müşteri hizmetleri</li>
                   </ul>
                   <div style={{ backgroundColor: 'white', padding: '15px', borderRadius: '10px' }}>
                     <strong style={{ color: '#f57c00', fontSize: '12px' }}>HUKUKİ SEBEP:</strong><br/>
@@ -1099,7 +1101,7 @@ const PrivacyPolicy = () => {
               <div style={{ backgroundColor: '#e8f5e8', padding: '25px', borderRadius: '15px', border: '2px solid #4caf50' }}>
                 <h4 style={{ color: '#2e7d32', marginBottom: '15px' }}>🏢 ŞİRKET İLETİŞİM</h4>
                 <div style={{ fontSize: '14px', color: '#2e7d32' }}>
-                  <p><strong>Şirket:</strong> HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ</p>
+                  <p><strong>Şirket:</strong> HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ</p>
                   <p><strong>Adres:</strong> AOSB MAH. 10035 SK. NO 5 ÇİĞİLİ İZMİR</p>
                   <p><strong>Ticaret Sicil No:</strong> 264080</p>
                   <p><strong>Web:</strong> www.hoowell.com.tr</p>

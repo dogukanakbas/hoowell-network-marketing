@@ -161,9 +161,9 @@ const QuestionManager = () => {
             onChange={(e) => setQuestions(e.target.value)}
             placeholder="Soruları şu formatta girin (uzun sorular desteklenir):
 
-Su arıtma cihazlarında hangi teknoloji kullanılır ve bu teknolojinin 
+Alkali iyonizer cihazlarında hangi teknoloji kullanılır ve bu teknolojinin 
 avantajları nelerdir?
-a) Reverse osmosis teknolojisi, tüm mineralleri filtreler
+a) Elektroliz teknolojisi, suyu alkali hale getirir
 b) UV sterilizasyon, bakterileri öldürür
 c) Karbon filtrasyon, klorun tadını giderir  
 d) İyon değişimi, suyun pH değerini ayarlar

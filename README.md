@@ -1,6 +1,6 @@
-# HOOWELL Global Su Arıtma Sistemleri
+# HOOWELL Global Alkali İyonizer Sistemleri
 
-Modern bir su arıtma sistemleri platformu. React frontend, Node.js backend ve MySQL veritabanı kullanılarak geliştirilmiştir.
+Modern bir alkali iyonizer sistemleri platformu. React frontend, Node.js backend ve MySQL veritabanı kullanılarak geliştirilmiştir.
 
 ## Özellikler
 

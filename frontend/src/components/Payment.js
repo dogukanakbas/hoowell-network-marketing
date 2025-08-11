@@ -51,7 +51,7 @@ const Payment = () => {
   const calculateAmount = () => {
     const usdRate = parseFloat(settings.usd_to_try_rate || 40);
     const vatRate = parseFloat(settings.vat_rate || 20);
-    
+
     let usdAmount;
     if (paymentType === 'education') {
       usdAmount = parseFloat(settings.education_price_usd || 100);
@@ -73,7 +73,7 @@ const Payment = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!receipt) {
       setMessage('Lütfen dekont dosyasını seçin');
       return;
@@ -143,19 +143,19 @@ const Payment = () => {
           </div>
 
           {/* IBAN Bilgileri */}
-          <div style={{ 
-            backgroundColor: 'var(--card-gray)', 
-            padding: '25px', 
-            borderRadius: '15px', 
+          <div style={{
+            backgroundColor: 'var(--card-gray)',
+            padding: '25px',
+            borderRadius: '15px',
             marginBottom: '25px',
             textAlign: 'center'
           }}>
             <h3 style={{ color: 'var(--primary-dark)', marginBottom: '15px' }}>
               🏦 IBAN Bilgileri
             </h3>
-            <div style={{ 
-              backgroundColor: 'var(--white)', 
-              padding: '20px', 
+            <div style={{
+              backgroundColor: 'var(--white)',
+              padding: '20px',
               borderRadius: '10px',
               fontFamily: 'monospace',
               fontSize: '18px',
@@ -166,15 +166,15 @@ const Payment = () => {
               TR77 0011 1000 0000 0153 1671 66
             </div>
             <div style={{ fontSize: '16px', color: 'var(--text-dark)' }}>
-              <strong>Alıcı:</strong> HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ
+              <strong>Alıcı:</strong> HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ
             </div>
           </div>
 
           {/* Ödeme Tutarı */}
-          <div style={{ 
-            backgroundColor: 'var(--white)', 
-            padding: '25px', 
-            borderRadius: '15px', 
+          <div style={{
+            backgroundColor: 'var(--white)',
+            padding: '25px',
+            borderRadius: '15px',
             marginBottom: '25px',
             textAlign: 'center',
             border: '2px solid var(--accent-gold)'
@@ -191,10 +191,10 @@ const Payment = () => {
           </div>
 
           {/* Müşteri Bilgileri */}
-          <div style={{ 
-            backgroundColor: 'var(--card-gray)', 
-            padding: '20px', 
-            borderRadius: '15px', 
+          <div style={{
+            backgroundColor: 'var(--card-gray)',
+            padding: '20px',
+            borderRadius: '15px',
             marginBottom: '25px'
           }}>
             <h4 style={{ color: 'var(--primary-dark)', marginBottom: '15px' }}>
@@ -210,9 +210,9 @@ const Payment = () => {
 
           {/* Mesaj Alanı */}
           {message && (
-            <div style={{ 
-              padding: '15px', 
-              borderRadius: '10px', 
+            <div style={{
+              padding: '15px',
+              borderRadius: '10px',
               marginBottom: '20px',
               backgroundColor: message.includes('✅') ? '#d4edda' : '#f8d7da',
               color: message.includes('✅') ? '#155724' : '#721c24',
@@ -224,7 +224,7 @@ const Payment = () => {
 
           {/* Aksiyon Butonu */}
           <div style={{ textAlign: 'center' }}>
-            <button 
+            <button
               onClick={handlePartnerPaymentSubmit}
               disabled={loading || message.includes('✅')}
               style={{
@@ -243,36 +243,36 @@ const Payment = () => {
             </button>
           </div>
 
-          <div style={{ 
-            marginTop: '20px', 
-            padding: '15px', 
-            backgroundColor: '#e3f2fd', 
+          <div style={{
+            marginTop: '20px',
+            padding: '15px',
+            backgroundColor: '#e3f2fd',
             borderRadius: '10px',
             fontSize: '14px',
             color: '#1565c0',
             textAlign: 'center'
           }}>
             <strong>💡 Bilgi:</strong> Bu işlem sadece ödeme kaydı oluşturur. Dekont yükleme gerekmez.
-            <br/>Müşteri IBAN'a ödeme yaptıktan sonra admin panelinden onaylanacaktır.
+            <br />Müşteri IBAN'a ödeme yaptıktan sonra admin panelinden onaylanacaktır.
           </div>
         </div>
       ) : (
         // Normal Ödeme Ekranı
         <div className="dashboard-card" style={{ marginBottom: '30px' }}>
           <h3>Ödeme Bilgileri</h3>
-          
+
           <div style={{ marginBottom: '20px' }}>
             <h4>IBAN Bilgileri</h4>
             <p style={{ backgroundColor: '#f5f5f5', padding: '15px', borderRadius: '8px', fontFamily: 'monospace' }}>
-              TR77 0011 1000 0000 0153 1671 66<br/>
-              Alıcı: HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ
+              TR77 0011 1000 0000 0153 1671 66<br />
+              Alıcı: HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ
             </p>
           </div>
 
           <form onSubmit={handleSubmit}>
             <div className="form-group">
               <label>Ödeme Türü</label>
-              <select 
+              <select
                 className="form-control"
                 value={paymentType}
                 onChange={(e) => setPaymentType(e.target.value)}
@@ -308,9 +308,9 @@ const Payment = () => {
             </div>
 
             {message && (
-              <div style={{ 
-                padding: '10px', 
-                borderRadius: '5px', 
+              <div style={{
+                padding: '10px',
+                borderRadius: '5px',
                 marginBottom: '20px',
                 backgroundColor: message.includes('oluşturuldu') ? '#d4edda' : '#f8d7da',
                 color: message.includes('oluşturuldu') ? '#155724' : '#721c24'
@@ -319,8 +319,8 @@ const Payment = () => {
               </div>
             )}
 
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               className="btn btn-primary"
               disabled={loading}
             >
@@ -333,7 +333,7 @@ const Payment = () => {
       {/* Payment History */}
       <div className="dashboard-card">
         <h3>Ödeme Geçmişi</h3>
-        
+
         {payments.length === 0 ? (
           <p>Henüz ödeme kaydınız bulunmamaktadır.</p>
         ) : (
@@ -354,8 +354,8 @@ const Payment = () => {
                   <td>₺{payment.total_amount?.toLocaleString()}</td>
                   <td>
                     <span className={`status-badge status-${payment.status}`}>
-                      {payment.status === 'pending' ? 'Bekliyor' : 
-                       payment.status === 'approved' ? 'Onaylandı' : 'Reddedildi'}
+                      {payment.status === 'pending' ? 'Bekliyor' :
+                        payment.status === 'approved' ? 'Onaylandı' : 'Reddedildi'}
                     </span>
                   </td>
                 </tr>

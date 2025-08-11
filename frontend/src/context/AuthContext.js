@@ -90,6 +90,8 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('token');
     delete axios.defaults.headers.common['Authorization'];
     setUser(null);
+    // Hemen login sayfasına yönlendir
+    window.location.href = '/login';
   };
 
   const refreshUser = async () => {

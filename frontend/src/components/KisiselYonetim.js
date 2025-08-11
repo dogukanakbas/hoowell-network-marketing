@@ -182,8 +182,8 @@ const KisiselYonetim = () => {
         right: '20px',
         zIndex: 10
       }}>
-        <img 
-          src="/hoowell-logo.png" 
+        <img
+          src="/hoowell-logo.png"
           alt="HOOWELL Logo"
           style={{
             width: '90px',
@@ -279,7 +279,7 @@ const KisiselYonetim = () => {
         boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
         border: '3px solid #FFD700'
       }}>
-        
+
         {/* Profil Sekmesi */}
         {activeTab === 'profile' && (
           <form onSubmit={handleProfileUpdate}>
@@ -303,7 +303,7 @@ const KisiselYonetim = () => {
                 <input
                   type="text"
                   value={profileForm.first_name}
-                  onChange={(e) => setProfileForm({...profileForm, first_name: e.target.value})}
+                  onChange={(e) => setProfileForm({ ...profileForm, first_name: e.target.value })}
                   style={{
                     width: '100%',
                     padding: '12px',
@@ -321,7 +321,7 @@ const KisiselYonetim = () => {
                 <input
                   type="text"
                   value={profileForm.last_name}
-                  onChange={(e) => setProfileForm({...profileForm, last_name: e.target.value})}
+                  onChange={(e) => setProfileForm({ ...profileForm, last_name: e.target.value })}
                   style={{
                     width: '100%',
                     padding: '12px',
@@ -341,7 +341,7 @@ const KisiselYonetim = () => {
               <input
                 type="email"
                 value={profileForm.email}
-                onChange={(e) => setProfileForm({...profileForm, email: e.target.value})}
+                onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })}
                 style={{
                   width: '100%',
                   padding: '12px',
@@ -360,7 +360,7 @@ const KisiselYonetim = () => {
               <div style={{ display: 'flex', gap: '10px' }}>
                 <select
                   value={profileForm.country_code}
-                  onChange={(e) => setProfileForm({...profileForm, country_code: e.target.value})}
+                  onChange={(e) => setProfileForm({ ...profileForm, country_code: e.target.value })}
                   style={{
                     width: '120px',
                     padding: '12px',
@@ -378,7 +378,7 @@ const KisiselYonetim = () => {
                 <input
                   type="tel"
                   value={profileForm.phone}
-                  onChange={(e) => setProfileForm({...profileForm, phone: e.target.value})}
+                  onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
                   placeholder="5XX XXX XX XX"
                   style={{
                     flex: 1,
@@ -399,7 +399,7 @@ const KisiselYonetim = () => {
                 </label>
                 <select
                   value={profileForm.city}
-                  onChange={(e) => setProfileForm({...profileForm, city: e.target.value, district: ''})}
+                  onChange={(e) => setProfileForm({ ...profileForm, city: e.target.value, district: '' })}
                   style={{
                     width: '100%',
                     padding: '12px',
@@ -420,7 +420,7 @@ const KisiselYonetim = () => {
                 </label>
                 <select
                   value={profileForm.district}
-                  onChange={(e) => setProfileForm({...profileForm, district: e.target.value})}
+                  onChange={(e) => setProfileForm({ ...profileForm, district: e.target.value })}
                   disabled={!profileForm.city}
                   style={{
                     width: '100%',
@@ -445,7 +445,7 @@ const KisiselYonetim = () => {
               </label>
               <textarea
                 value={profileForm.full_address}
-                onChange={(e) => setProfileForm({...profileForm, full_address: e.target.value})}
+                onChange={(e) => setProfileForm({ ...profileForm, full_address: e.target.value })}
                 rows="3"
                 placeholder="Detaylı adres bilgisi..."
                 style={{
@@ -502,7 +502,7 @@ const KisiselYonetim = () => {
               <input
                 type="password"
                 value={passwordForm.current_password}
-                onChange={(e) => setPasswordForm({...passwordForm, current_password: e.target.value})}
+                onChange={(e) => setPasswordForm({ ...passwordForm, current_password: e.target.value })}
                 style={{
                   width: '100%',
                   padding: '12px',
@@ -521,7 +521,7 @@ const KisiselYonetim = () => {
               <input
                 type="password"
                 value={passwordForm.new_password}
-                onChange={(e) => setPasswordForm({...passwordForm, new_password: e.target.value})}
+                onChange={(e) => setPasswordForm({ ...passwordForm, new_password: e.target.value })}
                 style={{
                   width: '100%',
                   padding: '12px',
@@ -546,7 +546,7 @@ const KisiselYonetim = () => {
               <input
                 type="password"
                 value={passwordForm.confirm_password}
-                onChange={(e) => setPasswordForm({...passwordForm, confirm_password: e.target.value})}
+                onChange={(e) => setPasswordForm({ ...passwordForm, confirm_password: e.target.value })}
                 style={{
                   width: '100%',
                   padding: '12px',
@@ -617,7 +617,7 @@ const KisiselYonetim = () => {
                   <input
                     type="checkbox"
                     checked={settingsForm.email_notifications}
-                    onChange={(e) => setSettingsForm({...settingsForm, email_notifications: e.target.checked})}
+                    onChange={(e) => setSettingsForm({ ...settingsForm, email_notifications: e.target.checked })}
                     style={{ opacity: 0, width: 0, height: 0 }}
                   />
                   <span style={{
@@ -663,7 +663,7 @@ const KisiselYonetim = () => {
                   <input
                     type="checkbox"
                     checked={settingsForm.sms_notifications}
-                    onChange={(e) => setSettingsForm({...settingsForm, sms_notifications: e.target.checked})}
+                    onChange={(e) => setSettingsForm({ ...settingsForm, sms_notifications: e.target.checked })}
                     style={{ opacity: 0, width: 0, height: 0 }}
                   />
                   <span style={{
@@ -709,7 +709,7 @@ const KisiselYonetim = () => {
                   <input
                     type="checkbox"
                     checked={settingsForm.marketing_emails}
-                    onChange={(e) => setSettingsForm({...settingsForm, marketing_emails: e.target.checked})}
+                    onChange={(e) => setSettingsForm({ ...settingsForm, marketing_emails: e.target.checked })}
                     style={{ opacity: 0, width: 0, height: 0 }}
                   />
                   <span style={{
@@ -755,7 +755,7 @@ const KisiselYonetim = () => {
                   <input
                     type="checkbox"
                     checked={settingsForm.system_notifications}
-                    onChange={(e) => setSettingsForm({...settingsForm, system_notifications: e.target.checked})}
+                    onChange={(e) => setSettingsForm({ ...settingsForm, system_notifications: e.target.checked })}
                     style={{ opacity: 0, width: 0, height: 0 }}
                   />
                   <span style={{
@@ -833,11 +833,10 @@ const KisiselYonetim = () => {
                   backgroundColor: '#f8f9fa',
                   borderRadius: '10px',
                   marginBottom: '15px',
-                  borderLeft: `4px solid ${
-                    notification.type === 'success' ? '#28a745' :
+                  borderLeft: `4px solid ${notification.type === 'success' ? '#28a745' :
                     notification.type === 'warning' ? '#ffc107' :
-                    notification.type === 'error' ? '#dc3545' : '#17a2b8'
-                  }`
+                      notification.type === 'error' ? '#dc3545' : '#17a2b8'
+                    }`
                 }}>
                   <div style={{
                     display: 'flex',

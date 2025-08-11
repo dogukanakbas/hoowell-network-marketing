@@ -28,7 +28,7 @@ const ShippingInfo = () => {
           <section style={{ marginBottom: '30px' }}>
             <h2 style={{ color: 'var(--primary-dark)', marginBottom: '15px' }}>1. Genel Teslimat Bilgileri</h2>
             <div style={{ backgroundColor: '#f8f9fa', padding: '20px', borderRadius: '10px' }}>
-              <p><strong>Şirket:</strong> HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ</p>
+              <p><strong>Şirket:</strong> HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ</p>
               <p><strong>Teslimat Adresi:</strong> AOSB MAH. 10035 SK. NO 5 ÇİĞİLİ İZMİR</p>
               <p><strong>Ticaret Sicil No:</strong> 264080</p>
               <p><strong>İletişim:</strong> info@hoowell.com.tr</p>

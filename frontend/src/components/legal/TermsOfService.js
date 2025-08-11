@@ -35,7 +35,7 @@ const TermsOfService = () => {
             KULLANIM ŞARTLARI VE HİZMET SÖZLEŞMESİ
           </h1>
           <p style={{ color: 'var(--accent-gold)', fontSize: '16px', fontWeight: '500' }}>
-            HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ
+            HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ
           </p>
         </div>
 
@@ -71,7 +71,7 @@ const TermsOfService = () => {
                   🏢 SATICI BİLGİLERİ (VERGİ MÜKELLEFİ)
                 </h4>
                 <div style={{ fontSize: '14px', color: '#1565c0' }}>
-                  <p><strong>Unvan:</strong> HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ</p>
+                  <p><strong>Unvan:</strong> HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ</p>
                   <p><strong>Adres:</strong> AOSB MAH. 10035 SK. NO 5 ÇİĞİLİ İZMİR</p>
                   <p><strong>Ticaret Sicil No:</strong> 264080</p>
                   <p><strong>Telefon:</strong> 0232 XXX XX XX</p>
@@ -107,7 +107,7 @@ const TermsOfService = () => {
                 <div style={{ backgroundColor: 'white', padding: '15px', borderRadius: '10px' }}>
                   <h5 style={{ color: '#f57c00', marginBottom: '8px' }}>🏆 Fiziksel Ürünler</h5>
                   <ul style={{ paddingLeft: '15px', fontSize: '12px', color: '#f57c00' }}>
-                    <li>HOOWELL Su Arıtma Cihazları</li>
+                    <li>HOOWELL Alkali İyonizer Cihazları</li>
                     <li>Yedek parçalar ve aksesuarlar</li>
                     <li>Filtre sistemleri</li>
                   </ul>
@@ -155,10 +155,11 @@ const TermsOfService = () => {
                   <div>
                     <h5 style={{ color: '#2e7d32', marginBottom: '10px' }}>💰 Fiyat Bilgileri</h5>
                     <div style={{ backgroundColor: 'white', padding: '15px', borderRadius: '10px', fontSize: '14px', color: '#2e7d32' }}>
-                      <p><strong>Net Fiyat:</strong> 4.000 TL</p>
+                      <p><strong>Net Fiyat:</strong> 4.000 TL (100 USD)</p>
                       <p><strong>KDV (%20):</strong> 800 TL</p>
-                      <p><strong>Toplam Fiyat:</strong> 4.800 TL</p>
+                      <p><strong>Toplam Fiyat:</strong> 4.800 TL (120 USD)</p>
                       <p><strong>Para Birimi:</strong> Türk Lirası (TL)</p>
+                      <p><strong>USD/TL Kuru:</strong> 1 USD = 40 TL</p>
                     </div>
                   </div>
                   <div>
@@ -182,36 +183,118 @@ const TermsOfService = () => {
                 </div>
               </div>
 
+              {/* HOOWELL Premium El Terminali */}
+              <div style={{ backgroundColor: '#fff3e0', padding: '25px', borderRadius: '15px', border: '2px solid #ff9800' }}>
+                <h4 style={{ color: '#f57c00', marginBottom: '15px', fontSize: '18px' }}>
+                  📱 HOOWELL PREMIUM EL TERMİNALİ
+                </h4>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '15px' }}>
+                  <div>
+                    <h5 style={{ color: '#f57c00', marginBottom: '8px', fontSize: '14px' }}>💰 Fiyat</h5>
+                    <div style={{ backgroundColor: 'white', padding: '12px', borderRadius: '8px', fontSize: '13px', color: '#f57c00' }}>
+                      <p><strong>Net:</strong> 16.400 TL</p>
+                      <p><strong>KDV:</strong> 3.280 TL</p>
+                      <p><strong>Toplam:</strong> 19.680 TL</p>
+                    </div>
+                  </div>
+                  <div>
+                    <h5 style={{ color: '#f57c00', marginBottom: '8px', fontSize: '14px' }}>📦 Özellikler</h5>
+                    <div style={{ backgroundColor: 'white', padding: '12px', borderRadius: '8px', fontSize: '13px', color: '#f57c00' }}>
+                      <p>5 Aşamalı Filtrasyon</p>
+                      <p>Kompakt Tasarım</p>
+                      <p>Renk Seçenekleri</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* HOOWELL Professional */}
               <div style={{ backgroundColor: '#e3f2fd', padding: '25px', borderRadius: '15px', border: '2px solid #2196f3' }}>
                 <h4 style={{ color: '#1565c0', marginBottom: '15px', fontSize: '18px' }}>
-                  🏆 HOOWELL CİHAZ PAKETİ - FİZİKSEL ÜRÜN
+                  🏆 HOOWELL PROFESSIONAL ALKALİ İYONİZER CİHAZI
                 </h4>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '15px' }}>
                   <div>
-                    <h5 style={{ color: '#1565c0', marginBottom: '10px' }}>💰 Fiyat Bilgileri</h5>
-                    <div style={{ backgroundColor: 'white', padding: '15px', borderRadius: '10px', fontSize: '14px', color: '#1565c0' }}>
-                      <p><strong>Net Fiyat:</strong> 72.000 TL</p>
-                      <p><strong>KDV (%20):</strong> 14.400 TL</p>
-                      <p><strong>Toplam Fiyat:</strong> 86.400 TL</p>
-                      <p><strong>Para Birimi:</strong> Türk Lirası (TL)</p>
+                    <h5 style={{ color: '#1565c0', marginBottom: '8px', fontSize: '14px' }}>💰 Fiyat</h5>
+                    <div style={{ backgroundColor: 'white', padding: '12px', borderRadius: '8px', fontSize: '13px', color: '#1565c0' }}>
+                      <p><strong>Net:</strong> 72.000 TL</p>
+                      <p><strong>KDV:</strong> 14.400 TL</p>
+                      <p><strong>Toplam:</strong> 86.400 TL</p>
                     </div>
                   </div>
                   <div>
-                    <h5 style={{ color: '#1565c0', marginBottom: '10px' }}>📦 Ürün Detayları</h5>
-                    <div style={{ backgroundColor: 'white', padding: '15px', borderRadius: '10px', fontSize: '14px', color: '#1565c0' }}>
-                      <p><strong>Ürün:</strong> HOOWELL Su Arıtma Cihazı</p>
-                      <p><strong>Garanti:</strong> 2 yıl resmi garanti</p>
-                      <p><strong>Kurulum:</strong> Ücretsiz profesyonel kurulum</p>
-                      <p><strong>Eğitim:</strong> Dahil (4.800 TL değerinde)</p>
+                    <h5 style={{ color: '#1565c0', marginBottom: '8px', fontSize: '14px' }}>📦 Özellikler</h5>
+                    <div style={{ backgroundColor: 'white', padding: '12px', borderRadius: '8px', fontSize: '13px', color: '#1565c0' }}>
+                      <p>7 Aşamalı Filtrasyon</p>
+                      <p>UV Sterilizasyon</p>
+                      <p>Akıllı Kontrol Paneli</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* HOOWELL Elite - KAMPANYALI ÜRÜN */}
+              <div style={{ backgroundColor: '#fff3e0', padding: '25px', borderRadius: '15px', border: '2px solid #ff6b35', position: 'relative', overflow: 'hidden' }}>
+                {/* Kampanya Badge */}
+                <div style={{
+                  position: 'absolute',
+                  top: '10px',
+                  right: '-30px',
+                  backgroundColor: '#ff6b35',
+                  color: 'white',
+                  padding: '5px 40px',
+                  fontSize: '12px',
+                  fontWeight: 'bold',
+                  transform: 'rotate(45deg)',
+                  boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
+                }}>
+                  KAMPANYA
+                </div>
+                <h4 style={{ color: '#ff6b35', marginBottom: '15px', fontSize: '18px' }}>
+                  ⭐ HOOWELL ELITE ALKALİ İYONİZER SİSTEMİ
+                </h4>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '15px' }}>
+                  <div>
+                    <h5 style={{ color: '#7b1fa2', marginBottom: '8px', fontSize: '14px' }}>💰 Fiyat</h5>
+                    <div style={{ backgroundColor: 'white', padding: '12px', borderRadius: '8px', fontSize: '13px', color: '#7b1fa2' }}>
+                      <p><strong>Net:</strong> 82.000 TL</p>
+                      <p><strong>KDV:</strong> 16.400 TL</p>
+                      <p><strong>Toplam:</strong> 98.400 TL</p>
                     </div>
                   </div>
                   <div>
-                    <h5 style={{ color: '#1565c0', marginBottom: '10px' }}>🚚 Teslimat Bilgileri</h5>
-                    <div style={{ backgroundColor: 'white', padding: '15px', borderRadius: '10px', fontSize: '14px', color: '#1565c0' }}>
-                      <p><strong>Teslimat Türü:</strong> Kargo</p>
-                      <p><strong>Teslimat Süresi:</strong> 7-14 iş günü</p>
-                      <p><strong>Kargo Ücreti:</strong> Ücretsiz</p>
-                      <p><strong>Cayma Hakkı:</strong> 14 gün</p>
+                    <h5 style={{ color: '#7b1fa2', marginBottom: '8px', fontSize: '14px' }}>📦 Özellikler</h5>
+                    <div style={{ backgroundColor: 'white', padding: '12px', borderRadius: '8px', fontSize: '13px', color: '#7b1fa2' }}>
+                      <p>Premium 7 Aşamalı Filtrasyon</p>
+                      <p>UV + Ozon Sterilizasyon</p>
+                      <p>Dokunmatik Kontrol</p>
+                      <p>Renk Seçenekleri</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Franchise Paketi */}
+              <div style={{ backgroundColor: '#e8f5e8', padding: '25px', borderRadius: '15px', border: '2px solid #4caf50' }}>
+                <h4 style={{ color: '#2e7d32', marginBottom: '15px', fontSize: '18px' }}>
+                  🤝 FRANCHISE PAKETİ - İŞ ORTAKLIĞI
+                </h4>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '15px' }}>
+                  <div>
+                    <h5 style={{ color: '#2e7d32', marginBottom: '8px', fontSize: '14px' }}>💰 Fiyat</h5>
+                    <div style={{ backgroundColor: 'white', padding: '12px', borderRadius: '8px', fontSize: '13px', color: '#2e7d32' }}>
+                      <p><strong>Net:</strong> 72.000 TL</p>
+                      <p><strong>KDV:</strong> 14.400 TL</p>
+                      <p><strong>Toplam:</strong> 86.400 TL</p>
+                    </div>
+                  </div>
+                  <div>
+                    <h5 style={{ color: '#2e7d32', marginBottom: '8px', fontSize: '14px' }}>📦 İçerik</h5>
+                    <div style={{ backgroundColor: 'white', padding: '12px', borderRadius: '8px', fontSize: '13px', color: '#2e7d32' }}>
+                      <p>Professional Cihaz</p>
+                      <p>Eğitim Paketi Dahil</p>
+                      <p>İş Ortaklığı Hakları</p>
+                      <p>Komisyon Sistemi</p>
                     </div>
                   </div>
                 </div>
@@ -245,7 +328,7 @@ const TermsOfService = () => {
                   <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '10px' }}>
                     <h5 style={{ color: '#2e7d32', marginBottom: '10px' }}>🏦 Banka Havalesi/EFT</h5>
                     <div style={{ fontSize: '14px', color: '#2e7d32' }}>
-                      <p><strong>Hesap Sahibi:</strong> HOOWELL GLOBAL SU ARITMA SİSTEMLERİ A.Ş.</p>
+                      <p><strong>Hesap Sahibi:</strong> HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ A.Ş.</p>
                       <p><strong>IBAN:</strong> TR77 0011 1000 0000 0153 1671 66</p>
                       <p><strong>Banka:</strong> Ziraat Bankası</p>
                       <p><strong>Şube:</strong> Çiğli Şubesi</p>
@@ -948,7 +1031,7 @@ const TermsOfService = () => {
               <div style={{ backgroundColor: '#e3f2fd', padding: '25px', borderRadius: '15px', border: '2px solid #2196f3' }}>
                 <h4 style={{ color: '#1565c0', marginBottom: '15px' }}>🏢 ŞİRKET İLETİŞİM</h4>
                 <div style={{ fontSize: '14px', color: '#1565c0' }}>
-                  <p><strong>Unvan:</strong> HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ</p>
+                  <p><strong>Unvan:</strong> HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ</p>
                   <p><strong>Adres:</strong> AOSB MAH. 10035 SK. NO 5 ÇİĞİLİ İZMİR</p>
                   <p><strong>Ticaret Sicil No:</strong> 264080</p>
                   <p><strong>E-posta:</strong> info@hoowell.com.tr</p>

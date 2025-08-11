@@ -8,6 +8,7 @@ const Layout = () => {
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
 
   // Ekran boyutu kontrolü
   useEffect(() => {
@@ -249,15 +250,15 @@ const Layout = () => {
                     alignItems: 'center',
                     justifyContent: 'center',
                     padding: isMobile ? '16px 20px' : '12px 20px',
-                    backgroundColor: isActive
+                    background: isActive
                       ? 'var(--accent-gold)'
                       : isGoldButton
-                        ? 'var(--accent-gold)'
-                        : '#1a4040',
+                        ? 'linear-gradient(135deg, #1a4040 0%, #2a5555 50%, #1a4040 100%)'
+                        : 'linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 50%, #000000 100%)',
                     color: isActive
                       ? '#0e2323'
                       : isGoldButton
-                        ? '#0e2323'
+                        ? '#ffffff'
                         : '#ffffff',
                     textDecoration: 'none',
                     borderRadius: '25px',
@@ -265,22 +266,28 @@ const Layout = () => {
                     fontSize: isMobile ? '15px' : '13px',
                     fontWeight: 'bold',
                     transition: 'all 0.3s ease',
-                    border: '2px solid var(--accent-gold)',
+                    border: isActive
+                      ? '2px solid var(--accent-gold)'
+                      : isGoldButton
+                        ? '2px solid #1a4040'
+                        : '2px solid var(--accent-gold)',
                     minHeight: isMobile ? '50px' : '45px',
-                    boxShadow: isActive || isGoldButton
+                    boxShadow: isActive
                       ? '0 4px 15px rgba(255, 215, 0, 0.4)'
-                      : '0 2px 8px rgba(0,0,0,0.2)',
+                      : isGoldButton
+                        ? '0 4px 15px rgba(26, 64, 64, 0.6)'
+                        : '0 2px 8px rgba(0,0,0,0.2)',
                     transform: isActive ? 'translateY(-1px)' : 'translateY(0)',
                     letterSpacing: '0.5px'
                   }}
                   onMouseEnter={(e) => {
                     if (!isActive) {
                       if (isGoldButton) {
-                        e.target.style.backgroundColor = '#e6c200';
+                        e.target.style.background = 'linear-gradient(135deg, #2a5555 0%, #3a6666 50%, #2a5555 100%)';
                         e.target.style.transform = 'translateY(-1px)';
-                        e.target.style.boxShadow = '0 6px 20px rgba(255, 215, 0, 0.5)';
+                        e.target.style.boxShadow = '0 6px 20px rgba(26, 64, 64, 0.8)';
                       } else {
-                        e.target.style.backgroundColor = '#2a5555';
+                        e.target.style.background = 'linear-gradient(135deg, #3c3c3c 0%, #2a2a2a 50%, #1a1a1a 100%)';
                         e.target.style.transform = 'translateY(-1px)';
                         e.target.style.boxShadow = '0 4px 12px rgba(255, 215, 0, 0.2)';
                       }
@@ -289,11 +296,11 @@ const Layout = () => {
                   onMouseLeave={(e) => {
                     if (!isActive) {
                       if (isGoldButton) {
-                        e.target.style.backgroundColor = 'var(--accent-gold)';
+                        e.target.style.background = 'linear-gradient(135deg, #1a4040 0%, #2a5555 50%, #1a4040 100%)';
                         e.target.style.transform = 'translateY(0)';
-                        e.target.style.boxShadow = '0 4px 15px rgba(255, 215, 0, 0.4)';
+                        e.target.style.boxShadow = '0 4px 15px rgba(26, 64, 64, 0.6)';
                       } else {
-                        e.target.style.backgroundColor = '#1a4040';
+                        e.target.style.background = 'linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 50%, #000000 100%)';
                         e.target.style.transform = 'translateY(0)';
                         e.target.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
                       }
@@ -404,9 +411,12 @@ const Layout = () => {
             {/* Çıkış Butonu */}
             <button
               onClick={() => {
+                if (loggingOut) return; // Çift tıklama önleme
+                setLoggingOut(true);
                 if (isMobile) closeSidebar();
                 logout();
               }}
+              disabled={loggingOut}
               style={{
                 padding: isMobile ? '16px 20px' : '12px 20px',
                 backgroundColor: '#dc3545',
@@ -438,7 +448,7 @@ const Layout = () => {
                 e.target.style.boxShadow = '0 4px 15px rgba(220, 53, 69, 0.3)';
               }}
             >
-              🚪 ÇIKIŞ
+              {loggingOut ? '⏳ ÇIKILIYOR...' : '🚪 ÇIKIŞ'}
             </button>
           </div>
 
@@ -479,12 +489,10 @@ const Layout = () => {
                       marginBottom: '10px'
                     }}
                   />
-                  <p style={{ color: 'var(--accent-gold)', fontStyle: 'italic', margin: 0 }}>
-                    INNOVATE YOUR LIFE
-                  </p>
+
                 </div>
                 <h4 style={{ color: 'var(--accent-gold)', marginBottom: '15px', fontSize: '16px' }}>
-                  HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ
+                  HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ
                 </h4>
                 <div style={{ fontSize: '14px', lineHeight: '1.6' }}>
                   <p><strong>📍 Adres:</strong> AOSB MAH. 10035 SK. NO 5 ÇİĞİLİ İZMİR</p>
@@ -551,13 +559,33 @@ const Layout = () => {
                   Ürünlerimiz
                 </h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <div style={{ fontSize: '14px' }}>
+                  <div style={{ fontSize: '13px' }}>
+                    <strong>📱 HOOWELL Premium El Terminali</strong><br />
+                    <span style={{ color: '#ccc' }}>19.680 TL (KDV Dahil)</span>
+                  </div>
+                  <div style={{ fontSize: '13px' }}>
+                    <strong>🏆 HOOWELL Professional Alkali İyonizer Cihazı</strong><br />
+                    <span style={{ color: '#ccc' }}>86.400 TL (KDV Dahil)</span>
+                  </div>
+                  <div style={{ fontSize: '13px' }}>
+                    <strong>⭐ HOOWELL Elite Alkali İyonizer Sistemi</strong><br />
+                    <span style={{ color: '#ff6b35' }}>🔥 KAMPANYA: 98.400 TL (KDV Dahil)</span>
+                  </div>
+                  <div style={{ fontSize: '13px' }}>
                     <strong>📚 Eğitim Paketi</strong><br />
                     <span style={{ color: '#ccc' }}>4.800 TL (KDV Dahil)</span>
                   </div>
-                  <div style={{ fontSize: '14px' }}>
-                    <strong>🏆 HOOWELL Cihaz Paketi</strong><br />
-                    <span style={{ color: '#ccc' }}>86.400 TL (KDV Dahil)</span>
+                  <div style={{ fontSize: '13px' }}>
+                    <strong>🤝 Franchise Paketi</strong><br />
+                    <span style={{ color: '#ccc' }}>86.400 TL (Cihaz + Eğitim)</span>
+                  </div>
+                  <div style={{ fontSize: '13px' }}>
+                    <strong>🔧 Yedek Parçalar</strong><br />
+                    <span style={{ color: '#ccc' }}>Filtreler ve Aksesuarlar</span>
+                  </div>
+                  <div style={{ fontSize: '13px' }}>
+                    <strong>🛠️ Teknik Servis</strong><br />
+                    <span style={{ color: '#ccc' }}>Kurulum ve Bakım</span>
                   </div>
                 </div>
               </div>
@@ -572,7 +600,7 @@ const Layout = () => {
               color: '#ccc'
             }}>
               <p style={{ margin: '0 0 10px 0' }}>
-                © 2025 HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ. Tüm hakları saklıdır.
+                © 2025 HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ. Tüm hakları saklıdır.
               </p>
               <p style={{ margin: 0, fontSize: '12px' }}>
                 Bu site 6698 sayılı KVKK kapsamında kişisel verilerinizi korumaktadır.

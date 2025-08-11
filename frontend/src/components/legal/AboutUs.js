@@ -50,7 +50,7 @@ const AboutUs = () => {
                                 <strong>Hoowell firması bir Waterlove kuruluşudur.</strong> Waterlove İzmir Organize Sanayi Bölgesinde 4.000 metrekarede üretim yapmaktadır.
                             </p>
                             <p style={{ marginBottom: '15px' }}>
-                                Waterlove, su arıtma konusunda Türkiye'nin en büyük ve önde gelen firmalarından birisidir. Uzmanlığımız <strong>NORMAL SUYU arıtarak İÇİLEBİLİR kaliteye getirmektir.</strong> 15 yıllık geçmişimizde 120'den fazla marka için ve 500.000'den fazla cihaz ürettik.
+                                Waterlove, alkali iyonizer teknolojileri konusunda Türkiye'nin en büyük ve önde gelen firmalarından birisidir. Uzmanlığımız <strong>NORMAL SUYU alkali iyonize ederek SAĞLIKLI kaliteye getirmektir.</strong> 15 yıllık geçmişimizde 120'den fazla marka için ve 500.000'den fazla cihaz ürettik.
                             </p>
                             <p style={{ marginBottom: '15px' }}>
                                 Bunca yıllık tecrübemizi <strong>Hoowell Alkali İonizer cihazını</strong> üretmek için kullandık.
@@ -74,7 +74,7 @@ const AboutUs = () => {
                                 <strong>Temiz su, aslında oksidandır yani vücudumuzu paslandırır.</strong> Oysa ki Hoowell Alkali İonizer cihazından içilen su <strong>Antioksidandır. Yani PAS ÇÖZÜCÜDÜR.</strong>
                             </p>
                             <p style={{ color: '#1565c0', fontWeight: 'bold', fontSize: '18px', textAlign: 'center' }}>
-                                Basit su arıtmalardan çıkan temiz su insanları YAŞLANDIRIRKEN, Hoowell Alkali İonizer'dan çıkan su GENÇLEŞTİRİR. Bu çok önemli bir İNOVASYONDUR.
+                                Basit filtrelerden çıkan temiz su insanları YAŞLANDIRIRKEN, Hoowell Alkali İonizer'dan çıkan su GENÇLEŞTİRİR. Bu çok önemli bir İNOVASYONDUR.
                             </p>
                         </div>
                     </section>
@@ -82,7 +82,7 @@ const AboutUs = () => {
                     <section style={{ marginBottom: '30px' }}>
                         <h2 style={{ color: 'var(--primary-dark)', marginBottom: '15px' }}>Şirket Bilgileri</h2>
                         <div style={{ backgroundColor: '#f8f9fa', padding: '25px', borderRadius: '15px' }}>
-                            <p><strong>Şirket Unvanı:</strong> HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ</p>
+                            <p><strong>Şirket Unvanı:</strong> HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ</p>
                             <p><strong>Kuruluş Yılı:</strong> 2024</p>
                             <p><strong>Ticaret Sicil No:</strong> 264080</p>
                             <p><strong>Adres:</strong> AOSB MAH. 10035 SK. NO 5 ÇİĞİLİ İZMİR</p>
@@ -124,6 +124,73 @@ const AboutUs = () => {
                     </section>
 
                     <section style={{ marginBottom: '30px' }}>
+                        <h2 style={{ color: 'var(--primary-dark)', marginBottom: '15px' }}>ÜRÜN VE HİZMET GAMİMİZ</h2>
+                        <div style={{ backgroundColor: '#fff3e0', padding: '25px', borderRadius: '15px', lineHeight: '1.8', marginBottom: '20px' }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
+                                <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '10px', border: '2px solid #ff9800' }}>
+                                    <h3 style={{ color: '#f57c00', marginBottom: '15px', fontSize: '18px' }}>🏆 HOOWELL ALKALİ İONİZER CİHAZI</h3>
+                                    <p style={{ color: '#f57c00', fontSize: '14px', marginBottom: '10px' }}>
+                                        <strong>Ana ürünümüz olan Alkali İonizer cihazı</strong>, normal suyu arıtarak antioksidan özellikli alkali su üretir.
+                                    </p>
+                                    <ul style={{ paddingLeft: '15px', fontSize: '14px', color: '#f57c00' }}>
+                                        <li><strong>7 Aşamalı Filtrasyon</strong> sistemi</li>
+                                        <li><strong>UV Sterilizasyon</strong> teknolojisi</li>
+                        <li><strong>Mineral Dengeleme</strong> özelliği</li>
+                                        <li><strong>Akıllı Kontrol Paneli</strong></li>
+                                        <li><strong>2 Yıl Garanti</strong></li>
+                                    </ul>
+                                </div>
+                                
+                                <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '10px', border: '2px solid #4caf50' }}>
+                                    <h3 style={{ color: '#2e7d32', marginBottom: '15px', fontSize: '18px' }}>🔧 YAN ÜRÜNLER VE AKSESUARLAR</h3>
+                                    <ul style={{ paddingLeft: '15px', fontSize: '14px', color: '#2e7d32' }}>
+                                        <li><strong>Yedek Filtreler:</strong> Tüm cihaz modelleri için</li>
+                                        <li><strong>Bakım Kitleri:</strong> Düzenli bakım malzemeleri</li>
+                                        <li><strong>Montaj Aksesuarları:</strong> Kurulum parçaları</li>
+                                        <li><strong>Test Kitleri:</strong> Su kalitesi ölçüm araçları</li>
+                                        <li><strong>Temizlik Ürünleri:</strong> Cihaz bakım ürünleri</li>
+                                    </ul>
+                                </div>
+                                
+                                <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '10px', border: '2px solid #2196f3' }}>
+                                    <h3 style={{ color: '#1565c0', marginBottom: '15px', fontSize: '18px' }}>📚 EĞİTİM VE DESTEK HİZMETLERİ</h3>
+                                    <ul style={{ paddingLeft: '15px', fontSize: '14px', color: '#1565c0' }}>
+                                        <li><strong>Online Eğitim Platformu:</strong> 10 video eğitimi</li>
+                                        <li><strong>Sertifika Programları:</strong> Uzman belgesi</li>
+                                        <li><strong>Teknik Destek:</strong> 7/24 yardım hattı</li>
+                                        <li><strong>Kurulum Hizmeti:</strong> Profesyonel montaj</li>
+                                        <li><strong>Bakım Hizmeti:</strong> Düzenli kontrol</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div style={{ backgroundColor: '#e8f5e8', padding: '20px', borderRadius: '10px', marginTop: '20px', border: '2px solid #4caf50' }}>
+                                <h4 style={{ color: '#2e7d32', marginBottom: '15px', textAlign: 'center' }}>💡 ÜRÜN FİYATLARI</h4>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '15px' }}>
+                                    <div style={{ backgroundColor: 'white', padding: '15px', borderRadius: '8px', textAlign: 'center' }}>
+                                        <h5 style={{ color: '#2e7d32', marginBottom: '8px' }}>📚 Eğitim Paketi</h5>
+                                        <p style={{ color: '#2e7d32', fontSize: '14px', margin: 0 }}>
+                                            <strong>100 USD</strong> (4.000 TL)<br/>
+                                            <strong>+20% KDV</strong> (800 TL)<br/>
+                                            <strong>= 4.800 TL</strong><br/>
+                                            <span style={{ color: '#ff9800', fontWeight: 'bold' }}>KDV Dahil Fiyat</span>
+                                        </p>
+                                    </div>
+                                    <div style={{ backgroundColor: 'white', padding: '15px', borderRadius: '8px', textAlign: 'center' }}>
+                                        <h5 style={{ color: '#2e7d32', marginBottom: '8px' }}>🏆 HOOWELL Cihaz Paketi</h5>
+                                        <p style={{ color: '#2e7d32', fontSize: '14px', margin: 0 }}>
+                                            <strong>1.800 USD</strong> (72.000 TL)<br/>
+                                            <strong>+20% KDV</strong> (14.400 TL)<br/>
+                                            <strong>= 86.400 TL</strong><br/>
+                                            <span style={{ color: '#ff9800', fontWeight: 'bold' }}>KDV Dahil Fiyat</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section style={{ marginBottom: '30px' }}>
                         <h2 style={{ color: 'var(--primary-dark)', marginBottom: '15px' }}>MİSYONUMUZ</h2>
                         <div style={{ backgroundColor: '#e3f2fd', padding: '25px', borderRadius: '15px', lineHeight: '1.8' }}>
                             <div style={{ marginBottom: '20px' }}>
@@ -154,12 +221,12 @@ const AboutUs = () => {
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
                             <div style={{ backgroundColor: '#e8f5e8', padding: '25px', borderRadius: '15px' }}>
                                 <h3 style={{ color: '#2e7d32', marginBottom: '15px', fontSize: '20px' }}>
-                                    🏭 Su Arıtma Sistemleri
+                                    🏭 Alkali İyonizer Sistemleri
                                 </h3>
                                 <ul style={{ paddingLeft: '20px', color: '#2e7d32' }}>
-                                    <li>Su dağıtım şebekeleri</li>
-                                    <li>Su iyileştirme sistemleri</li>
-                                    <li>Endüstriyel su arıtma</li>
+                                    <li>Alkali su dağıtım sistemleri</li>
+                                    <li>Su iyonizasyon sistemleri</li>
+                                    <li>Endüstriyel alkali iyonizer</li>
                                     <li>Hammadde ve yardımcı madde tedariki</li>
                                     <li>İthalat ve ihracat hizmetleri</li>
                                 </ul>
@@ -170,7 +237,7 @@ const AboutUs = () => {
                                     🏠 Ev Tipi Cihazlar
                                 </h3>
                                 <ul style={{ paddingLeft: '20px', color: '#f57c00' }}>
-                                    <li>Su arıtma cihazları</li>
+                                    <li>Alkali iyonizer cihazları</li>
                                     <li>Elektrik ve elektronik ev aletleri</li>
                                     <li>Teknik servis hizmetleri</li>
                                     <li>Yedek parça tedariki</li>
@@ -196,46 +263,141 @@ const AboutUs = () => {
                     <section style={{ marginBottom: '30px' }}>
                         <h2 style={{ color: 'var(--primary-dark)', marginBottom: '15px' }}>Ürün ve Hizmetlerimiz</h2>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}>
-                            <div style={{ backgroundColor: 'white', padding: '25px', borderRadius: '15px', border: '2px solid var(--accent-gold)' }}>
-                                <h3 style={{ color: 'var(--primary-dark)', marginBottom: '15px', textAlign: 'center' }}>
-                                    📚 Eğitim Paketi
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
+                            
+                            {/* HOOWELL Premium El Terminali */}
+                            <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '15px', border: '2px solid #ff9800' }}>
+                                <h3 style={{ color: 'var(--primary-dark)', marginBottom: '15px', textAlign: 'center', fontSize: '18px' }}>
+                                    📱 HOOWELL Premium El Terminali
                                 </h3>
                                 <div style={{ textAlign: 'center', marginBottom: '15px' }}>
-                                    <span style={{ fontSize: '24px', fontWeight: 'bold', color: 'var(--accent-gold)' }}>
-                                        4.800 TL
+                                    <span style={{ fontSize: '20px', fontWeight: 'bold', color: '#ff9800' }}>
+                                        19.680 TL
                                     </span>
-                                    <span style={{ fontSize: '14px', color: '#666', display: 'block' }}>
+                                    <span style={{ fontSize: '12px', color: '#666', display: 'block' }}>
                                         (KDV Dahil)
                                     </span>
                                 </div>
-                                <ul style={{ paddingLeft: '20px', fontSize: '14px' }}>
-                                    <li>10 Video Eğitimi</li>
-                                    <li>Sınav Sistemi</li>
-                                    <li>Sertifika Programı</li>
-                                    <li>Online Platform Erişimi</li>
-                                    <li>Teknik Destek</li>
+                                <ul style={{ paddingLeft: '20px', fontSize: '13px' }}>
+                                    <li>5 Aşamalı Filtrasyon</li>
+                                    <li>Kompakt Tasarım</li>
+                                    <li>Renk Seçenekleri</li>
+                                    <li>2 Yıl Garanti</li>
+                                    <li>Ücretsiz Kurulum</li>
                                 </ul>
                             </div>
 
-                            <div style={{ backgroundColor: 'white', padding: '25px', borderRadius: '15px', border: '2px solid var(--primary-dark)' }}>
-                                <h3 style={{ color: 'var(--primary-dark)', marginBottom: '15px', textAlign: 'center' }}>
-                                    🏆 HOOWELL Cihaz Paketi
+                            {/* HOOWELL Professional */}
+                            <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '15px', border: '2px solid var(--primary-dark)' }}>
+                                <h3 style={{ color: 'var(--primary-dark)', marginBottom: '15px', textAlign: 'center', fontSize: '18px' }}>
+                                    🏆 HOOWELL Professional Alkali İyonizer Cihazı
                                 </h3>
                                 <div style={{ textAlign: 'center', marginBottom: '15px' }}>
-                                    <span style={{ fontSize: '24px', fontWeight: 'bold', color: 'var(--primary-dark)' }}>
+                                    <span style={{ fontSize: '20px', fontWeight: 'bold', color: 'var(--primary-dark)' }}>
                                         86.400 TL
                                     </span>
-                                    <span style={{ fontSize: '14px', color: '#666', display: 'block' }}>
+                                    <span style={{ fontSize: '12px', color: '#666', display: 'block' }}>
                                         (KDV Dahil)
                                     </span>
                                 </div>
-                                <ul style={{ paddingLeft: '20px', fontSize: '14px' }}>
-                                    <li>HOOWELL Su Arıtma Cihazı</li>
-                                    <li>Eğitim Sistemi Dahil</li>
+                                <ul style={{ paddingLeft: '20px', fontSize: '13px' }}>
+                                    <li>7 Aşamalı Filtrasyon</li>
+                                    <li>UV Sterilizasyon</li>
+                                    <li>Mineral Dengeleme</li>
+                                    <li>Akıllı Kontrol Paneli</li>
                                     <li>2 Yıl Garanti</li>
-                                    <li>Ücretsiz Kurulum</li>
-                                    <li>Teknik Servis Desteği</li>
+                                </ul>
+                            </div>
+
+                            {/* HOOWELL Elite - KAMPANYALI ÜRÜN */}
+                            <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '15px', border: '2px solid #ff6b35', position: 'relative', overflow: 'hidden' }}>
+                                {/* Kampanya Badge */}
+                                <div style={{
+                                    position: 'absolute',
+                                    top: '5px',
+                                    right: '-25px',
+                                    backgroundColor: '#ff6b35',
+                                    color: 'white',
+                                    padding: '3px 30px',
+                                    fontSize: '10px',
+                                    fontWeight: 'bold',
+                                    transform: 'rotate(45deg)',
+                                    boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
+                                }}>
+                                    KAMPANYA
+                                </div>
+                                <h3 style={{ color: 'var(--primary-dark)', marginBottom: '15px', textAlign: 'center', fontSize: '18px' }}>
+                                    ⭐ HOOWELL Elite Alkali İyonizer Sistemi
+                                </h3>
+                                <div style={{ textAlign: 'center', marginBottom: '15px' }}>
+                                    <div style={{ 
+                                        backgroundColor: '#ff6b35', 
+                                        color: 'white', 
+                                        padding: '5px 10px', 
+                                        borderRadius: '15px', 
+                                        marginBottom: '8px',
+                                        fontSize: '11px',
+                                        fontWeight: 'bold'
+                                    }}>
+                                        🔥 KAMPANYA FİYATI
+                                    </div>
+                                    <span style={{ fontSize: '20px', fontWeight: 'bold', color: '#ff6b35' }}>
+                                        98.400 TL
+                                    </span>
+                                    <span style={{ fontSize: '12px', color: '#666', display: 'block' }}>
+                                        (KDV Dahil)
+                                    </span>
+                                </div>
+                                <ul style={{ paddingLeft: '20px', fontSize: '13px' }}>
+                                    <li>Premium 7 Aşamalı Filtrasyon</li>
+                                    <li>UV + Ozon Sterilizasyon</li>
+                                    <li>Dokunmatik Kontrol</li>
+                                    <li>Renk Seçenekleri</li>
+                                    <li>2 Yıl Garanti</li>
+                                </ul>
+                            </div>
+
+                            {/* Eğitim Paketi */}
+                            <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '15px', border: '2px solid #2196f3' }}>
+                                <h3 style={{ color: 'var(--primary-dark)', marginBottom: '15px', textAlign: 'center', fontSize: '18px' }}>
+                                    📚 Eğitim Paketi
+                                </h3>
+                                <div style={{ textAlign: 'center', marginBottom: '15px' }}>
+                                    <span style={{ fontSize: '20px', fontWeight: 'bold', color: '#2196f3' }}>
+                                        4.800 TL
+                                    </span>
+                                    <span style={{ fontSize: '12px', color: '#666', display: 'block' }}>
+                                        (KDV Dahil)
+                                    </span>
+                                </div>
+                                <ul style={{ paddingLeft: '20px', fontSize: '13px' }}>
+                                    <li>10 Video Eğitimi</li>
+                                    <li>Sınav Sistemi</li>
+                                    <li>Dijital Sertifika</li>
+                                    <li>Online Platform Erişimi</li>
+                                    <li>7/24 Teknik Destek</li>
+                                </ul>
+                            </div>
+
+                            {/* Franchise Paketi */}
+                            <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '15px', border: '2px solid #4caf50' }}>
+                                <h3 style={{ color: 'var(--primary-dark)', marginBottom: '15px', textAlign: 'center', fontSize: '18px' }}>
+                                    🤝 Franchise Paketi
+                                </h3>
+                                <div style={{ textAlign: 'center', marginBottom: '15px' }}>
+                                    <span style={{ fontSize: '20px', fontWeight: 'bold', color: '#4caf50' }}>
+                                        86.400 TL
+                                    </span>
+                                    <span style={{ fontSize: '12px', color: '#666', display: 'block' }}>
+                                        (KDV Dahil)
+                                    </span>
+                                </div>
+                                <ul style={{ paddingLeft: '20px', fontSize: '13px' }}>
+                                    <li>Professional Cihaz</li>
+                                    <li>Eğitim Paketi Dahil</li>
+                                    <li>İş Ortaklığı Hakları</li>
+                                    <li>Komisyon Sistemi</li>
+                                    <li>Tam Destek</li>
                                 </ul>
                             </div>
                         </div>
@@ -316,7 +478,7 @@ const AboutUs = () => {
                     <section style={{ marginBottom: '30px' }}>
                         <h2 style={{ color: 'var(--primary-dark)', marginBottom: '15px' }}>Neden HOOWELL?</h2>
                         <ul style={{ paddingLeft: '20px' }}>
-                            <li><strong>Uzman Ekip:</strong> Su arıtma teknolojileri konusunda deneyimli ekibimiz</li>
+                            <li><strong>Uzman Ekip:</strong> Alkali iyonizer teknolojileri konusunda deneyimli ekibimiz</li>
                             <li><strong>Kaliteli Ürünler:</strong> Uluslararası standartlarda sertifikalı ürünler</li>
                             <li><strong>Kapsamlı Eğitim:</strong> Detaylı eğitim programları ve sürekli destek</li>
                             <li><strong>Güçlü Bayi Ağı:</strong> Türkiye genelinde yaygın bayi ağı</li>

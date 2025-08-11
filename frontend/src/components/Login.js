@@ -25,7 +25,6 @@ const Login = () => {
     const result = await login(username, password);
     
     if (result.success) {
-      // AuthContext'ten gelen yönlendirme path'ini kullan
       navigate(result.redirectPath || '/');
     } else {
       setError(result.message);
@@ -34,76 +33,184 @@ const Login = () => {
     setLoading(false);
   };
 
+
+
+  const handleDiscoverHoowell = () => {
+    navigate('/discover');
+  };
+
   return (
-    <div className="login-container">
-      <div className="login-card">
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginBottom: '20px'
-        }}>
-          <img 
-            src="/hoowell-logo.png" 
-            alt="HOOWELL Logo"
-            style={{
-              width: '200px',
-              height: '100px',
-              objectFit: 'contain'
-            }}
-          />
-        </div>
-        <p className="login-subtitle">INNOVATE YOUR LIFE</p>
+    <div className="login-main-container">
+      <div className="login-grid">
         
-        <form onSubmit={handleSubmit}>
-          {error && (
-            <div style={{ 
-              color: '#721c24', 
-              backgroundColor: '#f8d7da', 
-              padding: '10px', 
-              borderRadius: '5px', 
-              marginBottom: '20px' 
+        {/* Sol Kart - HOOWELL Dünyasını Keşfedin */}
+        <div 
+          onClick={handleDiscoverHoowell}
+          className="login-card login-card-clickable"
+          style={{ textAlign: 'center' }}
+        >
+          <div className="login-corner-dot"></div>
+          
+          <div style={{
+            color: '#FFD700',
+            fontSize: '24px',
+            fontWeight: 'bold',
+            marginBottom: '20px',
+            letterSpacing: '1px'
+          }}>
+            HOOWELL
+          </div>
+          
+          <div style={{
+            color: '#FFD700',
+            fontSize: '20px',
+            fontWeight: 'bold',
+            marginBottom: '10px'
+          }}>
+            DÜNYASINI
+          </div>
+          
+          <div style={{
+            color: '#FFD700',
+            fontSize: '18px',
+            fontWeight: 'bold'
+          }}>
+            KEŞFEDİN
+          </div>
+          
+          <div style={{
+            color: '#FFD700',
+            fontSize: '12px',
+            marginTop: '10px',
+            opacity: 0.8
+          }}>
+            (HERKESE AÇIK)
+          </div>
+        </div>
+
+        {/* Orta - HOOWELL Logo */}
+        <div style={{
+          textAlign: 'center',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '500px'
+        }}>
+          {/* Logo */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: '30px'
+          }}>
+            <img 
+              src="/hoowell-logo.png" 
+              alt="HOOWELL Logo"
+              style={{
+                width: '280px',
+                height: '210px',
+                objectFit: 'contain'
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Sağ Kart - İş Ortağı Girişi */}
+        <div className="login-card">
+          <div className="login-corner-dot"></div>
+          
+          <div style={{
+            textAlign: 'center',
+            marginBottom: '30px'
+          }}>
+            <div style={{
+              color: '#FFD700',
+              fontSize: '20px',
+              fontWeight: 'bold',
+              marginBottom: '5px'
             }}>
-              {error}
+              İŞ ORTAĞI
             </div>
-          )}
-          
-          <div className="form-group">
-            <label>Kullanıcı Adı / E-posta / Partner ID</label>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Kullanıcı adı, e-posta veya Partner ID (örn: P2025000001)"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
-            <small style={{ color: '#666', fontSize: '12px', marginTop: '5px', display: 'block' }}>
-              Partner ID ile giriş yapabilirsiniz (örn: P2025000000)
-            </small>
+            <div style={{
+              color: '#FFD700',
+              fontSize: '20px',
+              fontWeight: 'bold'
+            }}>
+              GİRİŞİ
+            </div>
           </div>
-          
-          <div className="form-group">
-            <label>Şifre</label>
-            <input
-              type="password"
-              className="form-control"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          
-          <button 
-            type="submit" 
-            className="btn btn-primary" 
-            style={{ width: '100%' }}
-            disabled={loading}
-          >
-            {loading ? 'Giriş Yapılıyor...' : 'Giriş Yap'}
-          </button>
-        </form>
+
+          <form onSubmit={handleSubmit}>
+            {error && (
+              <div style={{ 
+                color: '#ff6b6b', 
+                backgroundColor: 'rgba(255, 107, 107, 0.1)', 
+                padding: '10px', 
+                borderRadius: '8px', 
+                marginBottom: '20px',
+                fontSize: '14px',
+                textAlign: 'center'
+              }}>
+                {error}
+              </div>
+            )}
+            
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{
+                color: '#FFD700',
+                fontSize: '12px',
+                marginBottom: '8px',
+                display: 'block',
+                textAlign: 'left',
+                fontWeight: 'bold'
+              }}>
+                İŞ ORTAĞI ID NUMARASI
+              </label>
+              <input
+                type="text"
+                placeholder="P_____-___-____"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+                className="login-input"
+              />
+            </div>
+            
+            <div style={{ marginBottom: '30px' }}>
+              <label style={{
+                color: '#FFD700',
+                fontSize: '12px',
+                marginBottom: '8px',
+                display: 'block',
+                textAlign: 'left',
+                fontWeight: 'bold'
+              }}>
+                ŞİFRE
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="login-input"
+              />
+            </div>
+            
+            <button 
+              type="submit"
+              disabled={loading}
+              className="login-button"
+            >
+              {loading ? 'GİRİŞ YAPILIYOR...' : 'GİRİŞ YAP'}
+            </button>
+          </form>
+
+
+        </div>
       </div>
+
+
     </div>
   );
 };

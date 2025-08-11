@@ -28,7 +28,7 @@ const KVKKPolicy = () => {
           <section style={{ marginBottom: '30px' }}>
             <h2 style={{ color: 'var(--primary-dark)', marginBottom: '15px' }}>1. Veri Sorumlusu</h2>
             <div style={{ backgroundColor: '#f8f9fa', padding: '20px', borderRadius: '10px' }}>
-              <p><strong>Şirket Unvanı:</strong> HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ</p>
+              <p><strong>Şirket Unvanı:</strong> HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ</p>
               <p><strong>Adres:</strong> AOSB MAH. 10035 SK. NO 5 ÇİĞİLİ İZMİR</p>
               <p><strong>Ticaret Sicil No:</strong> 264080</p>
               <p><strong>E-posta:</strong> info@hoowell.com.tr</p>
@@ -263,7 +263,7 @@ const KVKKPolicy = () => {
               <h4 style={{ color: '#004085', marginBottom: '10px' }}>📮 Posta ile Başvuru</h4>
               <p style={{ color: '#004085', margin: 0 }}>
                 <strong>Adres:</strong> AOSB MAH. 10035 SK. NO 5 ÇİĞİLİ İZMİR<br/>
-                <strong>Alıcı:</strong> HOOWELL GLOBAL SU ARITMA SİSTEMLERİ A.Ş. - KVKK Sorumlusu
+                <strong>Alıcı:</strong> HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ A.Ş. - KVKK Sorumlusu
               </p>
             </div>
 
@@ -299,7 +299,7 @@ const KVKKPolicy = () => {
             <h2 style={{ color: 'var(--primary-dark)', marginBottom: '15px' }}>11. İletişim</h2>
             <p>KVKK ile ilgili sorularınız için bizimle iletişime geçebilirsiniz:</p>
             <div style={{ backgroundColor: '#f8f9fa', padding: '20px', borderRadius: '10px' }}>
-              <p><strong>Şirket:</strong> HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ</p>
+              <p><strong>Şirket:</strong> HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ</p>
               <p><strong>E-posta:</strong> info@hoowell.com.tr</p>
               <p><strong>Adres:</strong> AOSB MAH. 10035 SK. NO 5 ÇİĞİLİ İZMİR</p>
               <p><strong>Ticaret Sicil No:</strong> 264080</p>

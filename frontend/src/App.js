@@ -26,6 +26,7 @@ import MuhasebeTakipPaneli from './components/MuhasebeTakipPaneli';
 import KisiselYonetim from './components/KisiselYonetim';
 // import AdminPayment from './components/AdminPayment'; // Şu an kullanılmıyor
 import Welcome from './components/Welcome';
+import HoowellDiscover from './components/HoowellDiscover';
 
 // Legal Pages
 import PrivacyPolicy from './components/legal/PrivacyPolicy';
@@ -49,6 +50,7 @@ function App() {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/welcome" element={<Welcome />} />
+            <Route path="/discover" element={<HoowellDiscover />} />
             <Route path="/" element={<Layout />}>
               <Route index element={<Dashboard />} />
               <Route path="payment" element={<Payment />} />

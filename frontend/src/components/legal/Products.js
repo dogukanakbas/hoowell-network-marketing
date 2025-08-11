@@ -60,7 +60,7 @@ const Products = () => {
               </p>
             </div>
             <p style={{ fontSize: '20px', fontWeight: 'bold', color: 'var(--accent-gold)' }}>
-              Basit su arıtmalardan çıkan temiz su insanları YAŞLANDIRIRKEN,<br/>
+              Basit filtrelerden çıkan temiz su insanları YAŞLANDIRIRKEN,<br/>
               Hoowell Alkali İonizer'dan çıkan su GENÇLEŞTİRİR.<br/>
               Bu çok önemli bir İNOVASYONDUR.
             </p>
@@ -71,129 +71,98 @@ const Products = () => {
           {/* Ana Ürünler */}
           <section style={{ marginBottom: '40px' }}>
             <h2 style={{ color: 'var(--primary-dark)', marginBottom: '25px', textAlign: 'center' }}>
-              Ana Ürünlerimiz
+              Ürün Gamımız
             </h2>
             
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
-              {/* Eğitim Paketi */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '25px' }}>
+              
+              {/* HOOWELL Premium El Terminali */}
               <div style={{ 
                 backgroundColor: 'white', 
-                padding: '30px', 
+                padding: '25px', 
                 borderRadius: '20px', 
-                border: '3px solid var(--accent-gold)',
+                border: '3px solid #ff9800',
                 boxShadow: '0 8px 25px rgba(0,0,0,0.1)',
                 textAlign: 'center'
               }}>
-                <div style={{ fontSize: '64px', marginBottom: '20px' }}>📚</div>
-                <h3 style={{ color: 'var(--primary-dark)', marginBottom: '15px', fontSize: '24px' }}>
-                  Eğitim Paketi
+                <div style={{ fontSize: '48px', marginBottom: '15px' }}>📱</div>
+                <h3 style={{ color: 'var(--primary-dark)', marginBottom: '15px', fontSize: '20px' }}>
+                  HOOWELL Premium El Terminali
                 </h3>
-                <div style={{ marginBottom: '20px' }}>
+                <div style={{ marginBottom: '15px' }}>
                   <span style={{ 
-                    fontSize: '36px', 
+                    fontSize: '28px', 
                     fontWeight: 'bold', 
-                    color: 'var(--accent-gold)' 
+                    color: '#ff9800' 
                   }}>
-                    4.800 TL
+                    19.680 TL
                   </span>
-                  <div style={{ fontSize: '14px', color: '#666' }}>
+                  <div style={{ fontSize: '12px', color: '#666' }}>
                     (KDV Dahil)
                   </div>
                 </div>
                 
-                <div style={{ textAlign: 'left', marginBottom: '25px' }}>
-                  <h4 style={{ color: 'var(--primary-dark)', marginBottom: '10px' }}>
-                    📋 Paket İçeriği:
-                  </h4>
-                  <ul style={{ paddingLeft: '20px', fontSize: '14px' }}>
-                    <li>10 Adet Profesyonel Eğitim Videosu</li>
-                    <li>Her Video Sonrası Sınav Sistemi</li>
-                    <li>Online Eğitim Platformu Erişimi</li>
-                    <li>Dijital Sertifika Programı</li>
-                    <li>7/24 Teknik Destek</li>
-                    <li>Backoffice Panel Erişimi</li>
-                    <li>Satış ve Pazarlama Eğitimi</li>
+                <div style={{ textAlign: 'left', marginBottom: '20px' }}>
+                  <ul style={{ paddingLeft: '20px', fontSize: '13px' }}>
+                    <li>Kompakt Tasarım</li>
+                    <li>5 Aşamalı Filtrasyon</li>
+                    <li>Renk Seçenekleri</li>
+                    <li>2 Yıl Garanti</li>
+                    <li>Ücretsiz Kurulum</li>
                   </ul>
-                </div>
-
-                <div style={{ backgroundColor: '#fff9e6', padding: '15px', borderRadius: '10px', marginBottom: '20px' }}>
-                  <h4 style={{ color: '#856404', marginBottom: '8px' }}>🎯 Eğitim Konuları:</h4>
-                  <div style={{ fontSize: '13px', color: '#856404', textAlign: 'left' }}>
-                    • Su Arıtma Teknolojileri<br/>
-                    • Satış Teknikleri<br/>
-                    • Müşteri İlişkileri<br/>
-                    • Satış ve Pazarlama<br/>
-                    • İş Geliştirme Stratejileri
-                  </div>
                 </div>
 
                 <Link 
                   to="/customer-registration"
                   style={{
                     display: 'inline-block',
-                    backgroundColor: 'var(--accent-gold)',
-                    color: 'var(--primary-dark)',
-                    padding: '12px 25px',
+                    backgroundColor: '#ff9800',
+                    color: 'white',
+                    padding: '10px 20px',
                     borderRadius: '10px',
                     textDecoration: 'none',
                     fontWeight: 'bold',
-                    boxShadow: '0 4px 15px rgba(255,215,0,0.3)'
+                    fontSize: '14px'
                   }}
                 >
                   🛒 Satın Al
                 </Link>
               </div>
 
-              {/* Cihaz Paketi */}
+              {/* HOOWELL Professional */}
               <div style={{ 
                 backgroundColor: 'white', 
-                padding: '30px', 
+                padding: '25px', 
                 borderRadius: '20px', 
                 border: '3px solid var(--primary-dark)',
                 boxShadow: '0 8px 25px rgba(0,0,0,0.1)',
                 textAlign: 'center'
               }}>
-                <div style={{ fontSize: '64px', marginBottom: '20px' }}>🏆</div>
-                <h3 style={{ color: 'var(--primary-dark)', marginBottom: '15px', fontSize: '24px' }}>
-                  HOOWELL Cihaz Paketi
+                <div style={{ fontSize: '48px', marginBottom: '15px' }}>🏆</div>
+                <h3 style={{ color: 'var(--primary-dark)', marginBottom: '15px', fontSize: '20px' }}>
+                  HOOWELL Professional Alkali İyonizer Cihazı
                 </h3>
-                <div style={{ marginBottom: '20px' }}>
+                <div style={{ marginBottom: '15px' }}>
                   <span style={{ 
-                    fontSize: '36px', 
+                    fontSize: '28px', 
                     fontWeight: 'bold', 
                     color: 'var(--primary-dark)' 
                   }}>
                     86.400 TL
                   </span>
-                  <div style={{ fontSize: '14px', color: '#666' }}>
+                  <div style={{ fontSize: '12px', color: '#666' }}>
                     (KDV Dahil)
                   </div>
                 </div>
                 
-                <div style={{ textAlign: 'left', marginBottom: '25px' }}>
-                  <h4 style={{ color: 'var(--primary-dark)', marginBottom: '10px' }}>
-                    📦 Paket İçeriği:
-                  </h4>
-                  <ul style={{ paddingLeft: '20px', fontSize: '14px' }}>
-                    <li>HOOWELL Su Arıtma Cihazı</li>
-                    <li>Tüm Eğitim Sistemi (4.800 TL Değerinde)</li>
-                    <li>2 Yıl Resmi Garanti</li>
-                    <li>Ücretsiz Kurulum Hizmeti</li>
-                    <li>1 Yıl Ücretsiz Bakım</li>
-                    <li>Yedek Parça Desteği</li>
-                    <li>Teknik Servis Hizmeti</li>
+                <div style={{ textAlign: 'left', marginBottom: '20px' }}>
+                  <ul style={{ paddingLeft: '20px', fontSize: '13px' }}>
+                    <li>7 Aşamalı Filtrasyon</li>
+                    <li>UV Sterilizasyon</li>
+                    <li>Mineral Dengeleme</li>
+                    <li>Akıllı Kontrol Paneli</li>
+                    <li>2 Yıl Garanti</li>
                   </ul>
-                </div>
-
-                <div style={{ backgroundColor: '#e8f5e8', padding: '15px', borderRadius: '10px', marginBottom: '20px' }}>
-                  <h4 style={{ color: '#2e7d32', marginBottom: '8px' }}>⚙️ Teknik Özellikler:</h4>
-                  <div style={{ fontSize: '13px', color: '#2e7d32', textAlign: 'left' }}>
-                    • 7 Aşamalı Filtrasyon<br/>
-                    • UV Sterilizasyon<br/>
-                    • Mineral Dengeleme<br/>
-                    • Akıllı Kontrol Paneli<br/>
-                    • Otomatik Temizlik
-                  </div>
                 </div>
 
                 <Link 
@@ -202,14 +171,202 @@ const Products = () => {
                     display: 'inline-block',
                     backgroundColor: 'var(--primary-dark)',
                     color: 'white',
-                    padding: '12px 25px',
+                    padding: '10px 20px',
                     borderRadius: '10px',
                     textDecoration: 'none',
                     fontWeight: 'bold',
-                    boxShadow: '0 4px 15px rgba(14,35,35,0.3)'
+                    fontSize: '14px'
                   }}
                 >
                   🛒 Satın Al
+                </Link>
+              </div>
+
+              {/* HOOWELL Elite - KAMPANYALI ÜRÜN */}
+              <div style={{ 
+                backgroundColor: 'white', 
+                padding: '25px', 
+                borderRadius: '20px', 
+                border: '3px solid #ff6b35',
+                boxShadow: '0 8px 25px rgba(255,107,53,0.3)',
+                textAlign: 'center',
+                position: 'relative',
+                overflow: 'hidden'
+              }}>
+                {/* Kampanya Badge */}
+                <div style={{
+                  position: 'absolute',
+                  top: '10px',
+                  right: '-30px',
+                  backgroundColor: '#ff6b35',
+                  color: 'white',
+                  padding: '5px 40px',
+                  fontSize: '12px',
+                  fontWeight: 'bold',
+                  transform: 'rotate(45deg)',
+                  boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
+                }}>
+                  KAMPANYA
+                </div>
+                <div style={{ fontSize: '48px', marginBottom: '15px' }}>⭐</div>
+                <h3 style={{ color: 'var(--primary-dark)', marginBottom: '15px', fontSize: '20px' }}>
+                  HOOWELL Elite Alkali İyonizer Sistemi
+                </h3>
+                <div style={{ marginBottom: '15px' }}>
+                  <div style={{ 
+                    backgroundColor: '#ff6b35', 
+                    color: 'white', 
+                    padding: '8px 15px', 
+                    borderRadius: '20px', 
+                    marginBottom: '10px',
+                    fontSize: '14px',
+                    fontWeight: 'bold'
+                  }}>
+                    🔥 ÖZEL KAMPANYA FİYATI
+                  </div>
+                  <span style={{ 
+                    fontSize: '28px', 
+                    fontWeight: 'bold', 
+                    color: '#ff6b35' 
+                  }}>
+                    98.400 TL
+                  </span>
+                  <div style={{ fontSize: '12px', color: '#666' }}>
+                    (KDV Dahil)
+                  </div>
+                </div>
+                
+                <div style={{ textAlign: 'left', marginBottom: '20px' }}>
+                  <ul style={{ paddingLeft: '20px', fontSize: '13px' }}>
+                    <li>Premium 7 Aşamalı Filtrasyon</li>
+                    <li>UV + Ozon Sterilizasyon</li>
+                    <li>Akıllı Mineral Dengeleme</li>
+                    <li>Dokunmatik Kontrol Paneli</li>
+                    <li>Renk Seçenekleri</li>
+                    <li>2 Yıl Garanti</li>
+                  </ul>
+                </div>
+
+                <Link 
+                  to="/customer-registration"
+                  style={{
+                    display: 'inline-block',
+                    backgroundColor: 'var(--accent-gold)',
+                    color: 'var(--primary-dark)',
+                    padding: '10px 20px',
+                    borderRadius: '10px',
+                    textDecoration: 'none',
+                    fontWeight: 'bold',
+                    fontSize: '14px'
+                  }}
+                >
+                  🛒 Satın Al
+                </Link>
+              </div>
+
+              {/* Eğitim Paketi */}
+              <div style={{ 
+                backgroundColor: 'white', 
+                padding: '25px', 
+                borderRadius: '20px', 
+                border: '3px solid #2196f3',
+                boxShadow: '0 8px 25px rgba(0,0,0,0.1)',
+                textAlign: 'center'
+              }}>
+                <div style={{ fontSize: '48px', marginBottom: '15px' }}>📚</div>
+                <h3 style={{ color: 'var(--primary-dark)', marginBottom: '15px', fontSize: '20px' }}>
+                  Eğitim Paketi
+                </h3>
+                <div style={{ marginBottom: '15px' }}>
+                  <span style={{ 
+                    fontSize: '28px', 
+                    fontWeight: 'bold', 
+                    color: '#2196f3' 
+                  }}>
+                    4.800 TL
+                  </span>
+                  <div style={{ fontSize: '12px', color: '#666' }}>
+                    (KDV Dahil)
+                  </div>
+                </div>
+                
+                <div style={{ textAlign: 'left', marginBottom: '20px' }}>
+                  <ul style={{ paddingLeft: '20px', fontSize: '13px' }}>
+                    <li>10 Video Eğitimi</li>
+                    <li>Sınav Sistemi</li>
+                    <li>Dijital Sertifika</li>
+                    <li>Online Platform Erişimi</li>
+                    <li>7/24 Teknik Destek</li>
+                  </ul>
+                </div>
+
+                <Link 
+                  to="/partner-registration"
+                  style={{
+                    display: 'inline-block',
+                    backgroundColor: '#2196f3',
+                    color: 'white',
+                    padding: '10px 20px',
+                    borderRadius: '10px',
+                    textDecoration: 'none',
+                    fontWeight: 'bold',
+                    fontSize: '14px'
+                  }}
+                >
+                  🤝 İş Ortağı Ol
+                </Link>
+              </div>
+
+              {/* Franchise Paketi */}
+              <div style={{ 
+                backgroundColor: 'white', 
+                padding: '25px', 
+                borderRadius: '20px', 
+                border: '3px solid #4caf50',
+                boxShadow: '0 8px 25px rgba(0,0,0,0.1)',
+                textAlign: 'center'
+              }}>
+                <div style={{ fontSize: '48px', marginBottom: '15px' }}>🤝</div>
+                <h3 style={{ color: 'var(--primary-dark)', marginBottom: '15px', fontSize: '20px' }}>
+                  Franchise Paketi
+                </h3>
+                <div style={{ marginBottom: '15px' }}>
+                  <span style={{ 
+                    fontSize: '28px', 
+                    fontWeight: 'bold', 
+                    color: '#4caf50' 
+                  }}>
+                    86.400 TL
+                  </span>
+                  <div style={{ fontSize: '12px', color: '#666' }}>
+                    (KDV Dahil)
+                  </div>
+                </div>
+                
+                <div style={{ textAlign: 'left', marginBottom: '20px' }}>
+                  <ul style={{ paddingLeft: '20px', fontSize: '13px' }}>
+                    <li>Professional Cihaz</li>
+                    <li>Eğitim Paketi Dahil</li>
+                    <li>İş Ortaklığı Hakları</li>
+                    <li>Komisyon Sistemi</li>
+                    <li>Tam Destek</li>
+                  </ul>
+                </div>
+
+                <Link 
+                  to="/partner-registration"
+                  style={{
+                    display: 'inline-block',
+                    backgroundColor: '#4caf50',
+                    color: 'white',
+                    padding: '10px 20px',
+                    borderRadius: '10px',
+                    textDecoration: 'none',
+                    fontWeight: 'bold',
+                    fontSize: '14px'
+                  }}
+                >
+                  🤝 İş Ortağı Ol
                 </Link>
               </div>
             </div>
@@ -232,46 +389,70 @@ const Products = () => {
               }}>
                 <thead>
                   <tr style={{ backgroundColor: 'var(--primary-dark)', color: 'white' }}>
-                    <th style={{ padding: '15px', textAlign: 'left' }}>Özellik</th>
-                    <th style={{ padding: '15px', textAlign: 'center' }}>Eğitim Paketi</th>
-                    <th style={{ padding: '15px', textAlign: 'center' }}>Cihaz Paketi</th>
+                    <th style={{ padding: '12px', textAlign: 'left', fontSize: '14px' }}>Özellik</th>
+                    <th style={{ padding: '12px', textAlign: 'center', fontSize: '14px' }}>Premium El Terminali</th>
+                    <th style={{ padding: '12px', textAlign: 'center', fontSize: '14px' }}>Professional Cihazı</th>
+                    <th style={{ padding: '12px', textAlign: 'center', fontSize: '14px', backgroundColor: '#fff3e0', color: '#ff6b35' }}>Elite Sistemi 🔥</th>
+                    <th style={{ padding: '12px', textAlign: 'center', fontSize: '14px' }}>Eğitim</th>
+                    <th style={{ padding: '12px', textAlign: 'center', fontSize: '14px' }}>Franchise</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr style={{ borderBottom: '1px solid #eee' }}>
-                    <td style={{ padding: '15px', fontWeight: 'bold' }}>💰 Fiyat</td>
-                    <td style={{ padding: '15px', textAlign: 'center' }}>4.800 TL</td>
-                    <td style={{ padding: '15px', textAlign: 'center' }}>86.400 TL</td>
+                    <td style={{ padding: '12px', fontWeight: 'bold', fontSize: '13px' }}>💰 Fiyat</td>
+                    <td style={{ padding: '12px', textAlign: 'center', fontSize: '12px' }}>19.680 TL</td>
+                    <td style={{ padding: '12px', textAlign: 'center', fontSize: '12px' }}>86.400 TL</td>
+                    <td style={{ padding: '12px', textAlign: 'center', fontSize: '12px' }}>98.400 TL</td>
+                    <td style={{ padding: '12px', textAlign: 'center', fontSize: '12px' }}>4.800 TL</td>
+                    <td style={{ padding: '12px', textAlign: 'center', fontSize: '12px' }}>86.400 TL</td>
                   </tr>
                   <tr style={{ borderBottom: '1px solid #eee', backgroundColor: '#f8f9fa' }}>
-                    <td style={{ padding: '15px', fontWeight: 'bold' }}>📚 Eğitim Sistemi</td>
-                    <td style={{ padding: '15px', textAlign: 'center' }}>✅</td>
-                    <td style={{ padding: '15px', textAlign: 'center' }}>✅</td>
+                    <td style={{ padding: '12px', fontWeight: 'bold', fontSize: '13px' }}>🔧 Filtrasyon</td>
+                    <td style={{ padding: '12px', textAlign: 'center', fontSize: '12px' }}>5 Aşama</td>
+                    <td style={{ padding: '12px', textAlign: 'center', fontSize: '12px' }}>7 Aşama</td>
+                    <td style={{ padding: '12px', textAlign: 'center', fontSize: '12px' }}>7 Aşama+</td>
+                    <td style={{ padding: '12px', textAlign: 'center', fontSize: '12px' }}>-</td>
+                    <td style={{ padding: '12px', textAlign: 'center', fontSize: '12px' }}>7 Aşama</td>
                   </tr>
                   <tr style={{ borderBottom: '1px solid #eee' }}>
-                    <td style={{ padding: '15px', fontWeight: 'bold' }}>🏆 Su Arıtma Cihazı</td>
-                    <td style={{ padding: '15px', textAlign: 'center' }}>❌</td>
-                    <td style={{ padding: '15px', textAlign: 'center' }}>✅</td>
+                    <td style={{ padding: '12px', fontWeight: 'bold', fontSize: '13px' }}>🎨 Renk Seçeneği</td>
+                    <td style={{ padding: '12px', textAlign: 'center', fontSize: '12px' }}>✅</td>
+                    <td style={{ padding: '12px', textAlign: 'center', fontSize: '12px' }}>❌</td>
+                    <td style={{ padding: '12px', textAlign: 'center', fontSize: '12px' }}>✅</td>
+                    <td style={{ padding: '12px', textAlign: 'center', fontSize: '12px' }}>-</td>
+                    <td style={{ padding: '12px', textAlign: 'center', fontSize: '12px' }}>❌</td>
                   </tr>
                   <tr style={{ borderBottom: '1px solid #eee', backgroundColor: '#f8f9fa' }}>
-                    <td style={{ padding: '15px', fontWeight: 'bold' }}>🛡️ Garanti</td>
-                    <td style={{ padding: '15px', textAlign: 'center' }}>Eğitim Desteği</td>
-                    <td style={{ padding: '15px', textAlign: 'center' }}>2 Yıl</td>
+                    <td style={{ padding: '12px', fontWeight: 'bold', fontSize: '13px' }}>📚 Eğitim Sistemi</td>
+                    <td style={{ padding: '12px', textAlign: 'center', fontSize: '12px' }}>❌</td>
+                    <td style={{ padding: '12px', textAlign: 'center', fontSize: '12px' }}>❌</td>
+                    <td style={{ padding: '12px', textAlign: 'center', fontSize: '12px' }}>❌</td>
+                    <td style={{ padding: '12px', textAlign: 'center', fontSize: '12px' }}>✅</td>
+                    <td style={{ padding: '12px', textAlign: 'center', fontSize: '12px' }}>✅</td>
                   </tr>
                   <tr style={{ borderBottom: '1px solid #eee' }}>
-                    <td style={{ padding: '15px', fontWeight: 'bold' }}>🔧 Kurulum</td>
-                    <td style={{ padding: '15px', textAlign: 'center' }}>-</td>
-                    <td style={{ padding: '15px', textAlign: 'center' }}>Ücretsiz</td>
+                    <td style={{ padding: '12px', fontWeight: 'bold', fontSize: '13px' }}>🛡️ Garanti</td>
+                    <td style={{ padding: '12px', textAlign: 'center', fontSize: '12px' }}>2 Yıl</td>
+                    <td style={{ padding: '12px', textAlign: 'center', fontSize: '12px' }}>2 Yıl</td>
+                    <td style={{ padding: '12px', textAlign: 'center', fontSize: '12px' }}>2 Yıl</td>
+                    <td style={{ padding: '12px', textAlign: 'center', fontSize: '12px' }}>Eğitim Desteği</td>
+                    <td style={{ padding: '12px', textAlign: 'center', fontSize: '12px' }}>2 Yıl</td>
                   </tr>
                   <tr style={{ borderBottom: '1px solid #eee', backgroundColor: '#f8f9fa' }}>
-                    <td style={{ padding: '15px', fontWeight: 'bold' }}>🎯 Hedef Kitle</td>
-                    <td style={{ padding: '15px', textAlign: 'center' }}>İş Ortakları</td>
-                    <td style={{ padding: '15px', textAlign: 'center' }}>Son Kullanıcılar</td>
+                    <td style={{ padding: '12px', fontWeight: 'bold', fontSize: '13px' }}>🎯 Hedef Kitle</td>
+                    <td style={{ padding: '12px', textAlign: 'center', fontSize: '12px' }}>Bireysel</td>
+                    <td style={{ padding: '12px', textAlign: 'center', fontSize: '12px' }}>Bireysel</td>
+                    <td style={{ padding: '12px', textAlign: 'center', fontSize: '12px' }}>Bireysel</td>
+                    <td style={{ padding: '12px', textAlign: 'center', fontSize: '12px' }}>İş Ortağı</td>
+                    <td style={{ padding: '12px', textAlign: 'center', fontSize: '12px' }}>İş Ortağı</td>
                   </tr>
                   <tr>
-                    <td style={{ padding: '15px', fontWeight: 'bold' }}>💼 Bayi Puanı</td>
-                    <td style={{ padding: '15px', textAlign: 'center' }}>120 Puan</td>
-                    <td style={{ padding: '15px', textAlign: 'center' }}>2.160 Puan</td>
+                    <td style={{ padding: '12px', fontWeight: 'bold', fontSize: '13px' }}>💼 İş Ortaklığı</td>
+                    <td style={{ padding: '12px', textAlign: 'center', fontSize: '12px' }}>❌</td>
+                    <td style={{ padding: '12px', textAlign: 'center', fontSize: '12px' }}>❌</td>
+                    <td style={{ padding: '12px', textAlign: 'center', fontSize: '12px' }}>❌</td>
+                    <td style={{ padding: '12px', textAlign: 'center', fontSize: '12px' }}>✅</td>
+                    <td style={{ padding: '12px', textAlign: 'center', fontSize: '12px' }}>✅</td>
                   </tr>
                 </tbody>
               </table>
@@ -345,7 +526,7 @@ const Products = () => {
                     İleri Teknoloji
                   </h4>
                   <p style={{ fontSize: '14px', color: '#666' }}>
-                    En son su arıtma teknolojileri ile üretilmiş cihazlar
+                    En son alkali iyonizer teknolojileri ile üretilmiş cihazlar
                   </p>
                 </div>
 

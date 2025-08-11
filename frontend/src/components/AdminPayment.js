@@ -187,7 +187,7 @@ const AdminPayment = () => {
                 <strong>IBAN:</strong> TR77 0011 1000 0000 0153 1671 66
               </div>
               <div style={{ marginBottom: '10px' }}>
-                <strong>Alıcı:</strong> HOOWELL GLOBAL SU ARITMA SİSTEMLERİ ANONİM ŞİRKETİ
+                <strong>Alıcı:</strong> HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ
               </div>
               <div>
                 <strong>Tutar:</strong> 4.800 TL (KDV Dahil)
