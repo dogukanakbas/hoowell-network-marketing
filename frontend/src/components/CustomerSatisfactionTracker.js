@@ -16,7 +16,7 @@ const CustomerSatisfactionTracker = () => {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
-      
+
       if (response.data && Array.isArray(response.data)) {
         setCustomers(response.data);
       } else {
@@ -99,7 +99,7 @@ const CustomerSatisfactionTracker = () => {
         }}>
           MEMNUN MÜŞTERİ TAKİP PROGRAMI
         </h1>
-        
+
         {/* HOOWELL Logo - Sağ Üst */}
         <div style={{
           position: 'absolute',
@@ -107,8 +107,8 @@ const CustomerSatisfactionTracker = () => {
           right: '20px',
           zIndex: 10
         }}>
-          <img 
-            src="/hoowell-logo.png" 
+          <img
+            src="/hoowell-logo.png"
             alt="HOOWELL Logo"
             style={{
               width: '90px',
@@ -127,13 +127,16 @@ const CustomerSatisfactionTracker = () => {
         boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
         border: '3px solid #FFD700'
       }}>
+
+
         {/* Ödül Kartları */}
         <div style={{
           display: 'flex',
-          justifyContent: 'center',
-          gap: '15px',
+          justifyContent: 'flex-end',
+          gap: '4px',
           marginBottom: '30px',
-          flexWrap: 'wrap'
+          flexWrap: 'wrap',
+          paddingRight: '2px'
         }}>
           {/* 450 USD Kart */}
           <div style={{
@@ -419,28 +422,28 @@ const CustomerSatisfactionTracker = () => {
                   {(customer.reference_count >= 3) ? '✓ Kazandı' : '-'}
                 </div>
               ]
-            )).flat() : 
-            // Veri yoksa boş satırlar göster
-            Array.from({ length: 8 }, (_, rowIndex) => (
-              Array.from({ length: 7 }, (_, colIndex) => (
-                <div
-                  key={`empty-${rowIndex}-${colIndex}`}
-                  style={{
-                    backgroundColor: 'white',
-                    border: '1px solid #ddd',
-                    padding: '15px 8px',
-                    minHeight: '50px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '12px',
-                    color: '#999'
-                  }}
-                >
-                  -
-                </div>
-              ))
-            )).flat()}
+            )).flat() :
+              // Veri yoksa boş satırlar göster
+              Array.from({ length: 8 }, (_, rowIndex) => (
+                Array.from({ length: 7 }, (_, colIndex) => (
+                  <div
+                    key={`empty-${rowIndex}-${colIndex}`}
+                    style={{
+                      backgroundColor: 'white',
+                      border: '1px solid #ddd',
+                      padding: '15px 8px',
+                      minHeight: '50px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '12px',
+                      color: '#999'
+                    }}
+                  >
+                    -
+                  </div>
+                ))
+              )).flat()}
           </div>
         </div>
 

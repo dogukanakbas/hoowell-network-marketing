@@ -276,13 +276,11 @@ const CareerTracker = () => {
           <div style={{
             width: '120px',
             height: '120px',
-            background: `radial-gradient(circle, ${design.badgeColor} 0%, ${design.badgeColor}AA 70%, transparent 100%)`,
+            background: 'transparent',
             borderRadius: '50%',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: `0 10px 30px ${design.badgeColor}66`,
-            border: `3px solid ${design.badgeColor}`,
             position: 'relative'
           }}>
             {careerData.current_level?.toLowerCase() === 'bronze' ? (
@@ -365,23 +363,7 @@ const CareerTracker = () => {
                 {careerData.current_level === 'country_distributor' ? '🌍' : '🥉'}
               </div>
             )}
-            
-            {/* Seviye Yıldızları */}
-            <div style={{
-              position: 'absolute',
-              bottom: '-10px',
-              display: 'flex',
-              gap: '2px'
-            }}>
-              {Array.from({ length: Math.min(careerData.current_level === 'bronze' ? 1 : 
-                                            careerData.current_level === 'silver' ? 2 :
-                                            careerData.current_level === 'gold' ? 3 :
-                                            careerData.current_level === 'star_leader' ? 4 :
-                                            careerData.current_level === 'super_star_leader' ? 5 :
-                                            careerData.current_level === 'presidents_team' ? 6 : 7, 7) }, (_, i) => (
-                <div key={i} style={{ fontSize: '12px', color: '#FFD700' }}>⭐</div>
-              ))}
-            </div>
+
           </div>
 
           {/* Seviye Başlığı */}
@@ -422,36 +404,48 @@ const CareerTracker = () => {
                 <div style={{
                   backgroundColor: design.cardColor,
                   borderRadius: '10px',
-                  padding: '10px 20px',
+                  padding: '12px 20px',
                   color: 'white',
                   fontWeight: 'bold',
                   fontSize: '14px',
                   textAlign: 'center',
-                  minWidth: '100px'
+                  width: '140px',
+                  height: '50px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
                 }}>
                   HEDEF
                 </div>
                 <div style={{
                   backgroundColor: design.cardColor,
                   borderRadius: '10px',
-                  padding: '10px 20px',
+                  padding: '12px 20px',
                   color: 'white',
                   fontWeight: 'bold',
                   fontSize: '14px',
                   textAlign: 'center',
-                  minWidth: '100px'
+                  width: '140px',
+                  height: '50px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
                 }}>
                   YAPILAN CİRO
                 </div>
                 <div style={{
                   backgroundColor: design.cardColor,
                   borderRadius: '10px',
-                  padding: '10px 20px',
+                  padding: '12px 20px',
                   color: 'white',
                   fontWeight: 'bold',
                   fontSize: '14px',
                   textAlign: 'center',
-                  minWidth: '100px'
+                  width: '140px',
+                  height: '50px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
                 }}>
                   KALAN CİRO
                 </div>
@@ -468,12 +462,16 @@ const CareerTracker = () => {
                   backgroundColor: 'white',
                   border: '2px solid #ccc',
                   borderRadius: '10px',
-                  padding: '10px 20px',
+                  padding: '12px 20px',
                   color: '#000',
                   fontWeight: 'bold',
                   fontSize: '14px',
                   textAlign: 'center',
-                  minWidth: '100px'
+                  width: '140px',
+                  height: '50px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
                 }}>
                   {design.targetKKP.toLocaleString()} KKP
                 </div>
@@ -481,12 +479,16 @@ const CareerTracker = () => {
                   backgroundColor: 'white',
                   border: '2px solid #ccc',
                   borderRadius: '10px',
-                  padding: '10px 20px',
+                  padding: '12px 20px',
                   color: '#000',
                   fontWeight: 'bold',
                   fontSize: '14px',
                   textAlign: 'center',
-                  minWidth: '100px'
+                  width: '140px',
+                  height: '50px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
                 }}>
                   {careerData.total_kkp.toLocaleString()} KKP
                 </div>
@@ -494,12 +496,16 @@ const CareerTracker = () => {
                   backgroundColor: 'white',
                   border: '2px solid #ccc',
                   borderRadius: '10px',
-                  padding: '10px 20px',
+                  padding: '12px 20px',
                   color: '#000',
                   fontWeight: 'bold',
                   fontSize: '14px',
                   textAlign: 'center',
-                  minWidth: '100px'
+                  width: '140px',
+                  height: '50px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
                 }}>
                   {remainingKKP.toLocaleString()} KKP
                 </div>
@@ -527,36 +533,48 @@ const CareerTracker = () => {
                 <div style={{
                   backgroundColor: design.cardColor,
                   borderRadius: '10px',
-                  padding: '10px 20px',
+                  padding: '12px 20px',
                   color: 'white',
                   fontWeight: 'bold',
                   fontSize: '14px',
                   textAlign: 'center',
-                  minWidth: '100px'
+                  width: '140px',
+                  height: '50px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
                 }}>
                   HEDEF
                 </div>
                 <div style={{
                   backgroundColor: design.cardColor,
                   borderRadius: '10px',
-                  padding: '10px 20px',
+                  padding: '12px 20px',
                   color: 'white',
                   fontWeight: 'bold',
                   fontSize: '14px',
                   textAlign: 'center',
-                  minWidth: '100px'
+                  width: '140px',
+                  height: '50px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
                 }}>
                   AKTİF ORTAK
                 </div>
                 <div style={{
                   backgroundColor: design.cardColor,
                   borderRadius: '10px',
-                  padding: '10px 20px',
+                  padding: '12px 20px',
                   color: 'white',
                   fontWeight: 'bold',
                   fontSize: '14px',
                   textAlign: 'center',
-                  minWidth: '100px'
+                  width: '140px',
+                  height: '50px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
                 }}>
                   EKSİK ORTAK
                 </div>
@@ -573,12 +591,16 @@ const CareerTracker = () => {
                   backgroundColor: 'white',
                   border: '2px solid #ccc',
                   borderRadius: '10px',
-                  padding: '10px 20px',
+                  padding: '12px 20px',
                   color: '#000',
                   fontWeight: 'bold',
                   fontSize: '14px',
                   textAlign: 'center',
-                  minWidth: '100px'
+                  width: '140px',
+                  height: '50px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
                 }}>
                   {design.targetPartners}
                 </div>
@@ -586,12 +608,16 @@ const CareerTracker = () => {
                   backgroundColor: 'white',
                   border: '2px solid #ccc',
                   borderRadius: '10px',
-                  padding: '10px 20px',
+                  padding: '12px 20px',
                   color: '#000',
                   fontWeight: 'bold',
                   fontSize: '14px',
                   textAlign: 'center',
-                  minWidth: '100px'
+                  width: '140px',
+                  height: '50px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
                 }}>
                   {careerData.active_partners}
                 </div>
@@ -599,12 +625,16 @@ const CareerTracker = () => {
                   backgroundColor: remainingPartners === 0 ? '#28a745' : 'white',
                   border: '2px solid #ccc',
                   borderRadius: '10px',
-                  padding: '10px 20px',
+                  padding: '12px 20px',
                   color: remainingPartners === 0 ? 'white' : '#000',
                   fontWeight: 'bold',
                   fontSize: '14px',
                   textAlign: 'center',
-                  minWidth: '100px'
+                  width: '140px',
+                  height: '50px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
                 }}>
                   {remainingPartners === 0 ? 'TAMAMLANDI' : remainingPartners}
                 </div>

@@ -641,9 +641,7 @@ const Dashboard = () => {
             padding: '20px',
             textAlign: 'center',
             border: '2px solid #FFD700',
-            boxShadow: '0 8px 25px rgba(0, 0, 0, 0.3)',
-            position: 'relative',
-            overflow: 'hidden'
+            boxShadow: '0 8px 25px rgba(0, 0, 0, 0.3)'
           }}>
             <h3 style={{ 
               color: '#FFD700', 
@@ -653,55 +651,19 @@ const Dashboard = () => {
             }}>
               LİDERLİK HAVUZLARI
             </h3>
-            <div style={{ color: '#FFD700', fontSize: '11px', marginBottom: '8px', opacity: 0.8 }}>
-              Ağustos 2025
+            <div style={{ color: '#FFD700', fontSize: '10px', marginBottom: '4px', opacity: 0.8 }}>
+              Dağıtım Tarihi : 01.09.2025
             </div>
-            
-            {/* Erişim kontrolü */}
-            {user?.career_level === 'star_leader' || user?.career_level === 'super_star_leader' || user?.career_level === 'presidents_team' ? (
-              <div style={{ 
-                fontSize: '28px', 
-                fontWeight: 'bold', 
-                color: '#FFD700'
-              }}>
-                {((stats.liderlikHavuzu || 0) * 40).toLocaleString()} TL
-              </div>
-            ) : (
-              <>
-                {/* Kilit overlay */}
-                <div style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  zIndex: 2
-                }}>
-                  <div style={{ fontSize: '30px', marginBottom: '5px' }}>🔒</div>
-                  <div style={{ 
-                    color: '#FFD700', 
-                    fontSize: '10px', 
-                    textAlign: 'center',
-                    fontWeight: 'bold'
-                  }}>
-                    STAR LİDER+<br />GEREKLİ
-                  </div>
-                </div>
-                <div style={{ 
-                  fontSize: '28px', 
-                  fontWeight: 'bold', 
-                  color: '#FFD700',
-                  filter: 'blur(3px)'
-                }}>
-                  ****** TL
-                </div>
-              </>
-            )}
+            <div style={{ color: '#FFD700', fontSize: '10px', marginBottom: '8px', opacity: 0.8 }}>
+              Ağustos 2025 Dönemi
+            </div>
+            <div style={{ 
+              fontSize: '28px', 
+              fontWeight: 'bold', 
+              color: '#FFD700'
+            }}>
+              {((stats.liderlikHavuzu || 0) * 40).toLocaleString()} TL
+            </div>
           </div>
 
           {/* Başkanlık Havuzları */}
@@ -711,9 +673,7 @@ const Dashboard = () => {
             padding: '20px',
             textAlign: 'center',
             border: '2px solid #FFD700',
-            boxShadow: '0 8px 25px rgba(0, 0, 0, 0.3)',
-            position: 'relative',
-            overflow: 'hidden'
+            boxShadow: '0 8px 25px rgba(0, 0, 0, 0.3)'
           }}>
             <h3 style={{ 
               color: '#FFD700', 
@@ -723,55 +683,19 @@ const Dashboard = () => {
             }}>
               BAŞKANLIK HAVUZLARI
             </h3>
-            <div style={{ color: '#FFD700', fontSize: '11px', marginBottom: '8px', opacity: 0.8 }}>
-              Ağustos 2025
+            <div style={{ color: '#FFD700', fontSize: '10px', marginBottom: '4px', opacity: 0.8 }}>
+              Dağıtım Tarihi : 01.09.2025
             </div>
-            
-            {/* Erişim kontrolü - Sadece Süper Star Lider ve üzeri */}
-            {user?.career_level === 'super_star_leader' || user?.career_level === 'presidents_team' ? (
-              <div style={{ 
-                fontSize: '28px', 
-                fontWeight: 'bold', 
-                color: '#FFD700'
-              }}>
-                {((stats.baskanlikHavuzu || 0) * 40).toLocaleString()} TL
-              </div>
-            ) : (
-              <>
-                {/* Kilit overlay */}
-                <div style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  zIndex: 2
-                }}>
-                  <div style={{ fontSize: '30px', marginBottom: '5px' }}>🔒</div>
-                  <div style={{ 
-                    color: '#FFD700', 
-                    fontSize: '10px', 
-                    textAlign: 'center',
-                    fontWeight: 'bold'
-                  }}>
-                    SÜPER STAR LİDER+<br />GEREKLİ
-                  </div>
-                </div>
-                <div style={{ 
-                  fontSize: '28px', 
-                  fontWeight: 'bold', 
-                  color: '#FFD700',
-                  filter: 'blur(3px)'
-                }}>
-                  ****** TL
-                </div>
-              </>
-            )}
+            <div style={{ color: '#FFD700', fontSize: '10px', marginBottom: '8px', opacity: 0.8 }}>
+              Ağustos 2025 Dönemi
+            </div>
+            <div style={{ 
+              fontSize: '28px', 
+              fontWeight: 'bold', 
+              color: '#FFD700'
+            }}>
+              {((stats.baskanlikHavuzu || 0) * 40).toLocaleString()} TL
+            </div>
           </div>
 
           {/* Kar Paylaşımı */}
