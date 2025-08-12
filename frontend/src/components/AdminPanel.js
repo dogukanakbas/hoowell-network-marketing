@@ -522,7 +522,7 @@ const UserManagement = () => {
                     <div style={{
                       width: '30px',
                       height: '30px',
-                      backgroundColor: user.career_level?.toLowerCase() === 'bronze' ? 'transparent' : 'var(--accent-gold)',
+                      backgroundColor: (user.career_level?.toLowerCase() === 'bronze' || user.career_level?.toLowerCase() === 'silver') ? 'transparent' : 'var(--accent-gold)',
                       borderRadius: '50%',
                       display: 'flex',
                       alignItems: 'center',
@@ -538,6 +538,17 @@ const UserManagement = () => {
                         <img 
                           src="/images/products/bronze_logo.jpeg" 
                           alt="Bronze Logo"
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            borderRadius: '50%'
+                          }}
+                        />
+                      ) : user.career_level?.toLowerCase() === 'silver' ? (
+                        <img 
+                          src="/images/products/silver_logo.jpeg" 
+                          alt="Silver Logo"
                           style={{
                             width: '100%',
                             height: '100%',

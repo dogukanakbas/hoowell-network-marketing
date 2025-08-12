@@ -160,6 +160,17 @@ const FranchiseNetwork = () => {
                   objectFit: 'cover'
                 }}
               />
+            ) : nodeData.career_level?.toLowerCase() === 'silver' ? (
+              <img 
+                src="/images/products/silver_logo.jpeg" 
+                alt="Silver Logo"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: '50%',
+                  objectFit: 'cover'
+                }}
+              />
             ) : nodeData.profile_photo ? (
               <img 
                 src={nodeData.profile_photo} 
@@ -554,6 +565,17 @@ const FranchiseNetwork = () => {
                   <img 
                     src="/images/products/bronze_logo.jpeg" 
                     alt="Bronze Logo"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      borderRadius: '50%',
+                      objectFit: 'cover'
+                    }}
+                  />
+                ) : selectedUser.career_level?.toLowerCase() === 'silver' ? (
+                  <img 
+                    src="/images/products/silver_logo.jpeg" 
+                    alt="Silver Logo"
                     style={{
                       width: '100%',
                       height: '100%',

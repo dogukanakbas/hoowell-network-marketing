@@ -297,6 +297,18 @@ const CareerTracker = () => {
                   filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.5))'
                 }}
               />
+            ) : careerData.current_level?.toLowerCase() === 'silver' ? (
+              <img 
+                src="/images/products/silver_logo.jpeg" 
+                alt="Silver Logo"
+                style={{
+                  width: '80px',
+                  height: '80px',
+                  objectFit: 'cover',
+                  borderRadius: '50%',
+                  filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.5))'
+                }}
+              />
             ) : (
               <div style={{
                 fontSize: '48px',

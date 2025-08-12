@@ -56,8 +56,6 @@ const Login = () => {
           className="login-card login-card-clickable"
           style={{ textAlign: 'center' }}
         >
-          <div className="login-corner-dot"></div>
-          
           <div style={{
             color: '#FFD700',
             fontSize: '24px',
@@ -114,10 +112,10 @@ const Login = () => {
             <img 
               src="/hoowell-logo.png" 
               alt="HOOWELL Logo"
+              className="login-logo-responsive"
               style={{
-                width: '280px',
-                height: '210px',
-                objectFit: 'contain'
+                objectFit: 'contain',
+                transition: 'all 0.3s ease'
               }}
             />
           </div>
@@ -125,8 +123,6 @@ const Login = () => {
 
         {/* Sağ Kart - İş Ortağı Girişi */}
         <div className="login-card">
-          <div className="login-corner-dot"></div>
-          
           <div style={{
             textAlign: 'center',
             marginBottom: '30px'

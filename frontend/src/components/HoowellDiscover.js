@@ -23,9 +23,10 @@ const HoowellDiscover = () => {
       minHeight: '100vh',
       width: '100vw',
       backgroundImage: 'url("/images/products/hoowell-discover-bg.jpg")',
-      backgroundSize: 'cover',
+      backgroundSize: 'contain',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
+      backgroundColor: '#1a4d4d',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -48,20 +49,22 @@ const HoowellDiscover = () => {
         {/* Sol Alt - Hybrid Alkali İyonizer Kartı */}
         <div className="video-card-left" style={{
           position: 'absolute',
-          bottom: '5px',
-          left: '50px',
-          zIndex: 10
+          bottom: '20px',
+          left: '5%',
+          zIndex: 10,
+          maxWidth: '220px',
+          width: 'calc(45% - 10px)'
         }}>
           <div className="video-card" style={{
             background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.85) 0%, rgba(40, 40, 40, 0.8) 50%, rgba(0, 0, 0, 0.85) 100%)',
             borderRadius: '12px',
             padding: '15px',
             border: '2px solid #FFD700',
-            maxWidth: '220px',
-            width: '220px',
+            width: '100%',
             textAlign: 'center',
             backdropFilter: 'blur(8px)',
-            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.4)'
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.4)',
+            boxSizing: 'border-box'
           }}>
 
             {/* Video Başlığı */}
@@ -147,20 +150,22 @@ const HoowellDiscover = () => {
         {/* Sağ Alt - Hoowell Franchise Kartı */}
         <div className="video-card-right" style={{
           position: 'absolute',
-          bottom: '5px',
-          right: '30px',
-          zIndex: 10
+          bottom: '20px',
+          right: '5%',
+          zIndex: 10,
+          maxWidth: '220px',
+          width: 'calc(45% - 10px)'
         }}>
           <div className="video-card" style={{
             background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.85) 0%, rgba(40, 40, 40, 0.8) 50%, rgba(0, 0, 0, 0.85) 100%)',
             borderRadius: '12px',
             padding: '15px',
             border: '2px solid #FFD700',
-            maxWidth: '220px',
-            width: '220px',
+            width: '100%',
             textAlign: 'center',
             backdropFilter: 'blur(8px)',
-            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.4)'
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.4)',
+            boxSizing: 'border-box'
           }}>
 
             {/* Video Başlığı */}
@@ -283,17 +288,34 @@ const HoowellDiscover = () => {
 
       {/* Responsive Styles */}
       <style jsx>{`
+        /* Ana container responsive ayarları */
+        @media (max-width: 1024px) {
+          div[style*="backgroundImage"] {
+            background-size: contain !important;
+            background-position: center !important;
+            background-color: #1a4d4d !important;
+          }
+        }
+        
         @media (max-width: 768px) {
+          div[style*="backgroundImage"] {
+            background-size: contain !important;
+            background-position: center top !important;
+            padding: 15px !important;
+          }
+          
           .video-card-left {
-            bottom: 50px !important;
-            left: 20px !important;
-            width: 200px !important;
+            bottom: 20px !important;
+            left: 3% !important;
+            width: calc(44% - 10px) !important;
+            max-width: 200px !important;
           }
           
           .video-card-right {
-            bottom: 50px !important;
-            right: 20px !important;
-            width: 200px !important;
+            bottom: 20px !important;
+            right: 3% !important;
+            width: calc(44% - 10px) !important;
+            max-width: 200px !important;
           }
           
           .back-button {
@@ -305,43 +327,89 @@ const HoowellDiscover = () => {
         }
         
         @media (max-width: 480px) {
+          div[style*="backgroundImage"] {
+            background-size: contain !important;
+            background-position: center top !important;
+            padding: 10px !important;
+            min-height: 100vh !important;
+          }
+          
           .video-card-left {
-            bottom: 40px !important;
-            left: 10px !important;
-            width: 180px !important;
+            bottom: 15px !important;
+            left: 2% !important;
+            width: calc(46% - 10px) !important;
+            max-width: 180px !important;
           }
           
           .video-card-right {
-            bottom: 40px !important;
-            right: 10px !important;
-            width: 180px !important;
+            bottom: 15px !important;
+            right: 2% !important;
+            width: calc(46% - 10px) !important;
+            max-width: 180px !important;
           }
           
           .video-card {
-            padding: 12px !important;
+            padding: 10px !important;
           }
           
           .video-title {
-            font-size: 12px !important;
-            margin-bottom: 10px !important;
+            font-size: 11px !important;
+            margin-bottom: 8px !important;
+            line-height: 1.1 !important;
           }
           
           .video-buttons {
             flex-direction: column !important;
-            gap: 6px !important;
+            gap: 5px !important;
           }
           
           .video-button {
             width: 100% !important;
-            padding: 5px 10px !important;
-            font-size: 10px !important;
+            padding: 4px 8px !important;
+            font-size: 9px !important;
+            border-radius: 12px !important;
           }
           
           .back-button {
-            top: 15px !important;
-            right: 15px !important;
-            padding: 8px 15px !important;
-            font-size: 11px !important;
+            top: 10px !important;
+            right: 10px !important;
+            padding: 8px 12px !important;
+            font-size: 10px !important;
+            border-radius: 15px !important;
+          }
+        }
+        
+        /* Çok küçük ekranlar için */
+        @media (max-width: 360px) {
+          .video-card-left, .video-card-right {
+            width: calc(50% - 8px) !important;
+            max-width: 160px !important;
+          }
+          
+          .video-title {
+            font-size: 10px !important;
+          }
+          
+          .video-button {
+            font-size: 8px !important;
+            padding: 3px 6px !important;
+          }
+        }
+        
+        /* Landscape mode için özel ayarlar */
+        @media (max-width: 768px) and (orientation: landscape) {
+          div[style*="backgroundImage"] {
+            background-size: cover !important;
+            background-position: center !important;
+          }
+          
+          .video-card-left, .video-card-right {
+            bottom: 10px !important;
+            width: 160px !important;
+          }
+          
+          .back-button {
+            top: 10px !important;
           }
         }
       `}</style>

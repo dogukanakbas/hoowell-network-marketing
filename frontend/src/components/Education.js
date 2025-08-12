@@ -16,6 +16,8 @@ const Education = () => {
   const [userProgress, setUserProgress] = useState([]);
   const [showVideoModal, setShowVideoModal] = useState(false);
   const [showCertificate, setShowCertificate] = useState(false);
+  const [showCompletionModal, setShowCompletionModal] = useState(false);
+  const [completionMessage, setCompletionMessage] = useState('');
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
@@ -75,10 +77,8 @@ const Education = () => {
       // Eğitim tamamlandıysa otomatik yönlendir
       if (response.data.education_completed && response.data.backoffice_access) {
         await refreshUser();
-        setTimeout(() => {
-          alert('🎉 Eğitimleriniz tamamlanmış! Backoffice sistemine yönlendiriliyorsunuz.');
-          navigate('/');
-        }, 1000);
+        setCompletionMessage('🎉 Eğitimleriniz tamamlanmış! Backoffice sistemine yönlendiriliyorsunuz.');
+        setShowCompletionModal(true);
       }
     } catch (error) {
       console.error('Error fetching progress:', error);
@@ -130,12 +130,8 @@ const Education = () => {
           await refreshUser();
           
           // Tebrikler mesajı göster
-          setTimeout(() => {
-            alert('🎉 ' + (response.data.message || 'Tebrikler! Eğitimlerinizi başarıyla tamamladınız. Artık backoffice sistemine erişebilirsiniz.'));
-            
-            // Ana sayfaya yönlendir
-            navigate('/');
-          }, 500);
+          setCompletionMessage('🎉 ' + (response.data.message || 'Tebrikler! Eğitimlerinizi başarıyla tamamladınız. Artık backoffice sistemine erişebilirsiniz.'));
+          setShowCompletionModal(true);
         } else {
           // User bilgilerini yenile (eğitim devam ediyor)
           await refreshUser();
@@ -1187,6 +1183,88 @@ const Education = () => {
       {/* Sertifika Modal */}
       {showCertificate && (
         <Certificate onClose={() => setShowCertificate(false)} />
+      )}
+
+      {/* Eğitim Tamamlama Modal */}
+      {showCompletionModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 10000,
+          padding: '20px'
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '20px',
+            padding: '40px',
+            maxWidth: '500px',
+            width: '100%',
+            textAlign: 'center',
+            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
+            border: '3px solid #FFD700'
+          }}>
+            <div style={{
+              fontSize: '60px',
+              marginBottom: '20px'
+            }}>
+              🎉
+            </div>
+            
+            <h2 style={{
+              color: '#0e2323',
+              fontSize: '24px',
+              fontWeight: 'bold',
+              marginBottom: '20px'
+            }}>
+              TEBRİKLER!
+            </h2>
+            
+            <p style={{
+              color: '#333',
+              fontSize: '16px',
+              lineHeight: '1.6',
+              marginBottom: '30px'
+            }}>
+              {completionMessage.replace('🎉 ', '')}
+            </p>
+            
+            <button
+              onClick={() => {
+                setShowCompletionModal(false);
+                navigate('/');
+              }}
+              style={{
+                backgroundColor: '#FFD700',
+                color: '#0e2323',
+                border: 'none',
+                borderRadius: '25px',
+                padding: '15px 40px',
+                fontSize: '18px',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                boxShadow: '0 5px 15px rgba(255, 215, 0, 0.3)',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseOver={(e) => {
+                e.target.style.transform = 'translateY(-2px)';
+                e.target.style.boxShadow = '0 8px 25px rgba(255, 215, 0, 0.4)';
+              }}
+              onMouseOut={(e) => {
+                e.target.style.transform = 'translateY(0)';
+                e.target.style.boxShadow = '0 5px 15px rgba(255, 215, 0, 0.3)';
+              }}
+            >
+              🏠 Ana Sayfaya Git
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

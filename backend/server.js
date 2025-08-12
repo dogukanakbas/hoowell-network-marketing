@@ -23,14 +23,33 @@ app.use('/uploads', express.static('uploads'));
 // Multer configuration for file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/receipts/');
+    // Farklı dosya türleri için farklı klasörler
+    if (file.fieldname === 'tc_identity_front' || file.fieldname === 'tax_plate') {
+      cb(null, 'uploads/accounting/');
+    } else {
+      cb(null, 'uploads/receipts/');
+    }
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + '-' + file.originalname);
   }
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    // Allowed file types
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Sadece JPG, PNG ve PDF dosyaları yüklenebilir.'), false);
+    }
+  }
+});
 
 // Database connection
 const db = mysql.createConnection({
@@ -3619,3 +3638,264 @@ app.get('/api/doping-promotion/progress', verifyToken, async (req, res) => {
 
 // ==================== DUPLICATE API'LERİ TEMİZLEME ====================
 // Not: Duplicate API'ler manuel olarak temizlenecek
+// ============= MUHASEBE BİLGİLERİ API'LERİ ====================
+
+// Muhasebe bilgilerini kontrol et
+app.get('/api/accounting/info', verifyToken, async (req, res) => {
+  try {
+    const [accountingInfo] = await db.promise().execute(
+      'SELECT * FROM accounting_info WHERE user_id = ?',
+      [req.user.id]
+    );
+
+    if (accountingInfo.length > 0) {
+      res.json({
+        success: true,
+        accountingInfo: accountingInfo[0]
+      });
+    } else {
+      res.json({
+        success: false,
+        message: 'Muhasebe bilgisi bulunamadı'
+      });
+    }
+  } catch (error) {
+    console.error('Accounting info check error:', error);
+    res.status(500).json({ message: 'Sunucu hatası' });
+  }
+});
+
+// Muhasebe bilgilerini kaydet
+app.post('/api/accounting/register', verifyToken, upload.fields([
+  { name: 'tc_identity_front', maxCount: 1 },
+  { name: 'tax_plate', maxCount: 1 }
+]), async (req, res) => {
+  try {
+    const {
+      account_type,
+      iban,
+      bank_name,
+      account_holder_name,
+      company_name,
+      tax_number
+    } = req.body;
+
+    // Mevcut kayıt kontrolü
+    const [existing] = await db.promise().execute(
+      'SELECT id FROM accounting_info WHERE user_id = ?',
+      [req.user.id]
+    );
+
+    if (existing.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Zaten kayıtlı muhasebe bilginiz bulunmaktadır'
+      });
+    }
+
+    // IBAN formatı kontrolü
+    const ibanRegex = /^TR\d{2}\s?\d{4}\s?\d{4}\s?\d{4}\s?\d{4}\s?\d{4}\s?\d{2}$/;
+    if (!ibanRegex.test(iban.replace(/\s/g, ''))) {
+      return res.status(400).json({
+        success: false,
+        message: 'Geçersiz IBAN formatı'
+      });
+    }
+
+    // Dosya kontrolü
+    if (account_type === 'individual' && !req.files?.tc_identity_front) {
+      return res.status(400).json({
+        success: false,
+        message: 'TC kimlik belgesi ön yüzü gereklidir'
+      });
+    }
+
+    if (account_type === 'company' && !req.files?.tax_plate) {
+      return res.status(400).json({
+        success: false,
+        message: 'Vergi levhası gereklidir'
+      });
+    }
+
+    // Dosya yollarını hazırla
+    let tcIdentityPath = null;
+    let taxPlatePath = null;
+
+    if (req.files?.tc_identity_front) {
+      tcIdentityPath = req.files.tc_identity_front[0].path;
+    }
+
+    if (req.files?.tax_plate) {
+      taxPlatePath = req.files.tax_plate[0].path;
+    }
+
+    // Veritabanına kaydet
+    const [result] = await db.promise().execute(`
+      INSERT INTO accounting_info (
+        user_id, account_type, iban, bank_name, account_holder_name,
+        company_name, tax_number, tc_identity_front, tax_plate
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `, [
+      req.user.id,
+      account_type,
+      iban.replace(/\s/g, ''),
+      bank_name || null,
+      account_holder_name,
+      company_name || null,
+      tax_number || null,
+      tcIdentityPath,
+      taxPlatePath
+    ]);
+
+    // Kayıtlı bilgiyi getir
+    const [newRecord] = await db.promise().execute(
+      'SELECT * FROM accounting_info WHERE id = ?',
+      [result.insertId]
+    );
+
+    res.json({
+      success: true,
+      message: 'Muhasebe bilgileri başarıyla kaydedildi',
+      accountingInfo: newRecord[0]
+    });
+
+  } catch (error) {
+    console.error('Accounting registration error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Kayıt sırasında bir hata oluştu'
+    });
+  }
+});
+
+// Muhasebe verilerini getir (sadece onaylanmış kullanıcılar için)
+app.get('/api/accounting/data', verifyToken, async (req, res) => {
+  try {
+    // Önce kullanıcının muhasebe bilgilerinin onaylanıp onaylanmadığını kontrol et
+    const [accountingInfo] = await db.promise().execute(
+      'SELECT is_approved FROM accounting_info WHERE user_id = ?',
+      [req.user.id]
+    );
+
+    if (accountingInfo.length === 0 || !accountingInfo[0].is_approved) {
+      return res.status(403).json({
+        success: false,
+        message: 'Muhasebe paneline erişim yetkiniz bulunmamaktadır'
+      });
+    }
+
+    // Muhasebe verilerini getir (örnek veri - gerçek implementasyon gerekli)
+    const bireyselData = [
+      {
+        id: 1,
+        earning_type: 'Satış Komisyonu',
+        related_person: 'Ahmet Yılmaz',
+        sale_date: '2025-01-15',
+        earn_date: '2025-01-30',
+        payment_date: '2025-02-01',
+        amount_usd: 100,
+        stopaj_amount: 80,
+        exchange_rate: 40,
+        net_amount_tl: 3200,
+        payment_status: 'ÖDENDİ'
+      }
+    ];
+
+    const sirketData = [
+      {
+        id: 1,
+        earning_type: 'Satış Komisyonu',
+        related_person: 'ABC Ltd. Şti.',
+        sale_date: '2025-01-15',
+        earn_date: '2025-01-30',
+        payment_date: '2025-02-01',
+        amount_usd: 100,
+        taxed_amount: 120,
+        exchange_rate: 40,
+        net_amount_tl: 4800,
+        payment_status: 'ÖDENDİ'
+      }
+    ];
+
+    res.json({
+      success: true,
+      data: {
+        bireysel: bireyselData,
+        sirket: sirketData
+      }
+    });
+
+  } catch (error) {
+    console.error('Accounting data fetch error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Muhasebe verileri yüklenirken hata oluştu'
+    });
+  }
+});
+
+// Admin: Muhasebe onayları listesi
+app.get('/api/admin/accounting/pending', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const [pendingApprovals] = await db.promise().execute(`
+      SELECT 
+        ai.*,
+        u.first_name,
+        u.last_name,
+        u.email,
+        u.phone
+      FROM accounting_info ai
+      JOIN users u ON ai.user_id = u.id
+      WHERE ai.is_approved = FALSE
+      ORDER BY ai.created_at DESC
+    `);
+
+    res.json({
+      success: true,
+      pendingApprovals
+    });
+
+  } catch (error) {
+    console.error('Pending approvals fetch error:', error);
+    res.status(500).json({ message: 'Sunucu hatası' });
+  }
+});
+
+// Admin: Muhasebe onayı/reddi
+app.post('/api/admin/accounting/approve/:id', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { action, rejection_reason } = req.body; // action: 'approve' or 'reject'
+
+    if (action === 'approve') {
+      await db.promise().execute(
+        'UPDATE accounting_info SET is_approved = TRUE, approval_date = NOW() WHERE id = ?',
+        [id]
+      );
+
+      res.json({
+        success: true,
+        message: 'Muhasebe bilgileri onaylandı'
+      });
+    } else if (action === 'reject') {
+      await db.promise().execute(
+        'UPDATE accounting_info SET is_approved = FALSE, rejection_reason = ? WHERE id = ?',
+        [rejection_reason || 'Belgeler uygun değil', id]
+      );
+
+      res.json({
+        success: true,
+        message: 'Muhasebe bilgileri reddedildi'
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        message: 'Geçersiz işlem'
+      });
+    }
+
+  } catch (error) {
+    console.error('Accounting approval error:', error);
+    res.status(500).json({ message: 'Sunucu hatası' });
+  }
+});

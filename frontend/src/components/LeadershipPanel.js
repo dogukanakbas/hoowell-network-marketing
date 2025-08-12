@@ -73,110 +73,6 @@ const LeadershipPanel = () => {
     return user?.career_level === 'presidents_team';
   };
 
-  // Erişim yetkisi yoksa kısıtlama sayfası göster
-  if (!hasAccess()) {
-    return (
-      <div style={{
-        minHeight: '100vh',
-        background: 'linear-gradient(135deg, #0e2323 0%, #1a3333 50%, #0e2323 100%)',
-        padding: '20px',
-        margin: '0 -20px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
-      }}>
-        <div style={{
-          backgroundColor: 'rgba(255, 255, 255, 0.95)',
-          borderRadius: '20px',
-          padding: '40px',
-          textAlign: 'center',
-          maxWidth: '600px',
-          border: '3px solid #FFD700'
-        }}>
-          <div style={{
-            fontSize: '80px',
-            marginBottom: '20px'
-          }}>
-            👑
-          </div>
-          
-          <h2 style={{
-            color: '#FFD700',
-            fontSize: '32px',
-            marginBottom: '20px',
-            textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
-          }}>
-            LİDERLİK HAVUZLARI
-          </h2>
-          
-          <div style={{
-            backgroundColor: '#fff3cd',
-            border: '2px solid #ffeaa7',
-            borderRadius: '15px',
-            padding: '30px',
-            marginBottom: '25px'
-          }}>
-            <div style={{
-              fontSize: '24px',
-              fontWeight: 'bold',
-              color: '#856404',
-              marginBottom: '15px'
-            }}>
-              🚫 ERİŞİM KISITLI
-            </div>
-            <p style={{
-              color: '#856404',
-              fontSize: '18px',
-              lineHeight: '1.6',
-              margin: 0
-            }}>
-              Bu sayfaya erişmek için <strong>STAR LİDER</strong> veya daha yüksek kariyer seviyesine ulaşmanız gerekiyor.
-            </p>
-          </div>
-
-          <div style={{
-            backgroundColor: '#f8f9fa',
-            borderRadius: '15px',
-            padding: '25px',
-            marginBottom: '25px'
-          }}>
-            <h4 style={{
-              color: '#0e2323',
-              marginBottom: '15px',
-              fontSize: '18px'
-            }}>
-              📊 Mevcut Durumunuz:
-            </h4>
-            
-            <div style={{
-              fontSize: '20px',
-              fontWeight: 'bold',
-              color: '#dc3545',
-              marginBottom: '10px'
-            }}>
-              Kariyer Seviyeniz: {user?.career_level?.toUpperCase() || 'BRONZE'}
-            </div>
-            
-            <div style={{
-              color: '#6c757d',
-              fontSize: '16px'
-            }}>
-              Gerekli Seviye: STAR LİDER veya üzeri
-            </div>
-          </div>
-
-          <div style={{
-            color: '#0e2323',
-            fontSize: '18px',
-            fontWeight: '600'
-          }}>
-            Kariyer seviyenizi yükseltmek için satış yapın ve takım oluşturun! 🚀
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   if (loading) {
     return (
       <div style={{
@@ -189,6 +85,65 @@ const LeadershipPanel = () => {
         backgroundColor: '#0e2323'
       }}>
         Liderlik havuzu verileri yükleniyor...
+      </div>
+    );
+  }
+
+  // Erişim yetkisi yoksa ana içerik alanında kapak göster
+  if (!hasAccess()) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #0e2323 0%, #1a3333 50%, #0e2323 100%)',
+        padding: '20px',
+        margin: '0 -20px',
+        position: 'relative'
+      }}>
+        {/* Ana içerik alanında kapak görseli */}
+        <div style={{
+          minHeight: 'calc(100vh - 40px)',
+          width: '100%',
+          backgroundImage: 'url("/images/products/havuz_kapak.png")',
+          backgroundSize: '100% 100%',
+          backgroundPosition: 'center center',
+          backgroundRepeat: 'no-repeat',
+          backgroundColor: '#1a4d4d',
+          borderRadius: '15px',
+          overflow: 'hidden',
+          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5)',
+          border: '2px solid #FFD700'
+        }}>
+          
+          {/* Responsive Styles */}
+          <style jsx>{`
+            /* Tüm ekranlar için görsel optimizasyonu */
+            div[style*="backgroundImage"] {
+              image-rendering: -webkit-optimize-contrast !important;
+              image-rendering: crisp-edges !important;
+            }
+            
+            @media (max-width: 1024px) {
+              div[style*="backgroundImage"] {
+                background-size: cover !important;
+                background-position: center center !important;
+              }
+            }
+            
+            @media (max-width: 768px) {
+              div[style*="backgroundImage"] {
+                background-size: cover !important;
+                background-position: center center !important;
+                border-radius: 10px !important;
+              }
+            }
+            
+            @media (max-width: 480px) {
+              div[style*="minHeight: 'calc(100vh - 40px)'"] {
+                min-height: calc(100vh - 60px) !important;
+              }
+            }
+          `}</style>
+        </div>
       </div>
     );
   }
