@@ -77,6 +77,50 @@ const MobileHeader = ({ title, showUserInfo = true }) => {
                   borderRadius: '50%'
                 }}
               />
+            ) : user.career_level?.toLowerCase() === 'gold' ? (
+              <img 
+                src="/images/products/gold_logo.jpeg" 
+                alt="Gold Logo"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  borderRadius: '50%'
+                }}
+              />
+            ) : user.career_level?.toLowerCase() === 'star_leader' ? (
+              <img 
+                src="/images/products/starlider_logo.jpeg" 
+                alt="Star Leader Logo"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  borderRadius: '50%'
+                }}
+              />
+            ) : user.career_level?.toLowerCase() === 'super_star_leader' ? (
+              <img 
+                src="/images/products/superstar_logo.jpeg" 
+                alt="Super Star Leader Logo"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  borderRadius: '50%'
+                }}
+              />
+            ) : user.career_level?.toLowerCase() === 'presidents_team' ? (
+              <img 
+                src="/images/products/baskanlar_logo.jpeg" 
+                alt="Başkanlar Logo"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  borderRadius: '50%'
+                }}
+              />
             ) : (
               user.first_name?.charAt(0) + user.last_name?.charAt(0)
             )}

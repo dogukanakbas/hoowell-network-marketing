@@ -309,17 +309,60 @@ const CareerTracker = () => {
                   filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.5))'
                 }}
               />
+            ) : careerData.current_level?.toLowerCase() === 'gold' ? (
+              <img 
+                src="/images/products/gold_logo.jpeg" 
+                alt="Gold Logo"
+                style={{
+                  width: '80px',
+                  height: '80px',
+                  objectFit: 'cover',
+                  borderRadius: '50%',
+                  filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.5))'
+                }}
+              />
+            ) : careerData.current_level?.toLowerCase() === 'star_leader' ? (
+              <img 
+                src="/images/products/starlider_logo.jpeg" 
+                alt="Star Leader Logo"
+                style={{
+                  width: '80px',
+                  height: '80px',
+                  objectFit: 'cover',
+                  borderRadius: '50%',
+                  filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.5))'
+                }}
+              />
+            ) : careerData.current_level?.toLowerCase() === 'super_star_leader' ? (
+              <img 
+                src="/images/products/superstar_logo.jpeg" 
+                alt="Super Star Leader Logo"
+                style={{
+                  width: '80px',
+                  height: '80px',
+                  objectFit: 'cover',
+                  borderRadius: '50%',
+                  filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.5))'
+                }}
+              />
+            ) : careerData.current_level?.toLowerCase() === 'presidents_team' ? (
+              <img 
+                src="/images/products/baskanlar_logo.jpeg" 
+                alt="Başkanlar Logo"
+                style={{
+                  width: '80px',
+                  height: '80px',
+                  objectFit: 'cover',
+                  borderRadius: '50%',
+                  filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.5))'
+                }}
+              />
             ) : (
               <div style={{
                 fontSize: '48px',
                 filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.5))'
               }}>
-                {careerData.current_level === 'country_distributor' ? '🌍' :
-                 careerData.current_level === 'presidents_team' ? '👑' :
-                 careerData.current_level === 'super_star_leader' ? '⭐' :
-                 careerData.current_level === 'star_leader' ? '🌟' :
-                 careerData.current_level === 'gold' ? '🥇' :
-                 careerData.current_level === 'silver' ? '🥈' : '🥉'}
+                {careerData.current_level === 'country_distributor' ? '🌍' : '🥉'}
               </div>
             )}
             
