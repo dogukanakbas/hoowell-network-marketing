@@ -60,7 +60,7 @@ const Certificate = ({ onClose }) => {
           style={{
             width: '800px',
             height: '600px',
-            background: 'linear-gradient(135deg, #0e2323 0%, #1a4a3a 50%, #0e2323 100%)',
+            background: '#0f2324',
             position: 'relative',
             display: 'flex',
             flexDirection: 'column',

@@ -52,7 +52,7 @@ const Welcome = () => {
         justifyContent: 'center',
         alignItems: 'center',
         height: '100vh',
-        background: 'linear-gradient(135deg, #0e2323 0%, #1a4a3a 50%, #0e2323 100%)',
+        background: '#0f2324',
         color: '#FFD700',
         fontSize: '18px'
       }}>
@@ -85,7 +85,7 @@ const Welcome = () => {
     <div style={{
       height: '100vh',
       width: '100vw',
-      background: 'linear-gradient(135deg, #0e2323 0%, #1a4a3a 50%, #0e2323 100%)',
+      background: '#0f2324',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',

@@ -75,7 +75,7 @@ const DopingPromosyonu = () => {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #0e2323 0%, #1a3333 50%, #0e2323 100%)',
+      background: '#0f2324',
       padding: '20px',
       margin: '0 -20px'
     }}>
@@ -90,8 +90,8 @@ const DopingPromosyonu = () => {
           src="/hoowell-logo.png" 
           alt="HOOWELL Logo"
           style={{
-            width: '90px',
-            height: '50px',
+            width: '120px',
+            height: '70px',
             objectFit: 'contain'
           }}
         />

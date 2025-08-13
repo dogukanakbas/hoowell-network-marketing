@@ -52,7 +52,7 @@ const SponsorshipTracker = () => {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #0e2323 0%, #1a3333 50%, #0e2323 100%)',
+      background: '#0f2324',
       padding: '20px',
       margin: '0 -20px'
     }}>
@@ -67,8 +67,8 @@ const SponsorshipTracker = () => {
           src="/hoowell-logo.png" 
           alt="HOOWELL Logo"
           style={{
-            width: '90px',
-            height: '50px',
+            width: '120px',
+            height: '70px',
             objectFit: 'contain'
           }}
         />
@@ -114,8 +114,8 @@ const SponsorshipTracker = () => {
           }}>
             {/* Başlık Satırı */}
             <div style={{
-              backgroundColor: '#B8860B',
-              color: 'white',
+              background: 'linear-gradient(135deg, #000000, #333333)',
+              color: '#FFD700',
               padding: '15px 8px',
               textAlign: 'center',
               fontWeight: 'bold',
@@ -128,8 +128,8 @@ const SponsorshipTracker = () => {
               ID<br />NUMARASI
             </div>
             <div style={{
-              backgroundColor: '#B8860B',
-              color: 'white',
+              background: 'linear-gradient(135deg, #000000, #333333)',
+              color: '#FFD700',
               padding: '15px 8px',
               textAlign: 'center',
               fontWeight: 'bold',
@@ -142,8 +142,8 @@ const SponsorshipTracker = () => {
               ADI<br />SOYADI
             </div>
             <div style={{
-              backgroundColor: '#B8860B',
-              color: 'white',
+              background: 'linear-gradient(135deg, #000000, #333333)',
+              color: '#FFD700',
               padding: '15px 8px',
               textAlign: 'center',
               fontWeight: 'bold',
@@ -156,8 +156,8 @@ const SponsorshipTracker = () => {
               TELEFON<br />NUMARASI
             </div>
             <div style={{
-              backgroundColor: '#B8860B',
-              color: 'white',
+              background: 'linear-gradient(135deg, #000000, #333333)',
+              color: '#FFD700',
               padding: '15px 8px',
               textAlign: 'center',
               fontWeight: 'bold',
@@ -170,8 +170,8 @@ const SponsorshipTracker = () => {
               TEMEL<br />EĞİTİMLER
             </div>
             <div style={{
-              backgroundColor: '#B8860B',
-              color: 'white',
+              background: 'linear-gradient(135deg, #000000, #333333)',
+              color: '#FFD700',
               padding: '15px 8px',
               textAlign: 'center',
               fontWeight: 'bold',
@@ -184,8 +184,8 @@ const SponsorshipTracker = () => {
               1.ADIM<br />(750 $)
             </div>
             <div style={{
-              backgroundColor: '#B8860B',
-              color: 'white',
+              background: 'linear-gradient(135deg, #000000, #333333)',
+              color: '#FFD700',
               padding: '15px 8px',
               textAlign: 'center',
               fontWeight: 'bold',
@@ -198,8 +198,8 @@ const SponsorshipTracker = () => {
               2.ADIM<br />(1.000 $)
             </div>
             <div style={{
-              backgroundColor: '#B8860B',
-              color: 'white',
+              background: 'linear-gradient(135deg, #000000, #333333)',
+              color: '#FFD700',
               padding: '15px 8px',
               textAlign: 'center',
               fontWeight: 'bold',
@@ -212,8 +212,8 @@ const SponsorshipTracker = () => {
               3.ADIM<br />(1.250 $)
             </div>
             <div style={{
-              backgroundColor: '#B8860B',
-              color: 'white',
+              background: 'linear-gradient(135deg, #000000, #333333)',
+              color: '#FFD700',
               padding: '15px 8px',
               textAlign: 'center',
               fontWeight: 'bold',
@@ -226,8 +226,8 @@ const SponsorshipTracker = () => {
               4.ADIM<br />(1.500 $)
             </div>
             <div style={{
-              backgroundColor: '#B8860B',
-              color: 'white',
+              background: 'linear-gradient(135deg, #000000, #333333)',
+              color: '#FFD700',
               padding: '15px 8px',
               textAlign: 'center',
               fontWeight: 'bold',
@@ -240,8 +240,8 @@ const SponsorshipTracker = () => {
               5.ADIM<br />(1.500 $)
             </div>
             <div style={{
-              backgroundColor: '#B8860B',
-              color: 'white',
+              background: 'linear-gradient(135deg, #000000, #333333)',
+              color: '#FFD700',
               padding: '15px 8px',
               textAlign: 'center',
               fontWeight: 'bold',

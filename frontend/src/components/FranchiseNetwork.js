@@ -9,9 +9,26 @@ const FranchiseNetwork = () => {
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState('tree'); // 'tree' or 'list'
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [showSearchResults, setShowSearchResults] = useState(false);
 
   useEffect(() => {
     fetchNetworkData();
+  }, []);
+
+  // Arama kutusunun dışına tıklandığında kapat
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest('.search-container')) {
+        setShowSearchResults(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
 
   const fetchNetworkData = async () => {
@@ -41,6 +58,52 @@ const FranchiseNetwork = () => {
     } catch (error) {
       console.error('User details fetch error:', error);
     }
+  };
+
+  // Arama fonksiyonu
+  const searchInTree = (node, searchTerm) => {
+    const results = [];
+    const term = searchTerm.toLowerCase().trim();
+    
+    if (!term) return results;
+    
+    const searchNode = (currentNode) => {
+      if (!currentNode) return;
+      
+      const fullName = `${currentNode.first_name} ${currentNode.last_name}`.toLowerCase();
+      const firstName = currentNode.first_name?.toLowerCase() || '';
+      const lastName = currentNode.last_name?.toLowerCase() || '';
+      const sponsorId = currentNode.sponsor_id?.toLowerCase() || '';
+      
+      if (fullName.includes(term) || firstName.includes(term) || lastName.includes(term) || sponsorId.includes(term)) {
+        results.push(currentNode);
+      }
+      
+      if (currentNode.children && currentNode.children.length > 0) {
+        currentNode.children.forEach(child => searchNode(child));
+      }
+    };
+    
+    searchNode(node);
+    return results;
+  };
+
+  const handleSearch = (value) => {
+    setSearchTerm(value);
+    if (value.trim() && networkData) {
+      const results = searchInTree(networkData, value);
+      setSearchResults(results);
+      setShowSearchResults(true);
+    } else {
+      setSearchResults([]);
+      setShowSearchResults(false);
+    }
+  };
+
+  const selectSearchResult = (user) => {
+    fetchUserDetails(user.user_id);
+    setShowSearchResults(false);
+    setSearchTerm('');
   };
 
   const formatDate = (dateString) => {
@@ -115,7 +178,7 @@ const FranchiseNetwork = () => {
             minHeight: '110px',
             background: isCurrentUser ? 
               'linear-gradient(135deg, #FFD700, #FFA500)' : 
-              'linear-gradient(135deg, #0e2323, #1a4a3a)',
+              'linear-gradient(135deg, #000000, #1a1a1a)',
             borderRadius: '12px',
             padding: '12px',
             cursor: 'pointer',
@@ -417,7 +480,7 @@ const FranchiseNetwork = () => {
     <div style={{
       padding: '20px',
       minHeight: '100vh',
-      backgroundColor: 'var(--background-light)'
+      backgroundColor: '#0f2323'
     }}>
       {/* Header */}
       <div style={{
@@ -428,11 +491,155 @@ const FranchiseNetwork = () => {
           color: 'var(--accent-gold)',
           fontSize: '32px',
           fontWeight: 'bold',
-          marginBottom: '10px',
+          marginBottom: '20px',
           textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
         }}>
           FRANCHISE AĞI YAPISI
         </h1>
+        
+        {/* Arama Kutusu */}
+        <div className="search-container" style={{
+          position: 'relative',
+          maxWidth: '400px',
+          margin: '0 auto 20px',
+          zIndex: 20
+        }}>
+          <input
+            type="text"
+            placeholder="Ad, soyad veya ID ile arama yapın..."
+            value={searchTerm}
+            onChange={(e) => handleSearch(e.target.value)}
+            style={{
+              width: '100%',
+              padding: '12px 45px 12px 15px',
+              borderRadius: '25px',
+              border: '2px solid #FFD700',
+              backgroundColor: 'rgba(255, 255, 255, 0.95)',
+              color: '#0f2323',
+              fontSize: '14px',
+              fontWeight: '500',
+              outline: 'none',
+              boxShadow: '0 4px 15px rgba(255, 215, 0, 0.3)',
+              transition: 'all 0.3s ease'
+            }}
+            onFocus={(e) => {
+              e.target.style.boxShadow = '0 6px 20px rgba(255, 215, 0, 0.5)';
+              e.target.style.transform = 'translateY(-2px)';
+            }}
+            onBlur={(e) => {
+              e.target.style.boxShadow = '0 4px 15px rgba(255, 215, 0, 0.3)';
+              e.target.style.transform = 'translateY(0)';
+            }}
+          />
+          <div style={{
+            position: 'absolute',
+            right: '15px',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            color: '#FFD700',
+            fontSize: '18px',
+            pointerEvents: 'none'
+          }}>
+            🔍
+          </div>
+          
+          {/* Arama Sonuçları */}
+          {showSearchResults && searchResults.length > 0 && (
+            <div style={{
+              position: 'absolute',
+              top: '100%',
+              left: '0',
+              right: '0',
+              backgroundColor: 'rgba(255, 255, 255, 0.98)',
+              borderRadius: '15px',
+              boxShadow: '0 8px 25px rgba(0, 0, 0, 0.3)',
+              border: '2px solid #FFD700',
+              maxHeight: '300px',
+              overflowY: 'auto',
+              zIndex: 1000,
+              marginTop: '5px'
+            }}>
+              {searchResults.map((result, index) => (
+                <div
+                  key={result.user_id}
+                  onClick={() => selectSearchResult(result)}
+                  style={{
+                    padding: '12px 15px',
+                    borderBottom: index < searchResults.length - 1 ? '1px solid rgba(255, 215, 0, 0.2)' : 'none',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = 'rgba(255, 215, 0, 0.1)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = 'transparent';
+                  }}
+                >
+                  <div style={{
+                    width: '35px',
+                    height: '35px',
+                    borderRadius: '50%',
+                    backgroundColor: getCareerLevelColor(result.career_level),
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#fff',
+                    fontSize: '12px',
+                    fontWeight: 'bold'
+                  }}>
+                    {result.first_name?.charAt(0)}{result.last_name?.charAt(0)}
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{
+                      color: '#0f2323',
+                      fontWeight: 'bold',
+                      fontSize: '14px'
+                    }}>
+                      {result.first_name} {result.last_name}
+                    </div>
+                    <div style={{
+                      color: '#666',
+                      fontSize: '12px'
+                    }}>
+                      {result.sponsor_id} • {getCareerLevelName(result.career_level)}
+                    </div>
+                  </div>
+                  <div style={{
+                    color: '#FFD700',
+                    fontSize: '16px'
+                  }}>
+                    👁️
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          
+          {/* Arama sonucu bulunamadı */}
+          {showSearchResults && searchResults.length === 0 && searchTerm.trim() && (
+            <div style={{
+              position: 'absolute',
+              top: '100%',
+              left: '0',
+              right: '0',
+              backgroundColor: 'rgba(255, 255, 255, 0.98)',
+              borderRadius: '15px',
+              boxShadow: '0 8px 25px rgba(0, 0, 0, 0.3)',
+              border: '2px solid #FFD700',
+              padding: '20px',
+              textAlign: 'center',
+              color: '#666',
+              fontSize: '14px',
+              marginTop: '5px'
+            }}>
+              Arama kriterinize uygun sonuç bulunamadı.
+            </div>
+          )}
+        </div>
         
         {/* HOOWELL Logo - Sağ Üst */}
         <div style={{
@@ -445,8 +652,8 @@ const FranchiseNetwork = () => {
             src="/hoowell-logo.png" 
             alt="HOOWELL Logo"
             style={{
-              width: '80px',
-              height: '40px',
+              width: '120px',
+              height: '70px',
               objectFit: 'contain'
             }}
           />
@@ -494,7 +701,7 @@ const FranchiseNetwork = () => {
 
       {/* Main Content */}
       <div style={{
-        backgroundColor: 'var(--white)',
+        backgroundColor: '#0f2323',
         borderRadius: '20px',
         padding: '20px',
         boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
@@ -859,7 +1066,7 @@ const FranchiseNetwork = () => {
         right: '20px',
         backgroundColor: 'rgba(255, 255, 255, 0.95)',
         borderRadius: '10px',
-        padding: '8px',
+        padding: '10px',
         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
         textAlign: 'center',
         zIndex: 100
@@ -868,14 +1075,14 @@ const FranchiseNetwork = () => {
           src="/hoowell-logo.png" 
           alt="HOOWELL Logo"
           style={{
-            width: '60px',
-            height: '30px',
+            width: '80px',
+            height: '45px',
             objectFit: 'contain',
-            marginBottom: '3px'
+            marginBottom: '5px'
           }}
         />
         <div style={{
-          fontSize: '8px',
+          fontSize: '10px',
           fontWeight: 'bold',
           color: 'var(--primary-dark)'
         }}>

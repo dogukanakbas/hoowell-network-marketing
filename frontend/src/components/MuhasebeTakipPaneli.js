@@ -159,7 +159,7 @@ const MuhasebeTakipPaneli = () => {
     <div style={{
       minHeight: '100vh',
       width: '100vw',
-      background: 'linear-gradient(135deg, #0e2323 0%, #1a4d4d 25%, #2a5555 50%, #1a4d4d 75%, #0e2323 100%)',
+      background: '#0f2324',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -661,7 +661,7 @@ const MuhasebeTakipPaneli = () => {
   const renderPendingApproval = () => (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #0e2323 0%, #1a3333 50%, #0e2323 100%)',
+      background: '#0f2324',
       padding: '20px',
       margin: '0 -20px',
       display: 'flex',
@@ -926,7 +926,7 @@ const MuhasebeTakipPaneli = () => {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #0e2323 0%, #1a3333 50%, #0e2323 100%)',
+      background: '#0f2324',
       padding: '20px',
       margin: '0 -20px',
       position: 'relative'
@@ -942,8 +942,8 @@ const MuhasebeTakipPaneli = () => {
           src="/hoowell-logo.png" 
           alt="HOOWELL Logo"
           style={{
-            width: '90px',
-            height: '50px',
+            width: '120px',
+            height: '70px',
             objectFit: 'contain'
           }}
         />

@@ -86,7 +86,7 @@ const TeamTracker = () => {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #0e2323 0%, #1a3333 50%, #0e2323 100%)',
+      background: '#0f2324',
       padding: '20px',
       margin: '0 -20px'
     }}>
@@ -101,8 +101,8 @@ const TeamTracker = () => {
           src="/hoowell-logo.png" 
           alt="HOOWELL Logo"
           style={{
-            width: '90px',
-            height: '50px',
+            width: '120px',
+            height: '70px',
             objectFit: 'contain'
           }}
         />
@@ -168,24 +168,7 @@ const TeamTracker = () => {
         </h1>
       </div>
 
-      {/* Kullanıcı Kariyer Bilgisi */}
-      <div style={{
-        textAlign: 'center',
-        marginBottom: '30px'
-      }}>
-        <div style={{
-          background: 'linear-gradient(135deg, #8B008B, #DA70D6)',
-          borderRadius: '15px',
-          padding: '15px 30px',
-          display: 'inline-block',
-          color: 'white',
-          fontWeight: 'bold',
-          fontSize: '16px'
-        }}>
-          <div>SİZİN KARİYERİNİZ: {getLevelName(user?.career_level || 'silver')}</div>
-          <div>KAZANÇ YÜZDENİZ: % {getFranchisePercentage(user?.career_level || 'silver')}</div>
-        </div>
-      </div>
+
 
       {/* Ana Container */}
       <div style={{
@@ -203,15 +186,15 @@ const TeamTracker = () => {
           <div style={{ overflowX: 'auto' }}>
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(7, 1fr)',
+              gridTemplateColumns: 'repeat(10, 1fr)',
               gap: '2px',
               fontSize: '12px',
-              minWidth: '1000px'
+              minWidth: '1200px'
             }}>
               {/* Başlık Satırı */}
               <div style={{
-                backgroundColor: '#B8860B',
-                color: 'white',
+                background: 'linear-gradient(135deg, #000000, #333333)',
+                color: '#FFD700',
                 padding: '15px 8px',
                 textAlign: 'center',
                 fontWeight: 'bold',
@@ -224,8 +207,8 @@ const TeamTracker = () => {
                 ID<br />NUMARASI
               </div>
               <div style={{
-                backgroundColor: '#B8860B',
-                color: 'white',
+                background: 'linear-gradient(135deg, #000000, #333333)',
+                color: '#FFD700',
                 padding: '15px 8px',
                 textAlign: 'center',
                 fontWeight: 'bold',
@@ -238,8 +221,64 @@ const TeamTracker = () => {
                 ADI<br />SOYADI
               </div>
               <div style={{
-                backgroundColor: '#B8860B',
-                color: 'white',
+                background: 'linear-gradient(135deg, #000000, #333333)',
+                color: '#FFD700',
+                padding: '15px 8px',
+                textAlign: 'center',
+                fontWeight: 'bold',
+                fontSize: '11px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: '60px'
+              }}>
+                İŞE BAŞLAMA<br />TARİHİ
+              </div>
+              <div style={{
+                background: 'linear-gradient(135deg, #000000, #333333)',
+                color: '#FFD700',
+                padding: '15px 8px',
+                textAlign: 'center',
+                fontWeight: 'bold',
+                fontSize: '11px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: '60px'
+              }}>
+                TOPLAM<br />KKP
+              </div>
+              <div style={{
+                background: 'linear-gradient(135deg, #000000, #333333)',
+                color: '#FFD700',
+                padding: '15px 8px',
+                textAlign: 'center',
+                fontWeight: 'bold',
+                fontSize: '11px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: '60px'
+              }}>
+                FRANCHAİSE<br />SATIŞI
+              </div>
+              <div style={{
+                background: 'linear-gradient(135deg, #000000, #333333)',
+                color: '#FFD700',
+                padding: '15px 8px',
+                textAlign: 'center',
+                fontWeight: 'bold',
+                fontSize: '11px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: '60px'
+              }}>
+                AKTİF<br />İŞ ORTAĞI
+              </div>
+              <div style={{
+                background: 'linear-gradient(135deg, #000000, #333333)',
+                color: '#FFD700',
                 padding: '15px 8px',
                 textAlign: 'center',
                 fontWeight: 'bold',
@@ -252,8 +291,8 @@ const TeamTracker = () => {
                 KARİYER<br />SEVİYESİ
               </div>
               <div style={{
-                backgroundColor: '#B8860B',
-                color: 'white',
+                background: 'linear-gradient(135deg, #000000, #333333)',
+                color: '#FFD700',
                 padding: '15px 8px',
                 textAlign: 'center',
                 fontWeight: 'bold',
@@ -263,11 +302,11 @@ const TeamTracker = () => {
                 justifyContent: 'center',
                 minHeight: '60px'
               }}>
-                HAK EDİŞ<br />YÜZDESİ
+                AYLIK SATIŞ<br />KKP
               </div>
               <div style={{
-                backgroundColor: '#B8860B',
-                color: 'white',
+                background: 'linear-gradient(135deg, #000000, #333333)',
+                color: '#FFD700',
                 padding: '15px 8px',
                 textAlign: 'center',
                 fontWeight: 'bold',
@@ -277,11 +316,11 @@ const TeamTracker = () => {
                 justifyContent: 'center',
                 minHeight: '60px'
               }}>
-                KAZANÇ<br />YÜZDESİ
+                AKTİFLEŞEN<br />İŞ ORTAĞI
               </div>
               <div style={{
-                backgroundColor: '#B8860B',
-                color: 'white',
+                background: 'linear-gradient(135deg, #000000, #333333)',
+                color: '#FFD700',
                 padding: '15px 8px',
                 textAlign: 'center',
                 fontWeight: 'bold',
@@ -291,26 +330,12 @@ const TeamTracker = () => {
                 justifyContent: 'center',
                 minHeight: '60px'
               }}>
-                YAPILAN SATIŞ<br />CİROSU
-              </div>
-              <div style={{
-                backgroundColor: '#B8860B',
-                color: 'white',
-                padding: '15px 8px',
-                textAlign: 'center',
-                fontWeight: 'bold',
-                fontSize: '11px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                minHeight: '60px'
-              }}>
-                AYLIK FRANCHAİSE<br />GELİRİ
+                AKTİFLİK<br />DURUMU
               </div>
 
               {/* Veri Satırları - Boş kutular */}
               {Array.from({ length: 8 }, (_, rowIndex) => (
-                Array.from({ length: 7 }, (_, colIndex) => (
+                Array.from({ length: 10 }, (_, colIndex) => (
                   <div
                     key={`takip-${rowIndex}-${colIndex}`}
                     style={{
@@ -329,26 +354,6 @@ const TeamTracker = () => {
                 ))
               )).flat()}
             </div>
-
-            {/* Alt Bilgi Kutusu */}
-            <div style={{
-              marginTop: '20px',
-              textAlign: 'center'
-            }}>
-
-              <div style={{
-                backgroundColor: 'rgba(0,0,0,0.8)',
-                borderRadius: '10px',
-                padding: '10px 20px',
-                color: '#FFD700',
-                fontSize: '14px',
-                fontWeight: 'bold',
-                marginTop: '10px',
-                display: 'inline-block'
-              }}>
-                TOPLAM<br />GELİR
-              </div>
-            </div>
           </div>
         )}
 
@@ -357,15 +362,15 @@ const TeamTracker = () => {
           <div style={{ overflowX: 'auto' }}>
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(10, 1fr)',
+              gridTemplateColumns: 'repeat(7, 1fr)',
               gap: '2px',
               fontSize: '12px',
-              minWidth: '1200px'
+              minWidth: '1000px'
             }}>
               {/* Başlık Satırı */}
               <div style={{
-                backgroundColor: '#B8860B',
-                color: 'white',
+                background: 'linear-gradient(135deg, #000000, #333333)',
+                color: '#FFD700',
                 padding: '15px 8px',
                 textAlign: 'center',
                 fontWeight: 'bold',
@@ -378,8 +383,8 @@ const TeamTracker = () => {
                 ID<br />NUMARASI
               </div>
               <div style={{
-                backgroundColor: '#B8860B',
-                color: 'white',
+                background: 'linear-gradient(135deg, #000000, #333333)',
+                color: '#FFD700',
                 padding: '15px 8px',
                 textAlign: 'center',
                 fontWeight: 'bold',
@@ -392,64 +397,8 @@ const TeamTracker = () => {
                 ADI<br />SOYADI
               </div>
               <div style={{
-                backgroundColor: '#B8860B',
-                color: 'white',
-                padding: '15px 8px',
-                textAlign: 'center',
-                fontWeight: 'bold',
-                fontSize: '11px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                minHeight: '60px'
-              }}>
-                İŞE BAŞLAMA<br />TARİHİ
-              </div>
-              <div style={{
-                backgroundColor: '#B8860B',
-                color: 'white',
-                padding: '15px 8px',
-                textAlign: 'center',
-                fontWeight: 'bold',
-                fontSize: '11px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                minHeight: '60px'
-              }}>
-                TOPLAM<br />KKP
-              </div>
-              <div style={{
-                backgroundColor: '#B8860B',
-                color: 'white',
-                padding: '15px 8px',
-                textAlign: 'center',
-                fontWeight: 'bold',
-                fontSize: '11px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                minHeight: '60px'
-              }}>
-                FRANCHAİSE<br />SATIŞI
-              </div>
-              <div style={{
-                backgroundColor: '#B8860B',
-                color: 'white',
-                padding: '15px 8px',
-                textAlign: 'center',
-                fontWeight: 'bold',
-                fontSize: '11px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                minHeight: '60px'
-              }}>
-                AKTİF<br />İŞ ORTAĞI
-              </div>
-              <div style={{
-                backgroundColor: '#B8860B',
-                color: 'white',
+                background: 'linear-gradient(135deg, #000000, #333333)',
+                color: '#FFD700',
                 padding: '15px 8px',
                 textAlign: 'center',
                 fontWeight: 'bold',
@@ -462,8 +411,8 @@ const TeamTracker = () => {
                 KARİYER<br />SEVİYESİ
               </div>
               <div style={{
-                backgroundColor: '#B8860B',
-                color: 'white',
+                background: 'linear-gradient(135deg, #000000, #333333)',
+                color: '#FFD700',
                 padding: '15px 8px',
                 textAlign: 'center',
                 fontWeight: 'bold',
@@ -473,11 +422,11 @@ const TeamTracker = () => {
                 justifyContent: 'center',
                 minHeight: '60px'
               }}>
-                AYLIK SATIŞ<br />KKP
+                HAK EDİŞ<br />YÜZDESİ
               </div>
               <div style={{
-                backgroundColor: '#B8860B',
-                color: 'white',
+                background: 'linear-gradient(135deg, #000000, #333333)',
+                color: '#FFD700',
                 padding: '15px 8px',
                 textAlign: 'center',
                 fontWeight: 'bold',
@@ -487,11 +436,11 @@ const TeamTracker = () => {
                 justifyContent: 'center',
                 minHeight: '60px'
               }}>
-                AKTİFLEŞEN<br />İŞ ORTAĞI
+                KAZANÇ<br />YÜZDESİ
               </div>
               <div style={{
-                backgroundColor: '#B8860B',
-                color: 'white',
+                background: 'linear-gradient(135deg, #000000, #333333)',
+                color: '#FFD700',
                 padding: '15px 8px',
                 textAlign: 'center',
                 fontWeight: 'bold',
@@ -501,12 +450,26 @@ const TeamTracker = () => {
                 justifyContent: 'center',
                 minHeight: '60px'
               }}>
-                AKTİFLİK<br />DURUMU
+                YAPILAN SATIŞ<br />CİROSU
+              </div>
+              <div style={{
+                background: 'linear-gradient(135deg, #000000, #333333)',
+                color: '#FFD700',
+                padding: '15px 8px',
+                textAlign: 'center',
+                fontWeight: 'bold',
+                fontSize: '11px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: '60px'
+              }}>
+                AYLIK FRANCHAİSE<br />GELİRİ
               </div>
 
               {/* Veri Satırları - Boş kutular */}
               {Array.from({ length: 8 }, (_, rowIndex) => (
-                Array.from({ length: 10 }, (_, colIndex) => (
+                Array.from({ length: 7 }, (_, colIndex) => (
                   <div
                     key={`kazanc-${rowIndex}-${colIndex}`}
                     style={{
@@ -531,7 +494,18 @@ const TeamTracker = () => {
               marginTop: '20px',
               textAlign: 'center'
             }}>
-
+              <div style={{
+                backgroundColor: 'rgba(0,0,0,0.8)',
+                borderRadius: '10px',
+                padding: '10px 20px',
+                color: '#FFD700',
+                fontSize: '14px',
+                fontWeight: 'bold',
+                marginTop: '10px',
+                display: 'inline-block'
+              }}>
+                TOPLAM<br />GELİR
+              </div>
             </div>
           </div>
         )}

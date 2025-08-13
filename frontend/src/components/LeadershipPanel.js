@@ -94,7 +94,7 @@ const LeadershipPanel = () => {
     return (
       <div style={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #0e2323 0%, #1a3333 50%, #0e2323 100%)',
+        background: '#0f2324',
         padding: '20px',
         margin: '0 -20px',
         position: 'relative'
@@ -111,7 +111,7 @@ const LeadershipPanel = () => {
           borderRadius: '15px',
           overflow: 'hidden',
           boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5)',
-          border: '2px solid #FFD700'
+          
         }}>
           
           {/* Responsive Styles */}
@@ -151,7 +151,7 @@ const LeadershipPanel = () => {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #0e2323 0%, #1a3333 50%, #0e2323 100%)',
+      background: '#0f2324',
       padding: '20px',
       margin: '0 -20px'
     }}>

@@ -5,6 +5,13 @@ const GlobalSeyahat = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
+  // Kapak resmi gösterilip gösterilmeyeceğini kontrol et
+  const shouldShowCover = () => {
+    const currentDate = new Date();
+    const targetDate = new Date('2025-09-01');
+    return currentDate < targetDate;
+  };
+  
   // Suppress unused variable warnings temporarily
   console.log('Global travel state:', { loading, error });
   const [travelData, setTravelData] = useState({
@@ -58,10 +65,69 @@ const GlobalSeyahat = () => {
     );
   }
 
+  // 1 Eylül 2025'e kadar kapak göster
+  if (shouldShowCover()) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: '#0f2324',
+        padding: '20px',
+        margin: '0 -20px',
+        position: 'relative'
+      }}>
+        {/* Ana içerik alanında kapak görseli */}
+        <div style={{
+          minHeight: 'calc(100vh - 40px)',
+          width: '100%',
+          backgroundImage: 'url("/images/products/globalseyehat_kapak.png")',
+          backgroundSize: '100% 100%',
+          backgroundPosition: 'center center',
+          backgroundRepeat: 'no-repeat',
+          backgroundColor: '#1a4d4d',
+          borderRadius: '15px',
+          overflow: 'hidden',
+          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5)',
+          
+        }}>
+          
+          {/* Responsive Styles */}
+          <style jsx>{`
+            /* Tüm ekranlar için görsel optimizasyonu */
+            div[style*="backgroundImage"] {
+              image-rendering: -webkit-optimize-contrast !important;
+              image-rendering: crisp-edges !important;
+            }
+            
+            @media (max-width: 1024px) {
+              div[style*="backgroundImage"] {
+                background-size: cover !important;
+                background-position: center center !important;
+              }
+            }
+            
+            @media (max-width: 768px) {
+              div[style*="backgroundImage"] {
+                background-size: cover !important;
+                background-position: center center !important;
+                border-radius: 10px !important;
+              }
+            }
+            
+            @media (max-width: 480px) {
+              div[style*="minHeight: 'calc(100vh - 40px)'"] {
+                min-height: calc(100vh - 60px) !important;
+              }
+            }
+          `}</style>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #0e2323 0%, #1a3333 50%, #0e2323 100%)',
+      background: '#0f2324',
       padding: '20px',
       margin: '0 -20px',
       position: 'relative'
@@ -77,8 +143,8 @@ const GlobalSeyahat = () => {
           src="/hoowell-logo.png" 
           alt="HOOWELL Logo"
           style={{
-            width: '90px',
-            height: '50px',
+            width: '120px',
+            height: '70px',
             objectFit: 'contain'
           }}
         />

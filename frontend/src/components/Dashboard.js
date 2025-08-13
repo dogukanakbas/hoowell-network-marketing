@@ -18,10 +18,10 @@ const Dashboard = () => {
 
   // Responsive state
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  
+
   // Modal state for fullscreen image
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
+
   // Suppress unused variable warnings temporarily
   console.log('Dashboard state:', { loading, error });
 
@@ -77,7 +77,7 @@ const Dashboard = () => {
   // Paylaşım fonksiyonu
   const handleShare = (title, url) => {
     const shareText = `🎥 ${title}\n\n${url}\n\n💧 HOOWELL - Alkali İyonizer Sistemleri`;
-    
+
     if (navigator.share) {
       // Web Share API destekleniyorsa (mobil cihazlar)
       navigator.share({
@@ -196,7 +196,7 @@ const Dashboard = () => {
 
       modal.appendChild(modalContent);
       modal.className = 'share-modal';
-      
+
       // Modal'ı kapatma
       modal.onclick = (e) => {
         if (e.target === modal) {
@@ -209,9 +209,9 @@ const Dashboard = () => {
   };
 
   return (
-    <div style={{ 
+    <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #0e2323 0%, #1a3333 50%, #0e2323 100%)',
+      background: '#0f2323',
       margin: isMobile ? '0 -15px' : '0 -20px',
       padding: isMobile ? '15px' : '20px',
       position: 'relative'
@@ -224,18 +224,15 @@ const Dashboard = () => {
         marginBottom: isMobile ? '15px' : isTablet ? '20px' : '30px'
       }}>
         <div style={{
-          width: isMobile ? '120px' : isTablet ? '150px' : '180px',
-          height: isMobile ? '80px' : isTablet ? '100px' : '120px',
+          width: isMobile ? '180px' : isTablet ? '220px' : '280px',
+          height: isMobile ? '120px' : isTablet ? '150px' : '180px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          marginBottom: isMobile ? '10px' : '15px',
-          borderRadius: '15px',
-          backgroundColor: 'rgba(255, 255, 255, 0.1)',
-          padding: '10px'
+          marginBottom: isMobile ? '10px' : '15px'
         }}>
-          <img 
-            src="/hoowell-logo.png" 
+          <img
+            src="/hoowell-logo.png"
             alt="HOOWELL Logo"
             style={{
               width: '100%',
@@ -259,38 +256,46 @@ const Dashboard = () => {
       }}>
         {/* Sol Panel - Video ve Haberler */}
         <div style={{
-          width: isMobile ? '100%' : isTablet ? '250px' : '280px',
-          maxWidth: isMobile ? '400px' : 'none',
+          width: isMobile ? '100%' : isTablet ? '300px' : '350px',
+          maxWidth: isMobile ? '450px' : 'none',
           display: 'flex',
           flexDirection: 'column',
-          gap: isMobile ? '15px' : '20px',
+          gap: isMobile ? '20px' : '25px',
           order: isMobile ? 2 : 0
         }}>
           {/* Haftalık Çalışma Takvimi */}
           <div style={{
-            background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)',
+            background: 'linear-gradient(135deg, #000000, #333333)',
             borderRadius: '15px',
-            padding: '15px',
+            padding: '20px',
             textAlign: 'center',
-            color: '#000',
+            color: '#FFD700',
             fontWeight: 'bold',
-            boxShadow: '0 8px 25px rgba(255, 215, 0, 0.3)'
+            boxShadow: '0 8px 25px rgba(0, 0, 0, 0.3)',
+            minHeight: '80px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
           }}>
-            <div style={{ fontSize: '14px' }}>HAFTALIK ÇALIŞMA TAKVİMİ</div>
+            <div style={{ fontSize: '16px' }}>HAFTALIK ÇALIŞMA TAKVİMİ</div>
           </div>
 
           {/* Hoowell'den Haberler */}
           <div style={{
-            background: 'linear-gradient(135deg, #2a2a2a 0%, #404040 50%, #2a2a2a 100%)',
+            background: 'linear-gradient(135deg, #000000, #333333)',
             borderRadius: '15px',
-            padding: '15px',
+            padding: '20px',
             textAlign: 'center',
             color: '#FFD700',
             fontWeight: 'bold',
             border: '2px solid #FFD700',
-            boxShadow: '0 8px 25px rgba(0, 0, 0, 0.3)'
+            boxShadow: '0 8px 25px rgba(0, 0, 0, 0.3)',
+            minHeight: '80px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
           }}>
-            <div style={{ fontSize: '14px' }}>Hoowell'den HABERLER</div>
+            <div style={{ fontSize: '16px' }}>Hoowell'den HABERLER</div>
           </div>
 
           {/* Video Kartları */}
@@ -309,35 +314,44 @@ const Dashboard = () => {
             }
           ].map((video, index) => (
             <div key={index} style={{
-              background: 'linear-gradient(135deg, #1a1a1a 0%, #333333 50%, #1a1a1a 100%)',
+              background: 'linear-gradient(135deg, #000000, #333333)',
               borderRadius: '12px',
-              padding: '15px',
+              padding: '20px',
               border: '2px solid #FFD700',
               boxShadow: '0 8px 25px rgba(0, 0, 0, 0.3)',
-              textAlign: 'center'
+              textAlign: 'center',
+              minHeight: '120px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between'
             }}>
-              <div style={{ 
-                color: '#FFD700', 
-                fontSize: '11px', 
-                marginBottom: '10px',
-                lineHeight: '1.3',
-                textAlign: 'center'
+              <div style={{
+                color: '#FFD700',
+                fontSize: '13px',
+                marginBottom: '15px',
+                lineHeight: '1.4',
+                textAlign: 'center',
+                flex: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
               }}>
                 {video.title}
               </div>
-              <button 
+              <button
                 onClick={() => handleShare(video.title, video.url)}
                 style={{
                   background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)',
                   color: '#000',
                   border: 'none',
-                  borderRadius: '8px',
-                  padding: '6px 12px',
-                  fontSize: '10px',
+                  borderRadius: '10px',
+                  padding: '10px 16px',
+                  fontSize: '12px',
                   fontWeight: 'bold',
                   cursor: 'pointer',
                   boxShadow: '0 4px 12px rgba(255, 215, 0, 0.3)',
-                  transition: 'transform 0.2s'
+                  transition: 'transform 0.2s',
+                  width: '100%'
                 }}
                 onMouseEnter={(e) => e.target.style.transform = 'translateY(-1px)'}
                 onMouseLeave={(e) => e.target.style.transform = 'translateY(0px)'}
@@ -358,7 +372,7 @@ const Dashboard = () => {
           order: isMobile ? 1 : 0
         }}>
           {/* Ana Promosyon Görseli - Responsive ve Tıklanabilir */}
-          <div 
+          <div
             onClick={() => setIsModalOpen(true)}
             style={{
               width: isMobile ? '100%' : isTablet ? '600px' : windowWidth > 1600 ? '900px' : windowWidth > 1400 ? '800px' : '700px',
@@ -421,17 +435,17 @@ const Dashboard = () => {
               border: '2px solid rgba(255, 215, 0, 0.5)',
               cursor: 'pointer'
             }}
-            className="zoom-icon"
-            onMouseEnter={(e) => {
-              e.target.style.transform = 'scale(1.1)';
-              e.target.style.backgroundColor = 'rgba(255, 215, 0, 0.9)';
-              e.target.style.color = '#000';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.transform = 'scale(1)';
-              e.target.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-              e.target.style.color = '#FFD700';
-            }}
+              className="zoom-icon"
+              onMouseEnter={(e) => {
+                e.target.style.transform = 'scale(1.1)';
+                e.target.style.backgroundColor = 'rgba(255, 215, 0, 0.9)';
+                e.target.style.color = '#000';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = 'scale(1)';
+                e.target.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                e.target.style.color = '#FFD700';
+              }}
             >
               🔍
             </div>
@@ -454,7 +468,7 @@ const Dashboard = () => {
               border: '1px solid rgba(255, 215, 0, 0.3)',
               whiteSpace: 'nowrap'
             }}
-            className="fullscreen-text"
+              className="fullscreen-text"
             >
               📱 Tam Ekran İçin Tıklayın
             </div>
@@ -471,19 +485,18 @@ const Dashboard = () => {
             maxWidth: isMobile ? '350px' : 'none'
           }}>
             {/* Müşteri Kayıt Paneli */}
-            <Link 
+            <Link
               to="/customer-registration"
               style={{
-                background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)',
+                background: 'linear-gradient(135deg, #e6c266 0%, #b38d00 50%, #d4a933 100%)',
                 borderRadius: isMobile ? '10px' : '12px',
                 padding: isMobile ? '15px 20px' : '12px 20px',
                 textAlign: 'center',
                 cursor: 'pointer',
-                boxShadow: '0 8px 25px rgba(255, 215, 0, 0.3)',
+                boxShadow: '0 8px 25px rgba(179, 141, 0, 0.3)',
                 minWidth: isMobile ? '100%' : '150px',
                 textDecoration: 'none',
                 transition: 'all 0.3s',
-                border: '2px solid rgba(255, 255, 255, 0.2)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -492,20 +505,20 @@ const Dashboard = () => {
               onMouseEnter={(e) => {
                 if (!isMobile) {
                   e.target.style.transform = 'translateY(-3px)';
-                  e.target.style.boxShadow = '0 12px 35px rgba(255, 215, 0, 0.4)';
+                  e.target.style.boxShadow = '0 12px 35px rgba(179, 141, 0, 0.4)';
                 }
               }}
               onMouseLeave={(e) => {
                 if (!isMobile) {
                   e.target.style.transform = 'translateY(0px)';
-                  e.target.style.boxShadow = '0 8px 25px rgba(255, 215, 0, 0.3)';
+                  e.target.style.boxShadow = '0 8px 25px rgba(179, 141, 0, 0.3)';
                 }
               }}
             >
-              <div style={{ 
-                color: '#0e2323', 
-                fontSize: isMobile ? '16px' : '14px', 
-                fontWeight: 'bold' 
+              <div style={{
+                color: '#0e2323',
+                fontSize: isMobile ? '16px' : '14px',
+                fontWeight: 'bold'
               }}>
                 MÜŞTERİ KAYIT PANELİ
               </div>
@@ -513,44 +526,42 @@ const Dashboard = () => {
 
             {/* Hoşgeldin Promosyonu */}
             <div style={{
-              background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)',
+              background: 'linear-gradient(135deg, #000000 0%, #333333 50%, #000000 100%)',
               borderRadius: isMobile ? '10px' : '12px',
               padding: isMobile ? '15px 20px' : '12px 20px',
               textAlign: 'center',
-              boxShadow: '0 8px 25px rgba(255, 215, 0, 0.3)',
+              boxShadow: '0 8px 25px rgba(0, 0, 0, 0.5)',
               minWidth: isMobile ? '100%' : '150px',
               position: 'relative',
-              border: '2px solid rgba(255, 255, 255, 0.2)',
               minHeight: isMobile ? '50px' : 'auto',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center'
             }}>
-              <div style={{ color: '#0e2323', fontSize: '11px', fontWeight: 'bold', marginBottom: '3px' }}>
+              <div style={{ color: '#FFD700', fontSize: '11px', fontWeight: 'bold', marginBottom: '3px' }}>
                 HOŞGELDİK PROMOSYONU KALAN
               </div>
-              <div style={{ color: '#0e2323', fontSize: '11px', fontWeight: 'bold', marginBottom: '5px' }}>
+              <div style={{ color: '#FFD700', fontSize: '11px', fontWeight: 'bold', marginBottom: '5px' }}>
                 CİHAZ ADEDİ
               </div>
-              <div style={{ color: '#0e2323', fontSize: '24px', fontWeight: 'bold' }}>
+              <div style={{ color: '#FFD700', fontSize: '32px', fontWeight: 'bold' }}>
                 399
               </div>
             </div>
 
             {/* İş Ortağı Kayıt Paneli */}
-            <Link 
+            <Link
               to="/partner-registration"
               style={{
-                background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)',
+                background: '#5b4c05',
                 borderRadius: isMobile ? '10px' : '12px',
                 padding: isMobile ? '15px 20px' : '12px 20px',
                 textAlign: 'center',
                 cursor: 'pointer',
-                boxShadow: '0 8px 25px rgba(255, 215, 0, 0.3)',
+                boxShadow: '0 8px 25px rgba(91, 76, 5, 0.3)',
                 minWidth: isMobile ? '100%' : '150px',
                 textDecoration: 'none',
                 transition: 'all 0.3s',
-                border: '2px solid rgba(255, 255, 255, 0.2)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -559,20 +570,20 @@ const Dashboard = () => {
               onMouseEnter={(e) => {
                 if (!isMobile) {
                   e.target.style.transform = 'translateY(-3px)';
-                  e.target.style.boxShadow = '0 12px 35px rgba(255, 215, 0, 0.4)';
+                  e.target.style.boxShadow = '0 12px 35px rgba(91, 76, 5, 0.4)';
                 }
               }}
               onMouseLeave={(e) => {
                 if (!isMobile) {
                   e.target.style.transform = 'translateY(0px)';
-                  e.target.style.boxShadow = '0 8px 25px rgba(255, 215, 0, 0.3)';
+                  e.target.style.boxShadow = '0 8px 25px rgba(91, 76, 5, 0.3)';
                 }
               }}
             >
-              <div style={{ 
-                color: '#0e2323', 
-                fontSize: isMobile ? '16px' : '14px', 
-                fontWeight: 'bold' 
+              <div style={{
+                color: '#fff',
+                fontSize: isMobile ? '16px' : '14px',
+                fontWeight: 'bold'
               }}>
                 İŞ ORTAĞI KAYIT PANELİ
               </div>
@@ -582,51 +593,50 @@ const Dashboard = () => {
 
         {/* Sağ Panel - Havuzlar ve Komisyonlar */}
         <div style={{
-          width: isMobile ? '100%' : isTablet ? '250px' : '280px',
-          maxWidth: isMobile ? '400px' : 'none',
+          width: isMobile ? '100%' : isTablet ? '220px' : '250px',
+          maxWidth: isMobile ? '350px' : 'none',
           display: 'flex',
           flexDirection: 'column',
-          gap: isMobile ? '15px' : '20px',
+          gap: isMobile ? '15px' : '18px',
           order: isMobile ? 3 : 0
         }}>
           {/* Toplam Komisyon Kazancı */}
           <div style={{
-            background: 'linear-gradient(135deg, #28a745 0%, #20c997 50%, #28a745 100%)',
-            borderRadius: '15px',
-            padding: '20px',
+            background: '#FFD700',
+            borderRadius: '12px',
+            padding: '15px',
             textAlign: 'center',
-            border: '2px solid #FFD700',
-            boxShadow: '0 8px 25px rgba(40, 167, 69, 0.3)'
+            boxShadow: '0 6px 20px rgba(255, 215, 0, 0.3)'
           }}>
-            <h3 style={{ 
-              color: '#fff', 
-              fontSize: '14px', 
-              marginBottom: '8px',
-              margin: '0 0 8px 0'
+            <h3 style={{
+              color: '#000',
+              fontSize: '12px',
+              marginBottom: '6px',
+              margin: '0 0 6px 0'
             }}>
               TOPLAM KOMİSYON KAZANCI
             </h3>
-            <div style={{ color: '#fff', fontSize: '11px', marginBottom: '8px', opacity: 0.9 }}>
+            <div style={{ color: '#000', fontSize: '10px', marginBottom: '6px', opacity: 0.8 }}>
               Bu Ay
             </div>
-            <div style={{ 
-              fontSize: '28px', 
-              fontWeight: 'bold', 
-              color: '#fff'
+            <div style={{
+              fontSize: '28px',
+              fontWeight: 'bold',
+              color: '#000'
             }}>
-              {((stats.totalCommission || 0) * 40).toLocaleString()} TL
+              ${(stats.totalCommission || 0).toLocaleString()}
             </div>
-            <Link 
+            <Link
               to="/muhasebe-takip-paneli"
               style={{
                 display: 'inline-block',
-                marginTop: '10px',
-                padding: '6px 12px',
-                backgroundColor: 'rgba(255,255,255,0.2)',
-                color: '#fff',
+                marginTop: '8px',
+                padding: '5px 10px',
+                backgroundColor: '#000',
+                color: '#FFD700',
                 textDecoration: 'none',
-                borderRadius: '8px',
-                fontSize: '12px',
+                borderRadius: '6px',
+                fontSize: '10px',
                 fontWeight: 'bold'
               }}
             >
@@ -636,16 +646,15 @@ const Dashboard = () => {
 
           {/* Liderlik Havuzları */}
           <div style={{
-            background: 'linear-gradient(135deg, #2a2a2a 0%, #404040 50%, #2a2a2a 100%)',
-            borderRadius: '15px',
-            padding: '20px',
+            background: 'linear-gradient(135deg, #000000, #333333)',
+            borderRadius: '12px',
+            padding: '15px',
             textAlign: 'center',
-            border: '2px solid #FFD700',
-            boxShadow: '0 8px 25px rgba(0, 0, 0, 0.3)'
+            boxShadow: '0 6px 20px rgba(0, 0, 0, 0.3)'
           }}>
-            <h3 style={{ 
-              color: '#FFD700', 
-              fontSize: '14px', 
+            <h3 style={{
+              color: '#FFD700',
+              fontSize: '14px',
               marginBottom: '8px',
               margin: '0 0 8px 0'
             }}>
@@ -657,27 +666,26 @@ const Dashboard = () => {
             <div style={{ color: '#FFD700', fontSize: '10px', marginBottom: '8px', opacity: 0.8 }}>
               Ağustos 2025 Dönemi
             </div>
-            <div style={{ 
-              fontSize: '28px', 
-              fontWeight: 'bold', 
+            <div style={{
+              fontSize: '36px',
+              fontWeight: 'bold',
               color: '#FFD700'
             }}>
-              {((stats.liderlikHavuzu || 0) * 40).toLocaleString()} TL
+              ${(stats.liderlikHavuzu || 0).toLocaleString()}
             </div>
           </div>
 
           {/* Başkanlık Havuzları */}
           <div style={{
-            background: 'linear-gradient(135deg, #2a2a2a 0%, #404040 50%, #2a2a2a 100%)',
-            borderRadius: '15px',
-            padding: '20px',
+            background: 'linear-gradient(135deg, #000000, #333333)',
+            borderRadius: '12px',
+            padding: '15px',
             textAlign: 'center',
-            border: '2px solid #FFD700',
-            boxShadow: '0 8px 25px rgba(0, 0, 0, 0.3)'
+            boxShadow: '0 6px 20px rgba(0, 0, 0, 0.3)'
           }}>
-            <h3 style={{ 
-              color: '#FFD700', 
-              fontSize: '14px', 
+            <h3 style={{
+              color: '#FFD700',
+              fontSize: '14px',
               marginBottom: '8px',
               margin: '0 0 8px 0'
             }}>
@@ -689,27 +697,26 @@ const Dashboard = () => {
             <div style={{ color: '#FFD700', fontSize: '10px', marginBottom: '8px', opacity: 0.8 }}>
               Ağustos 2025 Dönemi
             </div>
-            <div style={{ 
-              fontSize: '28px', 
-              fontWeight: 'bold', 
+            <div style={{
+              fontSize: '36px',
+              fontWeight: 'bold',
               color: '#FFD700'
             }}>
-              {((stats.baskanlikHavuzu || 0) * 40).toLocaleString()} TL
+              ${(stats.baskanlikHavuzu || 0).toLocaleString()}
             </div>
           </div>
 
           {/* Kar Paylaşımı */}
           <div style={{
-            background: 'linear-gradient(135deg, #2a2a2a 0%, #404040 50%, #2a2a2a 100%)',
-            borderRadius: '15px',
-            padding: '20px',
+            background: 'linear-gradient(135deg, #000000, #333333)',
+            borderRadius: '12px',
+            padding: '15px',
             textAlign: 'center',
-            border: '2px solid #FFD700',
-            boxShadow: '0 8px 25px rgba(0, 0, 0, 0.3)'
+            boxShadow: '0 6px 20px rgba(0, 0, 0, 0.3)'
           }}>
-            <h3 style={{ 
-              color: '#FFD700', 
-              fontSize: '14px', 
+            <h3 style={{
+              color: '#FFD700',
+              fontSize: '14px',
               marginBottom: '8px',
               margin: '0 0 8px 0'
             }}>
@@ -721,12 +728,12 @@ const Dashboard = () => {
             <div style={{ color: '#FFD700', fontSize: '10px', marginBottom: '8px', opacity: 0.8 }}>
               Bitiş Tarihi : 31.12.2026
             </div>
-            <div style={{ 
-              fontSize: '28px', 
-              fontWeight: 'bold', 
+            <div style={{
+              fontSize: '36px',
+              fontWeight: 'bold',
               color: '#FFD700'
             }}>
-              0 TL
+              $0
             </div>
           </div>
         </div>
@@ -734,13 +741,13 @@ const Dashboard = () => {
 
       {/* Tam Ekran Modal */}
       {isModalOpen && (
-        <div 
+        <div
           className="modal-overlay"
           style={{ padding: '20px' }}
           onClick={() => setIsModalOpen(false)}
         >
           {/* Modal İçeriği */}
-          <div 
+          <div
             className="modal-content"
             style={{
               display: 'flex',
@@ -759,7 +766,7 @@ const Dashboard = () => {
             </button>
 
             {/* Ana Görsel */}
-            <img 
+            <img
               src="./anasayfa.jpeg"
               alt="HOOWELL Ana Sayfa Görseli - Tam Ekran Görünüm"
               className="modal-image"
@@ -804,14 +811,14 @@ const Dashboard = () => {
               <div style={{ fontSize: '12px', marginTop: '20px', opacity: 0.6 }}>
                 Ana sayfa görseli yüklenemedi
               </div>
-              <div style={{ 
-                fontSize: '10px', 
-                marginTop: '15px', 
+              <div style={{
+                fontSize: '10px',
+                marginTop: '15px',
                 opacity: 0.5,
                 lineHeight: '1.4'
               }}>
-                • Network Marketing Sistemi<br/>
-                • Eğitim ve Satış Platformu<br/>
+                • Network Marketing Sistemi<br />
+                • Eğitim ve Satış Platformu<br />
                 • Kariyer Gelişim Programı
               </div>
             </div>

@@ -8,7 +8,7 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-  
+
   const { login, user } = useAuth();
   const navigate = useNavigate();
 
@@ -30,13 +30,13 @@ const Login = () => {
     setLoading(true);
 
     const result = await login(username, password);
-    
+
     if (result.success) {
       navigate(result.redirectPath || '/');
     } else {
       setError(result.message);
     }
-    
+
     setLoading(false);
   };
 
@@ -49,40 +49,40 @@ const Login = () => {
   return (
     <div className="login-main-container">
       <div className="login-grid">
-        
+
         {/* Sol Kart - HOOWELL Dünyasını Keşfedin */}
-        <div 
+        <div
           onClick={handleDiscoverHoowell}
           className="login-card login-card-clickable"
           style={{ textAlign: 'center' }}
         >
           <div style={{
             color: '#FFD700',
-            fontSize: '24px',
+            fontSize: '50px',
             fontWeight: 'bold',
             marginBottom: '20px',
             letterSpacing: '1px'
           }}>
             HOOWELL
           </div>
-          
+
           <div style={{
             color: '#FFD700',
-            fontSize: '20px',
+            fontSize: '50px',
             fontWeight: 'bold',
             marginBottom: '10px'
           }}>
             DÜNYASINI
           </div>
-          
+
           <div style={{
             color: '#FFD700',
-            fontSize: '18px',
+            fontSize: '50px',
             fontWeight: 'bold'
           }}>
             KEŞFEDİN
           </div>
-          
+
           <div style={{
             color: '#FFD700',
             fontSize: '12px',
@@ -109,8 +109,8 @@ const Login = () => {
             justifyContent: 'center',
             marginBottom: '30px'
           }}>
-            <img 
-              src="/hoowell-logo.png" 
+            <img
+              src="/hoowell-logo.png"
               alt="HOOWELL Logo"
               className="login-logo-responsive"
               style={{
@@ -129,7 +129,7 @@ const Login = () => {
           }}>
             <div style={{
               color: '#FFD700',
-              fontSize: '20px',
+              fontSize: '40px',
               fontWeight: 'bold',
               marginBottom: '5px'
             }}>
@@ -137,7 +137,7 @@ const Login = () => {
             </div>
             <div style={{
               color: '#FFD700',
-              fontSize: '20px',
+              fontSize: '40px',
               fontWeight: 'bold'
             }}>
               GİRİŞİ
@@ -146,11 +146,11 @@ const Login = () => {
 
           <form onSubmit={handleSubmit}>
             {error && (
-              <div style={{ 
-                color: '#ff6b6b', 
-                backgroundColor: 'rgba(255, 107, 107, 0.1)', 
-                padding: '10px', 
-                borderRadius: '8px', 
+              <div style={{
+                color: '#ff6b6b',
+                backgroundColor: 'rgba(255, 107, 107, 0.1)',
+                padding: '10px',
+                borderRadius: '8px',
                 marginBottom: '20px',
                 fontSize: '14px',
                 textAlign: 'center'
@@ -158,7 +158,7 @@ const Login = () => {
                 {error}
               </div>
             )}
-            
+
             <div style={{ marginBottom: '20px' }}>
               <label style={{
                 color: '#FFD700',
@@ -179,7 +179,7 @@ const Login = () => {
                 className="login-input"
               />
             </div>
-            
+
             <div style={{ marginBottom: '30px' }}>
               <label style={{
                 color: '#FFD700',
@@ -199,8 +199,8 @@ const Login = () => {
                 className="login-input"
               />
             </div>
-            
-            <button 
+
+            <button
               type="submit"
               disabled={loading}
               className="login-button"

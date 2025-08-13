@@ -193,7 +193,7 @@ const Education = () => {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #0e2323 0%, #1a4a3a 50%, #0e2323 100%)',
+      background: '#0f2324',
       padding: '0',
       margin: '0 -20px'
     }}>
@@ -264,8 +264,8 @@ const Education = () => {
               src="/hoowell-logo.png" 
               alt="HOOWELL Logo" 
               style={{
-                width: '80px',
-                height: '60px',
+                width: '120px',
+                height: '70px',
                 objectFit: 'contain'
               }}
               onError={(e) => {

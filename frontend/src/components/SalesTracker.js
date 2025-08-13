@@ -40,7 +40,7 @@ const SalesTracker = () => {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #0e2323 0%, #1a3333 50%, #0e2323 100%)',
+      background: '#0f2324',
       padding: '20px',
       margin: '0 -20px'
     }}>
@@ -55,8 +55,8 @@ const SalesTracker = () => {
           src="/hoowell-logo.png" 
           alt="HOOWELL Logo"
           style={{
-            width: '90px',
-            height: '50px',
+            width: '120px',
+            height: '70px',
             objectFit: 'contain'
           }}
         />
@@ -115,7 +115,7 @@ const SalesTracker = () => {
         {/* Bekleme Odası */}
         <div style={{ marginBottom: '40px' }}>
           <div style={{
-            backgroundColor: '#2c5530',
+            backgroundColor: '#0f2323',
             color: 'white',
             padding: '15px',
             borderRadius: '10px 10px 0 0',
@@ -128,7 +128,7 @@ const SalesTracker = () => {
           
           <div style={{
             backgroundColor: 'white',
-            border: '2px solid #2c5530',
+            border: '2px solid #0f2323',
             borderTop: 'none',
             borderRadius: '0 0 10px 10px',
             overflow: 'hidden'
@@ -137,7 +137,7 @@ const SalesTracker = () => {
             <div style={{
               display: 'grid',
               gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr',
-              backgroundColor: '#B8860B',
+              backgroundColor: '#cc9900',
               color: 'white',
               fontWeight: 'bold',
               fontSize: '14px'
@@ -146,7 +146,7 @@ const SalesTracker = () => {
                 padding: '15px', 
                 textAlign: 'center', 
                 borderRight: '1px solid rgba(255,255,255,0.3)',
-                backgroundColor: '#B8860B'
+                backgroundColor: '#cc9900'
               }}>
                 ADI SOYADI
               </div>
@@ -154,7 +154,7 @@ const SalesTracker = () => {
                 padding: '15px', 
                 textAlign: 'center', 
                 borderRight: '1px solid rgba(255,255,255,0.3)',
-                backgroundColor: '#B8860B'
+                backgroundColor: '#cc9900'
               }}>
                 SATILAN ÜRÜN
               </div>
@@ -162,7 +162,7 @@ const SalesTracker = () => {
                 padding: '15px', 
                 textAlign: 'center', 
                 borderRight: '1px solid rgba(255,255,255,0.3)',
-                backgroundColor: '#B8860B'
+                backgroundColor: '#cc9900'
               }}>
                 SATIŞ TARİHİ
               </div>
@@ -170,14 +170,14 @@ const SalesTracker = () => {
                 padding: '15px', 
                 textAlign: 'center', 
                 borderRight: '1px solid rgba(255,255,255,0.3)',
-                backgroundColor: '#B8860B'
+                backgroundColor: '#cc9900'
               }}>
                 BONUS TARİHİ
               </div>
               <div style={{ 
                 padding: '15px', 
                 textAlign: 'center',
-                backgroundColor: '#B8860B'
+                backgroundColor: '#cc9900'
               }}>
                 KAZANILAN KOMİSYON
               </div>
@@ -285,7 +285,7 @@ const SalesTracker = () => {
         {/* Ay İçinde Gerçekleşen Satışlar */}
         <div style={{ marginBottom: '40px' }}>
           <div style={{
-            backgroundColor: '#2c5530',
+            backgroundColor: '#0f2323',
             color: 'white',
             padding: '15px',
             borderRadius: '10px 10px 0 0',
@@ -298,7 +298,7 @@ const SalesTracker = () => {
           
           <div style={{
             backgroundColor: 'white',
-            border: '2px solid #2c5530',
+            border: '2px solid #0f2323',
             borderTop: 'none',
             borderRadius: '0 0 10px 10px',
             overflow: 'hidden'
@@ -307,7 +307,7 @@ const SalesTracker = () => {
             <div style={{
               display: 'grid',
               gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr',
-              backgroundColor: '#B8860B',
+              backgroundColor: '#cc9900',
               color: 'white',
               fontWeight: 'bold',
               fontSize: '14px'
@@ -316,7 +316,7 @@ const SalesTracker = () => {
                 padding: '15px', 
                 textAlign: 'center', 
                 borderRight: '1px solid rgba(255,255,255,0.3)',
-                backgroundColor: '#B8860B'
+                backgroundColor: '#cc9900'
               }}>
                 ADI SOYADI
               </div>
@@ -324,7 +324,7 @@ const SalesTracker = () => {
                 padding: '15px', 
                 textAlign: 'center', 
                 borderRight: '1px solid rgba(255,255,255,0.3)',
-                backgroundColor: '#B8860B'
+                backgroundColor: '#cc9900'
               }}>
                 SATILAN ÜRÜN
               </div>
@@ -332,7 +332,7 @@ const SalesTracker = () => {
                 padding: '15px', 
                 textAlign: 'center', 
                 borderRight: '1px solid rgba(255,255,255,0.3)',
-                backgroundColor: '#B8860B'
+                backgroundColor: '#cc9900'
               }}>
                 SATIŞ TARİHİ
               </div>
@@ -340,14 +340,14 @@ const SalesTracker = () => {
                 padding: '15px', 
                 textAlign: 'center', 
                 borderRight: '1px solid rgba(255,255,255,0.3)',
-                backgroundColor: '#B8860B'
+                backgroundColor: '#cc9900'
               }}>
                 KAZANILAN KOMİSYON
               </div>
               <div style={{ 
                 padding: '15px', 
                 textAlign: 'center',
-                backgroundColor: '#B8860B'
+                backgroundColor: '#cc9900'
               }}>
                 ÖDEME DURUMU
               </div>
@@ -462,7 +462,7 @@ const SalesTracker = () => {
 
         {/* Aylık Aktiflik Kontrolü */}
         <div style={{
-          backgroundColor: '#2c5530',
+          backgroundColor: '#0f2323',
           borderRadius: '15px',
           padding: '30px',
           textAlign: 'center'
