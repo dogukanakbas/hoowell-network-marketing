@@ -1059,36 +1059,7 @@ const FranchiseNetwork = () => {
         </div>
       )}
 
-      {/* Hoowell Bilgi Bankası Logo */}
-      <div style={{
-        position: 'fixed',
-        bottom: '20px',
-        right: '20px',
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        borderRadius: '10px',
-        padding: '10px',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
-        textAlign: 'center',
-        zIndex: 100
-      }}>
-        <img 
-          src="/hoowell-logo.png" 
-          alt="HOOWELL Logo"
-          style={{
-            width: '80px',
-            height: '45px',
-            objectFit: 'contain',
-            marginBottom: '5px'
-          }}
-        />
-        <div style={{
-          fontSize: '10px',
-          fontWeight: 'bold',
-          color: 'var(--primary-dark)'
-        }}>
-          BİLGİ BANKASI
-        </div>
-      </div>
+
     </div>
   );
 };

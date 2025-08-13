@@ -159,7 +159,7 @@ const MuhasebeTakipPaneli = () => {
     <div style={{
       minHeight: '100vh',
       width: '100vw',
-      background: '#0f2324',
+      background: '#0f2424',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -175,12 +175,12 @@ const MuhasebeTakipPaneli = () => {
       <div style={{
         position: 'relative',
         zIndex: 2,
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        background: '#0f2424',
         borderRadius: '25px',
         padding: '40px',
         maxWidth: '800px',
         width: '100%',
-        border: '4px solid #FFD700',
+        border: 'none',
         boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)',
         backdropFilter: 'blur(10px)'
       }}>
@@ -200,14 +200,14 @@ const MuhasebeTakipPaneli = () => {
             MUHASEBE TAKİP PANELİ
           </h1>
           <p style={{
-            color: '#0e2323',
+            color: '#FFD700',
             fontSize: '18px',
             fontWeight: '600'
           }}>
             BİZİMLE NASIL ÇALIŞACAKSINIZ?
           </p>
           <p style={{
-            color: '#856404',
+            color: '#FFD700',
             fontSize: '16px',
             marginTop: '10px',
             lineHeight: '1.5'
@@ -219,33 +219,33 @@ const MuhasebeTakipPaneli = () => {
 
         {/* Bilgilendirme */}
         <div style={{
-          backgroundColor: '#fff3cd',
-          border: '2px solid #ffeaa7',
+          backgroundColor: 'rgba(255, 215, 0, 0.1)',
+          border: '2px solid #FFD700',
           borderRadius: '15px',
           padding: '20px',
           marginBottom: '30px',
           fontSize: '14px',
           lineHeight: '1.6'
         }}>
-          <div style={{ marginBottom: '15px', color: '#856404' }}>
+          <div style={{ marginBottom: '15px', color: '#FFD700' }}>
             <strong>1. ŞİRKETİ olmayan İş Ortaklarının oluşan kazançları ödenirken KAYNAĞINDA STOPAJ KESİNTİSİ (%20) yapılarak ödeme yapılır. Kesilen %20'lik meblağ kişinin TC KİMLİK numarası ile her ay devlete yatırılır.</strong>
           </div>
-          <div style={{ color: '#856404' }}>
+          <div style={{ color: '#FFD700' }}>
             <strong>2. Şahıs, Limited ya da Anonim Şirketlerin sahipleri kazanılan meblağın üzerine %20 KDV ekleyerek fatura keserler ve kendi vergilerini şirketin bünyesinde ödemekten kendileri sorumludur.</strong>
           </div>
         </div>
 
         {/* Uyarı */}
         <div style={{
-          backgroundColor: '#f8d7da',
-          border: '2px solid #f5c6cb',
+          backgroundColor: 'rgba(255, 0, 0, 0.1)',
+          border: '2px solid #FFD700',
           borderRadius: '15px',
           padding: '20px',
           marginBottom: '30px',
           textAlign: 'center'
         }}>
           <p style={{
-            color: '#721c24',
+            color: '#FFD700',
             fontSize: '16px',
             fontWeight: 'bold',
             margin: 0
@@ -314,7 +314,7 @@ const MuhasebeTakipPaneli = () => {
               <label style={{
                 display: 'block',
                 marginBottom: '8px',
-                color: '#0e2323',
+                color: '#FFD700',
                 fontWeight: 'bold'
               }}>
                 IBAN Numarası *
@@ -329,10 +329,12 @@ const MuhasebeTakipPaneli = () => {
                 style={{
                   width: '100%',
                   padding: '12px',
-                  border: '2px solid #ddd',
+                  border: '2px solid rgba(255, 215, 0, 0.3)',
                   borderRadius: '10px',
                   fontSize: '14px',
-                  boxSizing: 'border-box'
+                  boxSizing: 'border-box',
+                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                  color: '#FFD700'
                 }}
               />
             </div>
@@ -340,7 +342,7 @@ const MuhasebeTakipPaneli = () => {
               <label style={{
                 display: 'block',
                 marginBottom: '8px',
-                color: '#0e2323',
+                color: '#FFD700',
                 fontWeight: 'bold'
               }}>
                 Banka Adı
@@ -354,10 +356,12 @@ const MuhasebeTakipPaneli = () => {
                 style={{
                   width: '100%',
                   padding: '12px',
-                  border: '2px solid #ddd',
+                  border: '2px solid rgba(255, 215, 0, 0.3)',
                   borderRadius: '10px',
                   fontSize: '14px',
-                  boxSizing: 'border-box'
+                  boxSizing: 'border-box',
+                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                  color: '#FFD700'
                 }}
               />
             </div>
@@ -367,7 +371,7 @@ const MuhasebeTakipPaneli = () => {
             <label style={{
               display: 'block',
               marginBottom: '8px',
-              color: '#0e2323',
+              color: '#FFD700',
               fontWeight: 'bold'
             }}>
               Hesap Sahibi Adı *
@@ -382,10 +386,12 @@ const MuhasebeTakipPaneli = () => {
               style={{
                 width: '100%',
                 padding: '12px',
-                border: '2px solid #ddd',
+                border: '2px solid rgba(255, 215, 0, 0.3)',
                 borderRadius: '10px',
                 fontSize: '14px',
-                boxSizing: 'border-box'
+                boxSizing: 'border-box',
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                color: '#FFD700'
               }}
             />
           </div>
@@ -403,7 +409,7 @@ const MuhasebeTakipPaneli = () => {
                   <label style={{
                     display: 'block',
                     marginBottom: '8px',
-                    color: '#0e2323',
+                    color: '#FFD700',
                     fontWeight: 'bold'
                   }}>
                     Şirket Adı *
@@ -418,10 +424,12 @@ const MuhasebeTakipPaneli = () => {
                     style={{
                       width: '100%',
                       padding: '12px',
-                      border: '2px solid #ddd',
+                      border: '2px solid rgba(255, 215, 0, 0.3)',
                       borderRadius: '10px',
                       fontSize: '14px',
-                      boxSizing: 'border-box'
+                      boxSizing: 'border-box',
+                      backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                      color: '#FFD700'
                     }}
                   />
                 </div>
@@ -429,7 +437,7 @@ const MuhasebeTakipPaneli = () => {
                   <label style={{
                     display: 'block',
                     marginBottom: '8px',
-                    color: '#0e2323',
+                    color: '#FFD700',
                     fontWeight: 'bold'
                   }}>
                     Vergi Numarası *
@@ -444,10 +452,12 @@ const MuhasebeTakipPaneli = () => {
                     style={{
                       width: '100%',
                       padding: '12px',
-                      border: '2px solid #ddd',
+                      border: '2px solid rgba(255, 215, 0, 0.3)',
                       borderRadius: '10px',
                       fontSize: '14px',
-                      boxSizing: 'border-box'
+                      boxSizing: 'border-box',
+                      backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                      color: '#FFD700'
                     }}
                   />
                 </div>
@@ -457,13 +467,14 @@ const MuhasebeTakipPaneli = () => {
 
           {/* Dosya Yükleme */}
           <div style={{
-            backgroundColor: '#e9ecef',
+            backgroundColor: 'rgba(255, 215, 0, 0.05)',
             borderRadius: '15px',
             padding: '20px',
-            marginBottom: '30px'
+            marginBottom: '30px',
+            border: '1px solid rgba(255, 215, 0, 0.2)'
           }}>
             <h3 style={{
-              color: '#0e2323',
+              color: '#FFD700',
               marginBottom: '15px',
               textAlign: 'center'
             }}>
@@ -475,7 +486,7 @@ const MuhasebeTakipPaneli = () => {
                 <label style={{
                   display: 'block',
                   marginBottom: '8px',
-                  color: '#0e2323',
+                  color: '#FFD700',
                   fontWeight: 'bold'
                 }}>
                   TC Kimlik Belgesi (Ön Yüz) *
@@ -488,11 +499,11 @@ const MuhasebeTakipPaneli = () => {
                   style={{
                     width: '100%',
                     padding: '12px',
-                    border: '2px solid #ddd',
+                    border: '2px solid rgba(255, 215, 0, 0.3)',
                     borderRadius: '10px',
                     fontSize: '14px',
                     boxSizing: 'border-box',
-                    backgroundColor: 'white'
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)'
                   }}
                 />
                 {files.tc_identity_front && (
@@ -506,7 +517,7 @@ const MuhasebeTakipPaneli = () => {
                 <label style={{
                   display: 'block',
                   marginBottom: '8px',
-                  color: '#0e2323',
+                  color: '#FFD700',
                   fontWeight: 'bold'
                 }}>
                   Vergi Levhası *
@@ -519,11 +530,11 @@ const MuhasebeTakipPaneli = () => {
                   style={{
                     width: '100%',
                     padding: '12px',
-                    border: '2px solid #ddd',
+                    border: '2px solid rgba(255, 215, 0, 0.3)',
                     borderRadius: '10px',
                     fontSize: '14px',
                     boxSizing: 'border-box',
-                    backgroundColor: 'white'
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)'
                   }}
                 />
                 {files.tax_plate && (
@@ -535,7 +546,7 @@ const MuhasebeTakipPaneli = () => {
             )}
             
             <p style={{
-              color: '#6c757d',
+              color: '#FFD700',
               fontSize: '12px',
               marginTop: '10px',
               textAlign: 'center'
@@ -573,13 +584,13 @@ const MuhasebeTakipPaneli = () => {
         <div style={{
           marginTop: '20px',
           padding: '15px',
-          backgroundColor: '#d1ecf1',
-          border: '1px solid #bee5eb',
+          backgroundColor: 'rgba(255, 215, 0, 0.1)',
+          border: '1px solid #FFD700',
           borderRadius: '10px',
           textAlign: 'center'
         }}>
           <p style={{
-            color: '#0c5460',
+            color: '#FFD700',
             fontSize: '14px',
             margin: 0,
             fontWeight: 'bold'
@@ -661,7 +672,7 @@ const MuhasebeTakipPaneli = () => {
   const renderPendingApproval = () => (
     <div style={{
       minHeight: '100vh',
-      background: '#0f2324',
+      background: '#0f2424',
       padding: '20px',
       margin: '0 -20px',
       display: 'flex',
@@ -669,13 +680,13 @@ const MuhasebeTakipPaneli = () => {
       justifyContent: 'center'
     }}>
       <div style={{
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        background: '#0f2424',
         borderRadius: '25px',
         padding: '50px',
         textAlign: 'center',
         maxWidth: '600px',
         width: '100%',
-        border: '4px solid #FFD700',
+        border: 'none',
         boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)'
       }}>
         <div style={{
@@ -695,14 +706,14 @@ const MuhasebeTakipPaneli = () => {
         </h2>
         
         <div style={{
-          backgroundColor: '#fff3cd',
-          border: '2px solid #ffeaa7',
+          backgroundColor: 'rgba(255, 215, 0, 0.1)',
+          border: '2px solid #FFD700',
           borderRadius: '15px',
           padding: '25px',
           marginBottom: '20px'
         }}>
           <p style={{
-            color: '#856404',
+            color: '#FFD700',
             fontSize: '18px',
             lineHeight: '1.6',
             margin: 0
@@ -713,23 +724,24 @@ const MuhasebeTakipPaneli = () => {
         </div>
 
         <div style={{
-          backgroundColor: '#f8f9fa',
+          backgroundColor: 'rgba(255, 255, 255, 0.05)',
           borderRadius: '15px',
-          padding: '20px'
+          padding: '20px',
+          border: '1px solid rgba(255, 215, 0, 0.3)'
         }}>
           <h4 style={{
-            color: '#0e2323',
+            color: '#FFD700',
             marginBottom: '10px'
           }}>
             Kayıtlı Bilgiler:
           </h4>
-          <p style={{ color: '#6c757d', margin: '5px 0' }}>
+          <p style={{ color: '#FFD700', margin: '5px 0' }}>
             <strong>Hesap Türü:</strong> {accountingInfo?.account_type === 'individual' ? 'Bireysel' : 'Şirket'}
           </p>
-          <p style={{ color: '#6c757d', margin: '5px 0' }}>
+          <p style={{ color: '#FFD700', margin: '5px 0' }}>
             <strong>IBAN:</strong> {accountingInfo?.iban}
           </p>
-          <p style={{ color: '#6c757d', margin: '5px 0' }}>
+          <p style={{ color: '#FFD700', margin: '5px 0' }}>
             <strong>Hesap Sahibi:</strong> {accountingInfo?.account_holder_name}
           </p>
         </div>
@@ -746,7 +758,7 @@ const MuhasebeTakipPaneli = () => {
         minHeight: '60vh',
         fontSize: '18px',
         color: '#FFD700',
-        backgroundColor: '#0e2323'
+        background: '#0f2424'
       }}>
         Muhasebe verileri yükleniyor...
       </div>
@@ -926,7 +938,7 @@ const MuhasebeTakipPaneli = () => {
   return (
     <div style={{
       minHeight: '100vh',
-      background: '#0f2324',
+      background: '#0f2424',
       padding: '20px',
       margin: '0 -20px',
       position: 'relative'

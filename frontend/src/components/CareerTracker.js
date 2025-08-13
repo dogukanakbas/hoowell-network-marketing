@@ -8,7 +8,7 @@ const CareerTracker = () => {
     current_level: 'bronze',
     total_kkp: 0,
     active_partners: 0,
-    target_kkp: 15000,
+    target_kkp: 20000,
     target_partners: 1
   });
   const [careerBonuses, setCareerBonuses] = useState([]);
@@ -44,7 +44,7 @@ const CareerTracker = () => {
           current_level: user.career_level || 'bronze',
           total_kkp: user.total_kkp || 0,
           active_partners: user.active_partners || 0,
-          target_kkp: 15000,
+          target_kkp: 20000,
           target_partners: 1
         });
       }
@@ -73,12 +73,12 @@ const CareerTracker = () => {
       bronze: {
         background: '#0f2323',
         badgeColor: '#CD7F32',
-        circleColor: '#575757', // Bronze gri rengi
-        buttonColor: '#575757',
-        cardColor: '#575757',
-        cardGradient: 'linear-gradient(135deg, #575757, #404040)',
-        hoverGradient: 'linear-gradient(135deg, #666666, #4a4a4a)',
-        targetKKP: 15000, // Silver için hedef
+        circleColor: '#7f7f7f', // Bronze için #7f7f7f rengi
+        buttonColor: '#7f7f7f',
+        cardColor: '#7f7f7f',
+        cardGradient: 'linear-gradient(135deg, #7f7f7f, #666666)',
+        hoverGradient: 'linear-gradient(135deg, #8a8a8a, #737373)',
+        targetKKP: 20000, // Silver için hedef
         targetPartners: 1,
         nextLevel: 'SILVER İŞ ORTAĞI',
         bonusAmount: 0,

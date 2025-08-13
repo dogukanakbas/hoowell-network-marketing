@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Outlet, Navigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import PaymentBlockedWarning from './PaymentBlockedWarning';
+import InfoBankButton from './InfoBankButton';
 
 
 const Layout = () => {
@@ -138,8 +139,8 @@ const Layout = () => {
       <div className={`sidebar ${isMobile && sidebarOpen ? 'open' : ''}`}>
         {/* Ana Menü Çerçevesi */}
         <div style={{
-          border: '3px solid var(--accent-gold)',
-          borderRadius: '20px',
+          border: '8px solid var(--accent-gold)',
+          borderRadius: '0px',
           padding: '15px',
           backgroundColor: '#0e2323',
           margin: '5px',
@@ -680,6 +681,9 @@ const Layout = () => {
           </div>
         </footer>
       </div>
+      
+      {/* Bilgi Bankası Butonu */}
+      <InfoBankButton />
     </div>
   );
 };

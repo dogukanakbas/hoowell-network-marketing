@@ -10,6 +10,7 @@ import Payment from './components/Payment';
 import Education from './components/Education';
 import AdminPanel from './components/AdminPanel';
 import AccessRestricted from './components/AccessRestricted';
+import BilgiBankasi from './components/BilgiBankasi';
 import PartnerRegistration from './components/PartnerRegistration';
 import CustomerRegistration from './components/CustomerRegistration';
 import CareerTracker from './components/CareerTracker';
@@ -71,7 +72,7 @@ function App() {
               <Route path="doping-promosyonu" element={<DopingPromosyonu />} />
               <Route path="global-seyahat-promosyonu" element={<GlobalSeyahat />} />
               <Route path="muhasebe-takip-paneli" element={<MuhasebeTakipPaneli />} />
-              <Route path="bilgi-bankasi" element={<AccessRestricted pageName="Bilgi Bankası" icon="📚" />} />
+              <Route path="bilgi-bankasi" element={<BilgiBankasi />} />
               <Route path="kisisel-yonetim" element={<KisiselYonetim />} />
               
               {/* Legal Pages */}

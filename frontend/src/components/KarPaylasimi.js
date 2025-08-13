@@ -13,7 +13,7 @@ const KarPaylasimi = () => {
     return currentDate < targetDate;
   };
   
-  const [showCover, setShowCover] = useState(shouldShowCover());
+  const [showCover, setShowCover] = useState(true); // Kapak gösterimini zorla
   const [profitData, setProfitData] = useState({
     salesChampions: {
       pool_amount: 0,
@@ -198,8 +198,8 @@ const KarPaylasimi = () => {
     );
   }
 
-  // 1 Ocak 2026'ya kadar kapak göster
-  if (showCover) {
+  // Kapak göster
+  if (true) {
     return (
       <div style={{
         minHeight: '100vh',
@@ -208,20 +208,52 @@ const KarPaylasimi = () => {
         margin: '0 -20px',
         position: 'relative'
       }}>
+        {/* HOOWELL Logo - Sağ Üst */}
+        <div className="logo-container" style={{
+          position: 'absolute',
+          top: '20px',
+          right: '20px',
+          zIndex: 10
+        }}>
+          <img 
+            src="/hoowell-logo.png" 
+            alt="HOOWELL Logo"
+            style={{
+              width: '120px',
+              height: '70px',
+              objectFit: 'contain'
+            }}
+          />
+        </div>
         {/* Ana içerik alanında kapak görseli */}
         <div style={{
           minHeight: 'calc(100vh - 40px)',
           width: '100%',
-          backgroundImage: 'url("/images/products/karpaylasım_kapak.png")',
-          backgroundSize: '100% 100%',
-          backgroundPosition: 'center center',
-          backgroundRepeat: 'no-repeat',
           backgroundColor: '#1a4d4d',
           borderRadius: '15px',
           overflow: 'hidden',
           boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5)',
-         
+          position: 'relative',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
         }}>
+          <img 
+            src="/images/products/profit_sharing_cover.png"
+            alt="Kar Paylaşım Kapak"
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              position: 'absolute',
+              top: 0,
+              left: 0
+            }}
+            onLoad={() => console.log('Kapak resmi yüklendi!')}
+            onError={(e) => console.error('Kapak resmi yüklenemedi:', e)}
+          />
+          
+
           
           {/* Responsive Styles */}
           <style jsx>{`
@@ -244,11 +276,21 @@ const KarPaylasimi = () => {
                 background-position: center center !important;
                 border-radius: 10px !important;
               }
+              
+              .logo-container img {
+                width: 100px !important;
+                height: 60px !important;
+              }
             }
             
             @media (max-width: 480px) {
               div[style*="minHeight: 'calc(100vh - 40px)'"] {
                 min-height: calc(100vh - 60px) !important;
+              }
+              
+              .logo-container img {
+                width: 80px !important;
+                height: 50px !important;
               }
             }
           `}</style>

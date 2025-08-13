@@ -99,6 +99,23 @@ const LeadershipPanel = () => {
         margin: '0 -20px',
         position: 'relative'
       }}>
+        {/* HOOWELL Logo - Sağ Üst */}
+        <div className="logo-container" style={{
+          position: 'absolute',
+          top: '20px',
+          right: '20px',
+          zIndex: 10
+        }}>
+          <img 
+            src="/hoowell-logo.png" 
+            alt="HOOWELL Logo"
+            style={{
+              width: '120px',
+              height: '70px',
+              objectFit: 'contain'
+            }}
+          />
+        </div>
         {/* Ana içerik alanında kapak görseli */}
         <div style={{
           minHeight: 'calc(100vh - 40px)',
@@ -135,11 +152,21 @@ const LeadershipPanel = () => {
                 background-position: center center !important;
                 border-radius: 10px !important;
               }
+              
+              .logo-container img {
+                width: 100px !important;
+                height: 60px !important;
+              }
             }
             
             @media (max-width: 480px) {
               div[style*="minHeight: 'calc(100vh - 40px)'"] {
                 min-height: calc(100vh - 60px) !important;
+              }
+              
+              .logo-container img {
+                width: 80px !important;
+                height: 50px !important;
               }
             }
           `}</style>
