@@ -28,6 +28,8 @@ import KisiselYonetim from './components/KisiselYonetim';
 // import AdminPayment from './components/AdminPayment'; // Şu an kullanılmıyor
 import Welcome from './components/Welcome';
 import HoowellDiscover from './components/HoowellDiscover';
+import PaymentSuccess from './components/PaymentSuccess';
+import PaymentFail from './components/PaymentFail';
 
 // Legal Pages
 import PrivacyPolicy from './components/legal/PrivacyPolicy';
@@ -52,6 +54,8 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/welcome" element={<Welcome />} />
             <Route path="/discover" element={<HoowellDiscover />} />
+            <Route path="/payment/success" element={<PaymentSuccess />} />
+            <Route path="/payment/fail" element={<PaymentFail />} />
             <Route path="/" element={<Layout />}>
               <Route index element={<Dashboard />} />
               <Route path="payment" element={<Payment />} />

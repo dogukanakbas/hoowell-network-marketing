@@ -123,6 +123,7 @@ const CustomerRegistration = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [message, setMessage] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('iban'); // 'iban' veya 'paytr'
   const [formData, setFormData] = useState({
     registration_type: 'individual',
     first_name: '',
@@ -211,6 +212,11 @@ const CustomerRegistration = () => {
   };
 
   const handleSubmit = async () => {
+    // Önce ödeme sayfasına geç
+    setCurrentStep(7);
+  };
+
+  const handlePayment = async () => {
     try {
       // Validasyon kontrolleri
       if (formData.registration_type === 'individual') {
@@ -265,7 +271,7 @@ const CustomerRegistration = () => {
       }
     } catch (error) {
       console.error('Kayıt hatası:', error);
-      alert('Kayıt sırasında bir hata oluştu.');
+      alert('Kayıt sırasında bir hata oluştu: ' + (error.response?.data?.message || error.message));
     }
   };
 
@@ -1517,7 +1523,7 @@ const CustomerRegistration = () => {
               )}
             </div>
 
-            {/* Ödeme Talimatları */}
+            {/* Ödeme Yöntemi Seçimi */}
             <div style={{
               backgroundColor: 'white',
               padding: '25px',
@@ -1525,26 +1531,96 @@ const CustomerRegistration = () => {
               marginBottom: '30px'
             }}>
               <h3 style={{ color: 'var(--primary-dark)', marginBottom: '20px', textAlign: 'center' }}>
-                💳 Ödeme Talimatları
+                💳 Ödeme Yöntemi Seçin
               </h3>
-              
-              <div style={{ backgroundColor: '#f8f9fa', padding: '20px', borderRadius: '10px', marginBottom: '20px' }}>
-                <h4 style={{ color: 'var(--primary-dark)', marginBottom: '15px' }}>
-                  1️⃣ Banka Havalesi / EFT
-                </h4>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                  <div>
-                    <p><strong>Banka:</strong> Türkiye İş Bankası</p>
-                    <p><strong>Hesap Sahibi:</strong> HOOWELL GLOBAL ANONİM ŞİRKETİ</p>
-                    <p><strong>IBAN:</strong> TR12 0006 4000 0011 2345 6789 01</p>
-                  </div>
-                  <div>
-                    <p><strong>Şube Kodu:</strong> 1234</p>
-                    <p><strong>Hesap No:</strong> 11234567-01</p>
-                    <p><strong>Swift Kodu:</strong> ISBKTRIS</p>
-                  </div>
+
+              {/* Ödeme Yöntemi Radio Butonları */}
+              <div style={{ marginBottom: '30px' }}>
+                <div style={{ display: 'flex', gap: '20px', marginBottom: '20px', justifyContent: 'center' }}>
+                  <label style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    cursor: 'pointer',
+                    padding: '15px 20px',
+                    border: paymentMethod === 'iban' ? '2px solid var(--primary-dark)' : '2px solid #ddd',
+                    borderRadius: '10px',
+                    backgroundColor: paymentMethod === 'iban' ? 'rgba(26, 74, 58, 0.1)' : 'white'
+                  }}>
+                    <input
+                      type="radio"
+                      value="iban"
+                      checked={paymentMethod === 'iban'}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                      style={{ marginRight: '10px' }}
+                    />
+                    <div>
+                      <div style={{ fontWeight: 'bold', fontSize: '16px' }}>🏦 IBAN ile Havale/EFT</div>
+                      <div style={{ fontSize: '12px', color: 'var(--text-light)' }}>Banka havalesi ile ödeme</div>
+                    </div>
+                  </label>
+                  
+                  <label style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    cursor: 'pointer',
+                    padding: '15px 20px',
+                    border: paymentMethod === 'paytr' ? '2px solid var(--primary-dark)' : '2px solid #ddd',
+                    borderRadius: '10px',
+                    backgroundColor: paymentMethod === 'paytr' ? 'rgba(26, 74, 58, 0.1)' : 'white'
+                  }}>
+                    <input
+                      type="radio"
+                      value="paytr"
+                      checked={paymentMethod === 'paytr'}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                      style={{ marginRight: '10px' }}
+                    />
+                    <div>
+                      <div style={{ fontWeight: 'bold', fontSize: '16px' }}>💳 Kredi/Banka Kartı</div>
+                      <div style={{ fontSize: '12px', color: 'var(--text-light)' }}>PayTR ile güvenli ödeme</div>
+                    </div>
+                  </label>
                 </div>
               </div>
+
+              {/* IBAN Bilgileri - Sadece IBAN seçildiğinde göster */}
+              {paymentMethod === 'iban' && (
+                <div style={{ backgroundColor: '#f8f9fa', padding: '20px', borderRadius: '10px', marginBottom: '20px' }}>
+                  <h4 style={{ color: 'var(--primary-dark)', marginBottom: '15px' }}>
+                    🏦 IBAN Bilgileri
+                  </h4>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                    <div>
+                      <p><strong>IBAN:</strong> TR77 0011 1000 0000 0153 1671 66</p>
+                      <p><strong>Hesap Sahibi:</strong> HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ</p>
+                    </div>
+                    <div>
+                      <p><strong>Banka:</strong> Türkiye İş Bankası</p>
+                      <p><strong>Şube:</strong> Merkez</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* PayTR Bilgileri - Sadece PayTR seçildiğinde göster */}
+              {paymentMethod === 'paytr' && (
+                <div style={{ 
+                  padding: '20px', 
+                  backgroundColor: '#e8f5e8', 
+                  borderRadius: '10px',
+                  marginBottom: '20px',
+                  border: '1px solid #4caf50'
+                }}>
+                  <h4 style={{ color: '#2e7d32', marginBottom: '15px' }}>💳 PayTR Güvenli Ödeme</h4>
+                  <ul style={{ color: '#2e7d32', fontSize: '14px', marginBottom: '0', paddingLeft: '20px' }}>
+                    <li>Kredi kartı ve banka kartı ile güvenli ödeme</li>
+                    <li>3D Secure ile korumalı işlem</li>
+                    <li>Anında ödeme onayı ve sipariş aktivasyonu</li>
+                    <li>SSL sertifikası ile şifreli bağlantı</li>
+                    <li>Visa, MasterCard, American Express kabul edilir</li>
+                  </ul>
+                </div>
+              )}
 
               <div style={{ backgroundColor: '#e8f5e8', padding: '20px', borderRadius: '10px', marginBottom: '20px' }}>
                 <h4 style={{ color: 'var(--success-green)', marginBottom: '15px' }}>
@@ -1630,22 +1706,76 @@ const CustomerRegistration = () => {
               ← Geri
             </button>
 
-            <button
-              onClick={handleSubmit}
-              style={{
-                backgroundColor: 'var(--success-green)',
-                color: 'white',
-                border: 'none',
-                borderRadius: '10px',
-                padding: '15px 40px',
-                fontSize: '18px',
-                cursor: 'pointer',
-                fontWeight: 'bold',
-                boxShadow: '0 4px 15px rgba(39, 174, 96, 0.3)'
-              }}
-            >
-              💾 Müşteri Kaydını Tamamla
-            </button>
+            <div style={{ display: 'flex', gap: '15px' }}>
+              {paymentMethod === 'iban' && (
+                <button
+                  onClick={handlePayment}
+                  style={{
+                    backgroundColor: 'var(--primary-dark)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '10px',
+                    padding: '15px 30px',
+                    fontSize: '16px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  🏦 IBAN ile Ödeme Yap
+                </button>
+              )}
+
+              {paymentMethod === 'paytr' && (
+                <button
+                  onClick={async () => {
+                    try {
+                      // Önce müşteri kaydını yap
+                      await handlePayment();
+                      
+                      // Sonra PayTR ödeme sayfasına yönlendir
+                      const customerInfo = {
+                        name: `${formData.first_name} ${formData.last_name}`,
+                        email: formData.email,
+                        phone: formData.phone,
+                        address: formData.delivery_address
+                      };
+                      
+                      const selectedProduct = products.find(p => p.id === formData.selected_product);
+                      
+                      const response = await axios.post('/api/paytr/create-payment', {
+                        payment_type: 'device',
+                        user_info: customerInfo,
+                        custom_amount: selectedProduct?.total || 0
+                      }, {
+                        headers: {
+                          'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                      });
+
+                      if (response.data.success) {
+                        window.location.href = response.data.paymentUrl;
+                      } else {
+                        alert('PayTR ödeme oluşturulamadı: ' + response.data.message);
+                      }
+                    } catch (error) {
+                      alert('PayTR ödeme hatası: ' + (error.response?.data?.message || 'Bilinmeyen hata'));
+                    }
+                  }}
+                  style={{
+                    backgroundColor: '#28a745',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '10px',
+                    padding: '15px 30px',
+                    fontSize: '16px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  💳 PayTR ile Güvenli Ödeme Yap
+                </button>
+              )}
+            </div>
           </div>
         </div>
       )}
@@ -1698,21 +1828,70 @@ const CustomerRegistration = () => {
           </p>
 
           <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <button
-              onClick={() => navigate('/payment')}
-              style={{
-                backgroundColor: 'var(--accent-gold)',
-                color: 'var(--primary-dark)',
-                border: 'none',
-                borderRadius: '10px',
-                padding: '15px 30px',
-                fontSize: '16px',
-                cursor: 'pointer',
-                fontWeight: 'bold'
-              }}
-            >
-              💳 Ödeme Yap
-            </button>
+            {paymentMethod === 'iban' ? (
+              <button
+                onClick={() => navigate('/payment')}
+                style={{
+                  backgroundColor: 'var(--primary-dark)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '10px',
+                  padding: '15px 30px',
+                  fontSize: '16px',
+                  cursor: 'pointer',
+                  fontWeight: 'bold'
+                }}
+              >
+                🏦 IBAN Ödeme Sayfasına Git
+              </button>
+            ) : (
+              <button
+                onClick={async () => {
+                  // PayTR ödeme işlemi başlat
+                  try {
+                    const customerInfo = {
+                      name: `${formData.first_name} ${formData.last_name}`,
+                      email: formData.email,
+                      phone: formData.phone,
+                      address: formData.full_address || 'Türkiye'
+                    };
+
+                    const selectedProduct = products.find(p => p.id === formData.selected_product);
+                    
+                    const response = await axios.post('/api/paytr/create-payment', {
+                      payment_type: 'device', // Müşteri kaydı cihaz ödemesi
+                      user_info: customerInfo,
+                      custom_amount: selectedProduct?.total || 0
+                    }, {
+                      headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                      }
+                    });
+
+                    if (response.data.success) {
+                      // PayTR sayfasına yönlendir
+                      window.location.href = response.data.paymentUrl;
+                    } else {
+                      alert('PayTR ödeme oluşturulamadı: ' + response.data.message);
+                    }
+                  } catch (error) {
+                    alert('PayTR ödeme hatası: ' + (error.response?.data?.message || 'Bilinmeyen hata'));
+                  }
+                }}
+                style={{
+                  backgroundColor: '#28a745',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '10px',
+                  padding: '15px 30px',
+                  fontSize: '16px',
+                  cursor: 'pointer',
+                  fontWeight: 'bold'
+                }}
+              >
+                💳 PayTR ile Güvenli Ödeme Yap
+              </button>
+            )}
             
             <button
               onClick={() => navigate('/')}

@@ -8,20 +8,24 @@
     "server": "nodemon backend/server.js",
     "client": "cd frontend && npm start",
     "build": "cd frontend && npm run build",
-    "install-all": "npm install && cd frontend && npm install"
+    "install-all": "npm install && cd frontend && npm install",
+    "start": "NODE_ENV=production node backend/server.js",
+    "deploy": "chmod +x deployment/production_deploy.sh && ./deployment/production_deploy.sh",
+    "backup": "mysqldump -u root -p hoowell_network > deployment/backup_$(date +%Y%m%d_%H%M%S).sql"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "mysql2": "^3.6.0",
+    "axios": "^1.11.0",
     "bcryptjs": "^2.4.3",
-    "jsonwebtoken": "^9.0.2",
-    "multer": "^1.4.5-lts.1",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.6.0",
     "nodemailer": "^6.9.4"
   },
   "devDependencies": {
-    "nodemon": "^3.0.1",
-    "concurrently": "^8.2.0"
+    "concurrently": "^8.2.0",
+    "nodemon": "^3.0.1"
   }
 }

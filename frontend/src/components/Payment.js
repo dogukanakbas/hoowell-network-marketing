@@ -7,11 +7,18 @@ const Payment = () => {
   // const { user } = useAuth(); // Şu an kullanılmıyor
   const location = useLocation();
   const [paymentType, setPaymentType] = useState('education');
+  const [paymentMethod, setPaymentMethod] = useState('iban'); // 'iban' veya 'paytr'
   const [receipt, setReceipt] = useState(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [payments, setPayments] = useState([]);
   const [settings, setSettings] = useState({});
+  const [userInfo, setUserInfo] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    address: ''
+  });
 
   // Yeni kayıt sistemi için state
   const partnerRegistrationData = location.state;
@@ -71,7 +78,8 @@ const Payment = () => {
     };
   };
 
-  const handleSubmit = async (e) => {
+  // IBAN ile ödeme (mevcut sistem)
+  const handleIbanSubmit = async (e) => {
     e.preventDefault();
 
     if (!receipt) {
@@ -104,10 +112,45 @@ const Payment = () => {
     }
   };
 
+  // PayTR ile ödeme
+  const handlePayTRSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!userInfo.name || !userInfo.email || !userInfo.phone) {
+      setMessage('Lütfen tüm bilgileri doldurun');
+      return;
+    }
+
+    setLoading(true);
+    setMessage('');
+
+    try {
+      const response = await axios.post('/api/paytr/create-payment', {
+        payment_type: paymentType,
+        user_info: userInfo
+      }, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      if (response.data.success) {
+        // PayTR sayfasına yönlendir
+        window.location.href = response.data.paymentUrl;
+      } else {
+        setMessage('PayTR ödeme oluşturulamadı: ' + response.data.message);
+      }
+    } catch (error) {
+      setMessage(error.response?.data?.message || 'PayTR ödeme oluşturulamadı');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const amounts = calculateAmount();
 
-  // İş ortağı kaydı için özel submit fonksiyonu
-  const handlePartnerPaymentSubmit = async () => {
+  // İş ortağı kaydı için IBAN ödemesi
+  const handlePartnerIbanPayment = async () => {
     setLoading(true);
     setMessage('');
 
@@ -120,9 +163,48 @@ const Payment = () => {
         skip_receipt: true
       });
 
-      setMessage('✅ Ödeme kaydı başarıyla oluşturuldu! İş ortağı kaydı tamamlandı.');
+      setMessage('✅ IBAN ödeme kaydı başarıyla oluşturuldu! İş ortağı kaydı tamamlandı.');
     } catch (error) {
       setMessage('❌ Ödeme kaydı oluşturulamadı: ' + (error.response?.data?.message || 'Bilinmeyen hata'));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // İş ortağı kaydı için PayTR ödemesi
+  const handlePartnerPayTRPayment = async () => {
+    if (!userInfo.name || !userInfo.email || !userInfo.phone) {
+      setMessage('Lütfen tüm bilgileri doldurun');
+      return;
+    }
+
+    setLoading(true);
+    setMessage('');
+
+    try {
+      const response = await axios.post('/api/paytr/create-payment', {
+        payment_type: 'franchise',
+        user_info: {
+          ...userInfo,
+          name: userInfo.name || partnerRegistrationData.partnerInfo?.name,
+          email: userInfo.email || partnerRegistrationData.partnerInfo?.email
+        },
+        partner_id: partnerRegistrationData.partnerId,
+        custom_amount: partnerRegistrationData.amount
+      }, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      if (response.data.success) {
+        // PayTR sayfasına yönlendir
+        window.location.href = response.data.paymentUrl;
+      } else {
+        setMessage('PayTR ödeme oluşturulamadı: ' + response.data.message);
+      }
+    } catch (error) {
+      setMessage(error.response?.data?.message || 'PayTR ödeme oluşturulamadı');
     } finally {
       setLoading(false);
     }
@@ -135,38 +217,36 @@ const Payment = () => {
         <div className="dashboard-card" style={{ marginBottom: '30px' }}>
           <div style={{ textAlign: 'center', marginBottom: '30px' }}>
             <h2 style={{ color: 'var(--primary-dark)', marginBottom: '10px' }}>
-              💳 İş Ortağı Ödeme Kaydı
+              💳 İş Ortağı Ödeme Yöntemi Seçin
             </h2>
             <p style={{ color: 'var(--text-light)' }}>
-              {partnerRegistrationData.partnerInfo?.name} için ödeme kaydı oluşturuluyor
+              {partnerRegistrationData.partnerInfo?.name} için ödeme işlemi
             </p>
           </div>
 
-          {/* IBAN Bilgileri */}
-          <div style={{
-            backgroundColor: 'var(--card-gray)',
-            padding: '25px',
-            borderRadius: '15px',
-            marginBottom: '25px',
-            textAlign: 'center'
-          }}>
-            <h3 style={{ color: 'var(--primary-dark)', marginBottom: '15px' }}>
-              🏦 IBAN Bilgileri
-            </h3>
-            <div style={{
-              backgroundColor: 'var(--white)',
-              padding: '20px',
-              borderRadius: '10px',
-              fontFamily: 'monospace',
-              fontSize: '18px',
-              fontWeight: 'bold',
-              letterSpacing: '2px',
-              marginBottom: '10px'
-            }}>
-              TR77 0011 1000 0000 0153 1671 66
-            </div>
-            <div style={{ fontSize: '16px', color: 'var(--text-dark)' }}>
-              <strong>Alıcı:</strong> HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ
+          {/* Ödeme Yöntemi Seçimi */}
+          <div style={{ marginBottom: '30px' }}>
+            <div style={{ display: 'flex', gap: '20px', marginBottom: '20px', justifyContent: 'center' }}>
+              <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+                <input
+                  type="radio"
+                  value="iban"
+                  checked={paymentMethod === 'iban'}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                  style={{ marginRight: '8px' }}
+                />
+                🏦 IBAN ile Havale/EFT
+              </label>
+              <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+                <input
+                  type="radio"
+                  value="paytr"
+                  checked={paymentMethod === 'paytr'}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                  style={{ marginRight: '8px' }}
+                />
+                💳 Kredi/Banka Kartı (PayTR)
+              </label>
             </div>
           </div>
 
@@ -208,6 +288,131 @@ const Payment = () => {
             </div>
           </div>
 
+          {/* IBAN Ödeme Seçeneği */}
+          {paymentMethod === 'iban' && (
+            <div style={{ marginBottom: '25px' }}>
+              <div style={{
+                backgroundColor: 'var(--card-gray)',
+                padding: '25px',
+                borderRadius: '15px',
+                textAlign: 'center'
+              }}>
+                <h3 style={{ color: 'var(--primary-dark)', marginBottom: '15px' }}>
+                  🏦 IBAN Bilgileri
+                </h3>
+                <div style={{
+                  backgroundColor: 'var(--white)',
+                  padding: '20px',
+                  borderRadius: '10px',
+                  fontFamily: 'monospace',
+                  fontSize: '18px',
+                  fontWeight: 'bold',
+                  letterSpacing: '2px',
+                  marginBottom: '10px'
+                }}>
+                  TR77 0011 1000 0000 0153 1671 66
+                </div>
+                <div style={{ fontSize: '16px', color: 'var(--text-dark)' }}>
+                  <strong>Alıcı:</strong> HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* PayTR Ödeme Seçeneği */}
+          {paymentMethod === 'paytr' && (
+            <div style={{ marginBottom: '25px' }}>
+              <div style={{
+                backgroundColor: 'var(--card-gray)',
+                padding: '25px',
+                borderRadius: '15px'
+              }}>
+                <h3 style={{ color: 'var(--primary-dark)', marginBottom: '20px', textAlign: 'center' }}>
+                  💳 PayTR Ödeme Bilgileri
+                </h3>
+                
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '20px' }}>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Ad Soyad *</label>
+                    <input
+                      type="text"
+                      value={userInfo.name}
+                      onChange={(e) => setUserInfo({...userInfo, name: e.target.value})}
+                      placeholder={partnerRegistrationData.partnerInfo?.name || "Adınız ve soyadınız"}
+                      style={{
+                        width: '100%',
+                        padding: '10px',
+                        borderRadius: '8px',
+                        border: '1px solid #ddd'
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>E-posta *</label>
+                    <input
+                      type="email"
+                      value={userInfo.email}
+                      onChange={(e) => setUserInfo({...userInfo, email: e.target.value})}
+                      placeholder={partnerRegistrationData.partnerInfo?.email || "ornek@email.com"}
+                      style={{
+                        width: '100%',
+                        padding: '10px',
+                        borderRadius: '8px',
+                        border: '1px solid #ddd'
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Telefon *</label>
+                    <input
+                      type="tel"
+                      value={userInfo.phone}
+                      onChange={(e) => setUserInfo({...userInfo, phone: e.target.value})}
+                      placeholder="5xxxxxxxxx"
+                      style={{
+                        width: '100%',
+                        padding: '10px',
+                        borderRadius: '8px',
+                        border: '1px solid #ddd'
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Adres</label>
+                    <input
+                      type="text"
+                      value={userInfo.address}
+                      onChange={(e) => setUserInfo({...userInfo, address: e.target.value})}
+                      placeholder="Adresiniz (opsiyonel)"
+                      style={{
+                        width: '100%',
+                        padding: '10px',
+                        borderRadius: '8px',
+                        border: '1px solid #ddd'
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div style={{ 
+                  backgroundColor: '#e3f2fd', 
+                  padding: '15px', 
+                  borderRadius: '8px', 
+                  marginBottom: '20px',
+                  border: '1px solid #2196f3'
+                }}>
+                  <h5 style={{ color: '#1565c0', marginBottom: '10px' }}>💳 PayTR Güvenli Ödeme</h5>
+                  <ul style={{ color: '#1565c0', fontSize: '14px', marginBottom: '0' }}>
+                    <li>Kredi kartı ve banka kartı ile güvenli ödeme</li>
+                    <li>3D Secure ile korumalı işlem</li>
+                    <li>Anında ödeme onayı</li>
+                    <li>SSL sertifikası ile şifreli bağlantı</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Mesaj Alanı */}
           {message && (
             <div style={{
@@ -222,25 +427,45 @@ const Payment = () => {
             </div>
           )}
 
-          {/* Aksiyon Butonu */}
+          {/* Aksiyon Butonları */}
           <div style={{ textAlign: 'center' }}>
-            <button
-              onClick={handlePartnerPaymentSubmit}
-              disabled={loading || message.includes('✅')}
-              style={{
-                padding: '15px 40px',
-                backgroundColor: loading || message.includes('✅') ? 'var(--card-gray)' : 'var(--primary-dark)',
-                color: loading || message.includes('✅') ? 'var(--text-light)' : 'var(--white)',
-                border: 'none',
-                borderRadius: '10px',
-                fontSize: '18px',
-                fontWeight: 'bold',
-                cursor: loading || message.includes('✅') ? 'not-allowed' : 'pointer',
-                boxShadow: '0 5px 15px rgba(0,0,0,0.2)'
-              }}
-            >
-              {loading ? 'İşleniyor...' : message.includes('✅') ? 'Tamamlandı' : 'Ödeme Kaydı Oluştur'}
-            </button>
+            {paymentMethod === 'iban' ? (
+              <button
+                onClick={handlePartnerIbanPayment}
+                disabled={loading || message.includes('✅')}
+                style={{
+                  padding: '15px 40px',
+                  backgroundColor: loading || message.includes('✅') ? 'var(--card-gray)' : 'var(--primary-dark)',
+                  color: loading || message.includes('✅') ? 'var(--text-light)' : 'var(--white)',
+                  border: 'none',
+                  borderRadius: '10px',
+                  fontSize: '18px',
+                  fontWeight: 'bold',
+                  cursor: loading || message.includes('✅') ? 'not-allowed' : 'pointer',
+                  boxShadow: '0 5px 15px rgba(0,0,0,0.2)'
+                }}
+              >
+                {loading ? 'İşleniyor...' : message.includes('✅') ? 'Tamamlandı' : '🏦 IBAN Ödeme Kaydı Oluştur'}
+              </button>
+            ) : (
+              <button
+                onClick={handlePartnerPayTRPayment}
+                disabled={loading || message.includes('✅')}
+                style={{
+                  padding: '15px 40px',
+                  backgroundColor: loading || message.includes('✅') ? 'var(--card-gray)' : '#28a745',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '10px',
+                  fontSize: '18px',
+                  fontWeight: 'bold',
+                  cursor: loading || message.includes('✅') ? 'not-allowed' : 'pointer',
+                  boxShadow: '0 5px 15px rgba(0,0,0,0.2)'
+                }}
+              >
+                {loading ? 'PayTR\'ye Yönlendiriliyor...' : '💳 PayTR ile Güvenli Ödeme Yap'}
+              </button>
+            )}
           </div>
 
           <div style={{
@@ -252,81 +477,201 @@ const Payment = () => {
             color: '#1565c0',
             textAlign: 'center'
           }}>
-            <strong>💡 Bilgi:</strong> Bu işlem sadece ödeme kaydı oluşturur. Dekont yükleme gerekmez.
-            <br />Müşteri IBAN'a ödeme yaptıktan sonra admin panelinden onaylanacaktır.
+            <strong>💡 Bilgi:</strong> {paymentMethod === 'iban' 
+              ? 'IBAN ödemesi için dekont yükleme gerekmez. Müşteri IBAN\'a ödeme yaptıktan sonra admin panelinden onaylanacaktır.'
+              : 'PayTR ile ödeme anında onaylanır ve iş ortağı kaydı otomatik tamamlanır.'
+            }
           </div>
         </div>
       ) : (
         // Normal Ödeme Ekranı
         <div className="dashboard-card" style={{ marginBottom: '30px' }}>
-          <h3>Ödeme Bilgileri</h3>
+          <h3>💳 Ödeme Yöntemi Seçin</h3>
 
-          <div style={{ marginBottom: '20px' }}>
-            <h4>IBAN Bilgileri</h4>
-            <p style={{ backgroundColor: '#f5f5f5', padding: '15px', borderRadius: '8px', fontFamily: 'monospace' }}>
-              TR77 0011 1000 0000 0153 1671 66<br />
-              Alıcı: HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ
-            </p>
+          {/* Ödeme Yöntemi Seçimi */}
+          <div style={{ marginBottom: '30px' }}>
+            <div style={{ display: 'flex', gap: '20px', marginBottom: '20px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+                <input
+                  type="radio"
+                  value="iban"
+                  checked={paymentMethod === 'iban'}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                  style={{ marginRight: '8px' }}
+                />
+                🏦 IBAN ile Havale/EFT
+              </label>
+              <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+                <input
+                  type="radio"
+                  value="paytr"
+                  checked={paymentMethod === 'paytr'}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                  style={{ marginRight: '8px' }}
+                />
+                💳 Kredi/Banka Kartı (PayTR)
+              </label>
+            </div>
           </div>
 
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label>Ödeme Türü</label>
-              <select
-                className="form-control"
-                value={paymentType}
-                onChange={(e) => setPaymentType(e.target.value)}
-              >
-                <option value="education">Eğitim Paketi - {amounts.totalAmount?.toLocaleString()} TL</option>
-                <option value="device">Cihaz Paketi - {amounts.totalAmount?.toLocaleString()} TL</option>
-              </select>
-            </div>
-
-            <div style={{ backgroundColor: '#f8f9fa', padding: '15px', borderRadius: '8px', marginBottom: '20px' }}>
-              <h4>Ödeme Detayları</h4>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                <div>Net Tutar: {amounts.tryAmount?.toLocaleString()} TL</div>
-                <div>KDV (%{settings.vat_rate}): {amounts.vatAmount?.toLocaleString()} TL</div>
-                <div style={{ fontWeight: 'bold', fontSize: '18px', color: '#1a4a3a', gridColumn: '1 / -1' }}>
-                  Toplam: {amounts.totalAmount?.toLocaleString()} TL (KDV Dahil)
-                </div>
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label>Dekont Dosyası</label>
-              <input
-                type="file"
-                className="form-control"
-                accept="image/*,.pdf"
-                onChange={(e) => setReceipt(e.target.files[0])}
-                required
-              />
-              <small style={{ color: '#666' }}>
-                Desteklenen formatlar: JPG, PNG, PDF
-              </small>
-            </div>
-
-            {message && (
-              <div style={{
-                padding: '10px',
-                borderRadius: '5px',
-                marginBottom: '20px',
-                backgroundColor: message.includes('oluşturuldu') ? '#d4edda' : '#f8d7da',
-                color: message.includes('oluşturuldu') ? '#155724' : '#721c24'
-              }}>
-                {message}
-              </div>
-            )}
-
-            <button
-              type="submit"
-              className="btn btn-primary"
-              disabled={loading}
+          {/* Ödeme Türü Seçimi */}
+          <div className="form-group" style={{ marginBottom: '20px' }}>
+            <label>Ödeme Türü</label>
+            <select
+              className="form-control"
+              value={paymentType}
+              onChange={(e) => setPaymentType(e.target.value)}
             >
-              {loading ? 'Gönderiliyor...' : 'Ödeme Kaydı Oluştur'}
-            </button>
-          </form>
+              <option value="education">Eğitim Paketi - {amounts.totalAmount?.toLocaleString()} TL</option>
+              <option value="device">Cihaz Paketi - {amounts.totalAmount?.toLocaleString()} TL</option>
+            </select>
+          </div>
+
+          {/* Ödeme Detayları */}
+          <div style={{ backgroundColor: '#f8f9fa', padding: '15px', borderRadius: '8px', marginBottom: '20px' }}>
+            <h4>Ödeme Detayları</h4>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+              <div>Net Tutar: {amounts.tryAmount?.toLocaleString()} TL</div>
+              <div>KDV (%{settings.vat_rate}): {amounts.vatAmount?.toLocaleString()} TL</div>
+              <div style={{ fontWeight: 'bold', fontSize: '18px', color: '#1a4a3a', gridColumn: '1 / -1' }}>
+                Toplam: {amounts.totalAmount?.toLocaleString()} TL (KDV Dahil)
+              </div>
+            </div>
+          </div>
+
+          {/* IBAN Ödeme Formu */}
+          {paymentMethod === 'iban' && (
+            <div>
+              <div style={{ marginBottom: '20px' }}>
+                <h4>🏦 IBAN Bilgileri</h4>
+                <p style={{ backgroundColor: '#f5f5f5', padding: '15px', borderRadius: '8px', fontFamily: 'monospace' }}>
+                  TR77 0011 1000 0000 0153 1671 66<br />
+                  Alıcı: HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ
+                </p>
+              </div>
+
+              <form onSubmit={handleIbanSubmit}>
+                <div className="form-group">
+                  <label>Dekont Dosyası</label>
+                  <input
+                    type="file"
+                    className="form-control"
+                    accept="image/*,.pdf"
+                    onChange={(e) => setReceipt(e.target.files[0])}
+                    required
+                  />
+                  <small style={{ color: '#666' }}>
+                    Desteklenen formatlar: JPG, PNG, PDF
+                  </small>
+                </div>
+
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={loading}
+                  style={{ width: '100%', padding: '12px' }}
+                >
+                  {loading ? 'Gönderiliyor...' : '📄 Dekont Yükle ve Ödeme Kaydı Oluştur'}
+                </button>
+              </form>
+            </div>
+          )}
+
+          {/* PayTR Ödeme Formu */}
+          {paymentMethod === 'paytr' && (
+            <div>
+              <form onSubmit={handlePayTRSubmit}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '20px' }}>
+                  <div className="form-group">
+                    <label>Ad Soyad *</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={userInfo.name}
+                      onChange={(e) => setUserInfo({...userInfo, name: e.target.value})}
+                      required
+                      placeholder="Adınız ve soyadınız"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>E-posta *</label>
+                    <input
+                      type="email"
+                      className="form-control"
+                      value={userInfo.email}
+                      onChange={(e) => setUserInfo({...userInfo, email: e.target.value})}
+                      required
+                      placeholder="ornek@email.com"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Telefon *</label>
+                    <input
+                      type="tel"
+                      className="form-control"
+                      value={userInfo.phone}
+                      onChange={(e) => setUserInfo({...userInfo, phone: e.target.value})}
+                      required
+                      placeholder="5xxxxxxxxx"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Adres</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={userInfo.address}
+                      onChange={(e) => setUserInfo({...userInfo, address: e.target.value})}
+                      placeholder="Adresiniz (opsiyonel)"
+                    />
+                  </div>
+                </div>
+
+                <div style={{ 
+                  backgroundColor: '#e3f2fd', 
+                  padding: '15px', 
+                  borderRadius: '8px', 
+                  marginBottom: '20px',
+                  border: '1px solid #2196f3'
+                }}>
+                  <h5 style={{ color: '#1565c0', marginBottom: '10px' }}>💳 PayTR Güvenli Ödeme</h5>
+                  <ul style={{ color: '#1565c0', fontSize: '14px', marginBottom: '0' }}>
+                    <li>Kredi kartı ve banka kartı ile güvenli ödeme</li>
+                    <li>3D Secure ile korumalı işlem</li>
+                    <li>Anında ödeme onayı</li>
+                    <li>SSL sertifikası ile şifreli bağlantı</li>
+                  </ul>
+                </div>
+
+                <button
+                  type="submit"
+                  className="btn btn-success"
+                  disabled={loading}
+                  style={{ 
+                    width: '100%', 
+                    padding: '15px',
+                    fontSize: '16px',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  {loading ? 'PayTR\'ye Yönlendiriliyor...' : '💳 PayTR ile Güvenli Ödeme Yap'}
+                </button>
+              </form>
+            </div>
+          )}
+
+          {/* Mesaj Alanı */}
+          {message && (
+            <div style={{
+              padding: '15px',
+              borderRadius: '8px',
+              marginTop: '20px',
+              backgroundColor: message.includes('oluşturuldu') || message.includes('yüklendi') ? '#d4edda' : '#f8d7da',
+              color: message.includes('oluşturuldu') || message.includes('yüklendi') ? '#155724' : '#721c24'
+            }}>
+              {message}
+            </div>
+          )}
         </div>
       )}
 

@@ -1,228 +1,172 @@
-# HOOWELL Güvenli Güncelleme Rehberi
+# 🔄 Güvenli Sunucu Güncelleme Rehberi
 
-## 🎯 AMAÇ
-Mevcut sunucudaki verileri kaybetmeden sistemi güncellemek.
-
-## ⚠️ ÖNEMLİ UYARILAR
-- Bu işlemler sırasında sistem kısa süre erişilemez olabilir
-- Mutlaka yedek alın
-- İşlemleri sırayla yapın
-- Her adımdan sonra test edin
-
-## 📋 GÜNCELLEME ADIMLARI
-
-### 1. YEDEK ALMA (KRİTİK!)
+## ADIM 1: Sunucuya Bağlanın
 ```bash
-# Veritabanı yedeği
-mysqldump -u root -p hoowell_network > backup_$(date +%Y%m%d_%H%M%S).sql
-
-# Dosya yedeği
-tar -czf files_backup_$(date +%Y%m%d_%H%M%S).tar.gz /path/to/hoowell/
-
-# Yedekleri güvenli yere kopyalayın
+ssh root@hoowell.net
+# veya
+ssh username@hoowell.net
 ```
 
-### 2. MEVCUT DURUM TESPİTİ
+## ADIM 2: Mevcut Durumu Kontrol Edin
 ```bash
-# Sunucuda mevcut tabloları kontrol et
-mysql -u root -p hoowell_network -e "SHOW TABLES;"
+# Hangi dizinde olduğunuzu kontrol edin
+pwd
 
-# Kullanıcı sayısını kontrol et
-mysql -u root -p hoowell_network -e "SELECT COUNT(*) as user_count FROM users;"
+# Proje dizinine gidin (muhtemelen şu konumlardan biri)
+cd /var/www/hoowell_son
+# veya
+cd /home/username/hoowell_son
+# veya
+cd /root/hoowell_son
 
-# Müşteri sayısını kontrol et
-mysql -u root -p hoowell_network -e "SELECT COUNT(*) as customer_count FROM customers;"
+# Mevcut git durumunu kontrol edin
+git status
+git branch
 ```
 
-### 3. EKSİK TABLO EKLEME
-```sql
--- customer_satisfaction_rewards tablosunu ekle
-USE hoowell_network;
-
-CREATE TABLE IF NOT EXISTS customer_satisfaction_rewards (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    customer_id INT NOT NULL,
-    reward_type ENUM('referral', 'satisfaction', 'loyalty') NOT NULL,
-    reward_amount_usd DECIMAL(10,2) NOT NULL,
-    reward_amount_try DECIMAL(10,2) NOT NULL,
-    reward_date DATETIME NOT NULL,
-    status ENUM('pending', 'approved', 'paid') DEFAULT 'pending',
-    notes TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (customer_id) REFERENCES customers(id),
-    INDEX idx_customer_id (customer_id),
-    INDEX idx_reward_date (reward_date),
-    INDEX idx_status (status)
-);
-```
-
-### 4. TABLO YAPILARINI GÜNCELLEME
-```sql
--- users tablosuna eksik alanlar varsa ekle
-ALTER TABLE users 
-ADD COLUMN IF NOT EXISTS payment_pending BOOLEAN DEFAULT FALSE,
-ADD COLUMN IF NOT EXISTS payment_blocked BOOLEAN DEFAULT FALSE,
-ADD COLUMN IF NOT EXISTS education_started_at DATETIME NULL;
-
--- customers tablosuna eksik alanlar varsa ekle  
-ALTER TABLE customers
-ADD COLUMN IF NOT EXISTS delivery_city VARCHAR(100),
-ADD COLUMN IF NOT EXISTS delivery_district VARCHAR(100),
-ADD COLUMN IF NOT EXISTS billing_address TEXT,
-ADD COLUMN IF NOT EXISTS billing_city VARCHAR(100),
-ADD COLUMN IF NOT EXISTS billing_district VARCHAR(100),
-ADD COLUMN IF NOT EXISTS same_address BOOLEAN DEFAULT TRUE,
-ADD COLUMN IF NOT EXISTS order_id VARCHAR(50);
-```
-
-### 5. BACKEND GÜNCELLEME
+## ADIM 3: Veritabanı Backup Alın (ÇOK ÖNEMLİ!)
 ```bash
-# Mevcut backend'i yedekle
-cp -r backend backend_backup_$(date +%Y%m%d)
+# Backup dizini oluşturun
+mkdir -p backups
 
-# Yeni backend dosyalarını kopyala
-# server.js ve diğer dosyaları güncelle
+# Veritabanı backup alın
+mysqldump -u root -p hoowell_network > backups/backup_$(date +%Y%m%d_%H%M%S).sql
 
-# Node modules'ları güncelle
-cd backend
+# Backup'ın oluştuğunu kontrol edin
+ls -la backups/
+```
+
+## ADIM 4: Mevcut Servisleri Durdurun
+```bash
+# PM2 ile çalışan servisleri kontrol edin
+pm2 list
+
+# Servisleri durdurun (ama silmeyin)
+pm2 stop all
+
+# Nginx'i durdurun (opsiyonel)
+sudo systemctl stop nginx
+```
+
+## ADIM 5: Mevcut Kodu Yedekleyin
+```bash
+# Mevcut kodu yedekleyin
+cp -r . ../hoowell_son_backup_$(date +%Y%m%d_%H%M%S)
+
+# Yedek oluştuğunu kontrol edin
+ls -la ../
+```
+
+## ADIM 6: Git'ten Yeni Kodları Çekin
+```bash
+# Mevcut değişiklikleri stash'leyin (eğer varsa)
+git stash
+
+# Ana branch'e geçin
+git checkout main
+
+# En son kodları çekin
+git pull origin main
+
+# Çekilen değişiklikleri kontrol edin
+git log --oneline -5
+```
+
+## ADIM 7: Dependencies Güncelleyin
+```bash
+# Backend dependencies
 npm install
-```
 
-### 6. FRONTEND GÜNCELLEME
-```bash
-# Mevcut frontend'i yedekle
-cp -r frontend frontend_backup_$(date +%Y%m%d)
-
-# Yeni frontend dosyalarını kopyala
-# React bileşenlerini güncelle
-
-# Dependencies'leri güncelle
+# Frontend dependencies
 cd frontend
 npm install
+cd ..
+```
+
+## ADIM 8: Frontend Build Yapın
+```bash
+cd frontend
 npm run build
+cd ..
 ```
 
-### 7. VERİ TUTARLILIK KONTROLÜ
-```sql
--- KKP hesaplamalarını düzelt
-UPDATE users u SET 
-total_kkp = (
-    SELECT COALESCE(
-        (SELECT SUM(total_amount)/40 FROM customers WHERE created_by = u.id), 0
-    ) + 
-    (SELECT COUNT(*) * 120 FROM users WHERE created_by = u.id AND role = 'partner')
-),
-active_partners = (
-    SELECT COUNT(*) FROM users WHERE created_by = u.id AND role = 'partner'
-);
-
--- Müşteri durumlarını düzelt
-UPDATE customers SET status = 'confirmed' WHERE status = 'pending';
-```
-
-### 8. SİSTEM AYARLARINI GÜNCELLE
-```sql
--- Sistem ayarlarını kontrol et ve güncelle
-INSERT INTO system_settings (setting_key, setting_value) VALUES
-('usd_to_try_rate', '40'),
-('vat_rate', '20'),
-('education_price_usd', '100'),
-('device_price_usd', '1800')
-ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value);
-```
-
-### 9. SERVİSLERİ YENİDEN BAŞLAT
+## ADIM 9: Veritabanı Migration'larını Çalıştırın
 ```bash
-# Backend servisi
-pm2 restart hoowell-backend
+# Yeni migration dosyalarını çalıştırın
+mysql -u root -p hoowell_network < backend/fix_customers_table.sql
+mysql -u root -p hoowell_network < backend/create_settings_table.sql  
+mysql -u root -p hoowell_network < backend/fix_payments_table.sql
 
-# Frontend servisi (nginx)
-sudo systemctl reload nginx
-
-# Veritabanı servisi (gerekirse)
-sudo systemctl restart mysql
+# Veritabanı yapısını kontrol edin
+mysql -u root -p hoowell_network -e "DESCRIBE customers;"
+mysql -u root -p hoowell_network -e "DESCRIBE payments;"
+mysql -u root -p hoowell_network -e "DESCRIBE settings;"
 ```
 
-### 10. TEST VE DOĞRULAMA
+## ADIM 10: Environment Dosyasını Kontrol Edin
 ```bash
-# API testleri
-curl -X GET "http://localhost:5001/api/dashboard/stats"
+# Mevcut .env dosyasını kontrol edin
+cat .env
 
-# Frontend testi
-curl -X GET "http://localhost:3000"
-
-# Veritabanı bağlantı testi
-mysql -u root -p hoowell_network -e "SELECT COUNT(*) FROM users;"
+# Eğer .env yoksa, production template'den oluşturun
+if [ ! -f .env ]; then
+    cp .env.production .env
+    echo "⚠️  .env dosyası oluşturuldu, lütfen düzenleyin!"
+fi
 ```
 
-## 🔧 SORUN GİDERME
-
-### Backend Başlamazsa:
+## ADIM 11: Servisleri Yeniden Başlatın
 ```bash
-# Log kontrolü
-pm2 logs hoowell-backend
-
-# Port kontrolü
-netstat -tulpn | grep :5001
-
-# Manuel başlatma
-cd backend && node server.js
-```
-
-### Frontend Görünmezse:
-```bash
-# Nginx log kontrolü
-sudo tail -f /var/log/nginx/error.log
-
-# Build kontrolü
-cd frontend && npm run build
-
-# Nginx config kontrolü
-sudo nginx -t
-```
-
-### Veritabanı Sorunları:
-```bash
-# MySQL log kontrolü
-sudo tail -f /var/log/mysql/error.log
-
-# Bağlantı testi
-mysql -u root -p -e "SHOW DATABASES;"
-
-# Tablo kontrolü
-mysql -u root -p hoowell_network -e "SHOW TABLES;"
-```
-
-## 📊 BAŞARI KRİTERLERİ
-
-✅ Tüm mevcut kullanıcılar korundu
-✅ Tüm müşteri kayıtları korundu  
-✅ KKP puanları doğru hesaplanıyor
-✅ Tüm API endpoint'leri çalışıyor
-✅ Frontend düzgün yükleniyor
-✅ Admin paneli erişilebilir
-✅ Yeni özellikler aktif
-
-## 🆘 ACİL DURUM PLANI
-
-Eğer bir şeyler ters giderse:
-
-```bash
-# Veritabanını geri yükle
-mysql -u root -p hoowell_network < backup_YYYYMMDD_HHMMSS.sql
-
-# Dosyaları geri yükle
-tar -xzf files_backup_YYYYMMDD_HHMMSS.tar.gz
-
-# Servisleri yeniden başlat
+# PM2 ile servisleri başlatın
 pm2 restart all
-sudo systemctl restart nginx
+
+# Eğer PM2'de servis yoksa, yeni başlatın
+pm2 start backend/server.js --name hoowell-backend
+
+# Servis durumunu kontrol edin
+pm2 status
+pm2 logs hoowell-backend --lines 20
 ```
 
-## 📞 DESTEK
+## ADIM 12: Nginx'i Başlatın
+```bash
+# Nginx konfigürasyonunu test edin
+sudo nginx -t
 
-Sorun yaşarsanız:
-1. Log dosyalarını kontrol edin
-2. Yedeklerden geri yükleyin
-3. Adım adım tekrar deneyin
+# Nginx'i başlatın
+sudo systemctl start nginx
+sudo systemctl status nginx
+```
+
+## ADIM 13: Test Edin
+```bash
+# Backend API test
+curl http://localhost:5001/api/test || echo "API test endpoint yok"
+
+# Frontend test
+curl http://hoowell.net || curl http://localhost
+
+# PM2 loglarını kontrol edin
+pm2 logs hoowell-backend --lines 10
+```
+
+## ADIM 14: Sorun Varsa Geri Dönüş
+```bash
+# Eğer sorun varsa, yedekten geri dönün
+# pm2 stop all
+# rm -rf ./*
+# cp -r ../hoowell_son_backup_YYYYMMDD_HHMMSS/* .
+# pm2 restart all
+```
+
+## ✅ Başarı Kontrol Listesi
+- [ ] Veritabanı backup alındı
+- [ ] Kod yedeklendi  
+- [ ] Git pull başarılı
+- [ ] Dependencies yüklendi
+- [ ] Frontend build yapıldı
+- [ ] Database migration'lar çalıştı
+- [ ] PM2 servisleri çalışıyor
+- [ ] Nginx çalışıyor
+- [ ] Site erişilebilir
+- [ ] PayTR test edildi

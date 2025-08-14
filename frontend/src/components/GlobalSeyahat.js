@@ -4,14 +4,14 @@ import axios from 'axios';
 const GlobalSeyahat = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   // Kapak resmi gösterilip gösterilmeyeceğini kontrol et
   const shouldShowCover = () => {
     const currentDate = new Date();
     const targetDate = new Date('2025-09-01');
     return currentDate < targetDate;
   };
-  
+
   // Suppress unused variable warnings temporarily
   console.log('Global travel state:', { loading, error });
   const [travelData, setTravelData] = useState({
@@ -82,8 +82,8 @@ const GlobalSeyahat = () => {
           right: '20px',
           zIndex: 10
         }}>
-          <img 
-            src="/hoowell-logo.png" 
+          <img
+            src="/hoowell-logo.png"
             alt="HOOWELL Logo"
             style={{
               width: '120px',
@@ -104,9 +104,9 @@ const GlobalSeyahat = () => {
           borderRadius: '15px',
           overflow: 'hidden',
           boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5)',
-          
+
         }}>
-          
+
           {/* Responsive Styles */}
           <style jsx>{`
             /* Tüm ekranlar için görsel optimizasyonu */
@@ -166,8 +166,8 @@ const GlobalSeyahat = () => {
         right: '20px',
         zIndex: 10
       }}>
-        <img 
-          src="/hoowell-logo.png" 
+        <img
+          src="/hoowell-logo.png"
           alt="HOOWELL Logo"
           style={{
             width: '120px',

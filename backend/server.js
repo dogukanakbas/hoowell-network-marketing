@@ -13,7 +13,7 @@ const app = express();
 // Middleware
 app.use(cors({
   origin: process.env.NODE_ENV === 'production'
-    ? ['https://yourdomain.com']
+    ? ['https://hoowell.net', 'https://www.hoowell.net']
     : ['http://localhost:3000'],
   credentials: true
 }));
@@ -166,20 +166,9 @@ const checkPaymentBlock = async (req, res, next) => {
   }
 };
 
-// PayTR Callback Endpoint (PayTR başvurusu için gerekli)
-app.post('/api/paytr/callback', (req, res) => {
-  try {
-    // PayTR'den gelen callback'leri işleyecek endpoint
-    // Şu an için basit bir response döndürüyoruz
-    console.log('PayTR Callback received:', req.body);
-    res.status(200).send('OK');
-  } catch (error) {
-    console.error('PayTR callback error:', error);
-    res.status(500).send('ERROR');
-  }
-});
-
-// Routes will be added here
+// PayTR Routes
+const paytrRoutes = require('./routes/paytr');
+app.use('/api/paytr', paytrRoutes);
 
 // Network Tree Routes
 app.get('/api/network/tree', verifyToken, async (req, res) => {
@@ -592,7 +581,7 @@ const calculateSponsorshipEarnings = async (partnerId, saleAmount, saleType) => 
     const partnerLevel = partner[0].career_level;
 
     // RECURSIVE DOWNLINE COMMISSION CALCULATION
-    await calculateDownlineCommissions(sponsorId, saleAmount, saleType, 1, partnerId);
+    await calculateDownlineCommissions(sponsorId, saleAmount, saleType, 1, partnerId, partnerLevel);
 
   } catch (error) {
     console.error('Calculate sponsorship earnings error:', error);
@@ -600,7 +589,7 @@ const calculateSponsorshipEarnings = async (partnerId, saleAmount, saleType) => 
 };
 
 // New function for recursive downline commissions
-const calculateDownlineCommissions = async (currentSponsorId, saleAmount, saleType, level, originalPartnerId) => {
+const calculateDownlineCommissions = async (currentSponsorId, saleAmount, saleType, level, originalPartnerId, partnerLevel) => {
   try {
     // Maximum levels for commission (prevent infinite recursion)
     const MAX_LEVELS = 5;
@@ -659,7 +648,7 @@ const calculateDownlineCommissions = async (currentSponsorId, saleAmount, saleTy
         // Get current earnings for this level
         const [currentEarnings] = await db.promise().execute(
           `SELECT ${level}_earnings FROM sponsorship_earnings WHERE sponsor_id = ? AND partner_id = ?`,
-          [sponsorId, partnerId]
+          [currentSponsorId, originalPartnerId]
         );
 
         if (currentEarnings.length > 0) {
@@ -669,10 +658,10 @@ const calculateDownlineCommissions = async (currentSponsorId, saleAmount, saleTy
           // Update earnings
           await db.promise().execute(
             `UPDATE sponsorship_earnings SET ${level}_earnings = ?, monthly_earnings = monthly_earnings + ? WHERE sponsor_id = ? AND partner_id = ?`,
-            [newAmount, bonusAmount, sponsorId, partnerId]
+            [newAmount, bonusAmount, currentSponsorId, originalPartnerId]
           );
 
-          console.log(`Sponsorship bonus: ${bonusAmount} USD added to ${level} level for sponsor ${sponsorId} from partner ${partnerId}`);
+          console.log(`Sponsorship bonus: ${bonusAmount} USD added to ${level} level for sponsor ${currentSponsorId} from partner ${originalPartnerId}`);
         }
       }
     }
@@ -682,7 +671,7 @@ const calculateDownlineCommissions = async (currentSponsorId, saleAmount, saleTy
       UPDATE sponsorship_earnings 
       SET first_sale_activated = TRUE, activation_date = NOW() 
       WHERE sponsor_id = ? AND partner_id = ? AND first_sale_activated = FALSE
-    `, [sponsorId, partnerId]);
+    `, [currentSponsorId, originalPartnerId]);
 
   } catch (error) {
     console.error('Calculate sponsorship earnings error:', error);
@@ -952,6 +941,9 @@ app.post('/api/customers', verifyToken, async (req, res) => {
       tc_no,
       email,
       phone,
+      country_code,
+      city,
+      district,
       delivery_address,
       company_name,
       tax_office,
@@ -961,6 +953,7 @@ app.post('/api/customers', verifyToken, async (req, res) => {
       authorized_phone,
       authorized_country_code,
       selected_product,
+      selected_color,
       product_price,
       product_vat,
       total_amount,
@@ -981,19 +974,21 @@ app.post('/api/customers', verifyToken, async (req, res) => {
     const [result] = await db.promise().execute(`
       INSERT INTO customers (
         customer_id, registration_type, first_name, last_name, tc_no, email, phone,
-        delivery_address, company_name, tax_office, tax_no, authorized_person,
-        authorized_email, authorized_phone, selected_product, product_price,
-        product_vat, total_amount, contract1_accepted, contract2_accepted,
-        contract3_accepted, contract4_accepted, contract5_accepted,
-        created_by, status
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        country_code, delivery_city, delivery_district, delivery_address, 
+        company_name, tax_office, tax_no, authorized_person,
+        authorized_email, authorized_phone, authorized_country_code, 
+        selected_product, product_price, product_vat, total_amount, 
+        contract1_accepted, contract2_accepted, contract3_accepted, 
+        contract4_accepted, contract5_accepted, created_by, status
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `, [
       customerId, registration_type, first_name, last_name, tc_no, email, phone,
-      delivery_address, company_name, tax_office, tax_no, authorized_person,
-      authorized_email, authorized_phone, selected_product, product_price,
-      product_vat, total_amount, contract1_accepted, contract2_accepted,
-      contract3_accepted, contract4_accepted, contract5_accepted,
-      req.user.id, 'confirmed'
+      country_code || '+90', city, district, delivery_address, 
+      company_name, tax_office, tax_no, authorized_person,
+      authorized_email, authorized_phone, authorized_country_code || '+90', 
+      selected_product, product_price, product_vat, total_amount, 
+      contract1_accepted, contract2_accepted, contract3_accepted, 
+      contract4_accepted, contract5_accepted, req.user.id, 'confirmed'
     ]);
 
     // Award KKP for customer sale - KDV hariç net fiyat üzerinden
