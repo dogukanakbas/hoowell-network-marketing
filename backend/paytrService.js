@@ -11,7 +11,7 @@ class PayTRService {
     this.baseUrl = 'https://www.paytr.com/odeme/api/';
   }
 
-  // PayTR token oluşturma (PHP örneğine uygun)
+  // PayTR token oluşturma (PayTR resmi örneğe uygun)
   createPaymentToken(paymentData) {
     const {
       merchant_oid,
@@ -32,13 +32,13 @@ class PayTRService {
       timeout_limit = 30
     } = paymentData;
 
-    // Bildirim URL'si - PayTR'nin ödeme sonucunu bildireceği endpoint
+    // PHP callback URL'i kullan (web root'ta)
     const baseUrl = process.env.NODE_ENV === 'production' 
-      ? (process.env.BACKEND_URL || 'https://hoowell.net') 
-      : 'http://localhost:5001';
-    const bildirim_url = `${baseUrl}/api/paytr/callback`;
+      ? 'https://hoowell.net'  // Production domain
+      : 'http://localhost';
+    const bildirim_url = `${baseUrl}/paytr_callback.php`;
 
-    // PayTR hash string (PHP örneğindeki sıra)
+    // PayTR hash string (resmi örneğe uygun sıra)
     const hashStr = `${this.merchantId}${user_ip}${merchant_oid}${email}${payment_amount}${user_basket}${no_installment}${max_installment}${currency}${test_mode}`;
     console.log('PayTR Hash String:', hashStr);
     
@@ -61,7 +61,7 @@ class PayTRService {
       user_phone,
       merchant_ok_url,
       merchant_fail_url,
-      bildirim_url, // ÖNEMLİ: PayTR'nin ödeme sonucunu bildireceği URL
+      bildirim_url, // PHP callback URL'i
       timeout_limit,
       currency,
       test_mode
@@ -72,7 +72,7 @@ class PayTRService {
     return postData;
   }
 
-  // Hash oluşturma fonksiyonu (PayTR dokümantasyonuna uygun)
+  // Hash oluşturma fonksiyonu (PayTR resmi örneğe uygun)
   createHash(data) {
     return crypto
       .createHmac('sha256', this.merchantKey)
@@ -80,7 +80,7 @@ class PayTRService {
       .digest('base64');
   }
 
-  // PayTR'ye ödeme isteği gönderme (iframe desteği ile)
+  // PayTR'ye ödeme isteği gönderme
   async createPayment(paymentData) {
     try {
       const tokenData = this.createPaymentToken(paymentData);
@@ -123,7 +123,7 @@ class PayTRService {
     }
   }
 
-  // Callback doğrulama
+  // Callback doğrulama (PHP callback için)
   verifyCallback(callbackData) {
     const {
       merchant_oid,

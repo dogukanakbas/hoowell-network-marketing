@@ -8,7 +8,7 @@ echo "🐘 PHP Kurulumu Başlıyor..."
 
 # PHP ve gerekli modülleri kur
 sudo apt update
-sudo apt install -y php8.1-fpm php8.1-cli php8.1-mysql php8.1-curl php8.1-json php8.1-mbstring
+sudo apt install -y php8.1-fpm php8.1-cli php8.1-mysql php8.1-curl php8.1-mbstring
 
 # PHP-FPM'i başlat ve aktif et
 sudo systemctl start php8.1-fpm
