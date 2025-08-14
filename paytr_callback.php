@@ -49,11 +49,11 @@ if ($hash != $post['hash']) {
     die('PAYTR notification failed: bad hash');
 }
 
-// Database bağlantısı
+// Database bağlantısı - ROOT kullanıcısı
 $host = 'localhost';
 $dbname = 'hoowell_network';
-$username = 'hoowell_user';
-$password = 'HoowellDB_2025'; // Güncellenmiş şifre
+$username = 'root';
+$password = 'HoowellDB_2025'; // Root şifresi
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
