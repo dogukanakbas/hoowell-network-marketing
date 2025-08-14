@@ -221,4 +221,240 @@ server {
         try_files $uri $uri/ /index.html;
         
         # Cache static assets
-        location ~* \.(js|css|png|jpg|jpeg|gif|
+        location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
+            expires 1y;
+            add_header Cache-Control "public, immutable";
+        }
+    }
+
+    # Backend API
+    location /api/ {
+        proxy_pass http://localhost:5001;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+        proxy_read_timeout 300s;
+        proxy_connect_timeout 75s;
+        
+        # PayTR Callback için özel ayarlar
+        location /api/paytr/callback {
+            proxy_pass http://localhost:5001;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_read_timeout 60s;
+            proxy_connect_timeout 30s;
+            
+            # PayTR IP'lerinden gelen istekleri kabul et
+            allow 185.233.134.0/24;
+            allow 185.233.135.0/24;
+            allow all; # Test için, production'da sadece PayTR IP'leri
+        }
+    }
+
+    # File uploads
+    location /uploads/ {
+        root /var/www/hoowell;
+        expires 30d;
+        add_header Cache-Control "public, no-transform";
+    }
+
+    # Gzip compression
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 1024;
+    gzip_proxied expired no-cache no-store private must-revalidate auth;
+    gzip_types text/plain text/css text/xml text/javascript application/x-javascript application/xml+rss application/javascript application/json;
+
+    # Rate limiting
+    limit_req_zone $binary_remote_addr zone=api:10m rate=10r/s;
+    location /api/ {
+        limit_req zone=api burst=20 nodelay;
+    }
+}
+```
+
+### Site Aktifleştirme
+```bash
+sudo ln -s /etc/nginx/sites-available/hoowell /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+## 🔒 8. SSL Sertifikası (Let's Encrypt)
+
+### Certbot Kurulumu
+```bash
+sudo apt install -y certbot python3-certbot-nginx
+```
+
+### SSL Sertifikası Alma
+```bash
+sudo certbot --nginx -d hoowell.net -d www.hoowell.net
+```
+
+### Otomatik Yenileme
+```bash
+sudo crontab -e
+# Aşağıdaki satırı ekleyin:
+0 12 * * * /usr/bin/certbot renew --quiet
+```
+
+## 🔥 9. Firewall Ayarları
+
+### UFW Kurulumu ve Ayarları
+```bash
+sudo ufw enable
+sudo ufw allow ssh
+sudo ufw allow 'Nginx Full'
+sudo ufw allow 3306 # MySQL (sadece localhost için)
+sudo ufw status
+```
+
+## 📊 10. Monitoring ve Loglar
+
+### PM2 Monitoring
+```bash
+pm2 monit
+pm2 logs hoowell-backend
+```
+
+### Nginx Logları
+```bash
+sudo tail -f /var/log/nginx/access.log
+sudo tail -f /var/log/nginx/error.log
+```
+
+### PayTR Callback Logları
+```bash
+tail -f /var/log/hoowell/backend-combined.log | grep "PayTR"
+```
+
+## 🧪 11. PayTR Test Ayarları
+
+### PayTR Panel Ayarları
+1. **Mağaza Paneli:** https://www.paytr.com/magaza
+2. **Bildirim URL'i:** `https://hoowell.net/api/paytr/callback`
+3. **Başarılı Ödeme URL'i:** `https://hoowell.net/payment/success`
+4. **Başarısız Ödeme URL'i:** `https://hoowell.net/payment/fail`
+
+### Test Kartı Bilgileri
+```
+Kart Numarası: 4355 0841 0000 0001
+Son Kullanma: 12/26
+CVV: 000
+3D Secure Şifre: 123456
+```
+
+### Test Sayfası
+```
+https://hoowell.net/paytr-test
+```
+
+## 🔄 12. Güncelleme Prosedürü
+
+### Güvenli Güncelleme
+```bash
+cd /var/www/hoowell
+
+# Backup
+sudo mysqldump -u hoowell_user -p hoowell_network > backup_$(date +%Y%m%d_%H%M%S).sql
+
+# Git pull
+git pull origin main
+
+# Backend güncelleme
+cd backend && npm install
+
+# Frontend build
+cd ../frontend && npm install && npm run build
+
+# PM2 restart
+pm2 restart hoowell-backend
+
+# Nginx reload
+sudo systemctl reload nginx
+```
+
+## 🚨 13. Sorun Giderme
+
+### Backend Çalışmıyor
+```bash
+pm2 logs hoowell-backend
+pm2 restart hoowell-backend
+```
+
+### PayTR Callback Çalışmıyor
+```bash
+# Callback loglarını kontrol et
+tail -f /var/log/hoowell/backend-combined.log | grep "PayTR"
+
+# Nginx access loglarını kontrol et
+sudo tail -f /var/log/nginx/access.log | grep "paytr"
+```
+
+### Veritabanı Bağlantı Sorunu
+```bash
+mysql -u hoowell_user -p hoowell_network
+# Bağlantı testini yap
+```
+
+## ✅ 14. Kurulum Kontrolü
+
+### Sistem Durumu Kontrolü
+```bash
+# PM2 durumu
+pm2 status
+
+# Nginx durumu
+sudo systemctl status nginx
+
+# MySQL durumu
+sudo systemctl status mysql
+
+# SSL sertifikası kontrolü
+sudo certbot certificates
+```
+
+### API Test
+```bash
+curl -X GET https://hoowell.net/api/health
+curl -X POST https://hoowell.net/api/paytr/callback -d "test=1"
+```
+
+## 🎯 15. PayTR Iframe Özellikleri
+
+✅ **Iframe Entegrasyonu:** PayTR ödeme sayfası iframe içinde açılıyor
+✅ **Responsive Tasarım:** Mobil ve desktop uyumlu
+✅ **Güvenli Callback:** Hash doğrulaması ile güvenli bildirim
+✅ **Otomatik Yeniden Boyutlandırma:** Iframe otomatik boyutlanıyor
+✅ **Hata Yönetimi:** Tüm hatalar yakalanıyor ve loglanıyor
+✅ **Test Desteği:** Test kartı ile kolay test imkanı
+
+## 🔐 16. Güvenlik Kontrol Listesi
+
+- [ ] SSL sertifikası aktif
+- [ ] Firewall kuralları ayarlandı
+- [ ] PayTR callback IP kısıtlaması
+- [ ] Database şifreleri güçlü
+- [ ] .env dosyası korunuyor
+- [ ] Nginx güvenlik başlıkları
+- [ ] Rate limiting aktif
+- [ ] Log dosyaları korunuyor
+
+---
+
+## 🎉 Kurulum Tamamlandı!
+
+PayTR iframe entegrasyonu ile HOOWELL sistemi başarıyla kuruldu. Artık kullanıcılar güvenli iframe içinde ödeme yapabilir ve sistem otomatik olarak ödemeleri işleyecektir.
+
+**Test URL:** https://hoowell.net/paytr-test
+**Ana Site:** https://hoowell.net
+
+Herhangi bir sorun yaşarsanız logları kontrol edin ve gerekirse PM2 servisini yeniden başlatın.
