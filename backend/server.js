@@ -17,21 +17,7 @@ app.use(cors({
     : ['http://localhost:3000'],
   credentials: true
 }));
-
-// Raw body middleware (PayTR callback için)
-app.use('/api/paytr/callback', (req, res, next) => {
-  let data = '';
-  req.on('data', chunk => {
-    data += chunk;
-  });
-  req.on('end', () => {
-    req.rawBody = data;
-    next();
-  });
-});
-
 app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static('uploads'));
 
 // Multer configuration for file uploads

@@ -186,45 +186,32 @@ router.post('/create-payment', auth, async (req, res) => {
   }
 });
 
-// PayTR callback endpoint (debug modlu)
+// PayTR callback endpoint (iframe desteği ile)
 router.post('/callback', async (req, res) => {
   try {
-    console.log('=== PayTR CALLBACK DEBUG ===');
-    console.log('Method:', req.method);
-    console.log('URL:', req.url);
-    console.log('Headers:', JSON.stringify(req.headers, null, 2));
-    console.log('Body:', JSON.stringify(req.body, null, 2));
-    console.log('Raw Body:', req.rawBody);
-    console.log('Content-Type:', req.get('Content-Type'));
-    
     const callbackData = req.body;
-    
-    // Eğer body boşsa, raw body'yi parse et
-    if (Object.keys(callbackData).length === 0 && req.rawBody) {
-      const querystring = require('querystring');
-      const parsedData = querystring.parse(req.rawBody.toString());
-      console.log('Parsed Raw Body:', parsedData);
-      Object.assign(callbackData, parsedData);
-    }
-    
-    console.log('Final Callback Data:', callbackData);
+    console.log('=== PayTR CALLBACK BAŞLADI ===');
+    console.log('PayTR Callback Data:', JSON.stringify(callbackData, null, 2));
+    console.log('Request Headers:', req.headers);
+    console.log('Request IP:', req.ip || req.connection.remoteAddress);
     
     // Gerekli alanları kontrol et
     if (!callbackData.merchant_oid || !callbackData.status || !callbackData.hash) {
       console.error('PayTR callback: Eksik parametreler');
-      console.error('merchant_oid:', callbackData.merchant_oid);
-      console.error('status:', callbackData.status);
-      console.error('hash:', callbackData.hash);
       return res.status(400).send('FAIL');
     }
 
-    // Hash doğrulamasını geçici olarak devre dışı bırak (test için)
-    console.log('Hash doğrulaması geçici olarak atlandı (test modu)');
-    
+    // Callback'i doğrula
+    if (!paytrService.verifyCallback(callbackData)) {
+      console.error('PayTR callback verification failed');
+      console.error('Callback Data:', callbackData);
+      return res.status(400).send('FAIL');
+    }
+
     const { merchant_oid, status, total_amount } = callbackData;
     console.log(`PayTR Callback: ${merchant_oid} - Status: ${status} - Amount: ${total_amount}`);
 
-    // Ödeme kaydını bul
+    // Önce ödeme kaydının var olup olmadığını kontrol et
     const checkQuery = 'SELECT * FROM payments WHERE merchant_oid = ?';
     const [existingPayments] = await db.promise().execute(checkQuery, [merchant_oid]);
     
@@ -242,9 +229,14 @@ router.post('/callback', async (req, res) => {
       return res.send('OK');
     }
 
-    // Ödeme durumunu güncelle
-    let paymentStatus = status === 'success' ? 'approved' : 'failed';
-    
+    // Ödeme kaydını güncelle
+    let paymentStatus;
+    if (status === 'success') {
+      paymentStatus = 'approved';
+    } else {
+      paymentStatus = 'failed';
+    }
+
     const updateQuery = `
       UPDATE payments 
       SET status = ?, paytr_status = ?, updated_at = NOW() 
@@ -254,18 +246,17 @@ router.post('/callback', async (req, res) => {
     await db.promise().execute(updateQuery, [paymentStatus, status, merchant_oid]);
     console.log(`Ödeme durumu güncellendi: ${merchant_oid} -> ${paymentStatus}`);
 
-    // Başarılı ödeme işlemleri
+    // Eğer ödeme başarılıysa kullanıcının eğitim erişimini aç
     if (status === 'success') {
       if (payment.payment_type === 'education') {
         const updateUserQuery = 'UPDATE users SET education_access = 1 WHERE id = ?';
         await db.promise().execute(updateUserQuery, [payment.user_id]);
         console.log(`Eğitim erişimi açıldı - User ID: ${payment.user_id}`);
-      } else if (payment.payment_type === 'device') {
-        console.log('Cihaz ödemesi tamamlandı - User ID:', payment.user_id);
       } else if (payment.payment_type === 'franchise' && payment.partner_id) {
+        // İş ortağı ödemesi başarılıysa partner kaydını aktif et
         const updatePartnerQuery = 'UPDATE business_partners SET payment_status = "completed", status = "active" WHERE id = ?';
         await db.promise().execute(updatePartnerQuery, [payment.partner_id]);
-        console.log(`İş ortağı aktif edildi - Partner ID: ${payment.partner_id}`);
+        console.log(`İş ortağı kaydı aktif edildi - Partner ID: ${payment.partner_id}`);
       }
     }
 
@@ -368,38 +359,6 @@ router.get('/iframe/:token', async (req, res) => {
   `;
   
   res.send(html);
-});
-
-// Test callback endpoint (debug için)
-router.post('/test-callback', async (req, res) => {
-  try {
-    console.log('=== PayTR TEST CALLBACK ===');
-    console.log('Method:', req.method);
-    console.log('Headers:', req.headers);
-    console.log('Body:', req.body);
-    console.log('Raw Body:', req.rawBody);
-    
-    res.json({
-      success: true,
-      message: 'Test callback çalışıyor!',
-      receivedData: req.body,
-      timestamp: new Date().toISOString()
-    });
-  } catch (error) {
-    console.error('Test callback error:', error);
-    res.status(500).json({ error: 'Test callback hatası' });
-  }
-});
-
-// PayTR callback durumu kontrol endpoint'i
-router.get('/callback-status', (req, res) => {
-  res.json({
-    status: 'active',
-    endpoint: '/api/paytr/callback',
-    testEndpoint: '/api/paytr/test-callback',
-    timestamp: new Date().toISOString(),
-    message: 'PayTR callback endpoint\'i hazır'
-  });
 });
 
 module.exports = router;
