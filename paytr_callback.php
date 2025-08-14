@@ -40,7 +40,18 @@ $merchant_salt = 'bF1uwkXPAhDw5yok';
 $post = $_POST;
 
 // POST değerleri ile hash oluştur (PayTR resmi örneğe göre)
-$hash = base64_encode(hash_hmac('sha256', $post['merchant_oid'].$merchant_salt.$post['status'].$post['total_amount'], $merchant_key, true));
+// Hash string: merchant_oid + merchant_salt + status + total_amount
+$hash_str = $post['merchant_oid'] . $merchant_salt . $post['status'] . $post['total_amount'];
+$hash = base64_encode(hash_hmac('sha256', $hash_str, $merchant_key, true));
+
+// Hash hesaplama detaylarını logla
+$hashLog = [
+    'hash_string' => $hash_str,
+    'calculated_hash' => $hash,
+    'received_hash' => $post['hash'] ?? 'missing',
+    'match' => ($hash === ($post['hash'] ?? ''))
+];
+file_put_contents($logFile, "HASH DEBUG: " . json_encode($hashLog, JSON_PRETTY_PRINT) . "\n", FILE_APPEND | LOCK_EX);
 
 // Oluşturulan hash'i, paytr'dan gelen post içindeki hash ile karşılaştır
 if ($hash != $post['hash']) {
@@ -82,9 +93,15 @@ try {
     if ($post['status'] == 'success') {
         // Ödeme Onaylandı
         
-        // Ödeme durumunu güncelle
-        $stmt = $pdo->prepare("UPDATE payments SET status = 'approved', paytr_status = ?, updated_at = NOW() WHERE merchant_oid = ?");
-        $stmt->execute([$post['status'], $post['merchant_oid']]);
+        // Ödeme durumunu güncelle (paytr_status kolonu varsa)
+        try {
+            $stmt = $pdo->prepare("UPDATE payments SET status = 'approved', paytr_status = ?, updated_at = NOW() WHERE merchant_oid = ?");
+            $stmt->execute([$post['status'], $post['merchant_oid']]);
+        } catch (Exception $e) {
+            // paytr_status kolonu yoksa sadece status güncelle
+            $stmt = $pdo->prepare("UPDATE payments SET status = 'approved', updated_at = NOW() WHERE merchant_oid = ?");
+            $stmt->execute([$post['merchant_oid']]);
+        }
 
         // Kullanıcı durumunu güncelle
         if ($payment['payment_type'] === 'education') {
@@ -108,9 +125,15 @@ try {
     } else {
         // Ödemeye Onay Verilmedi
         
-        // Ödeme durumunu güncelle
-        $stmt = $pdo->prepare("UPDATE payments SET status = 'failed', paytr_status = ?, updated_at = NOW() WHERE merchant_oid = ?");
-        $stmt->execute([$post['status'], $post['merchant_oid']]);
+        // Ödeme durumunu güncelle (paytr_status kolonu varsa)
+        try {
+            $stmt = $pdo->prepare("UPDATE payments SET status = 'failed', paytr_status = ?, updated_at = NOW() WHERE merchant_oid = ?");
+            $stmt->execute([$post['status'], $post['merchant_oid']]);
+        } catch (Exception $e) {
+            // paytr_status kolonu yoksa sadece status güncelle
+            $stmt = $pdo->prepare("UPDATE payments SET status = 'failed', updated_at = NOW() WHERE merchant_oid = ?");
+            $stmt->execute([$post['merchant_oid']]);
+        }
 
         // Hata bilgilerini logla
         $failed_reason = isset($post['failed_reason_msg']) ? $post['failed_reason_msg'] : 'Bilinmeyen hata';
