@@ -606,8 +606,6 @@ const calculateDownlineCommissions = async (currentSponsorId, saleAmount, saleTy
     const sponsorLevel = sponsor[0].career_level;
     const nextSponsorId = sponsor[0].created_by;
 
-
-
     // Calculate bonus based on partner's level and sponsor's eligibility
     const bonusPercentages = {
       bronze: 0.05,    // 5%
@@ -630,7 +628,7 @@ const calculateDownlineCommissions = async (currentSponsorId, saleAmount, saleTy
 
     // Calculate bonus for each level up to partner's current level
     const levels = ['bronze', 'silver', 'gold', 'star_leader', 'super_star_leader'];
-    const partnerLevelIndex = levels.indexOf(partnerLevel);
+    const partnerLevelIndex = levels.indexOf(partnerLevel || 'bronze'); // Default to bronze if undefined
 
     if (partnerLevelIndex === -1) {
       return; // Invalid level

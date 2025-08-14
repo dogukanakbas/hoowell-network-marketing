@@ -78,7 +78,7 @@ class PayTRService {
     try {
       const tokenData = this.createPaymentToken(paymentData);
       console.log('PayTR Token Data:', JSON.stringify(tokenData, null, 2));
-
+      
       const response = await axios.post('https://www.paytr.com/odeme/api/get-token', tokenData, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
@@ -91,7 +91,7 @@ class PayTRService {
       });
 
       console.log('PayTR API Response:', response.data);
-
+      
       if (response.data.status === 'success') {
         return {
           success: true,
