@@ -11,7 +11,7 @@ class PayTRService {
     this.baseUrl = 'https://www.paytr.com/odeme/api/';
   }
 
-  // PayTR token oluşturma
+  // PayTR token oluşturma (PHP örneğine uygun)
   createPaymentToken(paymentData) {
     const {
       merchant_oid,
@@ -29,43 +29,50 @@ class PayTRService {
       no_installment = 0,
       max_installment = 0,
       currency = 'TL',
-      payment_type = 'card'
+      timeout_limit = 30
     } = paymentData;
 
-    // PayTR için gerekli hash oluşturma (PayTR resmi dokümantasyonu)
-    // Doğru sıra: merchant_id + user_ip + user_name + user_address + user_phone + email + payment_amount + user_basket + no_installment + max_installment + currency + test_mode + merchant_oid
-    const hashStr = `${this.merchantId}${user_ip}${user_name}${user_address}${user_phone}${email}${payment_amount}${user_basket}${no_installment}${max_installment}${currency}${test_mode}${merchant_oid}`;
+    // Bildirim URL'si - PayTR'nin ödeme sonucunu bildireceği endpoint
+    const baseUrl = process.env.NODE_ENV === 'production' 
+      ? (process.env.BACKEND_URL || 'https://hoowell.net') 
+      : 'http://localhost:5001';
+    const bildirim_url = `${baseUrl}/api/paytr/callback`;
+
+    // PayTR hash string (PHP örneğindeki sıra)
+    const hashStr = `${this.merchantId}${user_ip}${merchant_oid}${email}${payment_amount}${user_basket}${no_installment}${max_installment}${currency}${test_mode}`;
     console.log('PayTR Hash String:', hashStr);
-    console.log('PayTR Merchant Key:', this.merchantKey);
-    console.log('PayTR Merchant Salt:', this.merchantSalt);
+    
     const paytr_token = this.createHash(hashStr);
     console.log('PayTR Token:', paytr_token);
 
     const postData = {
       merchant_id: this.merchantId,
+      user_ip,
+      merchant_oid,
+      email,
+      payment_amount,
+      paytr_token,
+      user_basket,
+      debug_on,
+      no_installment,
+      max_installment,
       user_name,
       user_address,
       user_phone,
-      user_ip,
-      email,
-      payment_amount,
-      merchant_oid,
-      user_basket,
-      no_installment,
-      max_installment,
-      currency,
-      test_mode,
-      debug_on,
       merchant_ok_url,
       merchant_fail_url,
-      payment_type,
-      paytr_token
+      bildirim_url, // ÖNEMLİ: PayTR'nin ödeme sonucunu bildireceği URL
+      timeout_limit,
+      currency,
+      test_mode
     };
+
+    console.log('PayTR Bildirim URL:', bildirim_url);
 
     return postData;
   }
 
-  // Hash oluşturma fonksiyonu
+  // Hash oluşturma fonksiyonu (PayTR dokümantasyonuna uygun)
   createHash(data) {
     return crypto
       .createHmac('sha256', this.merchantKey)
@@ -73,7 +80,7 @@ class PayTRService {
       .digest('base64');
   }
 
-  // PayTR'ye ödeme isteği gönderme
+  // PayTR'ye ödeme isteği gönderme (iframe desteği ile)
   async createPayment(paymentData) {
     try {
       const tokenData = this.createPaymentToken(paymentData);
@@ -96,7 +103,9 @@ class PayTRService {
         return {
           success: true,
           token: response.data.token,
-          paymentUrl: `https://www.paytr.com/odeme/guvenli/${response.data.token}`
+          paymentUrl: `https://www.paytr.com/odeme/guvenli/${response.data.token}`,
+          iframeUrl: `https://www.paytr.com/odeme/guvenli/${response.data.token}`,
+          iframeToken: response.data.token
         };
       } else {
         console.error('PayTR Error Details:', response.data);
@@ -139,6 +148,11 @@ class PayTRService {
       item.price,
       item.quantity
     ]);
+  }
+
+  // Base64 encode için helper
+  base64Encode(str) {
+    return Buffer.from(str, 'utf8').toString('base64');
   }
 }
 

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 // import { useAuth } from '../context/AuthContext'; // Şu an kullanılmıyor
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import PayTRIframe from './PayTRIframe';
 
 const Payment = () => {
   // const { user } = useAuth(); // Şu an kullanılmıyor
   const location = useLocation();
+  const navigate = useNavigate();
   const [paymentType, setPaymentType] = useState('education');
   const [paymentMethod, setPaymentMethod] = useState('iban'); // 'iban' veya 'paytr'
   const [receipt, setReceipt] = useState(null);
@@ -19,6 +21,11 @@ const Payment = () => {
     phone: '',
     address: ''
   });
+
+  // PayTR iframe için state'ler
+  const [showPayTRIframe, setShowPayTRIframe] = useState(false);
+  const [paytrIframeToken, setPaytrIframeToken] = useState(null);
+  const [currentMerchantOid, setCurrentMerchantOid] = useState(null);
 
   // Yeni kayıt sistemi için state
   const partnerRegistrationData = location.state;
@@ -112,7 +119,7 @@ const Payment = () => {
     }
   };
 
-  // PayTR ile ödeme
+  // PayTR ile ödeme (iframe desteği ile)
   const handlePayTRSubmit = async (e) => {
     e.preventDefault();
 
@@ -135,8 +142,11 @@ const Payment = () => {
       });
 
       if (response.data.success) {
-        // PayTR sayfasına yönlendir
-        window.location.href = response.data.paymentUrl;
+        // Iframe'i aç
+        setPaytrIframeToken(response.data.iframeToken);
+        setCurrentMerchantOid(response.data.merchant_oid);
+        setShowPayTRIframe(true);
+        setMessage('');
       } else {
         setMessage('PayTR ödeme oluşturulamadı: ' + response.data.message);
       }
@@ -171,7 +181,7 @@ const Payment = () => {
     }
   };
 
-  // İş ortağı kaydı için PayTR ödemesi
+  // İş ortağı kaydı için PayTR ödemesi (iframe desteği ile)
   const handlePartnerPayTRPayment = async () => {
     if (!userInfo.name || !userInfo.email || !userInfo.phone) {
       setMessage('Lütfen tüm bilgileri doldurun');
@@ -198,8 +208,11 @@ const Payment = () => {
       });
 
       if (response.data.success) {
-        // PayTR sayfasına yönlendir
-        window.location.href = response.data.paymentUrl;
+        // Iframe'i aç
+        setPaytrIframeToken(response.data.iframeToken);
+        setCurrentMerchantOid(response.data.merchant_oid);
+        setShowPayTRIframe(true);
+        setMessage('');
       } else {
         setMessage('PayTR ödeme oluşturulamadı: ' + response.data.message);
       }
@@ -210,8 +223,40 @@ const Payment = () => {
     }
   };
 
+  // PayTR iframe event handler'ları
+  const handlePayTRSuccess = () => {
+    setShowPayTRIframe(false);
+    setMessage('✅ Ödeme başarıyla tamamlandı! Yönlendiriliyorsunuz...');
+    setTimeout(() => {
+      navigate('/payment/success?merchant_oid=' + currentMerchantOid);
+    }, 2000);
+  };
+
+  const handlePayTRError = (error) => {
+    setShowPayTRIframe(false);
+    setMessage('❌ Ödeme işlemi başarısız: ' + error);
+    setTimeout(() => {
+      navigate('/payment/fail?error=' + encodeURIComponent(error));
+    }, 3000);
+  };
+
+  const handlePayTRClose = () => {
+    setShowPayTRIframe(false);
+    setPaytrIframeToken(null);
+    setCurrentMerchantOid(null);
+  };
+
   return (
     <div>
+      {/* PayTR Iframe Modal */}
+      {showPayTRIframe && (
+        <PayTRIframe
+          iframeToken={paytrIframeToken}
+          onSuccess={handlePayTRSuccess}
+          onError={handlePayTRError}
+          onClose={handlePayTRClose}
+        />
+      )}
       {isPartnerRegistration ? (
         // İş Ortağı Kayıt Ödeme Ekranı
         <div className="dashboard-card" style={{ marginBottom: '30px' }}>

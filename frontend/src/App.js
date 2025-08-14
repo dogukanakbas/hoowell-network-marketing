@@ -30,6 +30,7 @@ import Welcome from './components/Welcome';
 import HoowellDiscover from './components/HoowellDiscover';
 import PaymentSuccess from './components/PaymentSuccess';
 import PaymentFail from './components/PaymentFail';
+import PayTRTest from './components/PayTRTest';
 
 // Legal Pages
 import PrivacyPolicy from './components/legal/PrivacyPolicy';
@@ -56,6 +57,7 @@ function App() {
             <Route path="/discover" element={<HoowellDiscover />} />
             <Route path="/payment/success" element={<PaymentSuccess />} />
             <Route path="/payment/fail" element={<PaymentFail />} />
+            <Route path="/paytr-test" element={<PayTRTest />} />
             <Route path="/" element={<Layout />}>
               <Route index element={<Dashboard />} />
               <Route path="payment" element={<Payment />} />

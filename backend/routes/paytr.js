@@ -154,12 +154,8 @@ router.post('/create-payment', auth, async (req, res) => {
       merchant_fail_url: process.env.NODE_ENV === 'production'
         ? `${process.env.FRONTEND_URL || 'https://hoowell.net'}/payment/fail` 
         : 'https://www.paytr.com/odeme/test-fail',
-      user_basket: JSON.stringify(paytrService.formatUserBasket([
-        {
-          name: productName,
-          price: totalAmount,
-          quantity: 1
-        }
+      user_basket: paytrService.base64Encode(JSON.stringify([
+        [productName, (totalAmount / 100).toFixed(2), 1]
       ])),
       currency: 'TL',
       test_mode: process.env.NODE_ENV !== 'production' ? 1 : 0
@@ -172,6 +168,8 @@ router.post('/create-payment', auth, async (req, res) => {
       res.json({
         success: true,
         paymentUrl: paymentResult.paymentUrl,
+        iframeUrl: paymentResult.iframeUrl,
+        iframeToken: paymentResult.iframeToken,
         merchant_oid,
         amount: totalAmount / 100
       });
@@ -188,18 +186,48 @@ router.post('/create-payment', auth, async (req, res) => {
   }
 });
 
-// PayTR callback endpoint
+// PayTR callback endpoint (iframe desteği ile)
 router.post('/callback', async (req, res) => {
   try {
     const callbackData = req.body;
+    console.log('=== PayTR CALLBACK BAŞLADI ===');
+    console.log('PayTR Callback Data:', JSON.stringify(callbackData, null, 2));
+    console.log('Request Headers:', req.headers);
+    console.log('Request IP:', req.ip || req.connection.remoteAddress);
     
+    // Gerekli alanları kontrol et
+    if (!callbackData.merchant_oid || !callbackData.status || !callbackData.hash) {
+      console.error('PayTR callback: Eksik parametreler');
+      return res.status(400).send('FAIL');
+    }
+
     // Callback'i doğrula
     if (!paytrService.verifyCallback(callbackData)) {
       console.error('PayTR callback verification failed');
+      console.error('Callback Data:', callbackData);
       return res.status(400).send('FAIL');
     }
 
     const { merchant_oid, status, total_amount } = callbackData;
+    console.log(`PayTR Callback: ${merchant_oid} - Status: ${status} - Amount: ${total_amount}`);
+
+    // Önce ödeme kaydının var olup olmadığını kontrol et
+    const checkQuery = 'SELECT * FROM payments WHERE merchant_oid = ?';
+    const [existingPayments] = await db.promise().execute(checkQuery, [merchant_oid]);
+    
+    if (existingPayments.length === 0) {
+      console.error(`PayTR callback: Ödeme kaydı bulunamadı - ${merchant_oid}`);
+      return res.status(404).send('FAIL');
+    }
+
+    const payment = existingPayments[0];
+    console.log('Mevcut ödeme kaydı:', payment);
+
+    // Eğer ödeme zaten işlenmişse tekrar işleme
+    if (payment.status === 'approved' && status === 'success') {
+      console.log(`PayTR callback: Ödeme zaten onaylanmış - ${merchant_oid}`);
+      return res.send('OK');
+    }
 
     // Ödeme kaydını güncelle
     let paymentStatus;
@@ -216,26 +244,29 @@ router.post('/callback', async (req, res) => {
     `;
     
     await db.promise().execute(updateQuery, [paymentStatus, status, merchant_oid]);
+    console.log(`Ödeme durumu güncellendi: ${merchant_oid} -> ${paymentStatus}`);
 
     // Eğer ödeme başarılıysa kullanıcının eğitim erişimini aç
     if (status === 'success') {
-      const paymentQuery = 'SELECT * FROM payments WHERE merchant_oid = ?';
-      const [payments] = await db.promise().execute(paymentQuery, [merchant_oid]);
-      
-      if (payments.length > 0) {
-        const payment = payments[0];
-        
-        if (payment.payment_type === 'education') {
-          const updateUserQuery = 'UPDATE users SET education_access = 1 WHERE id = ?';
-          await db.promise().execute(updateUserQuery, [payment.user_id]);
-        }
+      if (payment.payment_type === 'education') {
+        const updateUserQuery = 'UPDATE users SET education_access = 1 WHERE id = ?';
+        await db.promise().execute(updateUserQuery, [payment.user_id]);
+        console.log(`Eğitim erişimi açıldı - User ID: ${payment.user_id}`);
+      } else if (payment.payment_type === 'franchise' && payment.partner_id) {
+        // İş ortağı ödemesi başarılıysa partner kaydını aktif et
+        const updatePartnerQuery = 'UPDATE business_partners SET payment_status = "completed", status = "active" WHERE id = ?';
+        await db.promise().execute(updatePartnerQuery, [payment.partner_id]);
+        console.log(`İş ortağı kaydı aktif edildi - Partner ID: ${payment.partner_id}`);
       }
     }
 
+    console.log(`=== PayTR CALLBACK TAMAMLANDI: ${merchant_oid} - ${status} ===`);
     res.send('OK');
 
   } catch (error) {
-    console.error('PayTR callback error:', error);
+    console.error('=== PayTR CALLBACK HATASI ===');
+    console.error('Error:', error);
+    console.error('Stack:', error.stack);
     res.status(500).send('FAIL');
   }
 });
@@ -266,6 +297,68 @@ router.get('/payment-status/:merchant_oid', auth, async (req, res) => {
     console.error('Payment status check error:', error);
     res.status(500).json({ message: 'Ödeme durumu kontrol edilemedi' });
   }
+});
+
+// PayTR iframe için özel endpoint (token ile ödeme sayfası)
+router.get('/iframe/:token', async (req, res) => {
+  const { token } = req.params;
+  
+  // Basit HTML sayfası döndür
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>PayTR Güvenli Ödeme</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            body { margin: 0; padding: 0; font-family: Arial, sans-serif; }
+            .container { padding: 20px; text-align: center; }
+            .loading { color: #666; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="loading">PayTR ödeme sayfası yükleniyor...</div>
+        </div>
+        
+        <script src="https://www.paytr.com/js/iframeResizer.min.js"></script>
+        <iframe 
+            src="https://www.paytr.com/odeme/guvenli/${token}" 
+            id="paytriframe" 
+            frameborder="0" 
+            scrolling="no"
+            style="width: 100%; min-height: 500px;">
+        </iframe>
+        
+        <script>
+            // Iframe'i resize et
+            if (typeof iFrameResize !== 'undefined') {
+                iFrameResize({
+                    log: false,
+                    checkOrigin: false,
+                    onMessage: function(messageData) {
+                        console.log('PayTR Message:', messageData);
+                        
+                        // Parent window'a mesaj gönder
+                        if (window.parent !== window) {
+                            window.parent.postMessage(messageData, '*');
+                        }
+                    }
+                }, '#paytriframe');
+            }
+            
+            // Loading'i gizle
+            setTimeout(() => {
+                const loading = document.querySelector('.loading');
+                if (loading) loading.style.display = 'none';
+            }, 2000);
+        </script>
+    </body>
+    </html>
+  `;
+  
+  res.send(html);
 });
 
 module.exports = router;
