@@ -93,13 +93,23 @@ try {
     if ($post['status'] == 'success') {
         // Ödeme Onaylandı
         
-        // Ödeme durumunu güncelle (paytr_status kolonu varsa)
+        // Ödeme durumunu güncelle (güvenli SQL)
         try {
-            $stmt = $pdo->prepare("UPDATE payments SET status = 'approved', paytr_status = ?, updated_at = NOW() WHERE merchant_oid = ?");
-            $stmt->execute([$post['status'], $post['merchant_oid']]);
+            // Önce paytr_status kolonunun varlığını kontrol et
+            $stmt = $pdo->prepare("SHOW COLUMNS FROM payments LIKE 'paytr_status'");
+            $stmt->execute();
+            $hasPaytrStatus = $stmt->rowCount() > 0;
+            
+            if ($hasPaytrStatus) {
+                $stmt = $pdo->prepare("UPDATE payments SET status = 'approved', paytr_status = ? WHERE merchant_oid = ?");
+                $stmt->execute([$post['status'], $post['merchant_oid']]);
+            } else {
+                $stmt = $pdo->prepare("UPDATE payments SET status = 'approved' WHERE merchant_oid = ?");
+                $stmt->execute([$post['merchant_oid']]);
+            }
         } catch (Exception $e) {
-            // paytr_status kolonu yoksa sadece status güncelle
-            $stmt = $pdo->prepare("UPDATE payments SET status = 'approved', updated_at = NOW() WHERE merchant_oid = ?");
+            // Basit güncelleme
+            $stmt = $pdo->prepare("UPDATE payments SET status = 'approved' WHERE merchant_oid = ?");
             $stmt->execute([$post['merchant_oid']]);
         }
 
@@ -125,13 +135,23 @@ try {
     } else {
         // Ödemeye Onay Verilmedi
         
-        // Ödeme durumunu güncelle (paytr_status kolonu varsa)
+        // Ödeme durumunu güncelle (güvenli SQL)
         try {
-            $stmt = $pdo->prepare("UPDATE payments SET status = 'failed', paytr_status = ?, updated_at = NOW() WHERE merchant_oid = ?");
-            $stmt->execute([$post['status'], $post['merchant_oid']]);
+            // Önce paytr_status kolonunun varlığını kontrol et
+            $stmt = $pdo->prepare("SHOW COLUMNS FROM payments LIKE 'paytr_status'");
+            $stmt->execute();
+            $hasPaytrStatus = $stmt->rowCount() > 0;
+            
+            if ($hasPaytrStatus) {
+                $stmt = $pdo->prepare("UPDATE payments SET status = 'failed', paytr_status = ? WHERE merchant_oid = ?");
+                $stmt->execute([$post['status'], $post['merchant_oid']]);
+            } else {
+                $stmt = $pdo->prepare("UPDATE payments SET status = 'failed' WHERE merchant_oid = ?");
+                $stmt->execute([$post['merchant_oid']]);
+            }
         } catch (Exception $e) {
-            // paytr_status kolonu yoksa sadece status güncelle
-            $stmt = $pdo->prepare("UPDATE payments SET status = 'failed', updated_at = NOW() WHERE merchant_oid = ?");
+            // Basit güncelleme
+            $stmt = $pdo->prepare("UPDATE payments SET status = 'failed' WHERE merchant_oid = ?");
             $stmt->execute([$post['merchant_oid']]);
         }
 

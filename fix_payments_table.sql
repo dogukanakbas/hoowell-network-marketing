@@ -39,5 +39,15 @@ ALTER TABLE payments
 ADD COLUMN IF NOT EXISTS test_mode TINYINT(1) DEFAULT 0 
 COMMENT 'Test mode flag';
 
+-- updated_at kolonunu ekle (eğer yoksa)
+ALTER TABLE payments 
+ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP 
+COMMENT 'Last update timestamp';
+
+-- created_at kolonunu ekle (eğer yoksa)
+ALTER TABLE payments 
+ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
+COMMENT 'Creation timestamp';
+
 -- Kolonları kontrol et
 DESCRIBE payments;
