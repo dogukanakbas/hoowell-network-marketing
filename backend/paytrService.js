@@ -7,7 +7,7 @@ class PayTRService {
     this.merchantId = process.env.PAYTR_MERCHANT_ID || '605940';
     this.merchantKey = process.env.PAYTR_MERCHANT_KEY || 'tMCPPznCxw8sb8b8';
     this.merchantSalt = process.env.PAYTR_MERCHANT_SALT || 'bF1uwkXPAhDw5yok';
-    this.testMode = process.env.NODE_ENV !== 'production';
+    this.testMode = false; // Test modunu kapat - Canlı mod için
     this.baseUrl = 'https://www.paytr.com/odeme/api/';
   }
 
@@ -25,7 +25,7 @@ class PayTRService {
       merchant_fail_url,
       user_basket,
       debug_on = 1,
-      test_mode = this.testMode ? 1 : 0,
+      test_mode = 0, // Test modunu kapat - Canlı mod için
       no_installment = 0,
       max_installment = 0,
       currency = 'TL',

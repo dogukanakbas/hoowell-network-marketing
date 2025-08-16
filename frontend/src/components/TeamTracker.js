@@ -489,68 +489,67 @@ const TeamTracker = () => {
               )).flat()}
             </div>
 
-            {/* Alt Bilgi Kutusu */}
+            {/* Toplam Kutuları */}
             <div style={{
               marginTop: '20px',
-              textAlign: 'center'
+              display: 'grid',
+              gridTemplateColumns: 'repeat(7, 1fr)',
+              gap: '2px',
+              minWidth: '1000px'
             }}>
+              {/* Boş kutular - İlk 5 kolon için */}
+              {Array.from({ length: 5 }, (_, index) => (
+                <div
+                  key={`total-empty-${index}`}
+                  style={{
+                    backgroundColor: 'transparent',
+                    padding: '15px 8px',
+                    minHeight: '50px'
+                  }}
+                />
+              ))}
+              
+              {/* YAPILAN SATIŞ CİROSU Toplam Kutusu */}
               <div style={{
                 backgroundColor: 'rgba(0,0,0,0.8)',
                 borderRadius: '10px',
-                padding: '10px 20px',
+                padding: '15px 8px',
                 color: '#FFD700',
                 fontSize: '14px',
                 fontWeight: 'bold',
-                marginTop: '10px',
-                display: 'inline-block'
+                textAlign: 'center',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: '50px',
+                border: '2px solid #FFD700'
               }}>
                 TOPLAM<br />GELİR
+              </div>
+              
+              {/* AYLIK FRANCHAİSE GELİRİ Toplam Kutusu */}
+              <div style={{
+                backgroundColor: 'rgba(0,0,0,0.8)',
+                borderRadius: '10px',
+                padding: '15px 8px',
+                color: '#FFD700',
+                fontSize: '14px',
+                fontWeight: 'bold',
+                textAlign: 'center',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: '50px',
+                border: '2px solid #FFD700'
+              }}>
+                
               </div>
             </div>
           </div>
         )}
       </div>
 
-      {/* Alt Sağ Logo */}
-      <div style={{
-        position: 'absolute',
-        bottom: '20px',
-        right: '20px',
-        zIndex: 10
-      }}>
-        <div style={{
-          width: '80px',
-          height: '80px',
-          background: 'linear-gradient(135deg, #FFD700, #FFA500)',
-          borderRadius: '15px',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          boxShadow: '0 5px 15px rgba(255, 215, 0, 0.4)',
-          border: '2px solid rgba(255, 255, 255, 0.2)'
-        }}>
-          <img 
-            src="/hoowell-logo.png" 
-            alt="HOOWELL Logo"
-            style={{
-              width: '80px',
-              height: '40px',
-              objectFit: 'contain',
-              marginBottom: '5px'
-            }}
-          />
-          <div style={{
-            fontSize: '8px',
-            fontWeight: 'bold',
-            color: '#0e2323',
-            textAlign: 'center',
-            lineHeight: '1.1'
-          }}>
-            <div>BİLGİ BANKASI</div>
-          </div>
-        </div>
-      </div>
+
     </div>
   );
 };

@@ -430,46 +430,7 @@ const SponsorshipTracker = () => {
         </div>
       </div>
 
-      {/* Alt Sağ Logo */}
-      <div style={{
-        position: 'absolute',
-        bottom: '20px',
-        right: '20px',
-        zIndex: 10
-      }}>
-        <div style={{
-          width: '100px',
-          height: '80px',
-          backgroundColor: 'rgba(255, 255, 255, 0.95)',
-          borderRadius: '10px',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          boxShadow: '0 5px 15px rgba(0, 0, 0, 0.2)',
-          padding: '5px'
-        }}>
-          <img 
-            src="/hoowell-logo.png" 
-            alt="HOOWELL Logo"
-            style={{
-              width: '80px',
-              height: '40px',
-              objectFit: 'contain',
-              marginBottom: '5px'
-            }}
-          />
-          <div style={{
-            fontSize: '8px',
-            fontWeight: 'bold',
-            color: '#0e2323',
-            textAlign: 'center',
-            lineHeight: '1.1'
-          }}>
-            <div>BİLGİ BANKASI</div>
-          </div>
-        </div>
-      </div>
+
     </div>
   );
 };

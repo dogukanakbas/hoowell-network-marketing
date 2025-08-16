@@ -239,7 +239,7 @@ const KarPaylasimi = () => {
           justifyContent: 'center'
         }}>
           <img 
-            src="/images/products/profit_sharing_cover.png"
+            src="/images/products/karpaylasım_kapak.png"
             alt="Kar Paylaşım Kapak"
             style={{
               width: '100%',

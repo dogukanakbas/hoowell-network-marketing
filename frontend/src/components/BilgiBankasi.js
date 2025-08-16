@@ -88,7 +88,7 @@ const BilgiBankasi = () => {
               padding: '15px',
               background: category.color === 'dark' 
                 ? 'linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 50%, #000000 100%)'
-                : 'linear-gradient(135deg, #27ae60 0%, #2ecc71 50%, #27ae60 100%)',
+                : 'linear-gradient(135deg, #1a4d4d 0%, #2a6666 50%, #1a4d4d 100%)',
               boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
               position: 'relative',
               overflow: 'hidden'

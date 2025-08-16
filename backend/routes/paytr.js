@@ -158,7 +158,7 @@ router.post('/create-payment', auth, async (req, res) => {
         [productName, (totalAmount / 100).toFixed(2), 1]
       ])),
       currency: 'TL',
-      test_mode: process.env.NODE_ENV !== 'production' ? 1 : 0
+      test_mode: 0 // Test modunu kapat - Canlı mod için
     };
 
     // PayTR token oluştur

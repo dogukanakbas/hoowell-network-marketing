@@ -156,17 +156,17 @@ const CustomerRegistration = () => {
     {
       id: 'product1',
       name: 'HOOWELL Premium El Terminali',
-      price: 16400,  // Perakende satış fiyatı
-      vat: 3280,     // 20% KDV
-      total: 19680,  // KDV dahil
+      price: 12480,  // Perakende satış fiyatı
+      vat: 2496,     // 20% KDV
+      total: 14976,  // KDV dahil
       description: 'PERAKENDE SATIŞ FİYATI',
       image: '/images/products/hoowell-premium.jpg',
       hasColorOptions: true,
       colors: [
         { id: 'black', name: 'Siyah', color: '#000000' },
         { id: 'blue', name: 'Mavi', color: '#0066CC' },
-        { id: 'gold', name: 'Gold', color: '#FFD700' },
-        { id: 'bronze', name: 'Bronz', color: '#CD7F32' }
+        { id: 'gold', name: 'Altın', color: '#D4AF37' },
+        { id: 'gray', name: 'Gri', color: '#808080' }
       ]
     },
     {
@@ -182,17 +182,17 @@ const CustomerRegistration = () => {
     {
       id: 'product3',
       name: 'HOOWELL Elite Alkali İyonizer Sistemi',
-      price: 82000,  // Perakende satış fiyatı
-      vat: 16400,    // 20% KDV
-      total: 98400,  // KDV dahil
+      price: 80000,  // Perakende satış fiyatı
+      vat: 16000,    // 20% KDV
+      total: 96000,  // KDV dahil
       description: 'PERAKENDE SATIŞ FİYATI',
       image: '/images/products/hoowell-elite.jpg',
       hasColorOptions: true,
       colors: [
         { id: 'black', name: 'Siyah', color: '#000000' },
         { id: 'blue', name: 'Mavi', color: '#0066CC' },
-        { id: 'gold', name: 'Gold', color: '#FFD700' },
-        { id: 'bronze', name: 'Bronz', color: '#CD7F32' }
+        { id: 'gold', name: 'Altın', color: '#D4AF37' },
+        { id: 'gray', name: 'Gri', color: '#808080' }
       ]
     }
   ];
