@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
+import InfoBankPopup from './InfoBankPopup';
 
 const CareerTracker = () => {
   const { user } = useAuth();
@@ -13,6 +14,7 @@ const CareerTracker = () => {
   });
   const [careerBonuses, setCareerBonuses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showInfoPopup, setShowInfoPopup] = useState(false);
 
   useEffect(() => {
     fetchCareerData();
@@ -919,6 +921,13 @@ const CareerTracker = () => {
             </div>
           </div>
         )}
+
+        {/* Bilgi Bankası Popup */}
+        <InfoBankPopup 
+          isOpen={showInfoPopup}
+          onClose={() => setShowInfoPopup(false)}
+          contentType="career"
+        />
       </div>
     </div>
   );

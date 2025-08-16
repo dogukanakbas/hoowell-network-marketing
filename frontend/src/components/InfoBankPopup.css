@@ -1,1 +1,193 @@
+.info-bank-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  backdrop-filter: blur(5px);
+}
 
+.info-bank-popup {
+  background: linear-gradient(135deg, #0e2323 0%, #1a3333 50%, #0e2323 100%);
+  border: 3px solid #FFD700;
+  border-radius: 20px;
+  padding: 30px;
+  max-width: 90vw;
+  max-height: 85vh;
+  min-height: 60vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  position: relative;
+  color: #ffffff;
+  font-family: 'Arial', sans-serif;
+}
+
+.info-bank-popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #FFD700;
+}
+
+.info-bank-popup-title {
+  color: #FFD700;
+  font-size: 28px;
+  font-weight: bold;
+  text-align: center;
+  margin: 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.info-bank-popup-close {
+  background: none;
+  border: none;
+  color: #FFD700;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.info-bank-popup-close:hover {
+  background-color: rgba(255, 215, 0, 0.2);
+  transform: scale(1.1);
+}
+
+.info-bank-popup-content {
+  line-height: 1.8;
+  font-size: 16px;
+  text-align: justify;
+  max-height: calc(85vh - 120px);
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.info-bank-popup-content h2 {
+  color: #FFD700;
+  font-size: 22px;
+  font-weight: bold;
+  margin: 25px 0 15px 0;
+  text-align: center;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.info-bank-popup-content h3 {
+  color: #FFD700;
+  font-size: 18px;
+  font-weight: bold;
+  margin: 20px 0 10px 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.info-bank-popup-content p {
+  margin: 12px 0;
+  text-indent: 20px;
+}
+
+.info-bank-popup-content strong {
+  color: #FFD700;
+  font-weight: bold;
+}
+
+.info-bank-popup-content .highlight {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 215, 0, 0.05) 100%);
+  padding: 15px;
+  border-radius: 10px;
+  border-left: 4px solid #FFD700;
+  margin: 15px 0;
+}
+
+.info-bank-popup-content .bonus-section {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 215, 0, 0.05) 100%);
+  padding: 20px;
+  border-radius: 15px;
+  border: 2px solid rgba(255, 215, 0, 0.3);
+  margin: 20px 0;
+}
+
+.info-bank-popup-content .bonus-item {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 10px 15px;
+  margin: 8px 0;
+  border-radius: 8px;
+  border-left: 3px solid #FFD700;
+}
+
+/* Responsive tasarım */
+@media (max-width: 768px) {
+  .info-bank-popup {
+    margin: 20px;
+    padding: 20px;
+    max-width: 95vw;
+    max-height: 90vh;
+    min-height: 70vh;
+  }
+  
+  .info-bank-popup-content {
+    max-height: calc(90vh - 100px);
+    font-size: 14px;
+  }
+  
+  .info-bank-popup-title {
+    font-size: 24px;
+  }
+  
+  .info-bank-popup-content {
+    font-size: 14px;
+  }
+  
+  .info-bank-popup-content h2 {
+    font-size: 20px;
+  }
+  
+  .info-bank-popup-content h3 {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .info-bank-popup {
+    margin: 10px;
+    padding: 15px;
+  }
+  
+  .info-bank-popup-title {
+    font-size: 20px;
+  }
+  
+  .info-bank-popup-content {
+    font-size: 13px;
+  }
+}
+
+/* Scrollbar stilleri */
+.info-bank-popup::-webkit-scrollbar {
+  width: 8px;
+}
+
+.info-bank-popup::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.info-bank-popup::-webkit-scrollbar-thumb {
+  background: #FFD700;
+  border-radius: 4px;
+}
+
+.info-bank-popup::-webkit-scrollbar-thumb:hover {
+  background: #FFA500;
+}

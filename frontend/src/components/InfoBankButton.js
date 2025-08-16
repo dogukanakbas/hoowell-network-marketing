@@ -1,20 +1,61 @@
-import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import InfoBankPopup from './InfoBankPopup';
 
 const InfoBankButton = () => {
-  const navigate = useNavigate();
   const location = useLocation();
+  const [showInfoPopup, setShowInfoPopup] = useState(false);
 
-  // Anasayfa ve organizasyon sayfasında gösterme
-  const excludedPaths = ['/', '/franchise-agi'];
-  if (excludedPaths.includes(location.pathname)) {
+  // Sadece bilgi bankası içeriği olan sayfalarda gösterme
+  const allowedPaths = [
+    '/kariyerim',
+    '/doping-promosyonu', 
+    '/satislarim',
+    '/memnun-musteri-takip',
+    '/sponsorluk-takip',
+    '/takim-takip',
+    '/liderlik-baskanlik-takip',
+    '/kar-paylasimi-promosyon',
+    '/global-seyahat-promosyonu',
+    '/muhasebe-takip-paneli'
+  ];
+  
+  if (!allowedPaths.includes(location.pathname)) {
     return null;
   }
+
+  // Sayfa bazlı contentType belirleme
+  const getContentType = () => {
+    switch (location.pathname) {
+      case '/kariyerim':
+        return 'career';
+      case '/doping-promosyonu':
+        return 'doping';
+      case '/satislarim':
+        return 'sales';
+      case '/memnun-musteri-takip':
+        return 'customers';
+      case '/sponsorluk-takip':
+        return 'sponsorship';
+      case '/takim-takip':
+        return 'team';
+      case '/liderlik-baskanlik-takip':
+        return 'leadership';
+      case '/kar-paylasimi-promosyon':
+        return 'profit';
+      case '/global-seyahat-promosyonu':
+        return 'travel';
+      case '/muhasebe-takip-paneli':
+        return 'accounting';
+      default:
+        return 'career'; // Varsayılan olarak kariyer bilgileri
+    }
+  };
 
   return (
     <div>
       <button
-        onClick={() => navigate('/bilgi-bankasi')}
+        onClick={() => setShowInfoPopup(true)}
         style={{
           position: 'fixed',
           bottom: '30px',
@@ -74,6 +115,13 @@ const InfoBankButton = () => {
           }
         }
       `}</style>
+
+      {/* Bilgi Bankası Popup */}
+      <InfoBankPopup 
+        isOpen={showInfoPopup}
+        onClose={() => setShowInfoPopup(false)}
+        contentType={getContentType()}
+      />
     </div>
   );
 };

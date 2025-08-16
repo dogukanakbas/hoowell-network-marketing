@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
+import InfoBankPopup from './InfoBankPopup';
 
 const KarPaylasimi = () => {
   const { user } = useAuth();
@@ -14,6 +15,7 @@ const KarPaylasimi = () => {
   };
   
   const [showCover, setShowCover] = useState(true); // Kapak gösterimini zorla
+  const [showInfoPopup, setShowInfoPopup] = useState(false);
   const [profitData, setProfitData] = useState({
     salesChampions: {
       pool_amount: 0,
@@ -78,109 +80,7 @@ const KarPaylasimi = () => {
     return allowedLevels.includes(user?.career_level);
   };
 
-  // Erişim yetkisi yoksa kısıtlama sayfası göster
-  if (!hasAccess()) {
-    return (
-      <div style={{
-        minHeight: '100vh',
-        background: 'linear-gradient(135deg, #0e2323 0%, #1a3333 50%, #0e2323 100%)',
-        padding: '20px',
-        margin: '0 -20px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
-      }}>
-        <div style={{
-          backgroundColor: 'rgba(255, 255, 255, 0.95)',
-          borderRadius: '20px',
-          padding: '40px',
-          textAlign: 'center',
-          maxWidth: '600px',
-          border: '3px solid #FFD700'
-        }}>
-          <div style={{
-            fontSize: '80px',
-            marginBottom: '20px'
-          }}>
-            💰
-          </div>
-
-          <h2 style={{
-            color: '#FFD700',
-            fontSize: '32px',
-            marginBottom: '20px',
-            textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
-          }}>
-            KAR PAYLAŞIMI HAVUZLARI
-          </h2>
-
-          <div style={{
-            backgroundColor: '#fff3cd',
-            border: '2px solid #ffeaa7',
-            borderRadius: '15px',
-            padding: '30px',
-            marginBottom: '25px'
-          }}>
-            <div style={{
-              fontSize: '24px',
-              fontWeight: 'bold',
-              color: '#856404',
-              marginBottom: '15px'
-            }}>
-              🚫 ERİŞİM KISITLI
-            </div>
-            <p style={{
-              color: '#856404',
-              fontSize: '18px',
-              lineHeight: '1.6',
-              margin: 0
-            }}>
-              Bu sayfaya erişmek için <strong>GOLD İŞ ORTAĞI</strong> veya daha yüksek kariyer seviyesine ulaşmanız gerekiyor.
-            </p>
-          </div>
-
-          <div style={{
-            backgroundColor: '#f8f9fa',
-            borderRadius: '15px',
-            padding: '25px',
-            marginBottom: '25px'
-          }}>
-            <h4 style={{
-              color: '#0e2323',
-              marginBottom: '15px',
-              fontSize: '18px'
-            }}>
-              📊 Mevcut Durumunuz:
-            </h4>
-
-            <div style={{
-              fontSize: '20px',
-              fontWeight: 'bold',
-              color: '#dc3545',
-              marginBottom: '10px'
-            }}>
-              Kariyer Seviyeniz: {user?.career_level?.toUpperCase() || 'BRONZE'}
-            </div>
-
-            <div style={{
-              color: '#6c757d',
-              fontSize: '16px'
-            }}>
-              Gerekli Seviye: GOLD İŞ ORTAĞI veya üzeri
-            </div>
-          </div>
-
-          <div style={{
-            color: '#0e2323',
-            fontSize: '18px',
-            fontWeight: '600'
-          }}>
-            Kariyer seviyenizi yükseltmek için satış yapın ve takım oluşturun! 🚀
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Erişim kontrolü kaldırıldı - Kapak resmi tüm kullanıcılara gösterilecek
 
   if (loading) {
     return (
@@ -792,25 +692,39 @@ const KarPaylasimi = () => {
         </div>
       </div>
 
-      {/* Alt Sağ Logo */}
+      {/* Alt Sağ Logo - Bilgi Bankası Butonu */}
       <div style={{
         position: 'absolute',
         bottom: '20px',
         right: '20px',
         zIndex: 10
       }}>
-        <div style={{
-          width: '100px',
-          height: '80px',
-          backgroundColor: 'rgba(255, 255, 255, 0.95)',
-          borderRadius: '10px',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          boxShadow: '0 5px 15px rgba(0, 0, 0, 0.2)',
-          padding: '5px'
-        }}>
+        <button
+          onClick={() => setShowInfoPopup(true)}
+          style={{
+            width: '100px',
+            height: '80px',
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            borderRadius: '10px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 5px 15px rgba(0, 0, 0, 0.2)',
+            padding: '5px',
+            border: 'none',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.transform = 'scale(1.05)';
+            e.target.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.3)';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.transform = 'scale(1)';
+            e.target.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.2)';
+          }}
+        >
           <img
             src="/hoowell-logo.png"
             alt="HOOWELL Logo"
@@ -830,8 +744,15 @@ const KarPaylasimi = () => {
           }}>
             <div>BİLGİ BANKASI</div>
           </div>
-        </div>
+        </button>
       </div>
+
+      {/* Bilgi Bankası Popup */}
+      <InfoBankPopup 
+        isOpen={showInfoPopup}
+        onClose={() => setShowInfoPopup(false)}
+        contentType="career"
+      />
     </div>
   );
 };

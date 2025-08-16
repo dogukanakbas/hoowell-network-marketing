@@ -39,6 +39,11 @@ export const AuthProvider = ({ children }) => {
     const interceptor = axios.interceptors.response.use(
       (response) => response,
       (error) => {
+        // Eğer user state'i null ise (çıkış yapılmışsa) interceptor'ı tetikleme
+        if (!user) {
+          return Promise.reject(error);
+        }
+        
         if (error.response?.status === 401 || error.response?.status === 400) {
           // Token expired or invalid
           if (error.response?.data?.message?.includes('token') || 
@@ -158,11 +163,17 @@ export const AuthProvider = ({ children }) => {
     
     console.log('User logged out, timers cleared');
     
+    // Önce user state'ini temizle (interceptor'ın tetiklenmemesi için)
+    setUser(null);
+    
+    // Sonra token'ı temizle
     localStorage.removeItem('token');
     delete axios.defaults.headers.common['Authorization'];
-    setUser(null);
-    // Hemen login sayfasına yönlendir
-    window.location.href = '/login';
+    
+    // Kısa bir gecikme ile yönlendirme (state güncellemesinin tamamlanması için)
+    setTimeout(() => {
+      window.location.href = '/login';
+    }, 100);
   }, []);
 
   const refreshUser = async () => {
