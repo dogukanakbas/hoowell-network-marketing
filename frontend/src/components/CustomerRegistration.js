@@ -1851,7 +1851,7 @@ const CustomerRegistration = () => {
 
                       if (response.data.success) {
                         // TREPS iframe sayfasına yönlendir
-                        window.location.href = `/payment?method=treps&token=${response.data.token}&url=${encodeURIComponent(response.data.url)}`;
+                        window.location.href = `/payment?method=treps&paymentId=${response.data.paymentId}`;
                       } else {
                         alert('TREPS ödeme oluşturulamadı: ' + response.data.error);
                       }

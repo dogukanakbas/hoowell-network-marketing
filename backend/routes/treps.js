@@ -54,6 +54,7 @@ router.post('/create-payment', async (req, res) => {
           ? `https://pohp.treps.tr/iframe/${mockToken}`
           : `https://pohp.treps.tr/iframe/${mockToken}`,
         token: mockToken,
+        paymentId: mockToken, // Mock için de paymentId ekle
         expire_date: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
         message: 'TREPS IFRAME ödeme oluşturuldu (TEST MODE)'
       });
@@ -170,6 +171,7 @@ router.post('/create-payment', async (req, res) => {
         success: true,
         url: response.data.data.url,
         token: response.data.data.token,
+        paymentId: response.data.data.token, // TREPS token'ını paymentId olarak kullan
         expire_date: response.data.data.expire_date,
         message: 'TREPS IFRAME ödeme oluşturuldu'
       });
@@ -190,6 +192,7 @@ router.post('/create-payment', async (req, res) => {
           ? `https://pohp.treps.tr/iframe/${mockToken}`
           : `https://pohp.treps.tr/iframe/${mockToken}`,
         token: mockToken,
+        paymentId: mockToken, // Mock için de paymentId ekle
         expire_date: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
         message: 'TREPS IFRAME ödeme oluşturuldu (TEST MODE - API Error)'
       });
