@@ -123,7 +123,7 @@ const CustomerRegistration = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [message, setMessage] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState('iban'); // 'iban' veya 'paytr'
+  const [paymentMethod, setPaymentMethod] = useState('iban'); // 'iban', 'paytr' veya 'treps'
   const [formData, setFormData] = useState({
     registration_type: 'individual',
     first_name: '',
@@ -1536,7 +1536,7 @@ const CustomerRegistration = () => {
 
               {/* Ödeme Yöntemi Radio Butonları */}
               <div style={{ marginBottom: '30px' }}>
-                <div style={{ display: 'flex', gap: '20px', marginBottom: '20px', justifyContent: 'center' }}>
+                <div style={{ display: 'flex', gap: '15px', marginBottom: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
                   <label style={{ 
                     display: 'flex', 
                     alignItems: 'center', 
@@ -1544,7 +1544,8 @@ const CustomerRegistration = () => {
                     padding: '15px 20px',
                     border: paymentMethod === 'iban' ? '2px solid var(--primary-dark)' : '2px solid #ddd',
                     borderRadius: '10px',
-                    backgroundColor: paymentMethod === 'iban' ? 'rgba(26, 74, 58, 0.1)' : 'white'
+                    backgroundColor: paymentMethod === 'iban' ? 'rgba(26, 74, 58, 0.1)' : 'white',
+                    minWidth: '200px'
                   }}>
                     <input
                       type="radio"
@@ -1566,7 +1567,8 @@ const CustomerRegistration = () => {
                     padding: '15px 20px',
                     border: paymentMethod === 'paytr' ? '2px solid var(--primary-dark)' : '2px solid #ddd',
                     borderRadius: '10px',
-                    backgroundColor: paymentMethod === 'paytr' ? 'rgba(26, 74, 58, 0.1)' : 'white'
+                    backgroundColor: paymentMethod === 'paytr' ? 'rgba(26, 74, 58, 0.1)' : 'white',
+                    minWidth: '200px'
                   }}>
                     <input
                       type="radio"
@@ -1578,6 +1580,29 @@ const CustomerRegistration = () => {
                     <div>
                       <div style={{ fontWeight: 'bold', fontSize: '16px' }}>💳 Kredi/Banka Kartı</div>
                       <div style={{ fontSize: '12px', color: 'var(--text-light)' }}>PayTR ile güvenli ödeme</div>
+                    </div>
+                  </label>
+
+                  <label style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    cursor: 'pointer',
+                    padding: '15px 20px',
+                    border: paymentMethod === 'treps' ? '2px solid var(--primary-dark)' : '2px solid #ddd',
+                    borderRadius: '10px',
+                    backgroundColor: paymentMethod === 'treps' ? 'rgba(26, 74, 58, 0.1)' : 'white',
+                    minWidth: '200px'
+                  }}>
+                    <input
+                      type="radio"
+                      value="treps"
+                      checked={paymentMethod === 'treps'}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                      style={{ marginRight: '10px' }}
+                    />
+                    <div>
+                      <div style={{ fontWeight: 'bold', fontSize: '16px' }}>🏦 TREPS Banka Sistemi</div>
+                      <div style={{ fontSize: '12px', color: 'var(--text-light)' }}>TCMB güvencesi ile ödeme</div>
                     </div>
                   </label>
                 </div>
@@ -1618,6 +1643,26 @@ const CustomerRegistration = () => {
                     <li>Anında ödeme onayı ve sipariş aktivasyonu</li>
                     <li>SSL sertifikası ile şifreli bağlantı</li>
                     <li>Visa, MasterCard, American Express kabul edilir</li>
+                  </ul>
+                </div>
+              )}
+
+              {/* TREPS Bilgileri - Sadece TREPS seçildiğinde göster */}
+              {paymentMethod === 'treps' && (
+                <div style={{ 
+                  padding: '20px', 
+                  backgroundColor: '#e3f2fd', 
+                  borderRadius: '10px',
+                  marginBottom: '20px',
+                  border: '1px solid #2196f3'
+                }}>
+                  <h4 style={{ color: '#1565c0', marginBottom: '15px' }}>🏦 TREPS Banka Sistemi</h4>
+                  <ul style={{ color: '#1565c0', fontSize: '14px', marginBottom: '0', paddingLeft: '20px' }}>
+                    <li>TCMB (Türkiye Cumhuriyet Merkez Bankası) güvencesi</li>
+                    <li>Banka altyapısı ile maksimum güvenlik</li>
+                    <li>Gerçek zamanlı ödeme işlemi</li>
+                    <li>Büyük tutarlı işlemler için uygun</li>
+                    <li>Kurumsal güvenlik standartları</li>
                   </ul>
                 </div>
               )}
@@ -1775,6 +1820,59 @@ const CustomerRegistration = () => {
                   💳 PayTR ile Güvenli Ödeme Yap
                 </button>
               )}
+
+              {paymentMethod === 'treps' && (
+                <button
+                  onClick={async () => {
+                    try {
+                      // Önce müşteri kaydını yap
+                      await handlePayment();
+                      
+                      // Sonra TREPS ödeme sayfasına yönlendir
+                      const selectedProduct = products.find(p => p.id === formData.selected_product);
+                      
+                      const response = await axios.post('/api/treps/create-payment', {
+                        amount: selectedProduct?.total || 0,
+                        orderId: `CUST_${Date.now()}`,
+                        description: `HOOWELL Müşteri Kaydı - ${formData.first_name} ${formData.last_name}`,
+                        customerName: `${formData.first_name} ${formData.last_name}`,
+                        customerEmail: formData.email,
+                        customerPhone: formData.phone,
+                        customerCity: formData.city,
+                        customerAddress: formData.delivery_address,
+                        customerZipCode: '34000',
+                        productName: selectedProduct?.name || 'HOOWELL Ürün',
+                        productId: selectedProduct?.id || 'HOOWELL-PRODUCT'
+                      }, {
+                        headers: {
+                          'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                      });
+
+                      if (response.data.success) {
+                        // TREPS iframe sayfasına yönlendir
+                        window.location.href = `/payment?method=treps&token=${response.data.token}&url=${encodeURIComponent(response.data.url)}`;
+                      } else {
+                        alert('TREPS ödeme oluşturulamadı: ' + response.data.error);
+                      }
+                    } catch (error) {
+                      alert('TREPS ödeme hatası: ' + (error.response?.data?.message || 'Bilinmeyen hata'));
+                    }
+                  }}
+                  style={{
+                    backgroundColor: '#007bff',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '10px',
+                    padding: '15px 30px',
+                    fontSize: '16px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  🏦 TREPS ile Güvenli Ödeme Yap
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -1828,7 +1926,7 @@ const CustomerRegistration = () => {
           </p>
 
           <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', flexWrap: 'wrap' }}>
-            {paymentMethod === 'iban' ? (
+            {paymentMethod === 'iban' && (
               <button
                 onClick={() => navigate('/payment')}
                 style={{
@@ -1844,7 +1942,9 @@ const CustomerRegistration = () => {
               >
                 🏦 IBAN Ödeme Sayfasına Git
               </button>
-            ) : (
+            )}
+
+            {paymentMethod === 'paytr' && (
               <button
                 onClick={async () => {
                   // PayTR ödeme işlemi başlat
@@ -1890,6 +1990,48 @@ const CustomerRegistration = () => {
                 }}
               >
                 💳 PayTR ile Güvenli Ödeme Yap
+              </button>
+            )}
+
+            {paymentMethod === 'treps' && (
+              <button
+                onClick={async () => {
+                  // TREPS ödeme işlemi başlat
+                  try {
+                    const selectedProduct = products.find(p => p.id === formData.selected_product);
+                    
+                    const response = await axios.post('/api/treps/create-payment', {
+                      amount: selectedProduct?.total || 0,
+                      orderId: `CUST_${Date.now()}`,
+                      description: `HOOWELL Müşteri Kaydı - ${formData.first_name} ${formData.last_name}`
+                    }, {
+                      headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                      }
+                    });
+
+                    if (response.data.success) {
+                      // TREPS ödeme sayfasına yönlendir
+                      window.location.href = `/payment?method=treps&paymentId=${response.data.paymentId}`;
+                    } else {
+                      alert('TREPS ödeme oluşturulamadı: ' + response.data.error);
+                    }
+                  } catch (error) {
+                    alert('TREPS ödeme hatası: ' + (error.response?.data?.message || 'Bilinmeyen hata'));
+                  }
+                }}
+                style={{
+                  backgroundColor: '#007bff',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '10px',
+                  padding: '15px 30px',
+                  fontSize: '16px',
+                  cursor: 'pointer',
+                  fontWeight: 'bold'
+                }}
+              >
+                🏦 TREPS ile Güvenli Ödeme Yap
               </button>
             )}
             

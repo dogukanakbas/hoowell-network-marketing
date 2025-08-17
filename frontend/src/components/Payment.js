@@ -9,7 +9,7 @@ const Payment = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [paymentType, setPaymentType] = useState('education');
-  const [paymentMethod, setPaymentMethod] = useState('iban'); // 'iban' veya 'paytr'
+  const [paymentMethod, setPaymentMethod] = useState('iban'); // 'iban', 'paytr' veya 'treps'
   const [receipt, setReceipt] = useState(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
@@ -27,6 +27,10 @@ const Payment = () => {
   const [paytrIframeToken, setPaytrIframeToken] = useState(null);
   const [currentMerchantOid, setCurrentMerchantOid] = useState(null);
 
+  // TREPS için state'ler
+  const [trepsPaymentId, setTrepsPaymentId] = useState(null);
+  const [trepsPaymentStatus, setTrepsPaymentStatus] = useState(null);
+
   // Yeni kayıt sistemi için state
   const partnerRegistrationData = location.state;
   const isPartnerRegistration = partnerRegistrationData && partnerRegistrationData.skipReceipt;
@@ -34,7 +38,36 @@ const Payment = () => {
   useEffect(() => {
     fetchPayments();
     fetchSettings();
-  }, []);
+    
+    // URL parametrelerini kontrol et
+    const urlParams = new URLSearchParams(location.search);
+    const method = urlParams.get('method');
+    const paymentId = urlParams.get('paymentId');
+    
+    if (method === 'treps' && paymentId) {
+      setPaymentMethod('treps');
+      setTrepsPaymentId(paymentId);
+      // TREPS ödeme durumunu kontrol et
+      checkTrepsPaymentStatus(paymentId);
+    }
+  }, [location.search]);
+
+  // TREPS ödeme durumu periyodik kontrol
+  useEffect(() => {
+    let interval;
+    
+    if (trepsPaymentId && trepsPaymentStatus !== 'completed' && trepsPaymentStatus !== 'failed') {
+      interval = setInterval(() => {
+        checkTrepsPaymentStatus(trepsPaymentId);
+      }, 10000); // 10 saniyede bir kontrol et
+    }
+    
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [trepsPaymentId, trepsPaymentStatus]);
 
   const fetchPayments = async () => {
     try {
@@ -59,6 +92,31 @@ const Payment = () => {
       setSettings(response.data);
     } catch (error) {
       console.error('Error fetching settings:', error);
+    }
+  };
+
+  // TREPS ödeme durumu kontrol
+  const checkTrepsPaymentStatus = async (paymentId) => {
+    try {
+      const response = await axios.get(`/api/treps/payment-status/${paymentId}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      
+      if (response.data.success) {
+        setTrepsPaymentStatus(response.data.status);
+        
+        if (response.data.status === 'completed') {
+          setMessage('✅ TREPS ödeme başarıyla tamamlandı!');
+          // Başarılı ödeme sonrası yönlendirme
+          setTimeout(() => {
+            navigate('/');
+          }, 3000);
+        }
+      }
+    } catch (error) {
+      console.error('TREPS ödeme durumu kontrol hatası:', error);
     }
   };
 
@@ -705,14 +763,51 @@ const Payment = () => {
             </div>
           )}
 
+          {/* TREPS Ödeme Durumu */}
+          {paymentMethod === 'treps' && trepsPaymentId && (
+            <div style={{
+              backgroundColor: '#e3f2fd',
+              padding: '20px',
+              borderRadius: '10px',
+              marginTop: '20px',
+              border: '1px solid #2196f3',
+              textAlign: 'center'
+            }}>
+              <h4 style={{ color: '#1565c0', marginBottom: '15px' }}>
+                🏦 TREPS Ödeme Durumu
+              </h4>
+              <div style={{ marginBottom: '15px' }}>
+                <strong>Ödeme ID:</strong> {trepsPaymentId}
+              </div>
+              {trepsPaymentStatus && (
+                <div style={{
+                  padding: '10px',
+                  borderRadius: '8px',
+                  backgroundColor: trepsPaymentStatus === 'completed' ? '#d4edda' : '#fff3cd',
+                  color: trepsPaymentStatus === 'completed' ? '#155724' : '#856404',
+                  fontWeight: 'bold'
+                }}>
+                  {trepsPaymentStatus === 'completed' ? '✅ Ödeme Tamamlandı' :
+                   trepsPaymentStatus === 'pending' ? '⏳ Ödeme Bekleniyor' :
+                   trepsPaymentStatus === 'processing' ? '🔄 İşlem Devam Ediyor' :
+                   trepsPaymentStatus === 'failed' ? '❌ Ödeme Başarısız' :
+                   '📊 Durum Kontrol Ediliyor'}
+                </div>
+              )}
+              <div style={{ marginTop: '15px', fontSize: '14px', color: '#1565c0' }}>
+                <p>TREPS ödeme işleminiz devam ediyor. Durum güncellemeleri otomatik olarak kontrol edilecektir.</p>
+              </div>
+            </div>
+          )}
+
           {/* Mesaj Alanı */}
           {message && (
             <div style={{
               padding: '15px',
               borderRadius: '8px',
               marginTop: '20px',
-              backgroundColor: message.includes('oluşturuldu') || message.includes('yüklendi') ? '#d4edda' : '#f8d7da',
-              color: message.includes('oluşturuldu') || message.includes('yüklendi') ? '#155724' : '#721c24'
+              backgroundColor: message.includes('oluşturuldu') || message.includes('yüklendi') || message.includes('✅') ? '#d4edda' : '#f8d7da',
+              color: message.includes('oluşturuldu') || message.includes('yüklendi') || message.includes('✅') ? '#155724' : '#721c24'
             }}>
               {message}
             </div>

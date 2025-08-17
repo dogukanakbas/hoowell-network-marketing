@@ -170,6 +170,10 @@ const checkPaymentBlock = async (req, res, next) => {
 const paytrRoutes = require('./routes/paytr');
 app.use('/api/paytr', paytrRoutes);
 
+// TREPS Routes
+const trepsRoutes = require('./routes/treps');
+app.use('/api/treps', trepsRoutes);
+
 // Network Tree Routes
 app.get('/api/network/tree', verifyToken, async (req, res) => {
   try {
