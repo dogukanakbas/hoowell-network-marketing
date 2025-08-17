@@ -30,6 +30,7 @@ const Payment = () => {
   // TREPS için state'ler
   const [trepsPaymentId, setTrepsPaymentId] = useState(null);
   const [trepsPaymentStatus, setTrepsPaymentStatus] = useState(null);
+  const [trepsIframeUrl, setTrepsIframeUrl] = useState(null);
 
   // Yeni kayıt sistemi için state
   const partnerRegistrationData = location.state;
@@ -43,12 +44,23 @@ const Payment = () => {
     const urlParams = new URLSearchParams(location.search);
     const method = urlParams.get('method');
     const paymentId = urlParams.get('paymentId');
+    const token = urlParams.get('token');
+    const url = urlParams.get('url');
     
-    if (method === 'treps' && paymentId) {
+    if (method === 'treps') {
       setPaymentMethod('treps');
-      setTrepsPaymentId(paymentId);
-      // TREPS ödeme durumunu kontrol et
-      checkTrepsPaymentStatus(paymentId);
+      
+      if (paymentId) {
+        setTrepsPaymentId(paymentId);
+        // TREPS ödeme durumunu kontrol et
+        checkTrepsPaymentStatus(paymentId);
+      }
+      
+      if (token && url) {
+        // Eski format - iframe göster
+        setTrepsPaymentId(token);
+        setTrepsIframeUrl(decodeURIComponent(url));
+      }
     }
   }, [location.search]);
 
@@ -763,8 +775,36 @@ const Payment = () => {
             </div>
           )}
 
+          {/* TREPS Ödeme İframe */}
+          {paymentMethod === 'treps' && trepsIframeUrl && (
+            <div style={{
+              backgroundColor: '#e3f2fd',
+              padding: '20px',
+              borderRadius: '10px',
+              marginTop: '20px',
+              border: '1px solid #2196f3',
+              textAlign: 'center'
+            }}>
+              <h4 style={{ color: '#1565c0', marginBottom: '15px' }}>
+                🏦 TREPS ile Güvenli Ödeme
+              </h4>
+              <iframe
+                src={trepsIframeUrl}
+                width="100%"
+                height="500px"
+                frameBorder="0"
+                allow="payment"
+                style={{
+                  border: '1px solid #ddd',
+                  borderRadius: '8px',
+                  backgroundColor: 'white'
+                }}
+              />
+            </div>
+          )}
+
           {/* TREPS Ödeme Durumu */}
-          {paymentMethod === 'treps' && trepsPaymentId && (
+          {paymentMethod === 'treps' && trepsPaymentId && !trepsIframeUrl && (
             <div style={{
               backgroundColor: '#e3f2fd',
               padding: '20px',
