@@ -1,4 +1,4 @@
-w#!/bin/bash
+#!/bin/bash
 
 echo "=== 502 GATEWAY HATASI TANI SCRIPTİ ==="
 echo ""
