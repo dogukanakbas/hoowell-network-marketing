@@ -60,6 +60,7 @@ const Payment = () => {
         // Eski format - iframe göster
         setTrepsPaymentId(token);
         setTrepsIframeUrl(decodeURIComponent(url));
+        console.log('TREPS iframe URL set:', decodeURIComponent(url));
       }
     }
   }, [location.search]);

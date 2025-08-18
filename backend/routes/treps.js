@@ -183,7 +183,7 @@ router.post('/create-payment', async (req, res) => {
     console.error('TREPS IFRAME ödeme hatası:', error);
     
     // Hata durumunda da mock response döndür (test için)
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === 'development' || process.env.TREPS_MOCK === 'true') {
       const mockToken = `HST-ERROR-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       
       res.json({
@@ -210,7 +210,7 @@ router.post('/create-payment', async (req, res) => {
 router.get('/payment-status/:paymentId', async (req, res) => {
   try {
     // Test için mock response (TREPS API çalışmıyorsa)
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === 'development' || process.env.TREPS_MOCK === 'true') {
       // Simüle edilmiş ödeme durumu (test için)
       const mockStatuses = ['pending', 'processing', 'completed'];
       const randomStatus = mockStatuses[Math.floor(Math.random() * mockStatuses.length)];
