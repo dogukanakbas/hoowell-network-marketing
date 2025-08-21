@@ -2870,6 +2870,7 @@ app.get('/api/sales/tracker', verifyToken, async (req, res) => {
       WHERE st.seller_id = ? 
       AND st.status = 'pending'
       AND st.bonus_date > NOW()
+      AND st.sale_type NOT IN ('franchise_education', 'franchise_education_hidden')
       ORDER BY st.sale_date DESC
     `, [userId]);
 
@@ -2896,6 +2897,7 @@ app.get('/api/sales/tracker', verifyToken, async (req, res) => {
       AND (st.status = 'active' OR (st.status = 'pending' AND st.bonus_date <= NOW()))
       AND MONTH(st.sale_date) = ? 
       AND YEAR(st.sale_date) = ?
+      AND st.sale_type NOT IN ('franchise_education', 'franchise_education_hidden')
       ORDER BY st.sale_date DESC
     `, [userId, currentMonth, currentYear]);
 
@@ -2906,26 +2908,8 @@ app.get('/api/sales/tracker', verifyToken, async (req, res) => {
       WHERE st.seller_id = ?
       AND MONTH(st.sale_date) = ? 
       AND YEAR(st.sale_date) = ?
-        WHERE u.created_by = ? 
-        AND p.status = 'approved'
-        AND MONTH(p.created_at) = ? 
-        AND YEAR(p.created_at) = ?
-        
-        UNION
-        
-        SELECT u.id FROM users u
-        WHERE u.created_by = ?
-        AND u.role = 'partner'
-        AND MONTH(u.created_at) = ?
-        AND YEAR(u.created_at) = ?
-        AND EXISTS (
-          SELECT 1 FROM payments p2 
-          WHERE p2.user_id = u.id 
-          AND p2.status = 'approved'
-          LIMIT 1
-        )
-      ) as activities
-    `, [userId, currentMonth, currentYear, userId, currentMonth, currentYear]);
+      AND st.sale_type NOT IN ('franchise_education', 'franchise_education_hidden')
+    `, [userId, currentMonth, currentYear]);
 
     res.json({
       pendingSales: pendingSales || [],

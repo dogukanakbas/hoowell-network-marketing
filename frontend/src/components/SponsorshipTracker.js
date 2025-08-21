@@ -325,7 +325,7 @@ const SponsorshipTracker = () => {
                     color: partner.education_completed ? '#28a745' : '#dc3545',
                     fontWeight: 'bold'
                   }}>
-                    {partner.education_completed ? '✅ Tamamlandı' : '⏳ Devam Ediyor'}
+                    {partner.education_completed ? '✅ Tamamlandı' : '⏳ Temel Eğitim Devam Ediyor'}
                   </div>,
                   
                   // 1. Adım (750$)

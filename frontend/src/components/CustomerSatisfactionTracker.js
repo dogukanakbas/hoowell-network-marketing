@@ -147,7 +147,29 @@ const CustomerSatisfactionTracker = () => {
             <div></div>
             <div></div>
 
-            {/* 450 USD Kart - 1.HEDİYE kolonu üstünde (5. kolon) */}
+            {/* 410 USD Kart - 1.HEDİYE kolonu üstünde (5. kolon) */}
+            <div style={{
+              background: 'linear-gradient(135deg, #2a2a2a 0%, #404040 50%, #2a2a2a 100%)',
+              borderRadius: '15px',
+              padding: window.innerWidth <= 768 ? '12px' : '15px',
+              textAlign: 'center',
+              color: '#FFD700',
+              fontWeight: 'bold',
+              border: '2px solid #FFD700',
+              boxShadow: '0 4px 15px rgba(0, 0, 0, 0.5)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minHeight: '100px'
+            }}>
+              <div style={{ fontSize: window.innerWidth <= 768 ? '12px' : '14px', marginBottom: '5px' }}>320 USD</div>
+              <div style={{ fontSize: window.innerWidth <= 768 ? '10px' : '12px', marginBottom: '5px' }}>Değerinde</div>
+              <div style={{ fontSize: window.innerWidth <= 768 ? '10px' : '12px' }}>EL TERMİNALİ</div>
+              <div style={{ fontSize: window.innerWidth <= 768 ? '10px' : '12px' }}>Hediye</div>
+            </div>
+
+            {/* 450 USD Kart - 2.HEDİYE kolonu üstünde (6. kolon) */}
             <div style={{
               background: 'linear-gradient(135deg, #2a2a2a 0%, #404040 50%, #2a2a2a 100%)',
               borderRadius: '15px',
@@ -167,28 +189,6 @@ const CustomerSatisfactionTracker = () => {
               <div style={{ fontSize: window.innerWidth <= 768 ? '10px' : '12px', marginBottom: '5px' }}>Değerinde</div>
               <div style={{ fontSize: window.innerWidth <= 768 ? '10px' : '12px' }}>ÜCRETSİZ FİLTRE</div>
               <div style={{ fontSize: window.innerWidth <= 768 ? '10px' : '12px' }}>Hediyesi</div>
-            </div>
-
-            {/* 410 USD Kart - 2.HEDİYE kolonu üstünde (6. kolon) */}
-            <div style={{
-              background: 'linear-gradient(135deg, #2a2a2a 0%, #404040 50%, #2a2a2a 100%)',
-              borderRadius: '15px',
-              padding: window.innerWidth <= 768 ? '12px' : '15px',
-              textAlign: 'center',
-              color: '#FFD700',
-              fontWeight: 'bold',
-              border: '2px solid #FFD700',
-              boxShadow: '0 4px 15px rgba(0, 0, 0, 0.5)',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              minHeight: '100px'
-            }}>
-              <div style={{ fontSize: window.innerWidth <= 768 ? '12px' : '14px', marginBottom: '5px' }}>410 USD</div>
-              <div style={{ fontSize: window.innerWidth <= 768 ? '10px' : '12px', marginBottom: '5px' }}>Değerinde</div>
-              <div style={{ fontSize: window.innerWidth <= 768 ? '10px' : '12px' }}>EL TERMİNALİ</div>
-              <div style={{ fontSize: window.innerWidth <= 768 ? '10px' : '12px' }}>Hediye</div>
             </div>
 
             {/* 500 USD Kart - 3.HEDİYE kolonu üstünde (7. kolon) */}
