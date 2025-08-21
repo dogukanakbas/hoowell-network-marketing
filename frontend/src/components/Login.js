@@ -50,99 +50,81 @@ const Login = () => {
     <div className="login-main-container">
       <div className="login-grid">
 
-        {/* Sol Kart - HOOWELL Dünyasını Keşfedin */}
-        <div
-          onClick={handleDiscoverHoowell}
-          className="login-card login-card-clickable"
-          style={{ textAlign: 'center' }}
-        >
-          <div style={{
-            color: '#FFD700',
-            fontSize: '50px',
-            fontWeight: 'bold',
-            marginBottom: '20px',
-            letterSpacing: '1px'
-          }}>
-            HOOWELL
-          </div>
-
-          <div style={{
-            color: '#FFD700',
-            fontSize: '50px',
-            fontWeight: 'bold',
-            marginBottom: '10px'
-          }}>
-            DÜNYASINI
-          </div>
-
-          <div style={{
-            color: '#FFD700',
-            fontSize: '50px',
-            fontWeight: 'bold'
-          }}>
-            KEŞFEDİN
-          </div>
-
-          <div style={{
-            color: '#FFD700',
-            fontSize: '12px',
-            marginTop: '10px',
-            opacity: 0.8
-          }}>
-            (HERKESE AÇIK)
-          </div>
-        </div>
-
-        {/* Orta - HOOWELL Logo */}
+        {/* Sol Yarı - HOOWELL Logo */}
         <div style={{
-          textAlign: 'center',
           display: 'flex',
-          flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'center',
-          minHeight: '500px'
+          justifyContent: 'flex-start',
+          minHeight: '100vh',
+          background: 'linear-gradient(135deg, #0f2324 0%, #0f2324 100%)',
+          padding: '60px'
         }}>
-          {/* Logo */}
+          {/* HOOWELL Logo - Büyük ve Sola Hizalı */}
           <div style={{
+            textAlign: 'left',
             display: 'flex',
-            alignItems: 'center',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
             justifyContent: 'center',
-            marginBottom: '30px'
+            marginLeft: '40px'
           }}>
             <img
               src="/hoowell-logo.png"
               alt="HOOWELL Logo"
-              className="login-logo-responsive"
               style={{
-                objectFit: 'contain',
+                width: '500px',
+                height: 'auto',
+                marginBottom: '40px',
+                filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.3))',
                 transition: 'all 0.3s ease'
               }}
             />
+            
+            
           </div>
         </div>
 
-        {/* Sağ Kart - İş Ortağı Girişi */}
-        <div className="login-card">
-          <div style={{
-            textAlign: 'center',
-            marginBottom: '30px'
+        {/* Sağ Yarı - İş Ortağı Girişi (Büyütülmüş) */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '100vh',
+          background: 'linear-gradient(135deg, #0f2324 0%, #0f2324 100%)',
+          padding: '40px'
+        }}>
+          <div className="login-card" style={{
+            width: '100%',
+            maxWidth: '500px',
+            padding: '50px',
+            borderRadius: '20px',
+            boxShadow: '0 15px 35px rgba(0,0,0,0.3)',
+            border: '3px solid #FFD700'
           }}>
             <div style={{
-              color: '#FFD700',
-              fontSize: '40px',
-              fontWeight: 'bold',
-              marginBottom: '5px'
+              textAlign: 'center',
+              marginBottom: '40px'
             }}>
-              İŞ ORTAĞI
+              <div style={{
+                color: '#FFD700',
+                fontSize: '48px',
+                fontWeight: 'bold',
+                marginBottom: '8px',
+                textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
+                letterSpacing: '2px'
+              }}>
+                İŞ ORTAĞI
+              </div>
+              <div style={{
+                color: '#FFD700',
+                fontSize: '48px',
+                fontWeight: 'bold',
+                textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
+                letterSpacing: '2px'
+              }}>
+                GİRİŞİ
+              </div>
             </div>
-            <div style={{
-              color: '#FFD700',
-              fontSize: '40px',
-              fontWeight: 'bold'
-            }}>
-              GİRİŞİ
-            </div>
-          </div>
 
           <form onSubmit={handleSubmit}>
             {error && (
@@ -209,11 +191,9 @@ const Login = () => {
             </button>
           </form>
 
-
+          </div>
         </div>
       </div>
-
-
     </div>
   );
 };

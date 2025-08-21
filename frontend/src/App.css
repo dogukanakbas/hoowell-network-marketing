@@ -74,20 +74,20 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px;
+  padding: 0;
   font-family: 'Arial', sans-serif;
   box-sizing: border-box;
 }
 
 .login-grid {
   display: grid;
-  grid-template-columns: 1fr 1.2fr 1fr;
-  gap: 60px;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
   width: 100%;
-  max-width: 1400px; /* Maksimum genişlik sınırı */
+  max-width: 100%;
   align-items: stretch;
-  min-height: 500px;
-  margin: 0 auto; /* Ortalama */
+  min-height: 100vh;
+  margin: 0;
 }
 
 .login-card {
@@ -1688,5 +1688,44 @@ div[style*="maxWidth"] {
   .login-logo {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Login Page Responsive Design */
+@media (max-width: 768px) {
+  .login-grid {
+    grid-template-columns: 1fr !important;
+    min-height: 100vh;
+  }
+  
+  .login-main-container {
+    padding: 20px;
+  }
+  
+  /* Sol yarı (logo) mobilde gizle */
+  .login-grid > div:first-child {
+    display: none;
+  }
+  
+  /* Sağ yarı (giriş) tam genişlik */
+  .login-grid > div:last-child {
+    width: 100%;
+    min-height: 100vh;
+  }
+  
+  /* Giriş kartı mobilde daha küçük */
+  .login-card {
+    padding: 30px 20px !important;
+    max-width: 100% !important;
+  }
+  
+  /* Logo mobilde daha küçük */
+  .login-grid img[src*="hoowell-logo"] {
+    width: 300px !important;
+  }
+  
+  /* Başlık mobilde daha küçük */
+  .login-grid div[style*="fontSize: '48px'"] {
+    font-size: 32px !important;
   }
 }
