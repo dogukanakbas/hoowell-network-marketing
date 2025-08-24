@@ -142,10 +142,13 @@ async function testTrepsConnection() {
       console.log('Payment Response:', JSON.stringify(paymentResponse.data, null, 2));
       console.log('');
 
-      if (paymentResponse.data && paymentResponse.data.data && paymentResponse.data.data.url) {
+      if (paymentResponse.data && paymentResponse.data.data) {
+        const trepsData = paymentResponse.data.data;
         console.log('🎉 TREPS entegrasyonu başarılı!');
-        console.log('IFRAME URL:', paymentResponse.data.data.url);
-        console.log('Token:', paymentResponse.data.data.token);
+        console.log('IFRAME URL:', trepsData.url || trepsData.iframe_url);
+        console.log('Token:', trepsData.token || trepsData.payment_token);
+        console.log('Payment ID:', trepsData.token || trepsData.payment_token);
+        console.log('Expire Date:', trepsData.expire_date || trepsData.expires_at);
       }
     }
 

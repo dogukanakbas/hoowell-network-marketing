@@ -206,12 +206,15 @@ router.post('/create-payment', async (req, res) => {
     console.log('TREPS IFRAME ödeme yanıtı:', response.data);
     
     if (response.data.status) {
+      // TREPS dokümantasyonuna göre yanıt formatı
+      const trepsData = response.data.data;
+      
       res.json({
         success: true,
-        url: response.data.data.url,
-        token: response.data.data.token,
-        paymentId: response.data.data.token, // TREPS token'ını paymentId olarak kullan
-        expire_date: response.data.data.expire_date,
+        url: trepsData.url || trepsData.iframe_url, // URL veya iframe_url
+        token: trepsData.token || trepsData.payment_token, // token veya payment_token
+        paymentId: trepsData.token || trepsData.payment_token, // TREPS token'ını paymentId olarak kullan
+        expire_date: trepsData.expire_date || trepsData.expires_at,
         message: 'TREPS IFRAME ödeme oluşturuldu'
       });
     } else {
@@ -228,8 +231,8 @@ router.post('/create-payment', async (req, res) => {
       res.json({
         success: true,
         url: process.env.NODE_ENV === 'production' 
-          ? `https://pohp.treps.tr/iframe/${mockToken}`
-          : `https://pohp.treps.tr/iframe/${mockToken}`,
+        ? `https://hp.treps.io/iframe/${mockToken}`
+          : `https://hp.treps.io/iframe/${mockToken}`,
         token: mockToken,
         paymentId: mockToken, // Mock için de paymentId ekle
         expire_date: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
