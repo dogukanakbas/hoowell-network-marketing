@@ -48,7 +48,7 @@ router.post('/create-payment', async (req, res) => {
     // TREPS API'yi gerçek olarak çağır
     console.log('TREPS API gerçek ödeme isteği gönderiliyor...');
     
-    // TREPS IFRAME ödeme verileri - Basitleştirilmiş
+    // TREPS IFRAME ödeme verileri - Dokümantasyona uygun
     const paymentData = {
       external_order_id: req.body.orderId || `Treps_ord_${Date.now()}`,
       amount: req.body.amount,
@@ -61,9 +61,12 @@ router.post('/create-payment', async (req, res) => {
       return_url: 'https://panel.hoowell.net/payment?method=treps&result=success',
       retry_fail: true,
       iframe_flag: 1,
-      iframe_web_uri: 'https://panel.hoowell.net/customer-registration',
+      iframe_web_uri: 'https://panel.hoowell.net',
       lang: 'tr',
-      // Müşteri bilgileri
+      // Zorunlu parametreler
+      client_ip: req.ip || '127.0.0.1',
+      description: req.body.description || 'HOOWELL Ödeme',
+      // Müşteri bilgileri - TREPS formatına uygun
       buyer: {
         customer_id: req.body.customerId || `CUST-${Date.now()}`,
         name: req.body.customerName?.split(' ')[0] || 'Müşteri',
@@ -73,9 +76,10 @@ router.post('/create-payment', async (req, res) => {
         country: 'TUR',
         city: req.body.customerCity || 'İstanbul',
         address: req.body.customerAddress || 'HOOWELL Adres',
-        zip_code: req.body.customerZipCode || '34000'
+        zip_code: req.body.customerZipCode || '34000',
+        citizenship_number: req.body.citizenshipNumber || null
       },
-      // Ürün bilgileri
+      // Ürün bilgileri - TREPS formatına uygun
       products: [
         {
           product_id: req.body.productId || 'HOOWELL-PRODUCT',
@@ -83,7 +87,8 @@ router.post('/create-payment', async (req, res) => {
           name: req.body.productName || 'HOOWELL Ürün',
           price: req.body.amount,
           quantity: 1,
-          description: req.body.productDescription || 'HOOWELL Alkali İyonizer Sistemi'
+          description: req.body.productDescription || 'HOOWELL Alkali İyonizer Sistemi',
+          unit: 'adet'
         }
       ],
       // Fatura adresi

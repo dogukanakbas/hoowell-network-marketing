@@ -54,7 +54,7 @@ async function testTrepsConnection() {
         return_url: 'https://panel.hoowell.net/payment?method=treps&result=success',
         retry_fail: true,
         iframe_flag: 1,
-        iframe_web_uri: 'https://panel.hoowell.net',
+        iframe_web_uri: 'https://panel.hoowell.net/customer-registration',
         lang: 'tr',
         // Müşteri bilgileri
         buyer: {
