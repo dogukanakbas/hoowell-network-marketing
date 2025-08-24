@@ -41,27 +41,14 @@ const getTrepsToken = async () => {
 
 // IFRAME Ödeme oluşturma
 router.post('/create-payment', async (req, res) => {
+  console.log('TREPS create-payment endpoint çağrıldı');
+  console.log('Request body:', req.body);
+  
   try {
-    // Test için mock response (TREPS API çalışmıyorsa)
-    if (process.env.NODE_ENV === 'development' || process.env.TREPS_MOCK === 'true') {
-      const mockToken = `HST-MOCK-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      
-      console.log('TREPS Mock Mode: IFRAME ödeme oluşturuldu');
-      
-      res.json({
-        success: true,
-        url: process.env.NODE_ENV === 'production' 
-          ? `https://hp.treps.io/iframe/${mockToken}`
-          : `https://hp.treps.io/iframe/${mockToken}`,
-        token: mockToken,
-        paymentId: mockToken, // Mock için de paymentId ekle
-        expire_date: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-        message: 'TREPS IFRAME ödeme oluşturuldu (TEST MODE)'
-      });
-      return;
-    }
+    // TREPS API'yi gerçek olarak çağır
+    console.log('TREPS API gerçek ödeme isteği gönderiliyor...');
     
-    // TREPS IFRAME ödeme verileri - Geliştirilmiş
+    // TREPS IFRAME ödeme verileri
     const paymentData = {
       external_order_id: req.body.orderId || `Treps_ord_${Date.now()}`,
       amount: req.body.amount,
@@ -70,7 +57,7 @@ router.post('/create-payment', async (req, res) => {
       transaction_type: 1, // Auth
       min_installment: 1,
       max_installment: 1,
-      expire_date: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 saat geçerli
+      expire_date: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
       return_url: process.env.NODE_ENV === 'production' 
         ? 'https://panel.hoowell.net/payment?method=treps&result=success'
         : `${req.protocol}://${req.get('host')}/payment?method=treps&result=success`,
@@ -149,41 +136,6 @@ router.post('/create-payment', async (req, res) => {
         hide_installments: "0",
         hide_pay_button: "0",
         hide_labels: "0"
-      },
-      buyer: {
-        customer_id: req.body.customerId || `CUST-${Date.now()}`,
-        name: req.body.customerName?.split(' ')[0] || 'Müşteri',
-        surname: req.body.customerName?.split(' ').slice(1).join(' ') || 'Adı',
-        email: req.body.customerEmail || 'musteri@example.com',
-        phone_number: req.body.customerPhone || '5551234567',
-        country: 'TUR',
-        city: req.body.customerCity || 'İstanbul',
-        address: req.body.customerAddress || 'Adres bilgisi',
-        zip_code: req.body.customerZipCode || '34000'
-      },
-      products: [
-        {
-          product_id: req.body.productId || 'HOOWELL-PRODUCT',
-          category: 'Su Arıtma Sistemi',
-          name: req.body.productName || 'HOOWELL Ürün',
-          price: req.body.amount,
-          quantity: 1,
-          description: req.body.description || 'HOOWELL Su Arıtma Sistemi'
-        }
-      ],
-      billing_address: {
-        name: req.body.customerName || 'Müşteri Adı',
-        city: req.body.customerCity || 'İstanbul',
-        country: 'Türkiye',
-        address: req.body.customerAddress || 'Fatura Adresi',
-        zip_code: req.body.customerZipCode || '34000'
-      },
-      shipping_address: {
-        name: req.body.customerName || 'Müşteri Adı',
-        city: req.body.customerCity || 'İstanbul',
-        country: 'Türkiye',
-        address: req.body.customerAddress || 'Teslimat Adresi',
-        zip_code: req.body.customerZipCode || '34000'
       }
     };
     
@@ -197,7 +149,6 @@ router.post('/create-payment', async (req, res) => {
         'Accept': 'application/json',
         'Authorization': `Bearer ${token}`
       },
-      // SSL sertifika doğrulamasını devre dışı bırak (sadece test için)
       httpsAgent: new (require('https').Agent)({
         rejectUnauthorized: false
       })
@@ -211,9 +162,9 @@ router.post('/create-payment', async (req, res) => {
       
       res.json({
         success: true,
-        url: trepsData.url || trepsData.iframe_url, // URL veya iframe_url
-        token: trepsData.token || trepsData.payment_token, // token veya payment_token
-        paymentId: trepsData.token || trepsData.payment_token, // TREPS token'ını paymentId olarak kullan
+        url: trepsData.url || trepsData.iframe_url,
+        token: trepsData.token || trepsData.payment_token,
+        paymentId: trepsData.token || trepsData.payment_token,
         expire_date: trepsData.expire_date || trepsData.expires_at,
         message: 'TREPS IFRAME ödeme oluşturuldu'
       });
@@ -223,23 +174,6 @@ router.post('/create-payment', async (req, res) => {
     
   } catch (error) {
     console.error('TREPS IFRAME ödeme hatası:', error);
-    
-    // Hata durumunda da mock response döndür (test için)
-    if (process.env.NODE_ENV === 'development' || process.env.TREPS_MOCK === 'true') {
-      const mockToken = `HST-ERROR-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      
-      res.json({
-        success: true,
-        url: process.env.NODE_ENV === 'production' 
-        ? `https://hp.treps.io/iframe/${mockToken}`
-          : `https://hp.treps.io/iframe/${mockToken}`,
-        token: mockToken,
-        paymentId: mockToken, // Mock için de paymentId ekle
-        expire_date: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-        message: 'TREPS IFRAME ödeme oluşturuldu (TEST MODE - API Error)'
-      });
-      return;
-    }
     
     res.status(500).json({
       success: false,
@@ -251,26 +185,6 @@ router.post('/create-payment', async (req, res) => {
 // Ödeme durumu sorgulama
 router.get('/payment-status/:paymentId', async (req, res) => {
   try {
-    // Test için mock response (TREPS API çalışmıyorsa)
-    if (process.env.NODE_ENV === 'development' || process.env.TREPS_MOCK === 'true') {
-      // Simüle edilmiş ödeme durumu (test için)
-      const mockStatuses = ['pending', 'processing', 'completed'];
-      const randomStatus = mockStatuses[Math.floor(Math.random() * mockStatuses.length)];
-      
-      res.json({
-        success: true,
-        status: randomStatus,
-        payment: {
-          id: req.params.paymentId,
-          status: randomStatus,
-          amount: 14976,
-          currency: 'TRY',
-          description: 'HOOWELL Test Ödeme'
-        }
-      });
-      return;
-    }
-    
     const token = await getTrepsToken();
     
     const response = await axios.get(`${TREPS_CONFIG.baseUrl}/api/payment/status/${req.params.paymentId}`, {
@@ -278,7 +192,6 @@ router.get('/payment-status/:paymentId', async (req, res) => {
         'Authorization': `Bearer ${token}`,
         'Accept': 'application/json'
       },
-      // SSL sertifika doğrulamasını devre dışı bırak (sadece test için)
       httpsAgent: new (require('https').Agent)({
         rejectUnauthorized: false
       })
@@ -292,22 +205,6 @@ router.get('/payment-status/:paymentId', async (req, res) => {
     
   } catch (error) {
     console.error('TREPS durum sorgulama hatası:', error);
-    
-    // Hata durumunda da mock response döndür (test için)
-    if (process.env.NODE_ENV === 'development') {
-      res.json({
-        success: true,
-        status: 'pending',
-        payment: {
-          id: req.params.paymentId,
-          status: 'pending',
-          amount: 14976,
-          currency: 'TRY',
-          description: 'HOOWELL Test Ödeme (Error)'
-        }
-      });
-      return;
-    }
     
     res.status(500).json({
       success: false,
