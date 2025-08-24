@@ -1583,6 +1583,7 @@ const CustomerRegistration = () => {
                     </div>
                   </label>
 
+                  {/* TREPS geçici olarak devre dışı - Authentication sorunu
                   <label style={{ 
                     display: 'flex', 
                     alignItems: 'center', 
@@ -1605,6 +1606,7 @@ const CustomerRegistration = () => {
                       <div style={{ fontSize: '12px', color: 'var(--text-light)' }}>TCMB güvencesi ile ödeme</div>
                     </div>
                   </label>
+                  */}
                 </div>
               </div>
 
