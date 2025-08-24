@@ -2017,7 +2017,9 @@ const CustomerRegistration = () => {
                       alert('TREPS ödeme oluşturulamadı: ' + response.data.error);
                     }
                   } catch (error) {
-                    alert('TREPS ödeme hatası: ' + (error.response?.data?.message || 'Bilinmeyen hata'));
+                    console.error('TREPS ödeme hatası:', error);
+                    const errorMessage = error.response?.data?.message || error.response?.data?.error || 'Bilinmeyen hata';
+                    alert('TREPS ödeme hatası: ' + errorMessage);
                   }
                 }}
                 style={{
