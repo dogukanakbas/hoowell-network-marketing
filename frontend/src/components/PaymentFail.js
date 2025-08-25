@@ -73,7 +73,7 @@ const PaymentFail = () => {
             🔄 Tekrar Dene
           </Link>
           <Link 
-            to="/dashboard" 
+            to="/" 
             style={{
               backgroundColor: '#6c757d',
               color: 'white',

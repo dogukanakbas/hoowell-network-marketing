@@ -147,7 +147,7 @@ const PaymentSuccess = () => {
 
         <div style={{ display: 'flex', gap: '15px', justifyContent: 'center' }}>
           <Link 
-            to="/dashboard" 
+            to="/" 
             style={{
               backgroundColor: '#FFD700',
               color: '#000',

@@ -129,7 +129,7 @@ const PartnerRegistration = () => {
   const [registrationType, setRegistrationType] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState('iban'); // 'iban' veya 'paytr'
+  const [paymentMethod, setPaymentMethod] = useState('iban'); // 'iban', 'paytr' veya 'treps'
   
   // Form verileri
   const [formData, setFormData] = useState({
@@ -258,10 +258,11 @@ const PartnerRegistration = () => {
         <div style={{ marginTop: '15px', color: 'var(--text-light)', fontSize: '14px' }}>
           {currentStep === 1 && 'Kayıt Türü Seçimi'}
           {currentStep === 2 && 'Bilgi Girişi'}
-          {currentStep === 3 && 'Ürün Seçimi'}
-          {currentStep === 4 && 'Sipariş Özeti'}
-          {currentStep === 5 && 'Sözleşme Onayları'}
-          {currentStep === 6 && 'Ödeme'}
+                      {currentStep === 3 && 'Ürün Seçimi'}
+            {currentStep === 4 && 'Sipariş Özeti'}
+            {currentStep === 5 && 'Sözleşme Onayları'}
+            {currentStep === 6 && 'Ödeme'}
+            {currentStep === 7 && 'Başarı'}
         </div>
       </div>
 
@@ -1294,8 +1295,337 @@ const PartnerRegistration = () => {
         </div>
       )}
 
-      {/* ADIM 6: Kayıt Tamamlama ve Kullanıcı Bilgileri */}
-      {currentStep === 6 && (
+              {/* ADIM 6: Ödeme */}
+        {currentStep === 6 && (
+          <div style={{
+            backgroundColor: 'var(--card-gray)',
+            borderRadius: '15px',
+            padding: '40px',
+            boxShadow: '0 4px 15px rgba(0,0,0,0.1)'
+          }}>
+            <h2 style={{ color: 'var(--primary-dark)', marginBottom: '30px', textAlign: 'center' }}>
+              💳 Ödeme Yöntemi Seçin
+            </h2>
+            
+            {/* Ödeme Tutarı */}
+            <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+              <div style={{ fontSize: '28px', fontWeight: 'bold', color: 'var(--primary-dark)' }}>
+                4.800 ₺
+              </div>
+              <div style={{ fontSize: '14px', color: 'var(--text-light)' }}>
+                (KDV Dahil - Franchise Satış Paketi)
+              </div>
+            </div>
+
+            {/* Ödeme Yöntemi Seçimi */}
+            <div style={{ marginBottom: '30px' }}>
+              <div style={{ display: 'flex', gap: '20px', marginBottom: '20px', justifyContent: 'center' }}>
+                <label style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  cursor: 'pointer',
+                  padding: '15px 20px',
+                  border: paymentMethod === 'iban' ? '2px solid var(--primary-dark)' : '2px solid #ddd',
+                  borderRadius: '10px',
+                  backgroundColor: paymentMethod === 'iban' ? 'rgba(26, 74, 58, 0.1)' : 'white'
+                }}>
+                  <input
+                    type="radio"
+                    value="iban"
+                    checked={paymentMethod === 'iban'}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    style={{ marginRight: '10px' }}
+                  />
+                  <div>
+                    <div style={{ fontWeight: 'bold', fontSize: '16px' }}>🏦 IBAN ile Havale/EFT</div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-light)' }}>Banka havalesi ile ödeme</div>
+                  </div>
+                </label>
+                
+                <label style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  cursor: 'pointer',
+                  padding: '15px 20px',
+                  border: paymentMethod === 'paytr' ? '2px solid var(--primary-dark)' : '2px solid #ddd',
+                  borderRadius: '10px',
+                  backgroundColor: paymentMethod === 'paytr' ? 'rgba(26, 74, 58, 0.1)' : 'white'
+                }}>
+                  <input
+                    type="radio"
+                    value="paytr"
+                    checked={paymentMethod === 'paytr'}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    style={{ marginRight: '10px' }}
+                  />
+                  <div>
+                    <div style={{ fontWeight: 'bold', fontSize: '16px' }}>💳 Kredi/Banka Kartı</div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-light)' }}>PayTR ile güvenli ödeme</div>
+                  </div>
+                </label>
+                
+                <label style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  cursor: 'pointer',
+                  padding: '15px 20px',
+                  border: paymentMethod === 'treps' ? '2px solid #007bff' : '2px solid #ddd',
+                  borderRadius: '10px',
+                  backgroundColor: paymentMethod === 'treps' ? 'rgba(0, 123, 255, 0.1)' : 'white'
+                }}>
+                  <input
+                    type="radio"
+                    value="treps"
+                    checked={paymentMethod === 'treps'}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    style={{ marginRight: '10px' }}
+                  />
+                  <div>
+                    <div style={{ fontWeight: 'bold', fontSize: '16px' }}>🏦 TREPS ile Ödeme</div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-light)' }}>TREPS ile güvenli ödeme</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            {/* IBAN Bilgileri - Sadece IBAN seçildiğinde göster */}
+            {paymentMethod === 'iban' && (
+              <div style={{ 
+                padding: '20px', 
+                backgroundColor: 'var(--card-gray)', 
+                borderRadius: '10px',
+                marginBottom: '20px'
+              }}>
+                <h4 style={{ color: 'var(--primary-dark)', marginBottom: '10px' }}>🏦 IBAN Bilgileri:</h4>
+                <div style={{ fontSize: '16px', fontWeight: 'bold', letterSpacing: '2px' }}>
+                  TR77 0011 1000 0000 0153 1671 66
+                </div>
+                <div style={{ fontSize: '14px', color: 'var(--text-light)', marginTop: '5px' }}>
+                  HOOWELL GLOBAL ALKALİ İYONİZER SİSTEMLERİ ANONİM ŞİRKETİ
+                </div>
+                <div style={{ 
+                  marginTop: '15px', 
+                  padding: '10px', 
+                  backgroundColor: '#e3f2fd', 
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  color: '#1565c0'
+                }}>
+                  💡 IBAN'a ödeme yaptıktan sonra dekont yükleme gerekmez. Admin onayı ile hesabınız aktifleştirilecektir.
+                </div>
+              </div>
+            )}
+
+            {/* PayTR Bilgileri - Sadece PayTR seçildiğinde göster */}
+            {paymentMethod === 'paytr' && (
+              <div style={{ 
+                padding: '20px', 
+                backgroundColor: '#e8f5e8', 
+                borderRadius: '10px',
+                marginBottom: '20px',
+                border: '1px solid #4caf50'
+              }}>
+                <h4 style={{ color: '#2e7d32', marginBottom: '15px' }}>💳 PayTR Güvenli Ödeme</h4>
+                <ul style={{ color: '#2e7d32', fontSize: '14px', marginBottom: '0', paddingLeft: '20px' }}>
+                  <li>Kredi kartı ve banka kartı ile güvenli ödeme</li>
+                  <li>3D Secure ile korumalı işlem</li>
+                  <li>Anında ödeme onayı ve hesap aktivasyonu</li>
+                  <li>SSL sertifikası ile şifreli bağlantı</li>
+                  <li>Visa, MasterCard, American Express kabul edilir</li>
+                </ul>
+              </div>
+            )}
+
+            {/* TREPS Bilgileri - Sadece TREPS seçildiğinde göster */}
+            {paymentMethod === 'treps' && (
+              <div style={{ 
+                padding: '20px', 
+                backgroundColor: '#e3f2fd', 
+                borderRadius: '10px',
+                marginBottom: '20px',
+                border: '1px solid #2196f3'
+              }}>
+                <h4 style={{ color: '#1565c0', marginBottom: '15px' }}>🏦 TREPS Güvenli Ödeme</h4>
+                <ul style={{ color: '#1565c0', fontSize: '14px', marginBottom: '0', paddingLeft: '20px' }}>
+                  <li>Kredi kartı ve banka kartı ile güvenli ödeme</li>
+                  <li>3D Secure ile korumalı işlem</li>
+                  <li>Anında ödeme onayı ve hesap aktivasyonu</li>
+                  <li>SSL sertifikası ile şifreli bağlantı</li>
+                  <li>Visa, MasterCard, American Express kabul edilir</li>
+                </ul>
+              </div>
+            )}
+
+            {/* Aksiyon Butonları */}
+            <div style={{ display: 'flex', gap: '20px' }}>
+              <button
+                onClick={() => setCurrentStep(5)}
+                style={{
+                  flex: 1,
+                  padding: '15px',
+                  backgroundColor: 'var(--card-gray)',
+                  color: 'var(--text-dark)',
+                  border: '2px solid var(--border-color)',
+                  borderRadius: '10px',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer'
+                }}
+              >
+                ← Geri
+              </button>
+              
+              {paymentMethod === 'iban' ? (
+                <button
+                  onClick={() => {
+                    // IBAN ödeme kaydı oluştur
+                    navigate('/payment', {
+                      state: {
+                        partnerId: 'NEW_PARTNER',
+                        amount: 4800,
+                        partnerInfo: {
+                          name: registrationType === 'individual' 
+                            ? `${formData.first_name} ${formData.last_name}`
+                            : formData.company_name,
+                          email: formData.email,
+                          type: registrationType
+                        },
+                        skipReceipt: true, // Dekont yükleme atla
+                        paymentMethod: 'iban'
+                      }
+                    });
+                  }}
+                  style={{
+                    flex: 1,
+                    padding: '15px',
+                    backgroundColor: 'var(--primary-dark)',
+                    color: 'var(--white)',
+                    border: 'none',
+                    borderRadius: '10px',
+                    fontSize: '16px',
+                    fontWeight: 'bold',
+                    cursor: 'pointer'
+                  }}
+                >
+                  🏦 IBAN Ödeme Kaydı Oluştur
+                </button>
+              ) : paymentMethod === 'paytr' ? (
+                <button
+                  onClick={async () => {
+                    // PayTR ödeme işlemi başlat
+                    setLoading(true);
+                    try {
+                      const partnerInfo = {
+                        name: registrationType === 'individual' 
+                          ? `${formData.first_name} ${formData.last_name}`
+                          : formData.company_name,
+                        email: formData.email,
+                        phone: formData.phone,
+                        address: formData.full_address || 'Türkiye'
+                      };
+
+                      const response = await axios.post('/api/paytr/create-payment', {
+                        payment_type: 'franchise',
+                        user_info: partnerInfo,
+                        partner_id: 'NEW_PARTNER',
+                        custom_amount: 4800
+                      }, {
+                        headers: {
+                          'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                      });
+
+                      if (response.data.success) {
+                        // PayTR sayfasına yönlendir
+                        window.location.href = response.data.paymentUrl;
+                        // Ödeme başarılı olduğunda 7. adıma geç
+                        setCurrentStep(7);
+                      } else {
+                        setMessage('❌ PayTR ödeme oluşturulamadı: ' + response.data.message);
+                      }
+                    } catch (error) {
+                      setMessage('❌ PayTR ödeme hatası: ' + (error.response?.data?.message || 'Bilinmeyen hata'));
+                    } finally {
+                      setLoading(false);
+                    }
+                  }}
+                  disabled={loading}
+                  style={{
+                    flex: 1,
+                    padding: '15px',
+                    backgroundColor: loading ? '#ccc' : '#28a745',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '10px',
+                    fontSize: '16px',
+                    fontWeight: 'bold',
+                    cursor: loading ? 'not-allowed' : 'pointer'
+                  }}
+                >
+                  {loading ? 'PayTR\'ye Yönlendiriliyor...' : '💳 PayTR ile Güvenli Ödeme Yap'}
+                </button>
+              ) : (
+                <button
+                  onClick={async () => {
+                    // TREPS ödeme işlemi başlat
+                    setLoading(true);
+                    try {
+                      const response = await axios.post('/api/treps/create-payment', {
+                        amount: 4800,
+                        orderId: `PARTNER_${Date.now()}`,
+                        description: `HOOWELL İş Ortağı Kaydı - ${registrationType === 'individual' ? `${formData.first_name} ${formData.last_name}` : formData.company_name}`,
+                        customerName: registrationType === 'individual' 
+                          ? `${formData.first_name} ${formData.last_name}`
+                          : formData.company_name,
+                        customerEmail: formData.email,
+                        customerPhone: formData.phone,
+                        customerCity: formData.city || 'İstanbul',
+                        customerAddress: formData.full_address || 'Türkiye',
+                        customerZipCode: '34000',
+                        productName: 'HOOWELL İş Ortağı Paketi',
+                        productId: 'HOOWELL-PARTNER'
+                      }, {
+                        headers: {
+                          'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                      });
+
+                      if (response.data.success) {
+                        // TREPS iframe URL'ine doğrudan yönlendir
+                        window.location.href = response.data.url;
+                        // Ödeme başarılı olduğunda 7. adıma geç
+                        setCurrentStep(7);
+                      } else {
+                        setMessage('❌ TREPS ödeme oluşturulamadı: ' + response.data.error);
+                      }
+                    } catch (error) {
+                      setMessage('❌ TREPS ödeme hatası: ' + (error.response?.data?.error || 'Bilinmeyen hata'));
+                    } finally {
+                      setLoading(false);
+                    }
+                  }}
+                  disabled={loading}
+                  style={{
+                    flex: 1,
+                    padding: '15px',
+                    backgroundColor: loading ? '#ccc' : '#007bff',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '10px',
+                    fontSize: '16px',
+                    fontWeight: 'bold',
+                    cursor: loading ? 'not-allowed' : 'pointer'
+                  }}
+                >
+                  {loading ? 'TREPS\'e Yönlendiriliyor...' : '🏦 TREPS ile Güvenli Ödeme Yap'}
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ADIM 7: Kayıt Tamamlama ve Kullanıcı Bilgileri */}
+        {currentStep === 7 && (
         <div style={{
           backgroundColor: 'var(--card-gray)',
           borderRadius: '15px',
@@ -1485,6 +1815,28 @@ const PartnerRegistration = () => {
                         <div style={{ fontSize: '12px', color: 'var(--text-light)' }}>PayTR ile güvenli ödeme</div>
                       </div>
                     </label>
+                    
+                    <label style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      cursor: 'pointer',
+                      padding: '15px 20px',
+                      border: paymentMethod === 'treps' ? '2px solid #007bff' : '2px solid #ddd',
+                      borderRadius: '10px',
+                      backgroundColor: paymentMethod === 'treps' ? 'rgba(0, 123, 255, 0.1)' : 'white'
+                    }}>
+                      <input
+                        type="radio"
+                        value="treps"
+                        checked={paymentMethod === 'treps'}
+                        onChange={(e) => setPaymentMethod(e.target.value)}
+                        style={{ marginRight: '10px' }}
+                      />
+                      <div>
+                        <div style={{ fontWeight: 'bold', fontSize: '16px' }}>🏦 TREPS ile Ödeme</div>
+                        <div style={{ fontSize: '12px', color: 'var(--text-light)' }}>TREPS ile güvenli ödeme</div>
+                      </div>
+                    </label>
                   </div>
                 </div>
 
@@ -1535,6 +1887,26 @@ const PartnerRegistration = () => {
                     </ul>
                   </div>
                 )}
+
+                {/* TREPS Bilgileri - Sadece TREPS seçildiğinde göster */}
+                {paymentMethod === 'treps' && (
+                  <div style={{ 
+                    padding: '20px', 
+                    backgroundColor: '#e3f2fd', 
+                    borderRadius: '10px',
+                    marginBottom: '20px',
+                    border: '1px solid #2196f3'
+                  }}>
+                    <h4 style={{ color: '#1565c0', marginBottom: '15px' }}>🏦 TREPS Güvenli Ödeme</h4>
+                    <ul style={{ color: '#1565c0', fontSize: '14px', marginBottom: '0', paddingLeft: '20px' }}>
+                      <li>Kredi kartı ve banka kartı ile güvenli ödeme</li>
+                      <li>3D Secure ile korumalı işlem</li>
+                      <li>Anında ödeme onayı ve hesap aktivasyonu</li>
+                      <li>SSL sertifikası ile şifreli bağlantı</li>
+                      <li>Visa, MasterCard, American Express kabul edilir</li>
+                    </ul>
+                  </div>
+                )}
               </div>
 
               {/* Aksiyon Butonları */}
@@ -1573,7 +1945,7 @@ const PartnerRegistration = () => {
                   >
                     🏦 IBAN Ödeme Kaydı Oluştur
                   </button>
-                ) : (
+                ) : paymentMethod === 'paytr' ? (
                   <button
                     onClick={async () => {
                       // PayTR ödeme işlemi başlat
@@ -1625,6 +1997,59 @@ const PartnerRegistration = () => {
                     }}
                   >
                     {loading ? 'PayTR\'ye Yönlendiriliyor...' : '💳 PayTR ile Güvenli Ödeme Yap'}
+                  </button>
+                ) : (
+                  <button
+                    onClick={async () => {
+                      // TREPS ödeme işlemi başlat
+                      setLoading(true);
+                      try {
+                        const response = await axios.post('/api/treps/create-payment', {
+                          amount: 4800,
+                          orderId: `PARTNER_${Date.now()}`,
+                          description: `HOOWELL İş Ortağı Kaydı - ${registrationType === 'individual' ? `${formData.first_name} ${formData.last_name}` : formData.company_name}`,
+                          customerName: registrationType === 'individual' 
+                            ? `${formData.first_name} ${formData.last_name}`
+                            : formData.company_name,
+                          customerEmail: formData.email,
+                          customerPhone: formData.phone,
+                          customerCity: formData.city || 'İstanbul',
+                          customerAddress: formData.full_address || 'Türkiye',
+                          customerZipCode: '34000',
+                          productName: 'HOOWELL İş Ortağı Paketi',
+                          productId: 'HOOWELL-PARTNER'
+                        }, {
+                          headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                          }
+                        });
+
+                        if (response.data.success) {
+                          // TREPS iframe URL'ine doğrudan yönlendir
+                          window.location.href = response.data.url;
+                        } else {
+                          setMessage('❌ TREPS ödeme oluşturulamadı: ' + response.data.error);
+                        }
+                      } catch (error) {
+                        setMessage('❌ TREPS ödeme hatası: ' + (error.response?.data?.error || 'Bilinmeyen hata'));
+                      } finally {
+                        setLoading(false);
+                      }
+                    }}
+                    disabled={loading}
+                    style={{
+                      flex: 1,
+                      padding: '15px',
+                      backgroundColor: loading ? '#ccc' : '#007bff',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '10px',
+                      fontSize: '16px',
+                      fontWeight: 'bold',
+                      cursor: loading ? 'not-allowed' : 'pointer'
+                    }}
+                  >
+                    {loading ? 'TREPS\'e Yönlendiriliyor...' : '🏦 TREPS ile Güvenli Ödeme Yap'}
                   </button>
                 )}
                 
