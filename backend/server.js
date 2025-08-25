@@ -1526,9 +1526,12 @@ app.get('/api/doping-promotion/progress', verifyToken, async (req, res) => {
       WHERE sponsor_id = ?
     `, [startDate, etap1EndDate, etap2StartDate, etap2EndDate, userSponsorId]);
 
-    // Kazanılacak puan hesaplama (şimdilik 0, ileride hesaplanacak)
+    // Etap 1 tamamlandı mı kontrol et
     const etap1Completed = (teamSales[0].etap1_sales >= 40 && partners[0].etap1_partners >= 7);
-    const etap2Completed = (teamSales[0].etap2_sales >= 80 && partners[0].etap2_partners >= 15);
+    
+    // Etap 2 sadece etap 1 tamamlandıysa aktif olabilir
+    const etap2Active = etap1Completed;
+    const etap2Completed = etap2Active && (teamSales[0].etap2_sales >= 80 && partners[0].etap2_partners >= 15);
 
     const dopingData = {
       etap1: {
@@ -1541,7 +1544,8 @@ app.get('/api/doping-promotion/progress', verifyToken, async (req, res) => {
         yapilan_ortak: partners[0].etap1_partners || 0,
         kalan_ortak: Math.max(0, 7 - (partners[0].etap1_partners || 0)),
         kazanilacak_puan: etap1Completed ? 2000 : 0, // 2x KKP bonusu
-        tamamlandi: etap1Completed
+        tamamlandi: etap1Completed,
+        aktif: true // Etap 1 her zaman aktif
       },
       etap2: {
         baslangic_tarihi: etap2StartDate.toLocaleDateString('tr-TR'),
@@ -1553,7 +1557,9 @@ app.get('/api/doping-promotion/progress', verifyToken, async (req, res) => {
         yapilan_ortak: partners[0].etap2_partners || 0,
         kalan_ortak: Math.max(0, 15 - (partners[0].etap2_partners || 0)),
         kazanilacak_puan: etap2Completed ? 3000 : 0, // 2x KKP bonusu
-        tamamlandi: etap2Completed
+        tamamlandi: etap2Completed,
+        aktif: etap2Active, // Etap 2 sadece etap 1 tamamlandıysa aktif
+        beklemekte: !etap2Active // Etap 1 tamamlanmadıysa beklemekte
       }
     };
 

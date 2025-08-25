@@ -48,21 +48,18 @@ router.post('/create-payment', async (req, res) => {
     // TREPS API'yi gerçek olarak çağır
     console.log('TREPS API gerçek ödeme isteği gönderiliyor...');
     
-    // TREPS IFRAME ödeme verileri - Dokümantasyona uygun
+    // TREPS Direkt API ödeme verileri - /api/payment/pay endpoint
     const paymentData = {
+      payment_request_type: 3, // API = 3
+      transaction_type: 1, // Auth = 1
       external_order_id: req.body.orderId || `Treps_ord_${Date.now()}`,
       amount: req.body.amount,
       currency: 'TRY',
-      secure_flag: 1,
-      transaction_type: 1,
-      min_installment: 1,
-      max_installment: 1,
-      expire_date: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
       return_url: 'https://panel.hoowell.net/payment?method=treps&result=success',
+      installment: 1,
+      description: req.body.description || 'HOOWELL Ödeme',
+      client_ip: req.ip || '92.249.61.128',
       retry_fail: true,
-      iframe_flag: 0, // 0 = Hosted Page (Direct Payment), 1 = IFrame
-      iframe_web_uri: 'https://panel.hoowell.net/customer-registration',
-      lang: 'tr',
       // Zorunlu parametreler
       client_ip: req.ip || '92.249.61.128',
       description: req.body.description || 'HOOWELL Ödeme',
@@ -114,7 +111,7 @@ router.post('/create-payment', async (req, res) => {
     
     const token = await getTrepsToken();
     
-    const response = await axios.post(`${TREPS_CONFIG.baseUrl}/api/payment/hostedpage`, paymentData, {
+    const response = await axios.post(`${TREPS_CONFIG.baseUrl}/api/payment/pay`, paymentData, {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',

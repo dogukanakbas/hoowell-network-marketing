@@ -468,7 +468,8 @@ const DopingPromosyonu = () => {
           padding: '30px',
           width: '600px',
           border: '3px solid #FFD700',
-          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5)'
+          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5)',
+          opacity: (!dopingData.etap1.tamamlandi) ? 0.6 : 1
         }}>
           {/* Etap Başlığı */}
           <div style={{
@@ -479,13 +480,13 @@ const DopingPromosyonu = () => {
             textAlign: 'center'
           }}>
             <h2 style={{
-              color: '#FFD700',
+              color: (!dopingData.etap1.tamamlandi) ? '#FFA500' : '#FFD700',
               fontSize: '24px',
               fontWeight: 'bold',
               margin: '0',
               marginBottom: '10px'
             }}>
-              2.ETAP
+              {(!dopingData.etap1.tamamlandi) ? '2.ETAP (BEKLEMEDE)' : '2.ETAP'}
             </h2>
             <div style={{ color: 'white', fontSize: '16px', marginBottom: '5px' }}>
               Başlangıç Tarihi: {dopingData.etap2.baslangic_tarihi}
@@ -568,7 +569,7 @@ const DopingPromosyonu = () => {
                 fontSize: '18px',
                 fontWeight: 'bold'
               }}>
-                {dopingData.etap2.yapilan_satis}
+                {(!dopingData.etap1.tamamlandi) ? 0 : dopingData.etap2.yapilan_satis}
               </div>
             </div>
             <div style={{
@@ -594,7 +595,7 @@ const DopingPromosyonu = () => {
                 fontSize: '18px',
                 fontWeight: 'bold'
               }}>
-                {dopingData.etap2.kalan_satis}
+                {(!dopingData.etap1.tamamlandi) ? 80 : dopingData.etap2.kalan_satis}
               </div>
             </div>
           </div>
@@ -671,7 +672,7 @@ const DopingPromosyonu = () => {
                 fontSize: '18px',
                 fontWeight: 'bold'
               }}>
-                {dopingData.etap2.yapilan_ortak}
+                {(!dopingData.etap1.tamamlandi) ? 0 : dopingData.etap2.yapilan_ortak}
               </div>
             </div>
             <div style={{
@@ -697,7 +698,7 @@ const DopingPromosyonu = () => {
                 fontSize: '18px',
                 fontWeight: 'bold'
               }}>
-                {dopingData.etap2.kalan_ortak}
+                {(!dopingData.etap1.tamamlandi) ? 15 : dopingData.etap2.kalan_ortak}
               </div>
             </div>
           </div>
@@ -707,7 +708,7 @@ const DopingPromosyonu = () => {
             textAlign: 'center',
             marginBottom: '20px',
             padding: '15px',
-            backgroundColor: dopingData.etap2.tamamlandi ? '#28a745' : '#dc3545',
+            backgroundColor: (!dopingData.etap1.tamamlandi) ? '#FFA500' : (dopingData.etap2.tamamlandi ? '#28a745' : '#dc3545'),
             borderRadius: '10px'
           }}>
             <div style={{
@@ -716,15 +717,17 @@ const DopingPromosyonu = () => {
               fontWeight: 'bold',
               marginBottom: '10px'
             }}>
-              {dopingData.etap2.tamamlandi ? '✅ ETAP TAMAMLANDI' : '⏳ ETAP DEVAM EDİYOR'}
+              {(!dopingData.etap1.tamamlandi) ? '⏸️ ETAP BEKLEMEDE' : (dopingData.etap2.tamamlandi ? '✅ ETAP TAMAMLANDI' : '⏳ ETAP DEVAM EDİYOR')}
             </div>
             <div style={{
               color: 'white',
               fontSize: '14px'
             }}>
-              {dopingData.etap2.tamamlandi 
-                ? 'KKP\'leriniz 2 ile çarpılıyor!' 
-                : `${dopingData.etap2.kalan_satis} satış ve ${dopingData.etap2.kalan_ortak} ortak kaldı`
+              {(!dopingData.etap1.tamamlandi) 
+                ? '1. Etap tamamlanması bekleniyor' 
+                : (dopingData.etap2.tamamlandi 
+                  ? 'KKP\'leriniz 2 ile çarpılıyor!' 
+                  : `${dopingData.etap2.kalan_satis} satış ve ${dopingData.etap2.kalan_ortak} ortak kaldı`)
               }
             </div>
           </div>
@@ -747,7 +750,7 @@ const DopingPromosyonu = () => {
               fontSize: '36px',
               fontWeight: 'bold'
             }}>
-              {dopingData.etap2.kazanilacak_puan.toFixed(3)} KKP
+              {(!dopingData.etap1.tamamlandi) ? '0.000' : dopingData.etap2.kazanilacak_puan.toFixed(3)} KKP
             </div>
             {dopingData.etap2.tamamlandi && (
               <div style={{
