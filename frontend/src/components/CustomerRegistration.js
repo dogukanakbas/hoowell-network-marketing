@@ -2011,15 +2011,26 @@ const CustomerRegistration = () => {
                     });
 
                     if (response.data.success) {
-                      // TREPS ödeme sayfasına yönlendir
-                      window.location.href = `/payment?method=treps&paymentId=${response.data.paymentId}`;
+                      // TREPS Hosted Page'e yönlendir (Direct Payment)
+                      window.location.href = response.data.url;
                     } else {
                       alert('TREPS ödeme oluşturulamadı: ' + response.data.error);
                     }
                   } catch (error) {
                     console.error('TREPS ödeme hatası:', error);
-                    const errorMessage = error.response?.data?.message || error.response?.data?.error || 'Bilinmeyen hata';
-                    alert('TREPS ödeme hatası: ' + errorMessage);
+                    
+                    if (error.response && error.response.status === 403) {
+                      // TREPS 403 hatası - PAYTR'ye yönlendir
+                      const usePaytr = confirm('TREPS ödeme sistemi şu anda kullanılamıyor. PAYTR ile ödeme yapmak ister misiniz?');
+                      if (usePaytr) {
+                        setPaymentMethod('paytr');
+                        // PAYTR ödeme butonunu tetikle
+                        document.querySelector('button[onclick*="paytr"]')?.click();
+                      }
+                    } else {
+                      const errorMessage = error.response?.data?.message || error.response?.data?.error || 'Bilinmeyen hata';
+                      alert('TREPS ödeme hatası: ' + errorMessage);
+                    }
                   }
                 }}
                 style={{

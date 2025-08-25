@@ -60,7 +60,7 @@ router.post('/create-payment', async (req, res) => {
       expire_date: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
       return_url: 'https://panel.hoowell.net/payment?method=treps&result=success',
       retry_fail: true,
-      iframe_flag: 1,
+      iframe_flag: 0, // 0 = Hosted Page (Direct Payment), 1 = IFrame
       iframe_web_uri: 'https://panel.hoowell.net/customer-registration',
       lang: 'tr',
       // Zorunlu parametreler
@@ -133,11 +133,11 @@ router.post('/create-payment', async (req, res) => {
       
       res.json({
         success: true,
-        url: trepsData.url || trepsData.iframe_url,
-        token: trepsData.token || trepsData.payment_token,
-        paymentId: trepsData.token || trepsData.payment_token,
-        expire_date: trepsData.expire_date || trepsData.expires_at,
-        message: 'TREPS IFRAME ödeme oluşturuldu'
+        url: trepsData.url,
+        token: trepsData.token,
+        paymentId: trepsData.token,
+        expire_date: trepsData.expire_date,
+        message: 'TREPS Hosted Page ödeme oluşturuldu'
       });
     } else {
       throw new Error(response.data.message || 'TREPS ödeme oluşturulamadı');
@@ -146,9 +146,21 @@ router.post('/create-payment', async (req, res) => {
   } catch (error) {
     console.error('TREPS IFRAME ödeme hatası:', error);
     
-    res.status(500).json({
+    // TREPS API'den 403 hatası alındıysa
+    if (error.response && error.response.status === 403) {
+      return res.status(403).json({
+        success: false,
+        error: 'TREPS ödeme sistemi şu anda kullanılamıyor. Lütfen PAYTR ile ödeme yapın.',
+        trepsError: true,
+        details: 'TREPS hesap ayarları sorunlu'
+      });
+    }
+    
+    // Diğer hatalar için
+    return res.status(500).json({
       success: false,
-      error: error.message
+      error: 'Ödeme sistemi hatası. Lütfen daha sonra tekrar deneyin.',
+      details: error.message
     });
   }
 });
