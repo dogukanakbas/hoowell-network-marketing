@@ -2021,7 +2021,7 @@ const CustomerRegistration = () => {
                     
                     if (error.response && error.response.status === 403) {
                       // TREPS 403 hatası - PAYTR'ye yönlendir
-                      const usePaytr = confirm('TREPS ödeme sistemi şu anda kullanılamıyor. PAYTR ile ödeme yapmak ister misiniz?');
+                      const usePaytr = window.confirm('TREPS ödeme sistemi şu anda kullanılamıyor. PAYTR ile ödeme yapmak ister misiniz?');
                       if (usePaytr) {
                         setPaymentMethod('paytr');
                         // PAYTR ödeme butonunu tetikle
