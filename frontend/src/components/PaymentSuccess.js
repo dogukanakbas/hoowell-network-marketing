@@ -9,8 +9,15 @@ const PaymentSuccess = () => {
 
   useEffect(() => {
     const merchant_oid = searchParams.get('merchant_oid');
+    const paymentId = searchParams.get('paymentId');
+    const method = searchParams.get('method');
+    
     if (merchant_oid) {
+      // PAYTR ödeme
       checkPaymentStatus(merchant_oid);
+    } else if (paymentId && method === 'treps') {
+      // TREPS ödeme
+      checkTrepsPaymentStatus(paymentId);
     } else {
       setLoading(false);
     }
@@ -26,6 +33,21 @@ const PaymentSuccess = () => {
       setPaymentInfo(response.data);
     } catch (error) {
       console.error('Payment status check error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const checkTrepsPaymentStatus = async (paymentId) => {
+    try {
+      const response = await axios.get(`/api/treps/payment-status/${paymentId}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      setPaymentInfo(response.data);
+    } catch (error) {
+      console.error('TREPS payment status check error:', error);
     } finally {
       setLoading(false);
     }

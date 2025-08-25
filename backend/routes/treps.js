@@ -58,7 +58,7 @@ router.post('/create-payment', async (req, res) => {
       min_installment: 1,
       max_installment: 1,
       expire_date: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 saat sonra
-      return_url: 'https://panel.hoowell.net/payment/success',
+      return_url: 'https://panel.hoowell.net/api/treps/payment-success',
       retry_fail: true,
       iframe_flag: 1, // IFRAME = 1
       iframe_web_uri: 'https://panel.hoowell.net',
@@ -246,6 +246,28 @@ router.post('/callback', async (req, res) => {
   } catch (error) {
     console.error('TREPS callback hatası:', error);
     res.status(500).json({ success: false });
+  }
+});
+
+// Payment success endpoint (GET)
+router.get('/payment-success', async (req, res) => {
+  try {
+    const { paymentId, status } = req.query;
+    
+    console.log('TREPS payment success:', { paymentId, status });
+    
+    // Ödeme durumunu kontrol et
+    if (status === 'success') {
+      // Başarılı ödeme - kullanıcıyı frontend'e yönlendir
+      res.redirect(`https://panel.hoowell.net/payment/success?paymentId=${paymentId}&status=success&method=treps`);
+    } else {
+      // Başarısız ödeme
+      res.redirect(`https://panel.hoowell.net/payment/fail?paymentId=${paymentId}&status=failed&method=treps`);
+    }
+    
+  } catch (error) {
+    console.error('TREPS payment success error:', error);
+    res.redirect('https://panel.hoowell.net/payment/fail?error=unknown');
   }
 });
 
