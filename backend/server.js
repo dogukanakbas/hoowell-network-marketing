@@ -2887,7 +2887,7 @@ app.get('/api/sales/tracker', verifyToken, async (req, res) => {
       WHERE st.seller_id = ? 
       AND st.status = 'pending'
       AND st.bonus_date > NOW()
-      AND st.sale_type NOT IN ('franchise_education', 'franchise_education_hidden')
+      AND st.sale_type IN ('product_sale', 'customer_registration')
       ORDER BY st.sale_date DESC
     `, [userId]);
 
@@ -2914,7 +2914,7 @@ app.get('/api/sales/tracker', verifyToken, async (req, res) => {
       AND (st.status = 'active' OR (st.status = 'pending' AND st.bonus_date <= NOW()))
       AND MONTH(st.sale_date) = ? 
       AND YEAR(st.sale_date) = ?
-      AND st.sale_type NOT IN ('franchise_education', 'franchise_education_hidden')
+      AND st.sale_type IN ('product_sale', 'customer_registration')
       ORDER BY st.sale_date DESC
     `, [userId, currentMonth, currentYear]);
 
@@ -2925,7 +2925,7 @@ app.get('/api/sales/tracker', verifyToken, async (req, res) => {
       WHERE st.seller_id = ?
       AND MONTH(st.sale_date) = ? 
       AND YEAR(st.sale_date) = ?
-      AND st.sale_type NOT IN ('franchise_education', 'franchise_education_hidden')
+      AND st.sale_type IN ('product_sale', 'customer_registration')
     `, [userId, currentMonth, currentYear]);
 
     res.json({
@@ -3326,7 +3326,29 @@ app.get('/api/team/tracker', verifyToken, async (req, res) => {
         u.email,
         COALESCE(up.total_sales, 0) as total_sales,
         COALESCE(up.monthly_sales, 0) as monthly_sales,
-        COALESCE(up.is_active_this_month, FALSE) as is_active_this_month,
+        -- Aktiflik durumu: Ürün satışı VEYA yeni iş ortağı ilk satışı
+        CASE 
+          WHEN (
+            SELECT COUNT(*) 
+            FROM sales_tracking st 
+            WHERE st.seller_id = u.id 
+            AND st.sale_type IN ('product_sale', 'customer_registration')
+            AND MONTH(st.sale_date) = MONTH(CURDATE())
+            AND YEAR(st.sale_date) = YEAR(CURDATE())
+            AND (st.status = 'active' OR (st.status = 'pending' AND st.bonus_date <= NOW()))
+          ) > 0
+          OR (
+            SELECT COUNT(*) 
+            FROM sales_tracking st 
+            WHERE st.seller_id = u.id 
+            AND st.sale_type = 'partner_registration'
+            AND MONTH(st.sale_date) = MONTH(CURDATE())
+            AND YEAR(st.sale_date) = YEAR(CURDATE())
+            AND (st.status = 'active' OR (st.status = 'pending' AND st.bonus_date <= NOW()))
+          ) > 0
+          THEN TRUE
+          ELSE FALSE
+        END as is_active_this_month,
         -- Calculate franchise percentage based on user's level
         CASE 
           WHEN ? = 'silver' THEN 2
