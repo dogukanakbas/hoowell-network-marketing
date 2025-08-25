@@ -249,12 +249,34 @@ router.post('/callback', async (req, res) => {
   }
 });
 
-// Payment success endpoint (GET)
+// Payment success endpoint (GET ve POST)
 router.get('/payment-success', async (req, res) => {
   try {
     const { paymentId, status } = req.query;
     
-    console.log('TREPS payment success:', { paymentId, status });
+    console.log('TREPS payment success (GET):', { paymentId, status });
+    
+    // Ödeme durumunu kontrol et
+    if (status === 'success') {
+      // Başarılı ödeme - kullanıcıyı frontend'e yönlendir
+      res.redirect(`https://panel.hoowell.net/payment/success?paymentId=${paymentId}&status=success&method=treps`);
+    } else {
+      // Başarısız ödeme
+      res.redirect(`https://panel.hoowell.net/payment/fail?paymentId=${paymentId}&status=failed&method=treps`);
+    }
+    
+  } catch (error) {
+    console.error('TREPS payment success error:', error);
+    res.redirect('https://panel.hoowell.net/payment/fail?error=unknown');
+  }
+});
+
+// Payment success endpoint (POST) - TREPS'ten POST isteği gelirse
+router.post('/payment-success', async (req, res) => {
+  try {
+    const { paymentId, status } = req.body;
+    
+    console.log('TREPS payment success (POST):', { paymentId, status });
     
     // Ödeme durumunu kontrol et
     if (status === 'success') {
