@@ -48,19 +48,21 @@ router.post('/create-payment', async (req, res) => {
     // TREPS API'yi gerçek olarak çağır
     console.log('TREPS API gerçek ödeme isteği gönderiliyor...');
     
-    // TREPS Direkt API ödeme verileri - /api/payment/pay endpoint
+    // TREPS Hostedpage ödeme verileri - /api/payment/hostedpage endpoint
     const paymentData = {
-      payment_request_type: 3, // API = 3
-      transaction_type: 1, // Auth = 1
-      external_order_id: req.body.orderId || `Treps_ord_${Date.now()}`,
+      external_order_id: req.body.orderId || `HOOWELL_${Date.now()}`,
       amount: req.body.amount,
       currency: 'TRY',
-      return_url: 'https://panel.hoowell.net/payment?method=treps&result=success',
-      installment: 1,
-      description: req.body.description || 'HOOWELL Ödeme',
-      client_ip: req.ip || '92.249.61.128',
+      secure_flag: 1,
+      transaction_type: 1,
+      min_installment: 1,
+      max_installment: 1,
+      expire_date: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 saat sonra
+      return_url: 'https://panel.hoowell.net/payment/success',
       retry_fail: true,
-      // Zorunlu parametreler
+      iframe_flag: 1, // IFRAME = 1
+      iframe_web_uri: 'https://panel.hoowell.net/customer-registration',
+      lang: 'tr',
       client_ip: req.ip || '92.249.61.128',
       description: req.body.description || 'HOOWELL Ödeme',
       // Müşteri bilgileri - TREPS formatına uygun
@@ -104,14 +106,45 @@ router.post('/create-payment', async (req, res) => {
         address: req.body.customerAddress || 'HOOWELL Adres',
         zip_code: req.body.customerZipCode || '34000'
       },
-
+      // CSS değişkenleri
+      css_variables: {
+        text_color: '#1f2937',
+        text_font_weight: '500',
+        font_family: 'Segoe UI, Roboto, sans-serif',
+        font_size: '16px',
+        input_bg: '#ffffff',
+        input_border: '1px solid #d1d5db',
+        input_radius: '8px',
+        input_padding: '12px',
+        input_color: '#111827',
+        input_font_weight: '400',
+        button_background_color: '#10b981',
+        button_background_color_hover: '#059669',
+        button_color: '#ffffff',
+        button_color_hover: '#ffffff',
+        button_padding: '12px 24px',
+        button_border: 'none',
+        button_border_hover: 'none',
+        button_width: '100%',
+        button_max_width: '300px',
+        button_transition: 'all 0.3s ease',
+        button_container_text_align: 'center',
+        button_container_margin_top: '24px',
+        label_margin: '0 0 8px 0',
+        installment_border_color: '#e5e7eb',
+        installment_selected_border_color: '#10b981',
+        installment_selected_background_color: '#ecfdf5',
+        hide_installments: '0',
+        hide_pay_button: '0',
+        hide_labels: '0'
+      }
     };
     
     console.log('TREPS IFRAME ödeme isteği gönderiliyor:', paymentData);
     
     const token = await getTrepsToken();
     
-    const response = await axios.post(`${TREPS_CONFIG.baseUrl}/api/payment/pay`, paymentData, {
+    const response = await axios.post(`${TREPS_CONFIG.baseUrl}/api/payment/hostedpage`, paymentData, {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
