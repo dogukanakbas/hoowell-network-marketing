@@ -163,7 +163,7 @@ const CustomerSatisfactionTracker = () => {
               justifyContent: 'center',
               minHeight: '100px'
             }}>
-              <div style={{ fontSize: window.innerWidth <= 768 ? '12px' : '14px', marginBottom: '5px' }}>320 USD</div>
+              <div style={{ fontSize: window.innerWidth <= 768 ? '12px' : '14px', marginBottom: '5px' }}>310 USD</div>
               <div style={{ fontSize: window.innerWidth <= 768 ? '10px' : '12px', marginBottom: '5px' }}>Değerinde</div>
               <div style={{ fontSize: window.innerWidth <= 768 ? '10px' : '12px' }}>EL TERMİNALİ</div>
               <div style={{ fontSize: window.innerWidth <= 768 ? '10px' : '12px' }}>Hediye</div>

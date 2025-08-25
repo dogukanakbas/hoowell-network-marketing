@@ -1031,10 +1031,39 @@ const FranchiseNetwork = () => {
                   Bu Ay Aktif
                 </div>
                 <div style={{ 
-                  color: selectedUser.is_active_this_month ? '#28a745' : '#dc3545',
-                  fontWeight: 'bold'
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
                 }}>
-                  {selectedUser.is_active_this_month ? 'EVET' : 'HAYIR'}
+                  {selectedUser.is_active_this_month ? (
+                    <img 
+                      src="/images/buttons/evet.png" 
+                      alt="EVET" 
+                      style={{
+                        width: '60px',
+                        height: '60px',
+                        borderRadius: '50%',
+                        cursor: 'pointer',
+                        transition: 'transform 0.2s ease'
+                      }}
+                      onMouseEnter={(e) => e.target.style.transform = 'scale(1.1)'}
+                      onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+                    />
+                  ) : (
+                    <img 
+                      src="/images/buttons/hayır.png" 
+                      alt="HAYIR" 
+                      style={{
+                        width: '60px',
+                        height: '60px',
+                        borderRadius: '50%',
+                        cursor: 'pointer',
+                        transition: 'transform 0.2s ease'
+                      }}
+                      onMouseEnter={(e) => e.target.style.transform = 'scale(1.1)'}
+                      onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+                    />
+                  )}
                 </div>
               </div>
             </div>

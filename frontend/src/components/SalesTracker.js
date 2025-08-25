@@ -490,25 +490,28 @@ const SalesTracker = () => {
               flexDirection: 'column',
               alignItems: 'center'
             }}>
-              <div style={{
-                width: '120px',
-                height: '120px',
-                borderRadius: '50%',
-                backgroundColor: '#DC143C',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'white',
-                fontSize: '24px',
-                fontWeight: 'bold',
-                marginBottom: '15px',
-                boxShadow: '0 5px 15px rgba(220, 20, 60, 0.4)',
-                opacity: salesData.monthlyActivity ? 0.3 : 1,
-                filter: salesData.monthlyActivity ? 'blur(2px)' : 'none',
-                transition: 'all 0.3s ease'
-              }}>
-                HAYIR
-              </div>
+              <img 
+                src="/images/buttons/hayır.png" 
+                alt="HAYIR" 
+                style={{
+                  width: '120px',
+                  height: '120px',
+                  borderRadius: '50%',
+                  marginBottom: '15px',
+                  opacity: salesData.monthlyActivity ? 0.3 : 1,
+                  filter: salesData.monthlyActivity ? 'blur(2px)' : 'none',
+                  transition: 'all 0.3s ease',
+                  cursor: 'pointer'
+                }}
+                onMouseEnter={(e) => {
+                  if (!salesData.monthlyActivity) {
+                    e.target.style.transform = 'scale(1.1)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.transform = 'scale(1)';
+                }}
+              />
             </div>
 
             {/* EVET Butonu */}
@@ -517,25 +520,28 @@ const SalesTracker = () => {
               flexDirection: 'column',
               alignItems: 'center'
             }}>
-              <div style={{
-                width: '120px',
-                height: '120px',
-                borderRadius: '50%',
-                backgroundColor: '#28a745',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'white',
-                fontSize: '24px',
-                fontWeight: 'bold',
-                marginBottom: '15px',
-                boxShadow: '0 5px 15px rgba(40, 167, 69, 0.4)',
-                opacity: !salesData.monthlyActivity ? 0.3 : 1,
-                filter: !salesData.monthlyActivity ? 'blur(2px)' : 'none',
-                transition: 'all 0.3s ease'
-              }}>
-                EVET
-              </div>
+              <img 
+                src="/images/buttons/evet.png" 
+                alt="EVET" 
+                style={{
+                  width: '120px',
+                  height: '120px',
+                  borderRadius: '50%',
+                  marginBottom: '15px',
+                  opacity: !salesData.monthlyActivity ? 0.3 : 1,
+                  filter: !salesData.monthlyActivity ? 'blur(2px)' : 'none',
+                  transition: 'all 0.3s ease',
+                  cursor: 'pointer'
+                }}
+                onMouseEnter={(e) => {
+                  if (salesData.monthlyActivity) {
+                    e.target.style.transform = 'scale(1.1)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.transform = 'scale(1)';
+                }}
+              />
             </div>
           </div>
           
