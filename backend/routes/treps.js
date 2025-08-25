@@ -64,14 +64,14 @@ router.post('/create-payment', async (req, res) => {
       iframe_web_uri: 'https://panel.hoowell.net/customer-registration',
       lang: 'tr',
       // Zorunlu parametreler
-      client_ip: req.ip || '127.0.0.1',
+      client_ip: req.ip || '92.249.61.128',
       description: req.body.description || 'HOOWELL Ödeme',
       // Müşteri bilgileri - TREPS formatına uygun
       buyer: {
         customer_id: req.body.customerId || `CUST-${Date.now()}`,
-        name: req.body.customerName?.split(' ')[0] || 'Müşteri',
-        surname: req.body.customerName?.split(' ').slice(1).join(' ') || 'Adı',
-        email: req.body.customerEmail || 'musteri@hoowell.net',
+        name: req.body.customerName?.trim()?.split(' ')[0] || 'HOOWELL',
+        surname: req.body.customerName?.trim()?.split(' ').slice(1).join(' ') || 'Müşteri',
+        email: req.body.customerEmail || `musteri_${Date.now()}@hoowell.net`,
         phone_number: req.body.customerPhone || '5551234567',
         country: 'TUR',
         city: req.body.customerCity || 'İstanbul',
@@ -93,7 +93,7 @@ router.post('/create-payment', async (req, res) => {
       ],
       // Fatura adresi
       billing_address: {
-        name: req.body.customerName || 'Müşteri Adı',
+        name: req.body.customerName?.trim() || 'HOOWELL Müşteri',
         city: req.body.customerCity || 'İstanbul',
         country: 'Türkiye',
         address: req.body.customerAddress || 'HOOWELL Adres',
@@ -101,7 +101,7 @@ router.post('/create-payment', async (req, res) => {
       },
       // Teslimat adresi
       shipping_address: {
-        name: req.body.customerName || 'Müşteri Adı',
+        name: req.body.customerName?.trim() || 'HOOWELL Müşteri',
         city: req.body.customerCity || 'İstanbul',
         country: 'Türkiye',
         address: req.body.customerAddress || 'HOOWELL Adres',
