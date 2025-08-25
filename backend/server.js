@@ -474,8 +474,8 @@ const checkDopingPromotionMultiplier = async (userId) => {
 
 const awardKKPForPartnerRegistration = async (userId) => {
   try {
-    // Partner registration gives fixed KKP (e.g., 120 KKP = 120 USD equivalent)
-    let kkpEarned = 120;
+    // Partner registration gives fixed KKP (100 KKP = 100 USD equivalent)
+    let kkpEarned = 100;
 
     // Check for doping promotion multiplier
     const dopingMultiplier = await checkDopingPromotionMultiplier(userId);
@@ -992,8 +992,9 @@ app.post('/api/customers', verifyToken, async (req, res) => {
     ]);
 
     // Award KKP for customer sale - KDV hariç net fiyat üzerinden
-    // product_price TL cinsinden, USD'ye çevir (1 USD = 1 KKP)
-    const productPriceUSD = product_price / 40; // TL'yi USD'ye çevir
+    // product_price TL cinsinden, USD'ye çevir (1 USD = 40 TL, 1 USD = 1 KKP)
+    // product_price zaten KDV hariç net fiyat (CustomerRegistration.js'den geliyor)
+    const productPriceUSD = product_price / 40; // TL'yi USD'ye çevir (1 USD = 40 TL)
     const kkpEarned = await awardKKPForCustomerSale(req.user.id, productPriceUSD);
 
     // Create sales tracking record
@@ -1013,7 +1014,7 @@ app.post('/api/customers', verifyToken, async (req, res) => {
       UPDATE user_profiles 
       SET total_sales = total_sales + ?, monthly_sales = monthly_sales + ?, is_active_this_month = TRUE
       WHERE user_id = ?
-    `, [total_amount / 40, total_amount / 40, req.user.id]); // USD cinsinden kaydet (KKP hesaplama için)
+    `, [total_amount / 40, total_amount / 40, req.user.id]); // USD cinsinden kaydet (KKP hesaplama için - 1 USD = 40 TL)
 
     // Calculate sponsorship earnings for the seller's sponsor
     await calculateSponsorshipEarnings(req.user.id, total_amount, 'customer_sale');
@@ -1239,18 +1240,18 @@ app.get('/api/doping-promotion/progress', verifyToken, async (req, res) => {
     // Calculate stage 1 KKP bonus
     let stage1KKPBonus = 0;
     if (daysSinceRegistration <= 60 && stage1TotalSales >= 40 && stage1Partners >= 7) {
-      // Calculate KKP earned in first 60 days and double it
-      const [stage1KKP] = await db.promise().execute(`
-        SELECT COALESCE(SUM(
-          CASE 
-            WHEN c.selected_product = 'device' THEN 1800
-            WHEN c.selected_product = 'education' THEN 100
-            ELSE 0
-          END
-        ), 0) as total_kkp
-        FROM customers c
-        WHERE c.created_by = ? AND c.created_at BETWEEN ? AND ?
-      `, [userId, registrationDate, stage1End]);
+              // Calculate KKP earned in first 60 days and double it
+        const [stage1KKP] = await db.promise().execute(`
+          SELECT COALESCE(SUM(
+            CASE 
+              WHEN c.selected_product = 'device' THEN 100
+              WHEN c.selected_product = 'education' THEN 100
+              ELSE 0
+            END
+          ), 0) as total_kkp
+          FROM customers c
+          WHERE c.created_by = ? AND c.created_at BETWEEN ? AND ?
+        `, [userId, registrationDate, stage1End]);
 
       stage1KKPBonus = stage1KKP[0].total_kkp; // This will be doubled
     }
@@ -1263,7 +1264,7 @@ app.get('/api/doping-promotion/progress', verifyToken, async (req, res) => {
         const [stage2KKP] = await db.promise().execute(`
           SELECT COALESCE(SUM(
             CASE 
-              WHEN c.selected_product = 'device' THEN 1800
+              WHEN c.selected_product = 'device' THEN 100
               WHEN c.selected_product = 'education' THEN 100
               ELSE 0
             END
@@ -2718,7 +2719,7 @@ app.get('/api/career/progress', verifyToken, async (req, res) => {
 
     // KKP Calculations
     const paymentKKP = paymentsResult[0].total_sales ? Math.floor(paymentsResult[0].total_sales / usdToTryRate) : 0;
-    const partnerKKP = (partnersResult[0].partner_count || 0) * 120; // Her partner 120 KKP (partner registration bonus)
+    const partnerKKP = (partnersResult[0].partner_count || 0) * 100; // Her partner 100 KKP (partner registration bonus)
     const customerKKP = customersResult[0].customer_net_sales ? Math.floor(customersResult[0].customer_net_sales) : 0; // KDV hariç net fiyat = KKP
     const totalKKP = paymentKKP + partnerKKP + customerKKP;
 
@@ -3185,6 +3186,9 @@ app.get('/api/sponsorship/my-partners', verifyToken, async (req, res) => {
         u.sponsor_id,
         u.career_level,
         u.created_at,
+        u.education_completed,
+        u.education_deadline,
+        u.education_started_at,
         COALESCE(sp.bronze_earnings, 0) as bronze_earnings,
         COALESCE(sp.silver_earnings, 0) as silver_earnings,
         COALESCE(sp.gold_earnings, 0) as gold_earnings,
@@ -3192,7 +3196,9 @@ app.get('/api/sponsorship/my-partners', verifyToken, async (req, res) => {
         COALESCE(sp.super_star_earnings, 0) as super_star_earnings,
         COALESCE(sp.monthly_earnings, 0) as monthly_earnings,
         COALESCE(sp.first_sale_activated, FALSE) as first_sale_activated,
-        sp.activation_date
+        sp.activation_date,
+        -- Partner adını birleştir
+        CONCAT(COALESCE(u.first_name, ''), ' ', COALESCE(u.last_name, '')) as partner_name
       FROM users u
       LEFT JOIN sponsorship_earnings sp ON u.id = sp.partner_id AND sp.sponsor_id = ?
       WHERE u.created_by = ? AND u.role = 'partner'
