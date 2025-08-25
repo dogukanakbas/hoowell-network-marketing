@@ -61,50 +61,50 @@ router.post('/create-payment', async (req, res) => {
       return_url: 'https://panel.hoowell.net/payment/success',
       retry_fail: true,
       iframe_flag: 1, // IFRAME = 1
-      iframe_web_uri: 'https://panel.hoowell.net/customer-registration',
+      iframe_web_uri: 'https://panel.hoowell.net',
       lang: 'tr',
-      client_ip: req.ip || '92.249.61.128',
+      client_ip: req.ip || '',
       description: req.body.description || 'HOOWELL Ödeme',
       // Müşteri bilgileri - TREPS formatına uygun
       buyer: {
         customer_id: req.body.customerId || `CUST-${Date.now()}`,
-        name: req.body.customerName?.trim()?.split(' ')[0] || 'HOOWELL',
-        surname: req.body.customerName?.trim()?.split(' ').slice(1).join(' ') || 'Müşteri',
-        email: req.body.customerEmail || `musteri_${Date.now()}@hoowell.net`,
-        phone_number: req.body.customerPhone || '5551234567',
+        name: req.body.customerName?.trim()?.split(' ')[0] || '',
+        surname: req.body.customerName?.trim()?.split(' ').slice(1).join(' ') || '',
+        email: req.body.customerEmail || '',
+        phone_number: req.body.customerPhone || '',
         country: 'TUR',
-        city: req.body.customerCity || 'İstanbul',
-        address: req.body.customerAddress || 'HOOWELL Adres',
-        zip_code: req.body.customerZipCode || '34000',
+        city: req.body.customerCity || '',
+        address: req.body.customerAddress || '',
+        zip_code: req.body.customerZipCode || '',
         citizenship_number: req.body.citizenshipNumber || null
       },
       // Ürün bilgileri - TREPS formatına uygun
       products: [
         {
-          product_id: req.body.productId || 'HOOWELL-PRODUCT',
-          category: 'Alkali İyonizer',
+          product_id: req.body.productId || `PROD-${Date.now()}`,
+          category: req.body.productCategory || 'Ürün',
           name: req.body.productName || 'HOOWELL Ürün',
           price: req.body.amount,
           quantity: 1,
-          description: req.body.productDescription || 'HOOWELL Alkali İyonizer Sistemi',
+          description: req.body.productDescription || 'HOOWELL Ürün',
           unit: 'adet'
         }
       ],
       // Fatura adresi
       billing_address: {
-        name: req.body.customerName?.trim() || 'HOOWELL Müşteri',
-        city: req.body.customerCity || 'İstanbul',
+        name: req.body.customerName?.trim() || '',
+        city: req.body.customerCity || '',
         country: 'Türkiye',
-        address: req.body.customerAddress || 'HOOWELL Adres',
-        zip_code: req.body.customerZipCode || '34000'
+        address: req.body.customerAddress || '',
+        zip_code: req.body.customerZipCode || ''
       },
       // Teslimat adresi
       shipping_address: {
-        name: req.body.customerName?.trim() || 'HOOWELL Müşteri',
-        city: req.body.customerCity || 'İstanbul',
+        name: req.body.customerName?.trim() || '',
+        city: req.body.customerCity || '',
         country: 'Türkiye',
-        address: req.body.customerAddress || 'HOOWELL Adres',
-        zip_code: req.body.customerZipCode || '34000'
+        address: req.body.customerAddress || '',
+        zip_code: req.body.customerZipCode || ''
       },
       // CSS değişkenleri
       css_variables: {
@@ -157,9 +157,13 @@ router.post('/create-payment', async (req, res) => {
     
     console.log('TREPS IFRAME ödeme yanıtı:', response.data);
     
-    if (response.data.status) {
+    if (response.data && response.data.status) {
       // TREPS dokümantasyonuna göre yanıt formatı
       const trepsData = response.data.data;
+      
+      if (!trepsData || !trepsData.url) {
+        throw new Error('TREPS yanıtında URL bulunamadı');
+      }
       
       res.json({
         success: true,
@@ -167,10 +171,10 @@ router.post('/create-payment', async (req, res) => {
         token: trepsData.token,
         paymentId: trepsData.token,
         expire_date: trepsData.expire_date,
-        message: 'TREPS Hosted Page ödeme oluşturuldu'
+        message: 'TREPS IFRAME ödeme oluşturuldu'
       });
     } else {
-      throw new Error(response.data.message || 'TREPS ödeme oluşturulamadı');
+      throw new Error(response.data?.message || 'TREPS ödeme oluşturulamadı');
     }
     
   } catch (error) {
