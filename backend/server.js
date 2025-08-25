@@ -1529,6 +1529,16 @@ app.get('/api/doping-promotion/progress', verifyToken, async (req, res) => {
     // Etap 1 tamamlandı mı kontrol et
     const etap1Completed = (teamSales[0].etap1_sales >= 40 && partners[0].etap1_partners >= 7);
     
+    // Debug log
+    console.log('🔍 Doping Debug:', {
+      userId,
+      etap1_sales: teamSales[0].etap1_sales,
+      etap1_partners: partners[0].etap1_partners,
+      etap1Completed,
+      etap2_sales: teamSales[0].etap2_sales,
+      etap2_partners: partners[0].etap2_partners
+    });
+    
     // Etap 2 sadece etap 1 tamamlandıysa aktif olabilir
     const etap2Active = etap1Completed;
     const etap2Completed = etap2Active && (teamSales[0].etap2_sales >= 80 && partners[0].etap2_partners >= 15);

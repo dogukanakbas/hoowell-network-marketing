@@ -62,6 +62,9 @@ const DopingPromosyonu = () => {
         }
       });
       if (response.data) {
+        console.log('🔍 Frontend Doping Data:', response.data);
+        console.log('🔍 Etap1 Tamamlandı:', response.data.etap1.tamamlandi);
+        console.log('🔍 Etap2 Beklemekte:', !response.data.etap1.tamamlandi);
         setDopingData(response.data);
       }
     } catch (error) {
