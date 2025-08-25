@@ -1850,8 +1850,8 @@ const CustomerRegistration = () => {
                       });
 
                       if (response.data.success) {
-                        // TREPS iframe sayfasına yönlendir
-                        window.location.href = `/payment?method=treps&paymentId=${response.data.paymentId}`;
+                        // TREPS iframe URL'ine doğrudan yönlendir
+                        window.location.href = response.data.url;
                       } else {
                         alert('TREPS ödeme oluşturulamadı: ' + response.data.error);
                       }
