@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 
 // Ülke kodları listesi
@@ -123,6 +123,18 @@ const turkeyData = {
 const PartnerRegistration = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  
+  // URL'den step parametresini al
+  useEffect(() => {
+    const stepParam = searchParams.get('step');
+    const paymentParam = searchParams.get('payment');
+    
+    if (stepParam && (paymentParam === 'success' || paymentParam === 'pending' || paymentParam === 'failed')) {
+      // Ödeme başarılı, beklemekte veya başarısız olduğunda son adıma geç
+      setCurrentStep(7);
+    }
+  }, [searchParams]);
   
   // Süreç adımları
   const [currentStep, setCurrentStep] = useState(1);
@@ -1747,7 +1759,7 @@ const PartnerRegistration = () => {
                 }
               })()}
 
-              {/* Ödeme Bilgileri */}
+              {/* Ödeme Durumu */}
               <div style={{
                 backgroundColor: 'var(--white)',
                 borderRadius: '15px',
@@ -1756,20 +1768,78 @@ const PartnerRegistration = () => {
                 boxShadow: '0 5px 15px rgba(0,0,0,0.1)'
               }}>
                 <h3 style={{ color: 'var(--primary-dark)', marginBottom: '20px', textAlign: 'center' }}>
-                  💳 Ödeme Yöntemi Seçin
+                  {searchParams.get('payment') === 'pending' ? '⏳ Ödeme Beklemede' : 
+                   searchParams.get('payment') === 'failed' ? '❌ Ödeme Başarısız' : '✅ Ödeme Tamamlandı'}
                 </h3>
                 
-                {/* Ödeme Tutarı */}
+                {/* Ödeme Durumu */}
                 <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-                  <div style={{ fontSize: '28px', fontWeight: 'bold', color: 'var(--primary-dark)' }}>
-                    4.800 ₺
-                  </div>
-                  <div style={{ fontSize: '14px', color: 'var(--text-light)' }}>
-                    (KDV Dahil - Franchise Satış Paketi)
-                  </div>
+                  {searchParams.get('payment') === 'pending' ? (
+                    <>
+                      <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#ffc107' }}>
+                        ⏳ Ödeme Beklemede
+                      </div>
+                      <div style={{ fontSize: '14px', color: 'var(--text-light)' }}>
+                        Kaydınız alındı, ödeme tamamlandığında aktif edilecek
+                      </div>
+                    </>
+                  ) : searchParams.get('payment') === 'failed' ? (
+                    <>
+                      <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#dc3545' }}>
+                        ❌ Ödeme Başarısız
+                      </div>
+                      <div style={{ fontSize: '14px', color: 'var(--text-light)' }}>
+                        Kaydınız alındı, daha sonra ödeme yapabilirsiniz
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#28a745' }}>
+                        ✅ Ödeme Başarılı
+                      </div>
+                      <div style={{ fontSize: '14px', color: 'var(--text-light)' }}>
+                        İş ortağı kaydınız aktif edildi
+                      </div>
+                    </>
+                  )}
                 </div>
 
-                {/* Ödeme Yöntemi Seçimi */}
+                {/* Ödeme Durumu Uyarısı */}
+                {searchParams.get('payment') === 'pending' && (
+                  <div style={{
+                    backgroundColor: '#fff3cd',
+                    padding: '15px',
+                    borderRadius: '10px',
+                    marginBottom: '20px',
+                    border: '1px solid #ffc107',
+                    textAlign: 'center'
+                  }}>
+                    <strong style={{ color: '#856404' }}>⚠️ Ödeme Durumu:</strong>
+                    <p style={{ color: '#856404', margin: '5px 0 0 0', fontSize: '14px' }}>
+                      Ödemeniz henüz tamamlanmadı. Kaydınız alındı ancak ödeme tamamlandığında hesabınız aktif edilecektir.
+                      Daha sonra ödeme yapabilirsiniz.
+                    </p>
+                  </div>
+                )}
+
+                {searchParams.get('payment') === 'failed' && (
+                  <div style={{
+                    backgroundColor: '#f8d7da',
+                    padding: '15px',
+                    borderRadius: '10px',
+                    marginBottom: '20px',
+                    border: '1px solid #dc3545',
+                    textAlign: 'center'
+                  }}>
+                    <strong style={{ color: '#721c24' }}>❌ Ödeme Başarısız:</strong>
+                    <p style={{ color: '#721c24', margin: '5px 0 0 0', fontSize: '14px' }}>
+                      Ödemeniz başarısız oldu ancak kaydınız alındı. Giriş bilgilerinizi not alın ve daha sonra ödeme yapabilirsiniz.
+                      Hesabınız ödeme tamamlandığında aktif edilecektir.
+                    </p>
+                  </div>
+                )}
+
+                {/* Sonraki Adımlar */}
                 <div style={{ marginBottom: '30px' }}>
                   <div style={{ display: 'flex', gap: '20px', marginBottom: '20px', justifyContent: 'center' }}>
                     <label style={{ 
@@ -1948,9 +2018,10 @@ const PartnerRegistration = () => {
                 ) : paymentMethod === 'paytr' ? (
                   <button
                     onClick={async () => {
-                      // PayTR ödeme işlemi başlat
+                      // Önce kayıt işlemini yap, sonra ödeme
                       setLoading(true);
                       try {
+                        // Kayıt işlemi zaten yapılmış, sadece ödeme başlat
                         const partnerInfo = {
                           name: registrationType === 'individual' 
                             ? `${formData.first_name} ${formData.last_name}`
@@ -2001,9 +2072,10 @@ const PartnerRegistration = () => {
                 ) : (
                   <button
                     onClick={async () => {
-                      // TREPS ödeme işlemi başlat
+                      // Önce kayıt işlemini yap, sonra ödeme
                       setLoading(true);
                       try {
+                        // Kayıt işlemi zaten yapılmış, sadece ödeme başlat
                         const response = await axios.post('/api/treps/create-payment', {
                           amount: 4800,
                           orderId: `PARTNER_${Date.now()}`,
@@ -2055,22 +2127,22 @@ const PartnerRegistration = () => {
                 
                 <button
                   onClick={() => {
-                    // Dashboard'a git
-                    navigate('/');
+                    // Son adıma geç - Giriş bilgilerini göster
+                    setCurrentStep(7);
                   }}
                   style={{
                     flex: 1,
                     padding: '15px',
-                    backgroundColor: 'var(--card-gray)',
-                    color: 'var(--text-dark)',
-                    border: '2px solid var(--border-color)',
+                    backgroundColor: '#28a745',
+                    color: 'white',
+                    border: 'none',
                     borderRadius: '10px',
                     fontSize: '16px',
                     fontWeight: 'bold',
                     cursor: 'pointer'
                   }}
                 >
-                  Dashboard'a Git
+                  ✅ Kaydı Tamamla
                 </button>
               </div>
             </div>

@@ -261,8 +261,8 @@ router.get('/payment-success', async (req, res) => {
       // Başarılı ödeme - kullanıcıyı frontend'e yönlendir
       res.redirect(`https://panel.hoowell.net/payment/success?paymentId=${paymentId}&status=success&method=treps`);
     } else {
-      // Başarısız ödeme
-      res.redirect(`https://panel.hoowell.net/payment/fail?paymentId=${paymentId}&status=failed&method=treps`);
+      // Başarısız ödeme - ama kayıt alınmış olmalı
+      res.redirect(`https://panel.hoowell.net/payment/fail?paymentId=${paymentId}&status=failed&method=treps&payment_type=franchise`);
     }
     
   } catch (error) {
@@ -283,8 +283,8 @@ router.post('/payment-success', async (req, res) => {
       // Başarılı ödeme - kullanıcıyı frontend'e yönlendir
       res.redirect(`https://panel.hoowell.net/payment/success?paymentId=${paymentId}&status=success&method=treps`);
     } else {
-      // Başarısız ödeme
-      res.redirect(`https://panel.hoowell.net/payment/fail?paymentId=${paymentId}&status=failed&method=treps`);
+      // Başarısız ödeme - ama kayıt alınmış olmalı
+      res.redirect(`https://panel.hoowell.net/payment/fail?paymentId=${paymentId}&status=failed&method=treps&payment_type=franchise`);
     }
     
   } catch (error) {

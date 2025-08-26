@@ -2199,6 +2199,12 @@ app.post('/api/partner/register', verifyToken, async (req, res) => {
       4800 // Partner registration amount
     );
 
+    // Create business partner record with pending payment status
+    await db.promise().execute(
+      'INSERT INTO business_partners (user_id, sponsor_id, partner_type, payment_status, status, created_at) VALUES (?, ?, ?, ?, ?, NOW())',
+      [newUserId, newSponsorId, partner_type, 'pending', 'pending']
+    );
+
     // Update sponsor's activity status
     await updateUserActivityStatus(req.user.id);
 

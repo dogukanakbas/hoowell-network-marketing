@@ -152,7 +152,7 @@ router.post('/create-payment', auth, async (req, res) => {
         ? `${process.env.FRONTEND_URL || 'https://panel.hoowell.net'}/payment/success`
         : 'https://www.paytr.com/odeme/test-ok',
       merchant_fail_url: process.env.NODE_ENV === 'production'
-        ? `${process.env.FRONTEND_URL || 'https://panel.hoowell.net'}/payment/fail` 
+        ? `${process.env.FRONTEND_URL || 'https://panel.hoowell.net'}/payment/fail?payment_type=franchise` 
         : 'https://www.paytr.com/odeme/test-fail',
       user_basket: paytrService.base64Encode(JSON.stringify([
         [productName, (totalAmount / 100).toFixed(2), 1]
@@ -257,6 +257,14 @@ router.post('/callback', async (req, res) => {
         const updatePartnerQuery = 'UPDATE business_partners SET payment_status = "completed", status = "active" WHERE id = ?';
         await db.promise().execute(updatePartnerQuery, [payment.partner_id]);
         console.log(`İş ortağı kaydı aktif edildi - Partner ID: ${payment.partner_id}`);
+      }
+    } else {
+      // Ödeme başarısız olsa bile kayıt alınmış olmalı
+      if (payment.payment_type === 'franchise' && payment.partner_id) {
+        // İş ortağı kaydını "beklemede" durumunda tut
+        const updatePartnerQuery = 'UPDATE business_partners SET payment_status = "pending", status = "pending" WHERE id = ?';
+        await db.promise().execute(updatePartnerQuery, [payment.partner_id]);
+        console.log(`İş ortağı kaydı beklemekte - Partner ID: ${payment.partner_id}`);
       }
     }
 

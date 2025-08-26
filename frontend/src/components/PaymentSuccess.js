@@ -146,19 +146,37 @@ const PaymentSuccess = () => {
         )}
 
         <div style={{ display: 'flex', gap: '15px', justifyContent: 'center' }}>
-          <Link 
-            to="/" 
-            style={{
-              backgroundColor: '#FFD700',
-              color: '#000',
-              padding: '12px 24px',
-              borderRadius: '8px',
-              textDecoration: 'none',
-              fontWeight: 'bold'
-            }}
-          >
-            🏠 Ana Sayfaya Dön
-          </Link>
+          {paymentInfo?.payment_type === 'franchise' ? (
+            // İş ortağı kaydı için son adıma yönlendir
+            <Link 
+              to="/partner-registration?step=7&payment=success" 
+              style={{
+                backgroundColor: '#28a745',
+                color: 'white',
+                padding: '12px 24px',
+                borderRadius: '8px',
+                textDecoration: 'none',
+                fontWeight: 'bold'
+              }}
+            >
+              ✅ Kaydı Tamamla
+            </Link>
+          ) : (
+            // Müşteri kaydı için ana sayfaya yönlendir
+            <Link 
+              to="/" 
+              style={{
+                backgroundColor: '#FFD700',
+                color: '#000',
+                padding: '12px 24px',
+                borderRadius: '8px',
+                textDecoration: 'none',
+                fontWeight: 'bold'
+              }}
+            >
+              🏠 Ana Sayfaya Dön
+            </Link>
+          )}
           <Link 
             to="/payment" 
             style={{
