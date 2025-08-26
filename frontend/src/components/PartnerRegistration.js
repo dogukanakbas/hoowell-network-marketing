@@ -1690,8 +1690,38 @@ const PartnerRegistration = () => {
                 onClick={async () => {
                   setLoading(true);
                   try {
+                    // Form verilerini kontrol et
+                    if (!registrationType) {
+                      setMessage('❌ Kayıt türü seçilmedi');
+                      setLoading(false);
+                      return;
+                    }
+
+                    if (!formData.email || !formData.phone || !formData.address || !formData.district || !formData.city) {
+                      setMessage(`❌ Temel bilgiler eksik: 
+                        Email: ${!formData.email ? 'Eksik' : 'Tamam'}, 
+                        Telefon: ${!formData.phone ? 'Eksik' : 'Tamam'}, 
+                        Adres: ${!formData.address ? 'Eksik' : 'Tamam'}, 
+                        İlçe: ${!formData.district ? 'Eksik' : 'Tamam'}, 
+                        Şehir: ${!formData.city ? 'Eksik' : 'Tamam'}`);
+                      setLoading(false);
+                      return;
+                    }
+
+                    if (registrationType === 'individual' && (!formData.first_name || !formData.last_name || !formData.tc_no)) {
+                      setMessage('❌ Bireysel kayıt için: Ad, soyad, TC kimlik no gerekli');
+                      setLoading(false);
+                      return;
+                    }
+
+                    if (registrationType === 'corporate' && (!formData.company_name || !formData.tax_office || !formData.tax_no || !formData.authorized_first_name || !formData.authorized_last_name)) {
+                      setMessage('❌ Kurumsal kayıt için: Şirket adı, vergi dairesi, vergi no, yetkili kişi bilgileri gerekli');
+                      setLoading(false);
+                      return;
+                    }
+
                     // Debug için form verilerini logla
-                    console.log('Form Data:', {
+                    const requestData = {
                       partner_type: registrationType,
                       first_name: formData.first_name,
                       last_name: formData.last_name,
@@ -1703,24 +1733,16 @@ const PartnerRegistration = () => {
                       company_name: formData.company_name || null,
                       tax_office: formData.tax_office || null,
                       tax_no: formData.tax_no || null,
-                      authorized_person: formData.authorized_person || null
-                    });
+                      authorized_person: registrationType === 'corporate' ? `${formData.authorized_first_name} ${formData.authorized_last_name}` : null
+                    };
+
+                    console.log('Form Data:', requestData);
+                    console.log('Registration Type:', registrationType);
+                    console.log('Form Data Keys:', Object.keys(formData));
+                    console.log('Form Data Values:', Object.values(formData));
 
                     // Kayıt verilerini backend'e gönder
-                    const response = await axios.post('/api/partner/register', {
-                      partner_type: registrationType,
-                      first_name: formData.first_name,
-                      last_name: formData.last_name,
-                      tc_no: formData.tc_no,
-                      email: formData.email,
-                      phone: formData.phone,
-                      delivery_address: `${formData.address}, ${formData.district}/${formData.city}`,
-                      billing_address: `${formData.address}, ${formData.district}/${formData.city}`,
-                      company_name: formData.company_name || null,
-                      tax_office: formData.tax_office || null,
-                      tax_no: formData.tax_no || null,
-                      authorized_person: formData.authorized_person || null
-                    }, {
+                    const response = await axios.post('/api/partner/register', requestData, {
                       headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
                       }

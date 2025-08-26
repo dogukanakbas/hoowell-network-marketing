@@ -54,7 +54,12 @@ const db = mysql.createConnection({
   host: process.env.DB_HOST || 'localhost',
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'hoowell_network'
+  database: process.env.DB_NAME || 'hoowell_network',
+  connectTimeout: 60000,
+  acquireTimeout: 60000,
+  timeout: 60000,
+  reconnect: true,
+  charset: 'utf8mb4'
 });
 
 // Database connection error handling
@@ -62,6 +67,16 @@ db.on('error', (err) => {
   console.error('Database connection error:', err);
   if (err.code === 'PROTOCOL_CONNECTION_LOST') {
     console.log('Attempting to reconnect to database...');
+    // Yeniden bağlanma denemesi
+    setTimeout(() => {
+      db.connect((err) => {
+        if (err) {
+          console.error('Reconnection failed:', err);
+        } else {
+          console.log('Reconnected to database');
+        }
+      });
+    }, 2000);
   }
 });
 
@@ -2125,9 +2140,43 @@ app.post('/api/partner/register', verifyToken, async (req, res) => {
       referrer_sponsor_id
     } = req.body;
 
+    // Debug için gelen verileri logla
+    console.log('=== PARTNER REGISTRATION DEBUG ===');
+    console.log('Request Body:', JSON.stringify(req.body, null, 2));
+    console.log('Request Headers:', req.headers);
+    console.log('User ID:', req.user.id);
+    console.log('Partner Type:', partner_type);
+    console.log('Email:', email);
+    console.log('Phone:', phone);
+    console.log('Delivery Address:', delivery_address);
+    console.log('All Fields:', {
+      partner_type,
+      first_name,
+      last_name,
+      tc_no,
+      email,
+      phone,
+      delivery_address,
+      billing_address,
+      company_name,
+      tax_office,
+      tax_no,
+      authorized_person
+    });
+    console.log('=== END DEBUG ===');
+
     // Gerekli alanları kontrol et
-    if (!partner_type || !email || !phone || !delivery_address) {
-      return res.status(400).json({ message: 'Temel bilgiler eksik' });
+    const missingFields = [];
+    if (!partner_type) missingFields.push('partner_type');
+    if (!email) missingFields.push('email');
+    if (!phone) missingFields.push('phone');
+    if (!delivery_address) missingFields.push('delivery_address');
+
+    if (missingFields.length > 0) {
+      console.log('Missing fields:', missingFields);
+      return res.status(400).json({ 
+        message: `Temel bilgiler eksik: ${missingFields.join(', ')}` 
+      });
     }
 
     if (partner_type === 'individual') {
