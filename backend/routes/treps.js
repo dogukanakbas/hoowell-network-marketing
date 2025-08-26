@@ -239,7 +239,14 @@ router.post('/callback', async (req, res) => {
     const { paymentId, status, transactionId } = req.body;
     
     // Veritabanında ödeme durumunu güncelle
-    // Bu kısmı kendi veritabanı yapınıza göre düzenleyin
+    if (status === 'success') {
+      // Başarılı ödeme - partner kaydını aktif et
+      // Bu kısmı kendi veritabanı yapınıza göre düzenleyin
+      console.log('TREPS başarılı ödeme:', paymentId);
+    } else {
+      // Başarısız ödeme - partner kaydı beklemekte kalır
+      console.log('TREPS başarısız ödeme:', paymentId);
+    }
     
     res.json({ success: true });
     

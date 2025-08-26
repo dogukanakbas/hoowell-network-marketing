@@ -2221,8 +2221,10 @@ app.post('/api/partner/register', verifyToken, async (req, res) => {
     }
 
     res.json({
+      success: true,
       message: 'İş ortağı başarıyla kaydedildi',
       user_id: newUserId,
+      partner_id: newUserId, // Partner ID'yi de döndür
       sponsor_id: newSponsorId,
       password: randomPassword
     });

@@ -4,14 +4,6 @@ import { useSearchParams, Link } from 'react-router-dom';
 const PaymentFail = () => {
   const [searchParams] = useSearchParams();
   const errorMessage = searchParams.get('error') || 'Ödeme işlemi tamamlanamadı';
-  
-  // Debug için parametreleri logla
-  console.log('PaymentFail URL params:', {
-    payment_type: searchParams.get('payment_type'),
-    method: searchParams.get('method'),
-    paymentId: searchParams.get('paymentId'),
-    status: searchParams.get('status')
-  });
 
   return (
     <div style={{

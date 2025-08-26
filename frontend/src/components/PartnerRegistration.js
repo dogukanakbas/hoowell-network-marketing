@@ -1489,23 +1489,54 @@ const PartnerRegistration = () => {
               
               {paymentMethod === 'iban' ? (
                 <button
-                  onClick={() => {
-                    // IBAN ödeme kaydı oluştur
-                    navigate('/payment', {
-                      state: {
-                        partnerId: 'NEW_PARTNER',
-                        amount: 4800,
-                        partnerInfo: {
-                          name: registrationType === 'individual' 
-                            ? `${formData.first_name} ${formData.last_name}`
-                            : formData.company_name,
-                          email: formData.email,
-                          type: registrationType
-                        },
-                        skipReceipt: true, // Dekont yükleme atla
-                        paymentMethod: 'iban'
+                  onClick={async () => {
+                    // Önce kayıt işlemini yap
+                    setLoading(true);
+                    try {
+                      const response = await axios.post('/api/partner/register', {
+                        partner_type: registrationType,
+                        first_name: formData.first_name,
+                        last_name: formData.last_name,
+                        tc_no: formData.tc_no,
+                        email: formData.email,
+                        phone: formData.phone,
+                        delivery_address: formData.full_address,
+                        billing_address: formData.full_address,
+                        company_name: formData.company_name,
+                        tax_office: formData.tax_office,
+                        tax_no: formData.tax_no,
+                        authorized_person: formData.authorized_person
+                      }, {
+                        headers: {
+                          'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                      });
+
+                      if (response.data.success) {
+                        // Kayıt başarılı, IBAN ödeme sayfasına yönlendir
+                        navigate('/payment', {
+                          state: {
+                            partnerId: response.data.partner_id,
+                            amount: 4800,
+                            partnerInfo: {
+                              name: registrationType === 'individual' 
+                                ? `${formData.first_name} ${formData.last_name}`
+                                : formData.company_name,
+                              email: formData.email,
+                              type: registrationType
+                            },
+                            skipReceipt: true,
+                            paymentMethod: 'iban'
+                          }
+                        });
+                      } else {
+                        setMessage('❌ Kayıt işlemi başarısız: ' + response.data.message);
                       }
-                    });
+                    } catch (error) {
+                      setMessage('❌ Kayıt hatası: ' + (error.response?.data?.message || 'Bilinmeyen hata'));
+                    } finally {
+                      setLoading(false);
+                    }
                   }}
                   style={{
                     flex: 1,
@@ -2021,35 +2052,59 @@ const PartnerRegistration = () => {
                       // Önce kayıt işlemini yap, sonra ödeme
                       setLoading(true);
                       try {
-                        // Kayıt işlemi zaten yapılmış, sadece ödeme başlat
-                        const partnerInfo = {
-                          name: registrationType === 'individual' 
-                            ? `${formData.first_name} ${formData.last_name}`
-                            : formData.company_name,
+                        // Önce kayıt işlemini yap
+                        const registerResponse = await axios.post('/api/partner/register', {
+                          partner_type: registrationType,
+                          first_name: formData.first_name,
+                          last_name: formData.last_name,
+                          tc_no: formData.tc_no,
                           email: formData.email,
                           phone: formData.phone,
-                          address: formData.full_address || 'Türkiye'
-                        };
-
-                        const response = await axios.post('/api/paytr/create-payment', {
-                          payment_type: 'franchise',
-                          user_info: partnerInfo,
-                          partner_id: JSON.parse(message.split('|')[1]).partner_id,
-                          custom_amount: 4800
+                          delivery_address: formData.full_address,
+                          billing_address: formData.full_address,
+                          company_name: formData.company_name,
+                          tax_office: formData.tax_office,
+                          tax_no: formData.tax_no,
+                          authorized_person: formData.authorized_person
                         }, {
                           headers: {
                             'Authorization': `Bearer ${localStorage.getItem('token')}`
                           }
                         });
 
-                        if (response.data.success) {
-                          // PayTR sayfasına yönlendir
-                          window.location.href = response.data.paymentUrl;
+                        if (registerResponse.data.success) {
+                          // Kayıt başarılı, PayTR ödeme başlat
+                          const partnerInfo = {
+                            name: registrationType === 'individual' 
+                              ? `${formData.first_name} ${formData.last_name}`
+                              : formData.company_name,
+                            email: formData.email,
+                            phone: formData.phone,
+                            address: formData.full_address || 'Türkiye'
+                          };
+
+                          const paymentResponse = await axios.post('/api/paytr/create-payment', {
+                            payment_type: 'franchise',
+                            user_info: partnerInfo,
+                            partner_id: registerResponse.data.partner_id,
+                            custom_amount: 4800
+                          }, {
+                            headers: {
+                              'Authorization': `Bearer ${localStorage.getItem('token')}`
+                            }
+                          });
+
+                          if (paymentResponse.data.success) {
+                            // PayTR sayfasına yönlendir
+                            window.location.href = paymentResponse.data.paymentUrl;
+                          } else {
+                            setMessage('❌ PayTR ödeme oluşturulamadı: ' + paymentResponse.data.message);
+                          }
                         } else {
-                          setMessage('❌ PayTR ödeme oluşturulamadı: ' + response.data.message);
+                          setMessage('❌ Kayıt işlemi başarısız: ' + registerResponse.data.message);
                         }
                       } catch (error) {
-                        setMessage('❌ PayTR ödeme hatası: ' + (error.response?.data?.message || 'Bilinmeyen hata'));
+                        setMessage('❌ İşlem hatası: ' + (error.response?.data?.message || 'Bilinmeyen hata'));
                       } finally {
                         setLoading(false);
                       }
@@ -2075,8 +2130,29 @@ const PartnerRegistration = () => {
                       // Önce kayıt işlemini yap, sonra ödeme
                       setLoading(true);
                       try {
-                        // Kayıt işlemi zaten yapılmış, sadece ödeme başlat
-                        const response = await axios.post('/api/treps/create-payment', {
+                        // Önce kayıt işlemini yap
+                        const registerResponse = await axios.post('/api/partner/register', {
+                          partner_type: registrationType,
+                          first_name: formData.first_name,
+                          last_name: formData.last_name,
+                          tc_no: formData.tc_no,
+                          email: formData.email,
+                          phone: formData.phone,
+                          delivery_address: formData.full_address,
+                          billing_address: formData.full_address,
+                          company_name: formData.company_name,
+                          tax_office: formData.tax_office,
+                          tax_no: formData.tax_no,
+                          authorized_person: formData.authorized_person
+                        }, {
+                          headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                          }
+                        });
+
+                        if (registerResponse.data.success) {
+                          // Kayıt başarılı, TREPS ödeme başlat
+                          const response = await axios.post('/api/treps/create-payment', {
                           amount: 4800,
                           orderId: `PARTNER_${Date.now()}`,
                           description: `HOOWELL İş Ortağı Kaydı - ${registrationType === 'individual' ? `${formData.first_name} ${formData.last_name}` : formData.company_name}`,
@@ -2102,11 +2178,14 @@ const PartnerRegistration = () => {
                         } else {
                           setMessage('❌ TREPS ödeme oluşturulamadı: ' + response.data.error);
                         }
-                      } catch (error) {
-                        setMessage('❌ TREPS ödeme hatası: ' + (error.response?.data?.error || 'Bilinmeyen hata'));
-                      } finally {
-                        setLoading(false);
+                      } else {
+                        setMessage('❌ Kayıt işlemi başarısız: ' + registerResponse.data.message);
                       }
+                    } catch (error) {
+                      setMessage('❌ İşlem hatası: ' + (error.response?.data?.message || 'Bilinmeyen hata'));
+                    } finally {
+                      setLoading(false);
+                    }
                     }}
                     disabled={loading}
                     style={{
