@@ -1690,18 +1690,40 @@ const PartnerRegistration = () => {
                 onClick={async () => {
                   setLoading(true);
                   try {
+                    // Debug için form verilerini logla
+                    console.log('Form Data:', {
+                      partner_type: registrationType,
+                      first_name: formData.first_name,
+                      last_name: formData.last_name,
+                      tc_no: formData.tc_no,
+                      email: formData.email,
+                      phone: formData.phone,
+                      delivery_address: `${formData.address}, ${formData.district}/${formData.city}`,
+                      billing_address: `${formData.address}, ${formData.district}/${formData.city}`,
+                      company_name: formData.company_name || null,
+                      tax_office: formData.tax_office || null,
+                      tax_no: formData.tax_no || null,
+                      authorized_person: formData.authorized_person || null
+                    });
+
                     // Kayıt verilerini backend'e gönder
-                    const response = await axios.post('/api/partner/register-new', {
-                      registration_type: registrationType,
-                      ...formData,
-                      full_address: `${formData.address}, ${formData.district}/${formData.city}`,
-                      total_amount: 4800,
-                      contracts_accepted: true,
-                      contract1_accepted: formData.contract1_accepted,
-                      contract2_accepted: formData.contract2_accepted,
-                      contract3_accepted: formData.contract3_accepted,
-                      contract4_accepted: formData.contract4_accepted,
-                      contract5_accepted: formData.contract5_accepted
+                    const response = await axios.post('/api/partner/register', {
+                      partner_type: registrationType,
+                      first_name: formData.first_name,
+                      last_name: formData.last_name,
+                      tc_no: formData.tc_no,
+                      email: formData.email,
+                      phone: formData.phone,
+                      delivery_address: `${formData.address}, ${formData.district}/${formData.city}`,
+                      billing_address: `${formData.address}, ${formData.district}/${formData.city}`,
+                      company_name: formData.company_name || null,
+                      tax_office: formData.tax_office || null,
+                      tax_no: formData.tax_no || null,
+                      authorized_person: formData.authorized_person || null
+                    }, {
+                      headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                      }
                     });
 
                     setMessage(`✅ Kayıt başarıyla tamamlandı!|${JSON.stringify(response.data)}`);

@@ -2125,6 +2125,21 @@ app.post('/api/partner/register', verifyToken, async (req, res) => {
       referrer_sponsor_id
     } = req.body;
 
+    // Gerekli alanları kontrol et
+    if (!partner_type || !email || !phone || !delivery_address) {
+      return res.status(400).json({ message: 'Temel bilgiler eksik' });
+    }
+
+    if (partner_type === 'individual') {
+      if (!first_name || !last_name || !tc_no) {
+        return res.status(400).json({ message: 'Bireysel kayıt için gerekli alanlar eksik' });
+      }
+    } else if (partner_type === 'corporate') {
+      if (!company_name || !tax_office || !tax_no || !authorized_person) {
+        return res.status(400).json({ message: 'Kurumsal kayıt için gerekli alanlar eksik' });
+      }
+    }
+
     // Generate random password
     const randomPassword = Math.random().toString(36).slice(-8);
     const hashedPassword = await bcrypt.hash(randomPassword, 10);
