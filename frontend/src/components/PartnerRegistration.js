@@ -1457,7 +1457,7 @@ const PartnerRegistration = () => {
                     });
 
                     setMessage(`✅ Kayıt başarıyla tamamlandı!|${JSON.stringify(response.data)}`);
-                    setCurrentStep(7); // Ödeme adımına geç
+                    // Otomatik yönlendirme kaldırıldı - kullanıcı manuel olarak ödeme adımına geçecek
                     
                   } catch (error) {
                     setMessage('❌ Kayıt hatası: ' + (error.response?.data?.message || 'Bilinmeyen hata'));
@@ -1479,6 +1479,27 @@ const PartnerRegistration = () => {
               >
                 {loading ? 'Kayıt Tamamlanıyor...' : '✅ Kayıt İşlemini Tamamla'}
               </button>
+              
+              {/* Kayıt başarılı olduğunda ödeme butonu göster */}
+              {message.includes('✅') && (
+                <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                  <button
+                    onClick={() => setCurrentStep(7)}
+                    style={{
+                      padding: '15px 30px',
+                      backgroundColor: '#28a745',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '10px',
+                      fontSize: '16px',
+                      fontWeight: 'bold',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    💳 Ödeme Yapmaya Geç
+                  </button>
+                </div>
+              )}
             </div>
             <div style={{ marginBottom: '30px' }}>
               <div style={{ display: 'flex', gap: '20px', marginBottom: '20px', justifyContent: 'center' }}>
@@ -1784,10 +1805,9 @@ const PartnerRegistration = () => {
                       });
 
                       if (response.data.success) {
-                        // TREPS iframe URL'ine doğrudan yönlendir
-                        window.location.href = response.data.url;
-                        // Ödeme başarılı olduğunda 7. adıma geç
-                        setCurrentStep(7);
+                        // TREPS iframe URL'ini yeni sekmede aç
+                        window.open(response.data.url, '_blank');
+                        setMessage('✅ TREPS ödeme sayfası yeni sekmede açıldı. Ödeme tamamlandıktan sonra bu sayfaya dönebilirsiniz.');
                       } else {
                         setMessage('❌ TREPS ödeme oluşturulamadı: ' + response.data.error);
                       }
@@ -1990,10 +2010,11 @@ const PartnerRegistration = () => {
                       }
                     });
 
-                    if (response.data.success) {
-                      // PayTR iframe URL'ine yönlendir
-                      window.location.href = response.data.url;
-                    } else {
+                                          if (response.data.success) {
+                        // PayTR iframe URL'ini yeni sekmede aç
+                        window.open(response.data.url, '_blank');
+                        setMessage('✅ PayTR ödeme sayfası yeni sekmede açıldı. Ödeme tamamlandıktan sonra bu sayfaya dönebilirsiniz.');
+                      } else {
                       setMessage('❌ PayTR ödeme oluşturulamadı: ' + response.data.error);
                     }
                   } catch (error) {
