@@ -149,13 +149,13 @@ const FranchiseNetwork = () => {
     const getResponsiveValues = () => {
       const width = window.innerWidth;
       if (width <= 480) {
-        return { cardWidth: '140px', cardGap: '15px', fontSize: '11px' };
+        return { cardWidth: '140px', cardGap: '20px', fontSize: '11px' };
       } else if (width <= 768) {
-        return { cardWidth: '160px', cardGap: '20px', fontSize: '12px' };
+        return { cardWidth: '160px', cardGap: '30px', fontSize: '12px' };
       } else if (width <= 992) {
-        return { cardWidth: '170px', cardGap: '25px', fontSize: '13px' };
+        return { cardWidth: '170px', cardGap: '40px', fontSize: '13px' };
       } else {
-        return { cardWidth: '180px', cardGap: '30px', fontSize: '14px' };
+        return { cardWidth: '180px', cardGap: '50px', fontSize: '14px' };
       }
     };
     
@@ -387,7 +387,8 @@ const FranchiseNetwork = () => {
                 top: '25px',
                 left: '50%',
                 transform: 'translateX(-50%)',
-                width: `${Math.min(childrenCount * 200, window.innerWidth - 100)}px`,
+                width: `${Math.max(childrenCount * parseInt(cardGap) + childrenCount * 180, 400)}px`,
+                maxWidth: `${window.innerWidth - 100}px`,
                 borderRadius: '2px',
                 boxShadow: '0 2px 4px rgba(255, 215, 0, 0.3)',
                 zIndex: 1
@@ -402,7 +403,10 @@ const FranchiseNetwork = () => {
               gap: cardGap,
               marginTop: '25px',
               flexWrap: window.innerWidth < 768 ? 'wrap' : 'nowrap',
-              position: 'relative'
+              position: 'relative',
+              width: '100%',
+              minWidth: `${Math.max(childrenCount * parseInt(cardGap) + childrenCount * 180, 400)}px`,
+              maxWidth: `${window.innerWidth - 100}px`
             }}>
               {nodeData.children.map((child, index) => {
                 const totalChildren = nodeData.children.length;
@@ -429,7 +433,8 @@ const FranchiseNetwork = () => {
                         transform: 'translateX(-50%)',
                         borderRadius: '2px',
                         boxShadow: '0 2px 4px rgba(255, 215, 0, 0.3)',
-                        zIndex: 2
+                        zIndex: 2,
+                        minHeight: '25px'
                       }} />
                     )}
 
@@ -446,7 +451,9 @@ const FranchiseNetwork = () => {
                         transform: 'translateX(-50%)',
                         border: '2px solid #fff',
                         boxShadow: '0 2px 6px rgba(255, 215, 0, 0.4)',
-                        zIndex: 3
+                        zIndex: 3,
+                        minWidth: '8px',
+                        minHeight: '8px'
                       }} />
                     )}
 

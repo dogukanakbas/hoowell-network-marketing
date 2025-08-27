@@ -188,6 +188,16 @@ router.post('/create-payment', auth, async (req, res) => {
 
 // PayTR callback endpoint (iframe desteği ile)
 router.post('/callback', async (req, res) => {
+  await handlePayTRCallback(req, res);
+});
+
+// GET callback endpoint (bazı durumlar için)
+router.get('/callback', async (req, res) => {
+  await handlePayTRCallback(req, res);
+});
+
+// PayTR callback handler function
+const handlePayTRCallback = async (req, res) => {
   try {
     const callbackData = req.body;
     console.log('=== PayTR CALLBACK BAŞLADI ===');
@@ -277,7 +287,7 @@ router.post('/callback', async (req, res) => {
     console.error('Stack:', error.stack);
     res.status(500).send('FAIL');
   }
-});
+};
 
 // Ödeme başarı durumu kontrolü
 router.get('/payment-status/:merchant_oid', auth, async (req, res) => {
