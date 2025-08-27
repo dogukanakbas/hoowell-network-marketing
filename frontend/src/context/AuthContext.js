@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
 
   // Set axios default base URL based on environment
   axios.defaults.baseURL = process.env.NODE_ENV === 'production' 
-    ? window.location.origin 
+    ? 'https://panel.hoowell.net' 
     : 'http://localhost:5001';
 
   // Session timeout settings (2 hours of inactivity)

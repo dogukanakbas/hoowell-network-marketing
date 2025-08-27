@@ -12,8 +12,10 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: true, // Tüm originlere izin ver (geçici çözüm)
-  credentials: true
+  origin: ['https://panel.hoowell.net', 'http://localhost:3000'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json({ limit: '10mb' }));
 app.use('/uploads', express.static('uploads'));
@@ -56,9 +58,6 @@ const db = mysql.createConnection({
   password: process.env.DB_PASSWORD || '',
   database: process.env.DB_NAME || 'hoowell_network',
   connectTimeout: 60000,
-  acquireTimeout: 60000,
-  timeout: 60000,
-  reconnect: true,
   charset: 'utf8mb4'
 });
 

@@ -134,6 +134,12 @@ const PartnerRegistration = () => {
       // Ödeme başarılı, beklemekte veya başarısız olduğunda son adıma geç
       setCurrentStep(7);
     }
+    
+    // LocalStorage'dan registration type'ı al
+    const savedRegistrationType = localStorage.getItem('partnerRegistrationType');
+    if (savedRegistrationType) {
+      setRegistrationType(savedRegistrationType);
+    }
   }, [searchParams]);
   
   // Süreç adımları
@@ -309,6 +315,7 @@ const PartnerRegistration = () => {
             <div 
               onClick={() => {
                 setRegistrationType('individual');
+                localStorage.setItem('partnerRegistrationType', 'individual');
                 setCurrentStep(2);
               }}
               style={{
@@ -331,6 +338,7 @@ const PartnerRegistration = () => {
             <div 
               onClick={() => {
                 setRegistrationType('corporate');
+                localStorage.setItem('partnerRegistrationType', 'corporate');
                 setCurrentStep(2);
               }}
               style={{
@@ -1691,6 +1699,13 @@ const PartnerRegistration = () => {
                   setLoading(true);
                   try {
                     // Form verilerini kontrol et
+                    console.log('=== REGISTRATION DEBUG ===');
+                    console.log('Registration Type:', registrationType);
+                    console.log('LocalStorage Registration Type:', localStorage.getItem('partnerRegistrationType'));
+                    console.log('Current Step:', currentStep);
+                    console.log('Form Data:', formData);
+                    console.log('=== END DEBUG ===');
+                    
                     if (!registrationType) {
                       setMessage('❌ Kayıt türü seçilmedi');
                       setLoading(false);
@@ -1742,6 +1757,11 @@ const PartnerRegistration = () => {
                     console.log('Form Data Values:', Object.values(formData));
 
                     // Kayıt verilerini backend'e gönder
+                    console.log('API URL:', axios.defaults.baseURL + '/api/partner/register');
+                    console.log('Request Headers:', {
+                      'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    });
+                    
                     const response = await axios.post('/api/partner/register', requestData, {
                       headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
