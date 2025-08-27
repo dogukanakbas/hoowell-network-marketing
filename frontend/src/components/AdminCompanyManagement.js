@@ -113,7 +113,7 @@ const AdminCompanyManagement = () => {
         {/* Tablo Header */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(10, 1fr)',
+          gridTemplateColumns: 'repeat(11, 1fr)',
           gap: '2px',
           marginBottom: '10px'
         }}>
@@ -125,7 +125,10 @@ const AdminCompanyManagement = () => {
               textAlign: 'center',
               fontSize: '10px',
               fontWeight: 'bold',
-              borderRadius: '5px'
+              borderRadius: '5px',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis'
             }}>
               {header}
             </div>
@@ -136,11 +139,11 @@ const AdminCompanyManagement = () => {
         {Array.from({ length: 10 }, (_, rowIndex) => (
           <div key={rowIndex} style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(10, 1fr)',
+            gridTemplateColumns: 'repeat(11, 1fr)',
             gap: '2px',
             marginBottom: '2px'
           }}>
-            {Array.from({ length: 10 }, (_, colIndex) => (
+            {Array.from({ length: 11 }, (_, colIndex) => (
               <div key={colIndex} style={{
                 backgroundColor: rowIndex % 2 === 0 ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.7)',
                 padding: '8px 4px',

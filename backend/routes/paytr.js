@@ -149,7 +149,7 @@ router.post('/create-payment', auth, async (req, res) => {
       user_ip: user_ip.replace('::ffff:', ''), // IPv4 formatına çevir
       // Production/Test URL'leri
       merchant_ok_url: process.env.NODE_ENV === 'production' 
-        ? `${process.env.FRONTEND_URL || 'https://panel.hoowell.net'}/payment/success`
+        ? `${process.env.FRONTEND_URL || 'https://panel.hoowell.net'}/payment/success?payment_type=franchise`
         : 'https://www.paytr.com/odeme/test-ok',
       merchant_fail_url: process.env.NODE_ENV === 'production'
         ? `${process.env.FRONTEND_URL || 'https://panel.hoowell.net'}/payment/fail?payment_type=franchise` 

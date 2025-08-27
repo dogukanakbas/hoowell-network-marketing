@@ -196,9 +196,7 @@ const AdminPaymentDetails = () => {
         {/* Tablo Header */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: activeTab === 'gunluk' 
-            ? 'repeat(7, 1fr)' 
-            : 'repeat(8, 1fr)',
+          gridTemplateColumns: 'repeat(8, 1fr)',
           gap: '2px',
           marginBottom: '10px'
         }}>
@@ -211,7 +209,10 @@ const AdminPaymentDetails = () => {
                 textAlign: 'center',
                 fontSize: '10px',
                 fontWeight: 'bold',
-                borderRadius: '5px'
+                borderRadius: '5px',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis'
               }}>
                 {header}
               </div>
@@ -224,7 +225,10 @@ const AdminPaymentDetails = () => {
                 textAlign: 'center',
                 fontSize: '10px',
                 fontWeight: 'bold',
-                borderRadius: '5px'
+                borderRadius: '5px',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis'
               }}>
                 {header}
               </div>
@@ -236,13 +240,11 @@ const AdminPaymentDetails = () => {
         {Array.from({ length: 8 }, (_, rowIndex) => (
           <div key={rowIndex} style={{
             display: 'grid',
-            gridTemplateColumns: activeTab === 'gunluk' 
-              ? 'repeat(7, 1fr)' 
-              : 'repeat(8, 1fr)',
+            gridTemplateColumns: 'repeat(8, 1fr)',
             gap: '2px',
             marginBottom: '2px'
           }}>
-            {Array.from({ length: activeTab === 'gunluk' ? 7 : 8 }, (_, colIndex) => (
+            {Array.from({ length: 8 }, (_, colIndex) => (
               <div key={colIndex} style={{
                 backgroundColor: rowIndex % 2 === 0 ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.7)',
                 padding: '8px 4px',

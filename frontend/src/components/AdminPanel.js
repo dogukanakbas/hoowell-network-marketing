@@ -24,30 +24,6 @@ const AdminPanel = () => {
       <div style={{ marginBottom: '20px' }}>
         <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
           <Link 
-            to="/admin/users" 
-            className={`btn ${location.pathname === '/admin/users' ? 'btn-primary' : 'btn-secondary'}`}
-          >
-            Kullanıcı Yönetimi
-          </Link>
-          <Link 
-            to="/admin/payments" 
-            className={`btn ${location.pathname === '/admin/payments' ? 'btn-primary' : 'btn-secondary'}`}
-          >
-            Ödeme Onayları
-          </Link>
-          <Link 
-            to="/admin/settings" 
-            className={`btn ${location.pathname === '/admin/settings' ? 'btn-primary' : 'btn-secondary'}`}
-          >
-            Sistem Ayarları
-          </Link>
-          <Link 
-            to="/admin/questions" 
-            className={`btn ${location.pathname === '/admin/questions' ? 'btn-primary' : 'btn-secondary'}`}
-          >
-            Soru Yönetimi
-          </Link>
-          <Link 
             to="/admin/system-settings" 
             className={`btn ${location.pathname === '/admin/system-settings' ? 'btn-primary' : 'btn-secondary'}`}
           >

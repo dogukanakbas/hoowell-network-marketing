@@ -130,7 +130,10 @@ const PartnerRegistration = () => {
     const stepParam = searchParams.get('step');
     const paymentParam = searchParams.get('payment');
     
-    if (stepParam && (paymentParam === 'success' || paymentParam === 'pending' || paymentParam === 'failed')) {
+    if (stepParam) {
+      // Step parametresi varsa o adıma geç
+      setCurrentStep(parseInt(stepParam));
+    } else if (paymentParam === 'success' || paymentParam === 'pending' || paymentParam === 'failed') {
       // Ödeme başarılı, beklemekte veya başarısız olduğunda son adıma geç
       setCurrentStep(7);
     }
@@ -1323,6 +1326,22 @@ const PartnerRegistration = () => {
             padding: '40px',
             boxShadow: '0 4px 15px rgba(0,0,0,0.1)'
           }}>
+            {/* Ödeme Başarısız Mesajı */}
+            {searchParams.get('payment') === 'failed' && (
+              <div style={{
+                backgroundColor: '#f8d7da',
+                border: '1px solid #f5c6cb',
+                color: '#721c24',
+                padding: '15px',
+                borderRadius: '10px',
+                marginBottom: '20px',
+                textAlign: 'center'
+              }}>
+                <strong>❌ Ödeme Başarısız:</strong> Önceki ödeme işleminiz başarısız oldu. 
+                Kayıt işlemini tamamladıktan sonra ödeme sayfasından tekrar deneyebilirsiniz.
+              </div>
+            )}
+            
             <h2 style={{ color: 'var(--primary-dark)', marginBottom: '30px', textAlign: 'center' }}>
               ✅ Kayıt İşlemini Tamamla
             </h2>
@@ -1512,6 +1531,22 @@ const PartnerRegistration = () => {
           padding: '40px',
           boxShadow: '0 4px 15px rgba(0,0,0,0.1)'
         }}>
+          {/* Ödeme Durumu Mesajı */}
+          {searchParams.get('payment') === 'failed' && (
+            <div style={{
+              backgroundColor: '#f8d7da',
+              border: '1px solid #f5c6cb',
+              color: '#721c24',
+              padding: '15px',
+              borderRadius: '10px',
+              marginBottom: '20px',
+              textAlign: 'center'
+            }}>
+              <strong>❌ Ödeme Başarısız:</strong> Önceki ödeme işleminiz başarısız oldu. 
+              Farklı bir ödeme yöntemi seçerek tekrar deneyebilirsiniz.
+            </div>
+          )}
+          
           <h2 style={{ color: 'var(--primary-dark)', marginBottom: '30px', textAlign: 'center' }}>
             💳 Ödeme Yöntemi Seçin
           </h2>

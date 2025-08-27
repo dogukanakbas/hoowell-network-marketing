@@ -170,49 +170,63 @@ const AdminSystemSettings = () => {
         boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
         marginBottom: '30px'
       }}>
-        {/* Tablo Header */}
+        {/* Tablo Container - Hizalama için */}
         <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(9, 1fr)',
-          gap: '2px',
-          marginBottom: '10px'
+          display: 'table',
+          width: '100%',
+          borderCollapse: 'collapse'
         }}>
-          {['ÜRÜNÜN ADI', 'ÜRÜNÜN KODU', 'USD FİYATI', 'KKP PUANI', 'KDV YÜZDESİ', 'SATIŞ FİYATI (₺)', 'KDV FİYATI', 'TOPLAM FİYAT', 'STOK ADEDİ'].map((header, index) => (
-            <div key={index} style={{
-              background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)',
-              color: '#000',
-              padding: '10px 5px',
-              textAlign: 'center',
-              fontSize: '11px',
-              fontWeight: 'bold',
-              borderRadius: '5px'
-            }}>
-              {header}
-            </div>
-          ))}
-        </div>
-
-        {/* Tablo Content */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(9, 1fr)',
-          gap: '2px'
-        }}>
-          {Array.from({ length: 9 }, (_, colIndex) => (
-            <input
-              key={colIndex}
-              type="text"
-              style={{
-                backgroundColor: 'white',
-                border: '1px solid #ddd',
-                borderRadius: '5px',
-                padding: '8px',
+          {/* Tablo Header */}
+          <div style={{
+            display: 'table-row'
+          }}>
+            {['ÜRÜNÜN ADI', 'ÜRÜNÜN KODU', 'USD FİYATI', 'KKP PUANI', 'KDV YÜZDESİ', 'SATIŞ FİYATI (₺)', 'KDV FİYATI', 'TOPLAM FİYAT', 'STOK ADEDİ'].map((header, index) => (
+              <div key={index} style={{
+                display: 'table-cell',
+                background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)',
+                color: '#000',
+                padding: '10px 5px',
                 textAlign: 'center',
-                fontSize: '12px'
-              }}
-              placeholder="Değer girin"
-            />
-          ))}
+                fontSize: '11px',
+                fontWeight: 'bold',
+                borderRadius: '5px',
+                border: '1px solid #FFD700',
+                verticalAlign: 'middle',
+                width: '11.11%' // 100% / 9 columns
+              }}>
+                {header}
+              </div>
+            ))}
+          </div>
+
+          {/* Tablo Content */}
+          <div style={{
+            display: 'table-row'
+          }}>
+            {Array.from({ length: 9 }, (_, colIndex) => (
+              <div key={colIndex} style={{
+                display: 'table-cell',
+                padding: '2px',
+                verticalAlign: 'top',
+                width: '11.11%' // 100% / 9 columns
+              }}>
+                <input
+                  type="text"
+                  style={{
+                    backgroundColor: 'white',
+                    border: '1px solid #ddd',
+                    borderRadius: '5px',
+                    padding: '8px',
+                    textAlign: 'center',
+                    fontSize: '12px',
+                    width: '100%',
+                    boxSizing: 'border-box'
+                  }}
+                  placeholder="Değer girin"
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 

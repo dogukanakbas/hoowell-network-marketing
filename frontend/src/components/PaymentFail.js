@@ -60,20 +60,35 @@ const PaymentFail = () => {
 
         <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', flexWrap: 'wrap' }}>
           {(searchParams.get('payment_type') === 'franchise' || searchParams.get('method') === 'treps') ? (
-            // İş ortağı kaydı için kaydı tamamla butonu
-            <Link 
-              to="/partner-registration?step=7&payment=failed" 
-              style={{
-                backgroundColor: '#28a745',
-                color: 'white',
-                padding: '12px 24px',
-                borderRadius: '8px',
-                textDecoration: 'none',
-                fontWeight: 'bold'
-              }}
-            >
-              ✅ Kaydı Tamamla
-            </Link>
+            // İş ortağı kaydı için butonlar
+            <>
+              <Link 
+                to="/partner-registration?step=6&payment=failed" 
+                style={{
+                  backgroundColor: '#28a745',
+                  color: 'white',
+                  padding: '12px 24px',
+                  borderRadius: '8px',
+                  textDecoration: 'none',
+                  fontWeight: 'bold'
+                }}
+              >
+                ✅ Kaydı Tamamla
+              </Link>
+              <Link 
+                to="/partner-registration?step=7&payment=failed" 
+                style={{
+                  backgroundColor: '#FFD700',
+                  color: '#000',
+                  padding: '12px 24px',
+                  borderRadius: '8px',
+                  textDecoration: 'none',
+                  fontWeight: 'bold'
+                }}
+              >
+                💳 Ödeme Sayfasına Dön
+              </Link>
+            </>
           ) : (
             // Müşteri kaydı için tekrar dene
             <Link 

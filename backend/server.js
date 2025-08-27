@@ -784,10 +784,26 @@ const updateDownlineCounts = async (sponsorId) => {
       [totalDownline, sponsorId]
     );
 
-    // Update user's active partners count
+    // Update user's active partners count - Sadece aktif iş ortaklarını say
+    const [activePartnersCount] = await db.promise().execute(`
+      SELECT COUNT(*) as active_count 
+      FROM users 
+      WHERE created_by = ? AND is_active = TRUE 
+      AND payment_confirmed = TRUE 
+      AND education_completed = TRUE
+      AND EXISTS (
+        SELECT 1 FROM sales_tracking st 
+        WHERE st.seller_id = users.id 
+        AND st.sale_type IN ('product_sale', 'customer_registration')
+        AND st.status = 'active'
+        AND MONTH(st.sale_date) = MONTH(NOW()) 
+        AND YEAR(st.sale_date) = YEAR(NOW())
+      )
+    `, [sponsorId]);
+
     await db.promise().execute(
       'UPDATE users SET active_partners = ? WHERE id = ?',
-      [directCount[0].count, sponsorId]
+      [activePartnersCount[0].active_count, sponsorId]
     );
 
     console.log(`Updated downline counts: User ${sponsorId} has ${totalDownline} total downline`);
@@ -1053,7 +1069,7 @@ app.get('/api/sales/tracker', verifyToken, async (req, res) => {
   try {
     const userId = req.user.id;
 
-    // Get pending sales (waiting room)
+    // Get pending sales (waiting room) - Sadece ürün satışları, franchise satışları hariç
     const [pendingSales] = await db.promise().execute(`
       SELECT 
         st.*,
@@ -1068,10 +1084,11 @@ app.get('/api/sales/tracker', verifyToken, async (req, res) => {
       LEFT JOIN customers c ON st.customer_id = c.id
       LEFT JOIN users p ON st.partner_id = p.id
       WHERE st.seller_id = ? AND st.status = 'pending'
+      AND st.sale_type != 'franchise' -- Franchise satışları hariç
       ORDER BY st.sale_date DESC
     `, [userId]);
 
-    // Get active sales (this month)
+    // Get active sales (this month) - Sadece ürün satışları, franchise satışları hariç
     const [activeSales] = await db.promise().execute(`
       SELECT 
         st.*,
@@ -1087,13 +1104,15 @@ app.get('/api/sales/tracker', verifyToken, async (req, res) => {
       LEFT JOIN users p ON st.partner_id = p.id
       WHERE st.seller_id = ? AND st.status = 'active'
       AND MONTH(st.sale_date) = MONTH(NOW()) AND YEAR(st.sale_date) = YEAR(NOW())
+      AND st.sale_type != 'franchise' -- Franchise satışları hariç
       ORDER BY st.sale_date DESC
     `, [userId]);
 
-    // Check monthly activity
+    // Check monthly activity - Sadece ürün satışları, franchise satışları hariç
     const [activityCheck] = await db.promise().execute(`
       SELECT COUNT(*) as count FROM sales_tracking 
       WHERE seller_id = ? AND MONTH(sale_date) = MONTH(NOW()) AND YEAR(sale_date) = YEAR(NOW())
+      AND sale_type != 'franchise' -- Franchise satışları hariç
     `, [userId]);
 
     const monthlyActivity = activityCheck[0].count > 0;
@@ -2936,7 +2955,7 @@ app.get('/api/sales/tracker', verifyToken, async (req, res) => {
     const currentMonth = currentDate.getMonth() + 1;
     const currentYear = currentDate.getFullYear();
 
-    // Get pending sales (bekleme odası - waiting for bonus activation)
+    // Get pending sales (bekleme odası - waiting for bonus activation) - Sadece ürün satışları
     const [pendingSales] = await db.promise().execute(`
       SELECT 
         st.id,
@@ -2959,10 +2978,11 @@ app.get('/api/sales/tracker', verifyToken, async (req, res) => {
       AND st.status = 'pending'
       AND st.bonus_date > NOW()
       AND st.sale_type IN ('product_sale', 'customer_registration')
+      AND st.sale_type != 'franchise' -- Franchise satışları hariç
       ORDER BY st.sale_date DESC
     `, [userId]);
 
-    // Get active sales (bu ay gerçekleşen - bonus activated)
+    // Get active sales (bu ay gerçekleşen - bonus activated) - Sadece ürün satışları
     const [activeSales] = await db.promise().execute(`
       SELECT 
         st.id,
@@ -2986,10 +3006,11 @@ app.get('/api/sales/tracker', verifyToken, async (req, res) => {
       AND MONTH(st.sale_date) = ? 
       AND YEAR(st.sale_date) = ?
       AND st.sale_type IN ('product_sale', 'customer_registration')
+      AND st.sale_type != 'franchise' -- Franchise satışları hariç
       ORDER BY st.sale_date DESC
     `, [userId, currentMonth, currentYear]);
 
-    // Check monthly activity (this month sales count)
+    // Check monthly activity (this month sales count) - Sadece ürün satışları
     const [monthlyActivity] = await db.promise().execute(`
       SELECT COUNT(*) as activity_count
       FROM sales_tracking st
@@ -2997,6 +3018,7 @@ app.get('/api/sales/tracker', verifyToken, async (req, res) => {
       AND MONTH(st.sale_date) = ? 
       AND YEAR(st.sale_date) = ?
       AND st.sale_type IN ('product_sale', 'customer_registration')
+      AND st.sale_type != 'franchise' -- Franchise satışları hariç
     `, [userId, currentMonth, currentYear]);
 
     res.json({
@@ -3188,7 +3210,17 @@ app.get('/api/profit-sharing/data', verifyToken, async (req, res) => {
     const [partnerData] = await db.promise().execute(`
       SELECT COUNT(*) as active_partners 
       FROM users 
-      WHERE created_by = ? AND is_active = TRUE
+      WHERE created_by = ? AND is_active = TRUE 
+      AND payment_confirmed = TRUE 
+      AND education_completed = TRUE
+      AND EXISTS (
+        SELECT 1 FROM sales_tracking st 
+        WHERE st.seller_id = users.id 
+        AND st.sale_type IN ('product_sale', 'customer_registration')
+        AND st.status = 'active'
+        AND MONTH(st.sale_date) = MONTH(NOW()) 
+        AND YEAR(st.sale_date) = YEAR(NOW())
+      )
     `, [userId]);
 
     const personalSales = salesData[0]?.personal_sales || 0;
@@ -3569,7 +3601,17 @@ app.get('/api/global-travel/data', verifyToken, async (req, res) => {
     const [partnershipData] = await db.promise().execute(`
       SELECT COUNT(*) as active_partners 
       FROM users 
-      WHERE created_by = ? AND is_active = TRUE
+      WHERE created_by = ? AND is_active = TRUE 
+      AND payment_confirmed = TRUE 
+      AND education_completed = TRUE
+      AND EXISTS (
+        SELECT 1 FROM sales_tracking st 
+        WHERE st.seller_id = users.id 
+        AND st.sale_type IN ('product_sale', 'customer_registration')
+        AND st.status = 'active'
+        AND MONTH(st.sale_date) = MONTH(NOW()) 
+        AND YEAR(st.sale_date) = YEAR(NOW())
+      )
     `, [userId]);
 
     const totalSalesTL = salesData[0]?.total_sales_tl || 0;
