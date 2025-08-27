@@ -254,7 +254,7 @@ router.post('/callback', async (req, res) => {
         console.log(`Eğitim erişimi açıldı - User ID: ${payment.user_id}`);
       } else if (payment.payment_type === 'franchise' && payment.partner_id) {
         // İş ortağı ödemesi başarılıysa partner kaydını aktif et
-        const updatePartnerQuery = 'UPDATE business_partners SET payment_status = "completed", status = "active" WHERE id = ?';
+        const updatePartnerQuery = 'UPDATE users SET payment_pending = FALSE, payment_confirmed = TRUE, is_active = TRUE WHERE id = ?';
         await db.promise().execute(updatePartnerQuery, [payment.partner_id]);
         console.log(`İş ortağı kaydı aktif edildi - Partner ID: ${payment.partner_id}`);
       }
@@ -262,7 +262,7 @@ router.post('/callback', async (req, res) => {
       // Ödeme başarısız olsa bile kayıt alınmış olmalı
       if (payment.payment_type === 'franchise' && payment.partner_id) {
         // İş ortağı kaydını "beklemede" durumunda tut
-        const updatePartnerQuery = 'UPDATE business_partners SET payment_status = "pending", status = "pending" WHERE id = ?';
+        const updatePartnerQuery = 'UPDATE users SET payment_pending = TRUE, payment_confirmed = FALSE WHERE id = ?';
         await db.promise().execute(updatePartnerQuery, [payment.partner_id]);
         console.log(`İş ortağı kaydı beklemekte - Partner ID: ${payment.partner_id}`);
       }

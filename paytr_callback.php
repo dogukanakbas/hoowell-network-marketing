@@ -125,7 +125,7 @@ try {
             error_log("PayTR Callback: Cihaz ödemesi tamamlandı - User ID: " . $payment['user_id']);
             
         } elseif ($payment['payment_type'] === 'franchise' && !empty($payment['partner_id'])) {
-            $stmt = $pdo->prepare("UPDATE business_partners SET payment_status = 'completed', status = 'active' WHERE id = ?");
+            $stmt = $pdo->prepare("UPDATE users SET payment_pending = FALSE, payment_confirmed = TRUE, is_active = TRUE WHERE id = ?");
             $stmt->execute([$payment['partner_id']]);
             error_log("PayTR Callback: İş ortağı aktif edildi - Partner ID: " . $payment['partner_id']);
         }
