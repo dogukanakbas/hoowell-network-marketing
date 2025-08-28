@@ -95,33 +95,37 @@ const PaymentSuccess = () => {
         maxWidth: '600px',
         boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
       }}>
-        {paymentInfo?.status === 'approved' ? (
+
+        
+        {(paymentInfo?.status === 'approved' || paymentInfo?.status === 'success' || searchParams.get('status') === 'success') ? (
           <>
             <div style={{ fontSize: '80px', marginBottom: '20px' }}>✅</div>
             <h1 style={{ color: '#28a745', marginBottom: '20px' }}>
               Ödeme Başarılı!
             </h1>
             <p style={{ fontSize: '18px', marginBottom: '30px', color: '#666' }}>
-              PayTR ile ödemeniz başarıyla tamamlandı.
+              Hoowell ile birlikte olduğunuz için teşekkür ederiz!
             </p>
             
-            <div style={{
-              backgroundColor: '#f8f9fa',
-              padding: '20px',
-              borderRadius: '10px',
-              marginBottom: '30px',
-              textAlign: 'left'
-            }}>
-              <h4 style={{ marginBottom: '15px' }}>Ödeme Detayları:</h4>
-              <div style={{ display: 'grid', gap: '10px' }}>
-                <div><strong>Tutar:</strong> {paymentInfo.amount?.toLocaleString()} TL</div>
-                <div><strong>Ödeme Türü:</strong> {paymentInfo.payment_type === 'education' ? 'Eğitim Paketi' : 'Cihaz Paketi'}</div>
-                <div><strong>Tarih:</strong> {new Date(paymentInfo.created_at).toLocaleString('tr-TR')}</div>
-                <div><strong>Durum:</strong> <span style={{ color: '#28a745' }}>✅ Onaylandı</span></div>
+            {paymentInfo && (
+              <div style={{
+                backgroundColor: '#f8f9fa',
+                padding: '20px',
+                borderRadius: '10px',
+                marginBottom: '30px',
+                textAlign: 'left'
+              }}>
+                <h4 style={{ marginBottom: '15px' }}>Ödeme Detayları:</h4>
+                <div style={{ display: 'grid', gap: '10px' }}>
+                  <div><strong>Tutar:</strong> {paymentInfo.amount?.toLocaleString() || 'Bilinmiyor'} TL</div>
+                  <div><strong>Ödeme Türü:</strong> {paymentInfo.payment_type === 'education' ? 'Eğitim Paketi' : 'Cihaz Paketi'}</div>
+                  <div><strong>Tarih:</strong> {paymentInfo.created_at ? new Date(paymentInfo.created_at).toLocaleString('tr-TR') : 'Bilinmiyor'}</div>
+                  <div><strong>Durum:</strong> <span style={{ color: '#28a745' }}>✅ Onaylandı</span></div>
+                </div>
               </div>
-            </div>
+            )}
 
-            {paymentInfo.payment_type === 'education' && (
+            {paymentInfo?.payment_type === 'education' && (
               <div style={{
                 backgroundColor: '#d4edda',
                 padding: '15px',
@@ -146,49 +150,18 @@ const PaymentSuccess = () => {
         )}
 
         <div style={{ display: 'flex', gap: '15px', justifyContent: 'center' }}>
-          {paymentInfo?.payment_type === 'franchise' ? (
-            // İş ortağı kaydı için son adıma yönlendir
-            <Link 
-              to="/partner-registration?step=7&payment=success" 
-              style={{
-                backgroundColor: '#28a745',
-                color: 'white',
-                padding: '12px 24px',
-                borderRadius: '8px',
-                textDecoration: 'none',
-                fontWeight: 'bold'
-              }}
-            >
-              ✅ Kaydı Tamamla
-            </Link>
-          ) : (
-            // Müşteri kaydı için ana sayfaya yönlendir
-            <Link 
-              to="/" 
-              style={{
-                backgroundColor: '#FFD700',
-                color: '#000',
-                padding: '12px 24px',
-                borderRadius: '8px',
-                textDecoration: 'none',
-                fontWeight: 'bold'
-              }}
-            >
-              🏠 Ana Sayfaya Dön
-            </Link>
-          )}
           <Link 
-            to="/payment" 
+            to="/" 
             style={{
-              backgroundColor: '#6c757d',
-              color: 'white',
+              backgroundColor: '#FFD700',
+              color: '#000',
               padding: '12px 24px',
               borderRadius: '8px',
               textDecoration: 'none',
               fontWeight: 'bold'
             }}
           >
-            💳 Ödeme Geçmişi
+            🏠 Ana Sayfaya Dön
           </Link>
         </div>
       </div>

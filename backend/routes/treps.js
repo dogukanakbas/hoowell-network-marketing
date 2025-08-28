@@ -58,7 +58,7 @@ router.post('/create-payment', async (req, res) => {
       min_installment: 1,
       max_installment: 1,
       expire_date: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 saat sonra
-      return_url: 'https://panel.hoowell.net/payment/success?payment_type=franchise',
+      return_url: 'https://panel.hoowell.net/payment/success?method=treps&payment_type=franchise',
       retry_fail: true,
       iframe_flag: 1, // IFRAME = 1
       iframe_web_uri: 'https://panel.hoowell.net',
@@ -230,22 +230,30 @@ router.get('/payment-status/:paymentId', async (req, res) => {
   }
 });
 
-// Callback endpoint
+// Callback endpoint (GET ve POST)
 router.post('/callback', async (req, res) => {
+  await handleTrepsCallback(req, res);
+});
+
+router.get('/callback', async (req, res) => {
+  await handleTrepsCallback(req, res);
+});
+
+// TREPS callback handler function
+const handleTrepsCallback = async (req, res) => {
   try {
-    console.log('TREPS callback:', req.body);
+    console.log('TREPS callback (POST/GET):', req.body || req.query);
     
     // Ödeme durumunu güncelle
-    const { paymentId, status, transactionId } = req.body;
+    const { paymentId, status, transactionId, orderId } = req.body || req.query;
     
     // Veritabanında ödeme durumunu güncelle
-    if (status === 'success') {
+    if (status === 'success' || status === 'approved') {
       // Başarılı ödeme - partner kaydını aktif et
-      // Bu kısmı kendi veritabanı yapınıza göre düzenleyin
-      console.log('TREPS başarılı ödeme:', paymentId);
+      console.log('TREPS başarılı ödeme:', paymentId || transactionId || orderId);
     } else {
       // Başarısız ödeme - partner kaydı beklemekte kalır
-      console.log('TREPS başarısız ödeme:', paymentId);
+      console.log('TREPS başarısız ödeme:', paymentId || transactionId || orderId);
     }
     
     res.json({ success: true });
@@ -254,49 +262,51 @@ router.post('/callback', async (req, res) => {
     console.error('TREPS callback hatası:', error);
     res.status(500).json({ success: false });
   }
-});
+};
 
 // Payment success endpoint (GET ve POST)
 router.get('/payment-success', async (req, res) => {
   try {
-    const { paymentId, status } = req.query;
+    const { paymentId, status, transactionId, orderId } = req.query;
     
-    console.log('TREPS payment success (GET):', { paymentId, status });
+    console.log('TREPS payment success (GET):', { paymentId, status, transactionId, orderId });
+    console.log('TREPS payment success query params:', req.query);
     
     // Ödeme durumunu kontrol et
-    if (status === 'success') {
+    if (status === 'success' || status === 'approved') {
       // Başarılı ödeme - kullanıcıyı frontend'e yönlendir
-      res.redirect(`https://panel.hoowell.net/payment/success?paymentId=${paymentId}&status=success&method=treps&payment_type=franchise`);
+      res.redirect(`https://panel.hoowell.net/payment/success?paymentId=${paymentId || transactionId || orderId}&status=success&method=treps&payment_type=franchise`);
     } else {
       // Başarısız ödeme - ama kayıt alınmış olmalı
-      res.redirect(`https://panel.hoowell.net/payment/fail?paymentId=${paymentId}&status=failed&method=treps&payment_type=franchise`);
+      res.redirect(`https://panel.hoowell.net/payment/fail?paymentId=${paymentId || transactionId || orderId}&status=failed&method=treps&payment_type=franchise`);
     }
     
   } catch (error) {
     console.error('TREPS payment success error:', error);
-    res.redirect('https://panel.hoowell.net/payment/fail?error=unknown');
+    res.redirect('https://panel.hoowell.net/payment/fail?error=unknown&method=treps&payment_type=franchise');
   }
 });
 
 // Payment success endpoint (POST) - TREPS'ten POST isteği gelirse
 router.post('/payment-success', async (req, res) => {
   try {
-    const { paymentId, status } = req.body;
+    const { paymentId, status, transactionId, orderId } = req.body;
     
-    console.log('TREPS payment success (POST):', { paymentId, status });
+    console.log('TREPS payment success (POST):', { paymentId, status, transactionId, orderId });
+    console.log('TREPS payment success body:', req.body);
     
     // Ödeme durumunu kontrol et
-    if (status === 'success') {
+    if (status === 'success' || status === 'approved') {
       // Başarılı ödeme - kullanıcıyı frontend'e yönlendir
-      res.redirect(`https://panel.hoowell.net/payment/success?paymentId=${paymentId}&status=success&method=treps&payment_type=franchise`);
+      res.redirect(`https://panel.hoowell.net/payment/success?paymentId=${paymentId || transactionId || orderId}&status=success&method=treps&payment_type=franchise`);
     } else {
       // Başarısız ödeme - ama kayıt alınmış olmalı
-      res.redirect(`https://panel.hoowell.net/payment/fail?paymentId=${paymentId}&status=failed&method=treps&payment_type=franchise`);
+      res.redirect(`https://panel.hoowell.net/payment/fail?paymentId=${paymentId || transactionId || orderId}&status=failed&method=treps&payment_type=franchise`);
     }
     
   } catch (error) {
     console.error('TREPS payment success error:', error);
-    res.redirect('https://panel.hoowell.net/payment/fail?error=unknown');
+    res.redirect('https://panel.hoowell.net/payment/fail?error=unknown&method=treps&payment_type=franchise');
   }
 });
 
