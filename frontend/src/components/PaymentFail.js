@@ -37,10 +37,11 @@ const PaymentFail = () => {
           padding: '20px',
           borderRadius: '10px',
           marginBottom: '30px',
-          color: '#721c24'
+          color: '#721c24',
+          textAlign: 'center'
         }}>
           <h4 style={{ marginBottom: '15px' }}>Olası Nedenler:</h4>
-          <ul style={{ textAlign: 'left', marginBottom: '0' }}>
+          <ul style={{ textAlign: 'left', marginBottom: '0', maxWidth: '400px', margin: '0 auto', listStylePosition: 'inside' }}>
             <li>Kart limitiniz yetersiz olabilir</li>
             <li>Kart bilgileriniz hatalı girilmiş olabilir</li>
             <li>3D Secure doğrulaması tamamlanmamış olabilir</li>

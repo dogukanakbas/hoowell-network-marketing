@@ -297,6 +297,27 @@ app.get('/api/network/tree', verifyToken, async (req, res) => {
   }
 });
 
+// Check if TC Kimlik No exists
+app.get('/api/check-tc/:tcNo', verifyToken, async (req, res) => {
+  try {
+    const { tcNo } = req.params;
+    
+    if (!tcNo || tcNo.length !== 11) {
+      return res.json({ exists: false });
+    }
+    
+    const [existingUser] = await db.promise().execute(
+      'SELECT id FROM users WHERE tc_no = ?',
+      [tcNo]
+    );
+    
+    res.json({ exists: existingUser.length > 0 });
+  } catch (error) {
+    console.error('TC kontrol hatası:', error);
+    res.status(500).json({ error: 'TC kontrol hatası' });
+  }
+});
+
 app.get('/api/network/user-details/:userId', verifyToken, async (req, res) => {
   try {
     const { userId } = req.params;
@@ -2312,9 +2333,6 @@ app.post('/api/partner/register', verifyToken, async (req, res) => {
     });
   } catch (error) {
     console.error('Partner registration error:', error);
-    if (error.code === 'ER_DUP_ENTRY') {
-      return res.status(400).json({ message: 'Bu email adresi zaten kullanılıyor' });
-    }
     res.status(500).json({ message: 'Sunucu hatası' });
   }
 });
@@ -2369,14 +2387,16 @@ app.post('/api/partner/register-new', verifyToken, async (req, res) => {
       return res.status(400).json({ message: 'Tüm sözleşme onayları gerekli' });
     }
 
-    // Check if email already exists
-    const [existingUser] = await db.promise().execute(
-      'SELECT id FROM users WHERE email = ?',
-      [email]
-    );
+    // Check if TC Kimlik No already exists (only for individual registration)
+    if (registration_type === 'individual' && tc_no) {
+      const [existingTC] = await db.promise().execute(
+        'SELECT id FROM users WHERE tc_no = ?',
+        [tc_no]
+      );
 
-    if (existingUser.length > 0) {
-      return res.status(400).json({ message: 'Bu email adresi zaten kullanılıyor' });
+      if (existingTC.length > 0) {
+        return res.status(400).json({ message: 'Bu TC Kimlik Numarası zaten kullanılıyor' });
+      }
     }
 
     // Generate random password
@@ -2489,7 +2509,7 @@ app.post('/api/partner/register-new', verifyToken, async (req, res) => {
     await updateDownlineCounts(req.user.id);
 
     // Create sales tracking record for partner registration
-    await createSalesTrackingRecord(req.user.id, null, 'partner_registration', 'Franchise Satış Paketi', userData.total_amount);
+          await createSalesTrackingRecord(req.user.id, null, 'partner_registration', 'Liderlik Kampı 3 Günlük Katılım Bileti', userData.total_amount);
 
     // Update sponsor's profile with new partner
     await db.promise().execute(`
@@ -2516,12 +2536,8 @@ app.post('/api/partner/register-new', verifyToken, async (req, res) => {
 
   } catch (error) {
     console.error('New partner registration error:', error);
-    if (error.code === 'ER_DUP_ENTRY') {
-      if (error.message.includes('email')) {
-        return res.status(400).json({ message: 'Bu email adresi zaten kullanılıyor' });
-      } else if (error.message.includes('sponsor_id')) {
-        return res.status(400).json({ message: 'Sponsor ID çakışması, lütfen tekrar deneyin' });
-      }
+    if (error.code === 'ER_DUP_ENTRY' && error.message.includes('sponsor_id')) {
+      return res.status(400).json({ message: 'Sponsor ID çakışması, lütfen tekrar deneyin' });
     }
     res.status(500).json({ message: 'Sunucu hatası: ' + error.message });
   }
@@ -2583,15 +2599,7 @@ app.post('/api/customer/register', verifyToken, verifyAdmin, async (req, res) =>
       return res.status(400).json({ message: 'Sözleşme onayları gerekli' });
     }
 
-    // Check if email already exists
-    const [existingCustomer] = await db.promise().execute(
-      'SELECT id FROM customers WHERE email = ?',
-      [email]
-    );
 
-    if (existingCustomer.length > 0) {
-      return res.status(400).json({ message: 'Bu email adresi zaten kullanılıyor' });
-    }
 
     // Generate unique customer ID
     const newCustomerId = await generateCustomerId();
@@ -2694,12 +2702,8 @@ app.post('/api/customer/register', verifyToken, verifyAdmin, async (req, res) =>
 
   } catch (error) {
     console.error('Customer registration error:', error);
-    if (error.code === 'ER_DUP_ENTRY') {
-      if (error.message.includes('email')) {
-        return res.status(400).json({ message: 'Bu email adresi zaten kullanılıyor' });
-      } else if (error.message.includes('customer_id')) {
-        return res.status(400).json({ message: 'Müşteri ID çakışması, lütfen tekrar deneyin' });
-      }
+    if (error.code === 'ER_DUP_ENTRY' && error.message.includes('customer_id')) {
+      return res.status(400).json({ message: 'Müşteri ID çakışması, lütfen tekrar deneyin' });
     }
     res.status(500).json({ message: 'Sunucu hatası: ' + error.message });
   }
@@ -3031,6 +3035,225 @@ app.get('/api/sales/tracker', verifyToken, async (req, res) => {
     res.status(500).json({ message: 'Sunucu hatası' });
   }
 });
+
+// Franchise Tracker API
+          app.get('/api/sales/franchise-tracker', verifyToken, async (req, res) => {
+            try {
+              const userId = req.user.id;
+              const currentDate = new Date();
+              const currentMonth = currentDate.getMonth() + 1;
+              const currentYear = currentDate.getFullYear();
+          
+              // Get pending franchise registrations (bekleme odası)
+              const [pendingFranchises] = await db.promise().execute(`
+                SELECT 
+                  u.id,
+                  u.first_name,
+                  u.last_name,
+                  u.registration_type,
+                  u.created_at,
+                  u.payment_confirmed,
+                  u.total_amount,
+                  u.sponsor_id,
+                  u.education_completed,
+                  NULL as first_sale_date
+                FROM users u
+                WHERE u.created_by = ? 
+                AND u.role = 'partner'
+                AND u.payment_pending = TRUE
+                AND u.payment_confirmed = FALSE
+                ORDER BY u.created_at DESC
+              `, [userId]);
+          
+              // Get active franchise registrations (bu ay gerçekleşen)
+              const [activeFranchises] = await db.promise().execute(`
+                SELECT 
+                  u.id,
+                  u.first_name,
+                  u.last_name,
+                  u.registration_type,
+                  u.created_at,
+                  u.payment_confirmed,
+                  u.total_amount,
+                  u.sponsor_id,
+                  u.education_completed,
+                  NULL as first_sale_date
+                FROM users u
+                WHERE u.created_by = ? 
+                AND u.role = 'partner'
+                AND u.payment_confirmed = TRUE
+                AND MONTH(u.created_at) = ? 
+                AND YEAR(u.created_at) = ?
+                ORDER BY u.created_at DESC
+              `, [userId, currentMonth, currentYear]);
+          
+              res.json({
+                pendingFranchises: pendingFranchises || [],
+                activeFranchises: activeFranchises || []
+              });
+            } catch (error) {
+              console.error('Franchise tracker error:', error);
+              res.status(500).json({ message: 'Sunucu hatası' });
+            }
+          });
+
+          // Admin - Müşteri Arama API
+          app.get('/api/admin/search-customers', verifyToken, async (req, res) => {
+            try {
+              if (req.user.role !== 'admin') {
+                return res.status(403).json({ message: 'Yetkisiz erişim' });
+              }
+
+              const { term } = req.query;
+              if (!term) {
+                return res.json({ customers: [] });
+              }
+
+              const [customers] = await db.promise().execute(`
+                SELECT 
+                  id,
+                  first_name,
+                  last_name,
+                  tc_no,
+                  email,
+                  phone,
+                  billing_address,
+                  shipping_address,
+                  created_at
+                FROM users 
+                WHERE role = 'customer' 
+                AND (
+                  first_name LIKE ? 
+                  OR last_name LIKE ? 
+                  OR email LIKE ? 
+                  OR tc_no LIKE ? 
+                  OR phone LIKE ?
+                )
+                ORDER BY created_at DESC
+                LIMIT 50
+              `, [`%${term}%`, `%${term}%`, `%${term}%`, `%${term}%`, `%${term}%`]);
+
+              res.json({ customers: customers || [] });
+            } catch (error) {
+              console.error('Müşteri arama hatası:', error);
+              res.status(500).json({ message: 'Sunucu hatası' });
+            }
+          });
+
+          // Admin - Müşteri Güncelleme API
+          app.put('/api/admin/update-customer', verifyToken, async (req, res) => {
+            try {
+              if (req.user.role !== 'admin') {
+                return res.status(403).json({ message: 'Yetkisiz erişim' });
+              }
+
+              const { id, first_name, last_name, tc_no, email, phone, billing_address, shipping_address } = req.body;
+
+              if (!id || !first_name || !last_name) {
+                return res.status(400).json({ message: 'Gerekli alanlar eksik' });
+              }
+
+              await db.promise().execute(`
+                UPDATE users 
+                SET 
+                  first_name = ?,
+                  last_name = ?,
+                  tc_no = ?,
+                  email = ?,
+                  phone = ?,
+                  billing_address = ?,
+                  shipping_address = ?,
+                  updated_at = NOW()
+                WHERE id = ? AND role = 'customer'
+              `, [first_name, last_name, tc_no, email, phone, billing_address, shipping_address, id]);
+
+              res.json({ message: 'Müşteri başarıyla güncellendi' });
+            } catch (error) {
+              console.error('Müşteri güncelleme hatası:', error);
+              res.status(500).json({ message: 'Sunucu hatası' });
+            }
+          });
+
+          // Admin - İş Ortağı Arama API
+          app.get('/api/admin/search-partners', verifyToken, async (req, res) => {
+            try {
+              if (req.user.role !== 'admin') {
+                return res.status(403).json({ message: 'Yetkisiz erişim' });
+              }
+
+              const { term } = req.query;
+              if (!term) {
+                return res.json({ partners: [] });
+              }
+
+              const [partners] = await db.promise().execute(`
+                SELECT 
+                  id,
+                  first_name,
+                  last_name,
+                  tc_no,
+                  email,
+                  phone,
+                  billing_address,
+                  shipping_address,
+                  sponsor_id,
+                  created_at
+                FROM users 
+                WHERE role = 'partner' 
+                AND (
+                  first_name LIKE ? 
+                  OR last_name LIKE ? 
+                  OR email LIKE ? 
+                  OR tc_no LIKE ? 
+                  OR phone LIKE ?
+                  OR sponsor_id LIKE ?
+                )
+                ORDER BY created_at DESC
+                LIMIT 50
+              `, [`%${term}%`, `%${term}%`, `%${term}%`, `%${term}%`, `%${term}%`, `%${term}%`]);
+
+              res.json({ partners: partners || [] });
+            } catch (error) {
+              console.error('İş ortağı arama hatası:', error);
+              res.status(500).json({ message: 'Sunucu hatası' });
+            }
+          });
+
+          // Admin - İş Ortağı Güncelleme API
+          app.put('/api/admin/update-partner', verifyToken, async (req, res) => {
+            try {
+              if (req.user.role !== 'admin') {
+                return res.status(403).json({ message: 'Yetkisiz erişim' });
+              }
+
+              const { id, sponsor_id, first_name, last_name, tc_no, email, phone, billing_address, shipping_address } = req.body;
+
+              if (!id || !first_name || !last_name) {
+                return res.status(400).json({ message: 'Gerekli alanlar eksik' });
+              }
+
+              await db.promise().execute(`
+                UPDATE users 
+                SET 
+                  sponsor_id = ?,
+                  first_name = ?,
+                  last_name = ?,
+                  tc_no = ?,
+                  email = ?,
+                  phone = ?,
+                  billing_address = ?,
+                  shipping_address = ?,
+                  updated_at = NOW()
+                WHERE id = ? AND role = 'partner'
+              `, [sponsor_id, first_name, last_name, tc_no, email, phone, billing_address, shipping_address, id]);
+
+              res.json({ message: 'İş ortağı başarıyla güncellendi' });
+            } catch (error) {
+              console.error('İş ortağı güncelleme hatası:', error);
+              res.status(500).json({ message: 'Sunucu hatası' });
+            }
+          });
+
 //Customer Satisfaction Tracking API
 app.get('/api/customer-satisfaction/my-customers', verifyToken, async (req, res) => {
   try {

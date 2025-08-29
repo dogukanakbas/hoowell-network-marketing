@@ -83,10 +83,10 @@ router.post('/create-payment', async (req, res) => {
         {
           product_id: req.body.productId || `PROD-${Date.now()}`,
           category: req.body.productCategory || 'Ürün',
-          name: req.body.productName || 'HOOWELL Ürün',
+          name: req.body.productName || 'Hoowell Liderlik Kampı 3 Günlük Katılım Bileti',
           price: req.body.amount,
           quantity: 1,
-          description: req.body.productDescription || 'HOOWELL Ürün',
+          description: req.body.productDescription || 'Hoowell Liderlik Kampı 3 Günlük Katılım Bileti',
           unit: 'adet'
         }
       ],

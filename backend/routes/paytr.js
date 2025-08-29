@@ -76,7 +76,7 @@ router.post('/create-payment', auth, async (req, res) => {
       // İş ortağı ödemesi için custom amount kullan
       totalAmount = Math.round((custom_amount || 4800) * 100); // PayTR kuruş cinsinden bekler
       usdAmount = (custom_amount || 4800) / usdRate;
-      productName = 'Hoowell Franchise Satış Paketi';
+      productName = 'Hoowell Liderlik Kampı 3 Günlük Katılım Bileti';
     } else {
       return res.status(400).json({ message: 'Geçersiz ödeme türü' });
     }

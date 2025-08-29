@@ -387,7 +387,7 @@ const FranchiseNetwork = () => {
                 top: '25px',
                 left: '50%',
                 transform: 'translateX(-50%)',
-                width: `${Math.max(childrenCount * parseInt(cardGap) + childrenCount * 180, 400)}px`,
+                width: `${Math.max(childrenCount * parseInt(cardGap) + childrenCount * parseInt(cardWidth), 400)}px`,
                 maxWidth: `${window.innerWidth - 100}px`,
                 borderRadius: '2px',
                 boxShadow: '0 2px 4px rgba(255, 215, 0, 0.3)',
@@ -405,7 +405,7 @@ const FranchiseNetwork = () => {
               flexWrap: window.innerWidth < 768 ? 'wrap' : 'nowrap',
               position: 'relative',
               width: '100%',
-              minWidth: `${Math.max(childrenCount * parseInt(cardGap) + childrenCount * 180, 400)}px`,
+              minWidth: `${Math.max(childrenCount * parseInt(cardGap) + childrenCount * parseInt(cardWidth), 400)}px`,
               maxWidth: `${window.innerWidth - 100}px`
             }}>
               {nodeData.children.map((child, index) => {
@@ -434,7 +434,8 @@ const FranchiseNetwork = () => {
                         borderRadius: '2px',
                         boxShadow: '0 2px 4px rgba(255, 215, 0, 0.3)',
                         zIndex: 2,
-                        minHeight: '25px'
+                        minHeight: '25px',
+                        minWidth: '3px'
                       }} />
                     )}
 

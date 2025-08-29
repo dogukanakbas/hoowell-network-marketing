@@ -106,8 +106,17 @@ const Layout = () => {
       !item.requiresEducation || user.education_completed
     );
 
-  // Admin menü öğesi - Tek buton
-  const adminMenuItem = { path: '/admin', label: 'Admin Paneli' };
+  // Admin menü öğeleri
+  const adminMenuItems = [
+    { path: '/admin/system-settings', label: 'Sistem Ayarları' },
+    { path: '/admin/company-management', label: 'Şirket Yönetimi' },
+    { path: '/admin/monthly-sales', label: 'Aylık Satışlar' },
+    { path: '/admin/payment-details', label: 'Ödeme Detayları' },
+          { path: '/admin/customer-data-fix', label: 'Müşteri Verileri' },
+      { path: '/admin/partner-data-fix', label: 'İş Ortağı Verileri' },
+    { path: '/admin/career-management', label: 'Kariyer Yönetimi' },
+    { path: '/admin/question-management', label: 'Soru Yönetimi' }
+  ];
 
   return (
     <div className="App">
@@ -393,48 +402,55 @@ const Layout = () => {
                 }}>
                   ADMİN PANELİ
                 </div>
-                <Link
-                  to={adminMenuItem.path}
-                  onClick={() => isMobile && closeSidebar()}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: isMobile ? '16px 20px' : '12px 20px',
-                    backgroundColor: location.pathname.startsWith('/admin') ? 'var(--accent-gold)' : '#1a4040',
-                    color: location.pathname.startsWith('/admin') ? '#0e2323' : '#ffffff',
-                    textDecoration: 'none',
-                    borderRadius: '25px',
-                    textAlign: 'center',
-                    fontSize: isMobile ? '15px' : '13px',
-                    fontWeight: 'bold',
-                    transition: 'all 0.3s ease',
-                    border: '2px solid var(--accent-gold)',
-                    minHeight: isMobile ? '50px' : '45px',
-                    boxShadow: location.pathname.startsWith('/admin')
-                      ? '0 4px 15px rgba(255, 215, 0, 0.4)'
-                      : '0 2px 8px rgba(0,0,0,0.2)',
-                    transform: location.pathname.startsWith('/admin') ? 'translateY(-1px)' : 'translateY(0)',
-                    letterSpacing: '0.5px',
-                    marginBottom: '8px'
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!location.pathname.startsWith('/admin')) {
-                      e.target.style.backgroundColor = '#2a5555';
-                      e.target.style.transform = 'translateY(-1px)';
-                      e.target.style.boxShadow = '0 4px 12px rgba(255, 215, 0, 0.2)';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!location.pathname.startsWith('/admin')) {
-                      e.target.style.backgroundColor = '#1a4040';
-                      e.target.style.transform = 'translateY(0)';
-                      e.target.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
-                    }
-                  }}
-                >
-                  {adminMenuItem.label}
-                </Link>
+                {adminMenuItems.map((item) => {
+                  const isActive = location.pathname === item.path;
+                  
+                  return (
+                    <Link
+                      key={item.path}
+                      to={item.path}
+                      onClick={() => isMobile && closeSidebar()}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: isMobile ? '16px 20px' : '12px 20px',
+                        backgroundColor: isActive ? 'var(--accent-gold)' : '#1a4040',
+                        color: isActive ? '#0e2323' : '#ffffff',
+                        textDecoration: 'none',
+                        borderRadius: '25px',
+                        textAlign: 'center',
+                        fontSize: isMobile ? '15px' : '13px',
+                        fontWeight: 'bold',
+                        transition: 'all 0.3s ease',
+                        border: '2px solid var(--accent-gold)',
+                        minHeight: isMobile ? '50px' : '45px',
+                        boxShadow: isActive
+                          ? '0 4px 15px rgba(255, 215, 0, 0.4)'
+                          : '0 2px 8px rgba(0,0,0,0.2)',
+                        transform: isActive ? 'translateY(-1px)' : 'translateY(0)',
+                        letterSpacing: '0.5px',
+                        marginBottom: '8px'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isActive) {
+                          e.target.style.backgroundColor = '#2a5555';
+                          e.target.style.transform = 'translateY(-1px)';
+                          e.target.style.boxShadow = '0 4px 12px rgba(255, 215, 0, 0.2)';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isActive) {
+                          e.target.style.backgroundColor = '#1a4040';
+                          e.target.style.transform = 'translateY(0)';
+                          e.target.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
+                        }
+                      }}
+                    >
+                      {item.label}
+                    </Link>
+                  );
+                })}
               </>
             )}
 

@@ -151,6 +151,8 @@ const PartnerRegistration = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('iban'); // 'iban', 'paytr' veya 'treps'
+  const [tcCheckLoading, setTcCheckLoading] = useState(false);
+  const [tcExists, setTcExists] = useState(false);
   
   // Form verileri
   const [formData, setFormData] = useState({
@@ -174,6 +176,36 @@ const PartnerRegistration = () => {
     contract4_accepted: false, // Ön Bilgilendirme Formu
     contract5_accepted: false  // Elektronik Ticaret Bilgilendirmesi
   });
+
+  // TC Kimlik No kontrolü fonksiyonu
+  const checkTCExists = async (tcNo) => {
+    if (!tcNo || tcNo.length !== 11) {
+      setTcExists(false);
+      return;
+    }
+    
+    setTcCheckLoading(true);
+    try {
+      const response = await axios.get(`/api/check-tc/${tcNo}`);
+      setTcExists(response.data.exists);
+    } catch (error) {
+      console.error('TC kontrol hatası:', error);
+      setTcExists(false);
+    } finally {
+      setTcCheckLoading(false);
+    }
+  };
+
+  // TC değiştiğinde kontrol et
+  useEffect(() => {
+    if (registrationType === 'individual' && formData.tc_no) {
+      const timeoutId = setTimeout(() => {
+        checkTCExists(formData.tc_no);
+      }, 1000); // 1 saniye bekle
+      
+      return () => clearTimeout(timeoutId);
+    }
+  }, [formData.tc_no, registrationType]);
 
   // Eğitim tamamlanmamışsa erişim engelle (Admin hariç)
   if (!user || (!user.education_completed && user.role !== 'admin')) {
@@ -412,23 +444,57 @@ const PartnerRegistration = () => {
                   <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: 'var(--text-dark)' }}>
                     TC Kimlik No *
                   </label>
-                  <input
-                    type="text"
-                    required
-                    maxLength="11"
-                    placeholder="TC Kimlik No (11 hane)"
-                    value={formData.tc_no}
-                    onChange={(e) => setFormData({...formData, tc_no: e.target.value})}
-                    style={{
-                      width: '100%',
-                      padding: '12px 15px',
-                      border: '2px solid #ddd',
-                      borderRadius: '10px',
-                      fontSize: '14px',
-                      backgroundColor: '#fff',
-                      color: '#333'
-                    }}
-                  />
+                  <div style={{ position: 'relative' }}>
+                    <input
+                      type="text"
+                      required
+                      maxLength="11"
+                      placeholder="TC Kimlik No (11 hane)"
+                      value={formData.tc_no}
+                      onChange={(e) => setFormData({...formData, tc_no: e.target.value})}
+                      style={{
+                        width: '100%',
+                        padding: '12px 15px',
+                        border: tcExists ? '2px solid #dc3545' : '2px solid #ddd',
+                        borderRadius: '10px',
+                        fontSize: '14px',
+                        backgroundColor: '#fff',
+                        color: '#333'
+                      }}
+                    />
+                    {tcCheckLoading && (
+                      <div style={{
+                        position: 'absolute',
+                        right: '10px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        fontSize: '16px'
+                      }}>
+                        ⏳
+                      </div>
+                    )}
+                    {tcExists && !tcCheckLoading && (
+                      <div style={{
+                        position: 'absolute',
+                        right: '10px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        fontSize: '16px',
+                        color: '#dc3545'
+                      }}>
+                        ❌
+                      </div>
+                    )}
+                  </div>
+                  {tcExists && (
+                    <div style={{
+                      color: '#dc3545',
+                      fontSize: '12px',
+                      marginTop: '5px'
+                    }}>
+                      Bu TC Kimlik Numarası zaten kullanılıyor!
+                    </div>
+                  )}
                 </div>
                 
                 <div>
@@ -960,7 +1026,7 @@ const PartnerRegistration = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <div style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '5px' }}>
-                  Franchise Satış Paketi
+                  Liderlik Kampı 3 Günlük Katılım Bileti
                 </div>
                 <div style={{ fontSize: '14px', color: 'var(--text-light)' }}>
                   Alkali iyonizer sistemleri franchise hakkı
@@ -1557,7 +1623,7 @@ const PartnerRegistration = () => {
               4.800 ₺
             </div>
             <div style={{ fontSize: '14px', color: 'var(--text-light)' }}>
-              (KDV Dahil - Franchise Satış Paketi)
+                              (KDV Dahil - Liderlik Kampı 3 Günlük Katılım Bileti)
             </div>
           </div>
 

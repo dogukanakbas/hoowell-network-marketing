@@ -1141,8 +1141,10 @@ video{
   }
 }
 .about-image-five img {
-  width: 100%;
+  width: 105%;
+  max-width: 105%;
   z-index: 2;
+  transform: scale(1.05);
 }
 
 

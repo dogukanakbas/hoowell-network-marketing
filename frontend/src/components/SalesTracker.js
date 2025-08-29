@@ -4,16 +4,28 @@ import axios from 'axios';
 
 const SalesTracker = () => {
   const { user } = useAuth();
+  const [activeTab, setActiveTab] = useState('products'); // 'products' veya 'franchise'
   const [salesData, setSalesData] = useState({
     pendingSales: [],
     activeSales: [],
     monthlyActivity: false
   });
+  const [franchiseData, setFranchiseData] = useState({
+    pendingFranchises: [],
+    activeFranchises: []
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchSalesData();
+    fetchFranchiseData();
   }, []);
+
+  useEffect(() => {
+    if (activeTab === 'franchise') {
+      fetchFranchiseData();
+    }
+  }, [activeTab]);
 
   const fetchSalesData = async () => {
     try {
@@ -34,6 +46,23 @@ const SalesTracker = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchFranchiseData = async () => {
+    try {
+      const response = await axios.get('/api/sales/franchise-tracker', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      setFranchiseData(response.data);
+    } catch (error) {
+      console.error('Franchise data fetch error:', error);
+      setFranchiseData({
+        pendingFranchises: [],
+        activeFranchises: []
+      });
     }
   };
 
@@ -81,6 +110,69 @@ const SalesTracker = () => {
         </h1>
       </div>
 
+      {/* Tab Butonları - Ana Container Üstünde */}
+      <div style={{
+        maxWidth: '1200px',
+        margin: '0 auto 20px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }}>
+        <button
+          onClick={() => setActiveTab('products')}
+          style={{
+            padding: '12px 24px',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            backgroundColor: activeTab === 'products' ? '#FFD700' : '#333',
+            color: activeTab === 'products' ? '#000' : '#FFD700',
+            border: '2px solid #FFD700',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease'
+          }}
+          onMouseEnter={(e) => {
+            if (activeTab !== 'products') {
+              e.target.style.backgroundColor = '#555';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (activeTab !== 'products') {
+              e.target.style.backgroundColor = '#333';
+            }
+          }}
+        >
+          ÜRÜN SATIŞLARI
+        </button>
+        
+        <button
+          onClick={() => setActiveTab('franchise')}
+          style={{
+            padding: '12px 24px',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            backgroundColor: activeTab === 'franchise' ? '#FFD700' : '#333',
+            color: activeTab === 'franchise' ? '#000' : '#FFD700',
+            border: '2px solid #FFD700',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease'
+          }}
+          onMouseEnter={(e) => {
+            if (activeTab !== 'franchise') {
+              e.target.style.backgroundColor = '#555';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (activeTab !== 'franchise') {
+              e.target.style.backgroundColor = '#333';
+            }
+          }}
+        >
+          FRANCHISE SATIŞLARI
+        </button>
+      </div>
+
       {/* Ana Container */}
       <div style={{
         maxWidth: '1200px',
@@ -111,9 +203,12 @@ const SalesTracker = () => {
             Satış verileri yükleniyor...
           </div>
         )}
-        
-        {/* Bekleme Odası */}
-        <div style={{ marginBottom: '40px' }}>
+
+        {/* Ürün Satışları Tab */}
+        {activeTab === 'products' && (
+          <>
+            {/* Bekleme Odası */}
+            <div style={{ marginBottom: '40px' }}>
           <div style={{
             backgroundColor: '#0f2323',
             color: 'white',
@@ -565,10 +660,212 @@ const SalesTracker = () => {
             </p>
           </div>
         </div>
+            </>
+          )}
+
+          {/* Franchise Satışları Tab */}
+          {activeTab === 'franchise' && (
+            <>
+              {/* Franchise Satışları */}
+              <div style={{ marginBottom: '40px' }}>
+                <div style={{
+                  backgroundColor: '#0f2323',
+                  color: 'white',
+                  padding: '15px',
+                  borderRadius: '10px 10px 0 0',
+                  textAlign: 'center',
+                  fontSize: '18px',
+                  fontWeight: 'bold'
+                }}>
+                  FRANCHISE SATIŞLARI
+                </div>
+                
+                <div style={{
+                  backgroundColor: 'white',
+                  border: '2px solid #0f2323',
+                  borderTop: 'none',
+                  borderRadius: '0 0 10px 10px',
+                  overflow: 'hidden'
+                }}>
+                  {/* Tablo Başlıkları - Franchise */}
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: '0.5fr 1fr 1fr 1fr 1fr 1fr',
+                    backgroundColor: '#cc9900',
+                    color: 'white',
+                    fontWeight: 'bold',
+                    fontSize: '14px'
+                  }}>
+                    <div style={{ 
+                      padding: '15px', 
+                      textAlign: 'center', 
+                      borderRight: '1px solid #ddd',
+                      backgroundColor: '#cc9900'
+                    }}>
+                      ID NUMARASI
+                    </div>
+                    <div style={{ 
+                      padding: '15px', 
+                      textAlign: 'center', 
+                      borderRight: '1px solid #ddd',
+                      backgroundColor: '#cc9900'
+                    }}>
+                      ADI SOYADI
+                    </div>
+                    <div style={{ 
+                      padding: '15px', 
+                      textAlign: 'center', 
+                      borderRight: '1px solid #ddd',
+                      backgroundColor: '#cc9900'
+                    }}>
+                      FRANCHISE SATIN ALDIĞI TARİH
+                    </div>
+                    <div style={{ 
+                      padding: '15px', 
+                      textAlign: 'center', 
+                      borderRight: '1px solid #ddd',
+                      backgroundColor: '#cc9900'
+                    }}>
+                      TEMEL EĞİTİMLERİ BİTİRDİĞİ TARİH
+                    </div>
+                    <div style={{ 
+                      padding: '15px', 
+                      textAlign: 'center', 
+                      borderRight: '1px solid #ddd',
+                      backgroundColor: '#cc9900'
+                    }}>
+                      1. SATIŞINI YAPTIĞI TARİH
+                    </div>
+                    <div style={{ 
+                      padding: '15px', 
+                      textAlign: 'center', 
+                      backgroundColor: '#cc9900'
+                    }}>
+                      DURUM
+                    </div>
+                  </div>
+                  
+                  {/* Franchise Verileri */}
+                  <div style={{ minHeight: '60px' }}>
+                    {loading ? (
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: '40px',
+                        fontSize: '16px',
+                        color: '#666'
+                      }}>
+                        Veriler yükleniyor...
+                      </div>
+                    ) : franchiseData.pendingFranchises.length === 0 ? (
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: '40px',
+                        fontSize: '16px',
+                        color: '#666'
+                      }}>
+                        Franchise kaydı bulunmuyor
+                      </div>
+                    ) : (
+                      franchiseData.pendingFranchises.map((franchise, index) => (
+                        <div key={index} style={{
+                          display: 'grid',
+                          gridTemplateColumns: '0.5fr 1fr 1fr 1fr 1fr 1fr',
+                          borderBottom: '1px solid #ddd'
+                        }}>
+                          <div style={{
+                            backgroundColor: 'white',
+                            border: '1px solid #ddd',
+                            padding: '15px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '14px',
+                            color: '#333',
+                            fontWeight: 'bold',
+                            borderRight: '1px solid #ddd'
+                          }}>
+                            {franchise.partner_id || `P${franchise.id.toString().padStart(10, '0')}`}
+                          </div>
+                          <div style={{
+                            backgroundColor: 'white',
+                            border: '1px solid #ddd',
+                            padding: '15px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '14px',
+                            color: '#333',
+                            borderRight: '1px solid #ddd'
+                          }}>
+                            {franchise.first_name} {franchise.last_name}
+                          </div>
+                          <div style={{
+                            backgroundColor: 'white',
+                            border: '1px solid #ddd',
+                            padding: '15px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '14px',
+                            color: '#333',
+                            borderRight: '1px solid #ddd'
+                          }}>
+                            {franchise.created_at ? new Date(franchise.created_at).toLocaleDateString('tr-TR') : 'Belirtilmemiş'}
+                          </div>
+                          <div style={{
+                            backgroundColor: 'white',
+                            border: '1px solid #ddd',
+                            padding: '15px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '14px',
+                            color: '#333',
+                            borderRight: '1px solid #ddd'
+                          }}>
+                            {franchise.education_completed ? new Date(franchise.education_completed).toLocaleDateString('tr-TR') : 'Tamamlanmadı'}
+                          </div>
+                          <div style={{
+                            backgroundColor: 'white',
+                            border: '1px solid #ddd',
+                            padding: '15px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '14px',
+                            color: '#333',
+                            borderRight: '1px solid #ddd'
+                          }}>
+                            {franchise.first_sale_date && franchise.first_sale_date !== null ? new Date(franchise.first_sale_date).toLocaleDateString('tr-TR') : 'Henüz yapmadı'}
+                          </div>
+                          <div style={{
+                            backgroundColor: 'white',
+                            border: '1px solid #ddd',
+                            padding: '15px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '14px',
+                            color: '#333',
+                            fontWeight: 'bold'
+                          }}>
+                            {franchise.payment_confirmed ? 'Aktif' : 'Beklemede'}
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
       </div>
-
-
-    </div>
+    
   );
 };
 

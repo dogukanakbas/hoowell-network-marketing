@@ -201,7 +201,7 @@ const AdminPaymentDetails = () => {
           marginBottom: '10px'
         }}>
           {activeTab === 'gunluk' ? 
-            ['MÜŞTERİ NUMARASI', 'ADI SOYADI', 'TELEFON NUMARASI', 'Email Adresi', 'YAŞADIĞI ŞEHİR', 'ÖDEME KREDİ KARTI', 'ÖDEME BANKA EFT', 'BANKA ONAYI'].map((header, index) => (
+            ['ID NUMARASI', 'ADI SOYADI', 'TELEFON NUMARASI', 'Email Adresi', 'YAŞADIĞI ŞEHİR', 'ÖDEME KREDİ KARTI', 'ÖDEME BANKA EFT', 'BANKA ONAYI'].map((header, index) => (
               <div key={index} style={{
                 background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)',
                 color: '#000',
@@ -217,7 +217,7 @@ const AdminPaymentDetails = () => {
                 {header}
               </div>
             )) :
-            ['ID NUMARASI', 'ADI SOYADI', 'TELEFON NUMARASI', 'SPONSOR ID NUMARASI', 'SPONSOR ADI SOYADI', 'ÖDEME KREDİ KARTI', 'ÖDEME BANKA EFT', 'BANKA ONAYI'].map((header, index) => (
+            ['ID NUMARASI', 'ADI SOYADI', 'TELEFON NUMARASI', 'SPONSOR ID', 'SPONSOR ADI', 'ÖDEME KREDİ KARTI', 'ÖDEME BANKA EFT', 'BANKA ONAYI'].map((header, index) => (
               <div key={index} style={{
                 background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)',
                 color: '#000',

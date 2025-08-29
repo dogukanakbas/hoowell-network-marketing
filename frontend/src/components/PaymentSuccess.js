@@ -113,10 +113,10 @@ const PaymentSuccess = () => {
                 padding: '20px',
                 borderRadius: '10px',
                 marginBottom: '30px',
-                textAlign: 'left'
+                textAlign: 'center'
               }}>
                 <h4 style={{ marginBottom: '15px' }}>Ödeme Detayları:</h4>
-                <div style={{ display: 'grid', gap: '10px' }}>
+                <div style={{ display: 'grid', gap: '10px', textAlign: 'left', maxWidth: '300px', margin: '0 auto' }}>
                   <div><strong>Tutar:</strong> {paymentInfo.amount?.toLocaleString() || 'Bilinmiyor'} TL</div>
                   <div><strong>Ödeme Türü:</strong> {paymentInfo.payment_type === 'education' ? 'Eğitim Paketi' : 'Cihaz Paketi'}</div>
                   <div><strong>Tarih:</strong> {paymentInfo.created_at ? new Date(paymentInfo.created_at).toLocaleString('tr-TR') : 'Bilinmiyor'}</div>

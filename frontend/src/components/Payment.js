@@ -382,7 +382,7 @@ const Payment = () => {
               {partnerRegistrationData.amount?.toLocaleString()} ₺
             </div>
             <div style={{ fontSize: '14px', color: 'var(--text-light)', marginTop: '5px' }}>
-              Franchise Satış Paketi (KDV Dahil)
+                              Liderlik Kampı 3 Günlük Katılım Bileti (KDV Dahil)
             </div>
           </div>
 

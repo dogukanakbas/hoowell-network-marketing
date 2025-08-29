@@ -21,46 +21,6 @@ const AdminPanel = () => {
 
   return (
     <div>
-      <div style={{ marginBottom: '20px' }}>
-        <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
-          <Link 
-            to="/admin/system-settings" 
-            className={`btn ${location.pathname === '/admin/system-settings' ? 'btn-primary' : 'btn-secondary'}`}
-          >
-            Sistem Ayarları
-          </Link>
-          <Link 
-            to="/admin/company-management" 
-            className={`btn ${location.pathname === '/admin/company-management' ? 'btn-primary' : 'btn-secondary'}`}
-          >
-            Şirket Yönetimi
-          </Link>
-          <Link 
-            to="/admin/monthly-sales" 
-            className={`btn ${location.pathname === '/admin/monthly-sales' ? 'btn-primary' : 'btn-secondary'}`}
-          >
-            Aylık Satışlar
-          </Link>
-          <Link 
-            to="/admin/payment-details" 
-            className={`btn ${location.pathname === '/admin/payment-details' ? 'btn-primary' : 'btn-secondary'}`}
-          >
-            Ödeme Detayları
-          </Link>
-          <Link 
-            to="/admin/career-management" 
-            className={`btn ${location.pathname === '/admin/career-management' ? 'btn-primary' : 'btn-secondary'}`}
-          >
-            Kariyer Yönetimi
-          </Link>
-          <Link 
-            to="/admin/question-management" 
-            className={`btn ${location.pathname === '/admin/question-management' ? 'btn-primary' : 'btn-secondary'}`}
-          >
-            Soru Yönetimi
-          </Link>
-        </div>
-      </div>
 
       <Routes>
         <Route path="users" element={<UserManagement />} />
@@ -72,6 +32,8 @@ const AdminPanel = () => {
         <Route path="company-management" element={<AdminCompanyManagement />} />
         <Route path="monthly-sales" element={<AdminMonthlySales />} />
         <Route path="payment-details" element={<AdminPaymentDetails />} />
+        <Route path="customer-data-fix" element={<CustomerDataFix />} />
+        <Route path="partner-data-fix" element={<PartnerDataFix />} />
         <Route path="career-management" element={<AdminCareerManagement />} />
         <Route path="question-management" element={<AdminQuestionManagement />} />
         <Route index element={<AdminDashboard />} />
@@ -85,6 +47,1019 @@ const AdminDashboard = () => {
     <div className="dashboard-card">
       <h3>Admin Panel</h3>
       <p>Yönetim paneline hoş geldiniz. Sol menüden istediğiniz bölüme geçebilirsiniz.</p>
+    </div>
+  );
+};
+
+const CustomerDataFix = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [customers, setCustomers] = useState([]);
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+
+  // Müşteri arama fonksiyonu
+  const searchCustomers = async () => {
+    if (!searchTerm.trim()) return;
+    
+    setLoading(true);
+    try {
+      const response = await axios.get(`/api/admin/search-customers?term=${encodeURIComponent(searchTerm)}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      setCustomers(response.data.customers || []);
+      setMessage('');
+    } catch (error) {
+      console.error('Müşteri arama hatası:', error);
+      setMessage('Müşteri arama sırasında hata oluştu');
+      setCustomers([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Müşteri bilgilerini güncelleme fonksiyonu
+  const updateCustomer = async (customerData) => {
+    try {
+      const response = await axios.put('/api/admin/update-customer', customerData, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      setMessage('Müşteri bilgileri başarıyla güncellendi');
+      setSelectedCustomer(null);
+      searchCustomers(); // Listeyi yenile
+    } catch (error) {
+      console.error('Müşteri güncelleme hatası:', error);
+      setMessage('Müşteri güncellenirken hata oluştu');
+    }
+  };
+
+  return (
+    <div style={{
+      minHeight: '100vh',
+      background: '#0f2324',
+      padding: '20px',
+      color: 'white'
+    }}>
+      {/* HOOWELL Logo */}
+      <div style={{
+        position: 'absolute',
+        top: '20px',
+        right: '20px',
+        zIndex: 10
+      }}>
+        <img 
+          src="/hoowell-logo.png" 
+          alt="HOOWELL Logo"
+          style={{
+            width: '120px',
+            height: '70px',
+            objectFit: 'contain'
+          }}
+        />
+      </div>
+
+      {/* Ana Başlık */}
+      <div style={{
+        textAlign: 'center',
+        marginBottom: '40px',
+        paddingTop: '20px'
+      }}>
+        <h1 style={{
+          color: '#FFD700',
+          fontSize: '48px',
+          fontWeight: 'bold',
+          margin: '0',
+          textShadow: '3px 3px 6px rgba(0,0,0,0.7)',
+          letterSpacing: '2px'
+        }}>
+          MÜŞTERİ VERİ DÜZELTME PANELİ
+        </h1>
+      </div>
+
+      {/* Arama Kısmı */}
+      <div style={{
+        maxWidth: '1200px',
+        margin: '0 auto 30px',
+        display: 'flex',
+        gap: '15px',
+        alignItems: 'center'
+      }}>
+        <input
+          type="text"
+          placeholder="Ara"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          onKeyPress={(e) => e.key === 'Enter' && searchCustomers()}
+          style={{
+            flex: 1,
+            padding: '15px 20px',
+            fontSize: '16px',
+            border: '2px solid #FFD700',
+            borderRadius: '10px',
+            backgroundColor: 'white',
+            color: '#333',
+            outline: 'none'
+          }}
+        />
+        <button
+          onClick={searchCustomers}
+          disabled={loading}
+          style={{
+            padding: '15px 30px',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            backgroundColor: '#FFD700',
+            color: '#0f2324',
+            border: '2px solid #FFD700',
+            borderRadius: '10px',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.backgroundColor = '#e6c200';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.backgroundColor = '#FFD700';
+          }}
+        >
+          {loading ? 'Aranıyor...' : 'Ara'}
+        </button>
+      </div>
+
+      {/* Mesaj */}
+      {message && (
+        <div style={{
+          maxWidth: '1200px',
+          margin: '0 auto 20px',
+          padding: '15px',
+          backgroundColor: message.includes('başarıyla') ? '#28a745' : '#dc3545',
+          color: 'white',
+          borderRadius: '10px',
+          textAlign: 'center'
+        }}>
+          {message}
+        </div>
+      )}
+
+      {/* Müşteri Listesi */}
+      {customers.length > 0 && (
+        <div style={{
+          maxWidth: '1200px',
+          margin: '0 auto 30px',
+          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+          borderRadius: '15px',
+          padding: '20px',
+          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5)'
+        }}>
+          <h3 style={{ color: '#333', marginBottom: '20px' }}>Bulunan Müşteriler:</h3>
+          {customers.map((customer) => (
+            <div
+              key={customer.id}
+              style={{
+                padding: '15px',
+                border: '1px solid #ddd',
+                borderRadius: '10px',
+                marginBottom: '10px',
+                cursor: 'pointer',
+                backgroundColor: selectedCustomer?.id === customer.id ? '#f8f9fa' : 'white',
+                transition: 'all 0.3s ease'
+              }}
+              onClick={() => setSelectedCustomer(customer)}
+            >
+              <div style={{ color: '#333', fontWeight: 'bold' }}>
+                {customer.first_name} {customer.last_name} - {customer.email}
+              </div>
+              <div style={{ color: '#666', fontSize: '14px' }}>
+                TC: {customer.tc_no || 'Belirtilmemiş'} | Tel: {customer.phone || 'Belirtilmemiş'}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Seçili Müşteri Düzenleme Formu */}
+      {selectedCustomer && (
+        <div style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+          borderRadius: '15px',
+          padding: '30px',
+          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5)'
+        }}>
+          <h3 style={{ color: '#333', marginBottom: '30px', textAlign: 'center' }}>
+            Müşteri Bilgilerini Düzenle
+          </h3>
+          
+          <CustomerEditForm 
+            customer={selectedCustomer} 
+            onUpdate={updateCustomer}
+            onCancel={() => setSelectedCustomer(null)}
+          />
+        </div>
+      )}
+    </div>
+  );
+};
+
+const CustomerEditForm = ({ customer, onUpdate, onCancel }) => {
+  const [formData, setFormData] = useState({
+    first_name: customer.first_name || '',
+    last_name: customer.last_name || '',
+    tc_no: customer.tc_no || '',
+    email: customer.email || '',
+    phone: customer.phone || '',
+    billing_address: customer.billing_address || '',
+    shipping_address: customer.shipping_address || ''
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onUpdate({
+      id: customer.id,
+      ...formData
+    });
+  };
+
+  return (
+    <form onSubmit={handleSubmit} style={{ color: '#333' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '20px', alignItems: 'center' }}>
+        {/* İŞ ORTAĞI BİLGİLERİ */}
+        <div style={{
+          padding: '15px',
+          backgroundColor: '#f8f9fa',
+          borderRadius: '10px',
+          border: '2px solid #FFD700',
+          fontWeight: 'bold',
+          textAlign: 'center'
+        }}>
+          İŞ ORTAĞI BİLGİLERİ
+        </div>
+        <div></div>
+
+        {/* ADI */}
+        <div style={{
+          padding: '15px',
+          backgroundColor: '#f8f9fa',
+          borderRadius: '10px',
+          border: '2px solid #FFD700',
+          fontWeight: 'bold',
+          textAlign: 'center'
+        }}>
+          ADI
+        </div>
+        <input
+          type="text"
+          value={formData.first_name}
+          onChange={(e) => setFormData({...formData, first_name: e.target.value})}
+          style={{
+            padding: '15px',
+            fontSize: '16px',
+            border: '2px solid #ddd',
+            borderRadius: '10px',
+            backgroundColor: 'white',
+            color: '#333',
+            outline: 'none'
+          }}
+        />
+
+        {/* SOYADI */}
+        <div style={{
+          padding: '15px',
+          backgroundColor: '#f8f9fa',
+          borderRadius: '10px',
+          border: '2px solid #FFD700',
+          fontWeight: 'bold',
+          textAlign: 'center'
+        }}>
+          SOYADI
+        </div>
+        <input
+          type="text"
+          value={formData.last_name}
+          onChange={(e) => setFormData({...formData, last_name: e.target.value})}
+          style={{
+            padding: '15px',
+            fontSize: '16px',
+            border: '2px solid #ddd',
+            borderRadius: '10px',
+            backgroundColor: 'white',
+            color: '#333',
+            outline: 'none'
+          }}
+        />
+
+        {/* TC KİMLİK NO */}
+        <div style={{
+          padding: '15px',
+          backgroundColor: '#f8f9fa',
+          borderRadius: '10px',
+          border: '2px solid #FFD700',
+          fontWeight: 'bold',
+          textAlign: 'center'
+        }}>
+          TC KİMLİK NO
+        </div>
+        <input
+          type="text"
+          value={formData.tc_no}
+          onChange={(e) => setFormData({...formData, tc_no: e.target.value})}
+          maxLength="11"
+          style={{
+            padding: '15px',
+            fontSize: '16px',
+            border: '2px solid #ddd',
+            borderRadius: '10px',
+            backgroundColor: 'white',
+            color: '#333',
+            outline: 'none'
+          }}
+        />
+
+        {/* Email ADRESİ */}
+        <div style={{
+          padding: '15px',
+          backgroundColor: '#f8f9fa',
+          borderRadius: '10px',
+          border: '2px solid #FFD700',
+          fontWeight: 'bold',
+          textAlign: 'center'
+        }}>
+          Email ADRESİ
+        </div>
+        <input
+          type="email"
+          value={formData.email}
+          onChange={(e) => setFormData({...formData, email: e.target.value})}
+          style={{
+            padding: '15px',
+            fontSize: '16px',
+            border: '2px solid #ddd',
+            borderRadius: '10px',
+            backgroundColor: 'white',
+            color: '#333',
+            outline: 'none'
+          }}
+        />
+
+        {/* TELEFON */}
+        <div style={{
+          padding: '15px',
+          backgroundColor: '#f8f9fa',
+          borderRadius: '10px',
+          border: '2px solid #FFD700',
+          fontWeight: 'bold',
+          textAlign: 'center'
+        }}>
+          TELEFON
+        </div>
+        <input
+          type="tel"
+          value={formData.phone}
+          onChange={(e) => setFormData({...formData, phone: e.target.value})}
+          style={{
+            padding: '15px',
+            fontSize: '16px',
+            border: '2px solid #ddd',
+            borderRadius: '10px',
+            backgroundColor: 'white',
+            color: '#333',
+            outline: 'none'
+          }}
+        />
+
+        {/* FATURA ADRESİ */}
+        <div style={{
+          padding: '15px',
+          backgroundColor: '#f8f9fa',
+          borderRadius: '10px',
+          border: '2px solid #FFD700',
+          fontWeight: 'bold',
+          textAlign: 'center'
+        }}>
+          FATURA ADRESİ
+        </div>
+        <textarea
+          value={formData.billing_address}
+          onChange={(e) => setFormData({...formData, billing_address: e.target.value})}
+          rows="3"
+          style={{
+            padding: '15px',
+            fontSize: '16px',
+            border: '2px solid #ddd',
+            borderRadius: '10px',
+            backgroundColor: 'white',
+            color: '#333',
+            outline: 'none',
+            resize: 'vertical'
+          }}
+        />
+
+        {/* TESLİMAT ADRESİ */}
+        <div style={{
+          padding: '15px',
+          backgroundColor: '#f8f9fa',
+          borderRadius: '10px',
+          border: '2px solid #FFD700',
+          fontWeight: 'bold',
+          textAlign: 'center'
+        }}>
+          TESLİMAT ADRESİ
+        </div>
+        <textarea
+          value={formData.shipping_address}
+          onChange={(e) => setFormData({...formData, shipping_address: e.target.value})}
+          rows="3"
+          style={{
+            padding: '15px',
+            fontSize: '16px',
+            border: '2px solid #ddd',
+            borderRadius: '10px',
+            backgroundColor: 'white',
+            color: '#333',
+            outline: 'none',
+            resize: 'vertical'
+          }}
+        />
+      </div>
+
+      {/* Butonlar */}
+      <div style={{
+        display: 'flex',
+        gap: '15px',
+        justifyContent: 'center',
+        marginTop: '30px'
+      }}>
+        <button
+          type="submit"
+          style={{
+            padding: '15px 30px',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            backgroundColor: '#28a745',
+            color: 'white',
+            border: '2px solid #28a745',
+            borderRadius: '10px',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.backgroundColor = '#218838';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.backgroundColor = '#28a745';
+          }}
+        >
+          Güncelle
+        </button>
+        <button
+          type="button"
+          onClick={onCancel}
+          style={{
+            padding: '15px 30px',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            backgroundColor: '#dc3545',
+            color: 'white',
+            border: '2px solid #dc3545',
+            borderRadius: '10px',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.backgroundColor = '#c82333';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.backgroundColor = '#dc3545';
+          }}
+        >
+          İptal
+        </button>
+      </div>
+    </form>
+  );
+};
+
+const PartnerEditForm = ({ partner, onUpdate, onCancel }) => {
+  const [formData, setFormData] = useState({
+    sponsor_id: partner.sponsor_id || '',
+    first_name: partner.first_name || '',
+    last_name: partner.last_name || '',
+    tc_no: partner.tc_no || '',
+    email: partner.email || '',
+    phone: partner.phone || '',
+    billing_address: partner.billing_address || '',
+    shipping_address: partner.shipping_address || ''
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onUpdate({
+      id: partner.id,
+      ...formData
+    });
+  };
+
+  return (
+    <form onSubmit={handleSubmit} style={{ color: '#333' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '20px', alignItems: 'center' }}>
+        {/* İŞ ORTAĞI BİLGİLERİ */}
+        <div style={{
+          padding: '15px',
+          backgroundColor: '#f8f9fa',
+          borderRadius: '10px',
+          border: '2px solid #FFD700',
+          fontWeight: 'bold',
+          textAlign: 'center'
+        }}>
+          İŞ ORTAĞI BİLGİLERİ
+        </div>
+        <div></div>
+
+        {/* SPONSOR ID NO */}
+        <div style={{
+          padding: '15px',
+          backgroundColor: '#f8f9fa',
+          borderRadius: '10px',
+          border: '2px solid #FFD700',
+          fontWeight: 'bold',
+          textAlign: 'center'
+        }}>
+          SPONSOR ID NO
+        </div>
+        <input
+          type="text"
+          value={formData.sponsor_id}
+          onChange={(e) => setFormData({...formData, sponsor_id: e.target.value})}
+          style={{
+            padding: '15px',
+            fontSize: '16px',
+            border: '2px solid #ddd',
+            borderRadius: '10px',
+            backgroundColor: 'white',
+            color: '#333',
+            outline: 'none'
+          }}
+        />
+
+        {/* ADI */}
+        <div style={{
+          padding: '15px',
+          backgroundColor: '#f8f9fa',
+          borderRadius: '10px',
+          border: '2px solid #FFD700',
+          fontWeight: 'bold',
+          textAlign: 'center'
+        }}>
+          ADI
+        </div>
+        <input
+          type="text"
+          value={formData.first_name}
+          onChange={(e) => setFormData({...formData, first_name: e.target.value})}
+          style={{
+            padding: '15px',
+            fontSize: '16px',
+            border: '2px solid #ddd',
+            borderRadius: '10px',
+            backgroundColor: 'white',
+            color: '#333',
+            outline: 'none'
+          }}
+        />
+
+        {/* SOYADI */}
+        <div style={{
+          padding: '15px',
+          backgroundColor: '#f8f9fa',
+          borderRadius: '10px',
+          border: '2px solid #FFD700',
+          fontWeight: 'bold',
+          textAlign: 'center'
+        }}>
+          SOYADI
+        </div>
+        <input
+          type="text"
+          value={formData.last_name}
+          onChange={(e) => setFormData({...formData, last_name: e.target.value})}
+          style={{
+            padding: '15px',
+            fontSize: '16px',
+            border: '2px solid #ddd',
+            borderRadius: '10px',
+            backgroundColor: 'white',
+            color: '#333',
+            outline: 'none'
+          }}
+        />
+
+        {/* TC KİMLİK NO */}
+        <div style={{
+          padding: '15px',
+          backgroundColor: '#f8f9fa',
+          borderRadius: '10px',
+          border: '2px solid #FFD700',
+          fontWeight: 'bold',
+          textAlign: 'center'
+        }}>
+          TC KİMLİK NO
+        </div>
+        <input
+          type="text"
+          value={formData.tc_no}
+          onChange={(e) => setFormData({...formData, tc_no: e.target.value})}
+          maxLength="11"
+          style={{
+            padding: '15px',
+            fontSize: '16px',
+            border: '2px solid #ddd',
+            borderRadius: '10px',
+            backgroundColor: 'white',
+            color: '#333',
+            outline: 'none'
+          }}
+        />
+
+        {/* EMAIL ADRESİ */}
+        <div style={{
+          padding: '15px',
+          backgroundColor: '#f8f9fa',
+          borderRadius: '10px',
+          border: '2px solid #FFD700',
+          fontWeight: 'bold',
+          textAlign: 'center'
+        }}>
+          EMAIL ADRESİ
+        </div>
+        <input
+          type="email"
+          value={formData.email}
+          onChange={(e) => setFormData({...formData, email: e.target.value})}
+          style={{
+            padding: '15px',
+            fontSize: '16px',
+            border: '2px solid #ddd',
+            borderRadius: '10px',
+            backgroundColor: 'white',
+            color: '#333',
+            outline: 'none'
+          }}
+        />
+
+        {/* TELEFON */}
+        <div style={{
+          padding: '15px',
+          backgroundColor: '#f8f9fa',
+          borderRadius: '10px',
+          border: '2px solid #FFD700',
+          fontWeight: 'bold',
+          textAlign: 'center'
+        }}>
+          TELEFON
+        </div>
+        <input
+          type="tel"
+          value={formData.phone}
+          onChange={(e) => setFormData({...formData, phone: e.target.value})}
+          style={{
+            padding: '15px',
+            fontSize: '16px',
+            border: '2px solid #ddd',
+            borderRadius: '10px',
+            backgroundColor: 'white',
+            color: '#333',
+            outline: 'none'
+          }}
+        />
+
+        {/* FATURA ADRESİ */}
+        <div style={{
+          padding: '15px',
+          backgroundColor: '#f8f9fa',
+          borderRadius: '10px',
+          border: '2px solid #FFD700',
+          fontWeight: 'bold',
+          textAlign: 'center'
+        }}>
+          FATURA ADRESİ
+        </div>
+        <textarea
+          value={formData.billing_address}
+          onChange={(e) => setFormData({...formData, billing_address: e.target.value})}
+          rows="3"
+          style={{
+            padding: '15px',
+            fontSize: '16px',
+            border: '2px solid #ddd',
+            borderRadius: '10px',
+            backgroundColor: 'white',
+            color: '#333',
+            outline: 'none',
+            resize: 'vertical'
+          }}
+        />
+
+        {/* TESLİMAT ADRESİ */}
+        <div style={{
+          padding: '15px',
+          backgroundColor: '#f8f9fa',
+          borderRadius: '10px',
+          border: '2px solid #FFD700',
+          fontWeight: 'bold',
+          textAlign: 'center'
+        }}>
+          TESLİMAT ADRESİ
+        </div>
+        <textarea
+          value={formData.shipping_address}
+          onChange={(e) => setFormData({...formData, shipping_address: e.target.value})}
+          rows="3"
+          style={{
+            padding: '15px',
+            fontSize: '16px',
+            border: '2px solid #ddd',
+            borderRadius: '10px',
+            backgroundColor: 'white',
+            color: '#333',
+            outline: 'none',
+            resize: 'vertical'
+          }}
+        />
+      </div>
+
+      {/* Butonlar */}
+      <div style={{
+        display: 'flex',
+        gap: '15px',
+        justifyContent: 'center',
+        marginTop: '30px'
+      }}>
+        <button
+          type="submit"
+          style={{
+            padding: '15px 30px',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            backgroundColor: '#28a745',
+            color: 'white',
+            border: '2px solid #28a745',
+            borderRadius: '10px',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.backgroundColor = '#218838';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.backgroundColor = '#28a745';
+          }}
+        >
+          Güncelle
+        </button>
+        <button
+          type="button"
+          onClick={onCancel}
+          style={{
+            padding: '15px 30px',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            backgroundColor: '#dc3545',
+            color: 'white',
+            border: '2px solid #dc3545',
+            borderRadius: '10px',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.backgroundColor = '#c82333';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.backgroundColor = '#dc3545';
+          }}
+        >
+          İptal
+        </button>
+      </div>
+    </form>
+  );
+};
+
+const PartnerDataFix = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [partners, setPartners] = useState([]);
+  const [selectedPartner, setSelectedPartner] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+
+  // İş ortağı arama fonksiyonu
+  const searchPartners = async () => {
+    if (!searchTerm.trim()) return;
+    
+    setLoading(true);
+    try {
+      const response = await axios.get(`/api/admin/search-partners?term=${encodeURIComponent(searchTerm)}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      setPartners(response.data.partners || []);
+      setMessage('');
+    } catch (error) {
+      console.error('İş ortağı arama hatası:', error);
+      setMessage('İş ortağı arama sırasında hata oluştu');
+      setPartners([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // İş ortağı bilgilerini güncelleme fonksiyonu
+  const updatePartner = async (partnerData) => {
+    try {
+      const response = await axios.put('/api/admin/update-partner', partnerData, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      setMessage('İş ortağı bilgileri başarıyla güncellendi');
+      setSelectedPartner(null);
+      searchPartners(); // Listeyi yenile
+    } catch (error) {
+      console.error('İş ortağı güncelleme hatası:', error);
+      setMessage('İş ortağı güncellenirken hata oluştu');
+    }
+  };
+
+  return (
+    <div style={{
+      minHeight: '100vh',
+      background: '#0f2324',
+      padding: '20px',
+      color: 'white'
+    }}>
+      {/* HOOWELL Logo */}
+      <div style={{
+        position: 'absolute',
+        top: '20px',
+        right: '20px',
+        zIndex: 10
+      }}>
+        <img 
+          src="/hoowell-logo.png" 
+          alt="HOOWELL Logo"
+          style={{
+            width: '120px',
+            height: '70px',
+            objectFit: 'contain'
+          }}
+        />
+      </div>
+
+      {/* Ana Başlık */}
+      <div style={{
+        textAlign: 'center',
+        marginBottom: '40px',
+        paddingTop: '20px'
+      }}>
+        <h1 style={{
+          color: '#FFD700',
+          fontSize: '48px',
+          fontWeight: 'bold',
+          margin: '0',
+          textShadow: '3px 3px 6px rgba(0,0,0,0.7)',
+          letterSpacing: '2px'
+        }}>
+          İŞ ORTAĞI VERİ DÜZELTME PANELİ
+        </h1>
+      </div>
+
+      {/* Arama Kısmı */}
+      <div style={{
+        maxWidth: '1200px',
+        margin: '0 auto 30px',
+        display: 'flex',
+        gap: '15px',
+        alignItems: 'center'
+      }}>
+        <input
+          type="text"
+          placeholder="Ara"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          onKeyPress={(e) => e.key === 'Enter' && searchPartners()}
+          style={{
+            flex: 1,
+            padding: '15px 20px',
+            fontSize: '16px',
+            border: '2px solid #FFD700',
+            borderRadius: '10px',
+            backgroundColor: 'white',
+            color: '#333',
+            outline: 'none'
+          }}
+        />
+        <button
+          onClick={searchPartners}
+          disabled={loading}
+          style={{
+            padding: '15px 30px',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            backgroundColor: '#FFD700',
+            color: '#0f2324',
+            border: '2px solid #FFD700',
+            borderRadius: '10px',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.backgroundColor = '#e6c200';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.backgroundColor = '#FFD700';
+          }}
+        >
+          {loading ? 'Aranıyor...' : 'Ara'}
+        </button>
+      </div>
+
+      {/* Mesaj */}
+      {message && (
+        <div style={{
+          maxWidth: '1200px',
+          margin: '0 auto 20px',
+          padding: '15px',
+          backgroundColor: message.includes('başarıyla') ? '#28a745' : '#dc3545',
+          color: 'white',
+          borderRadius: '10px',
+          textAlign: 'center'
+        }}>
+          {message}
+        </div>
+      )}
+
+      {/* İş Ortağı Listesi */}
+      {partners.length > 0 && (
+        <div style={{
+          maxWidth: '1200px',
+          margin: '0 auto 30px',
+          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+          borderRadius: '15px',
+          padding: '20px',
+          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5)'
+        }}>
+          <h3 style={{ color: '#333', marginBottom: '20px' }}>Bulunan İş Ortakları:</h3>
+          {partners.map((partner) => (
+            <div
+              key={partner.id}
+              style={{
+                padding: '15px',
+                border: '1px solid #ddd',
+                borderRadius: '10px',
+                marginBottom: '10px',
+                cursor: 'pointer',
+                backgroundColor: selectedPartner?.id === partner.id ? '#f8f9fa' : 'white',
+                transition: 'all 0.3s ease'
+              }}
+              onClick={() => setSelectedPartner(partner)}
+            >
+              <div style={{ color: '#333', fontWeight: 'bold' }}>
+                {partner.first_name} {partner.last_name} - {partner.email}
+              </div>
+              <div style={{ color: '#666', fontSize: '14px' }}>
+                TC: {partner.tc_no || 'Belirtilmemiş'} | Tel: {partner.phone || 'Belirtilmemiş'} | Sponsor ID: {partner.sponsor_id || 'Belirtilmemiş'}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Seçili İş Ortağı Düzenleme Formu */}
+      {selectedPartner && (
+        <div style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+          borderRadius: '15px',
+          padding: '30px',
+          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5)'
+        }}>
+          <h3 style={{ color: '#333', marginBottom: '30px', textAlign: 'center' }}>
+            İş Ortağı Bilgilerini Düzenle
+          </h3>
+          
+          <PartnerEditForm 
+            partner={selectedPartner} 
+            onUpdate={updatePartner}
+            onCancel={() => setSelectedPartner(null)}
+          />
+        </div>
+      )}
     </div>
   );
 };
@@ -460,7 +1435,7 @@ const UserManagement = () => {
             }}>
               <strong>💡 Bilgi:</strong> Kullanıcı oluşturulduktan sonra otomatik olarak:
               <ul style={{ marginTop: '8px', marginBottom: '0' }}>
-                <li>Franchise Satış Paketi (4.800 ₺) atanacak</li>
+                <li>Liderlik Kampı 3 Günlük Katılım Bileti (4.800 ₺) atanacak</li>
                 <li>Sözleşmeler otomatik onaylanacak</li>
                 <li>Rastgele şifre oluşturulacak</li>
                 <li>Email ile bilgilendirme yapılacak</li>
