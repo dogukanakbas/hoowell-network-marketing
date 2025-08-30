@@ -4426,16 +4426,18 @@ app.get('/api/admin/payment-details', verifyToken, verifyAdmin, async (req, res)
     const totalRecords = countResult[0].total;
     const totalPages = Math.ceil(totalRecords / limit);
 
-    // Ödeme verileri - Basit sorgu ile
+    // Ödeme verileri - Filtrelerle birlikte
+    const paymentParams = [...params, parseInt(limit), parseInt(offset)];
     const [payments] = await db.promise().execute(`
       SELECT 
         p.*,
         CONCAT(COALESCE(u.first_name, ''), ' ', COALESCE(u.last_name, '')) as user_name
       FROM payments p
       LEFT JOIN users u ON p.user_id = u.id
+      ${whereClause}
       ORDER BY p.created_at DESC
       LIMIT ? OFFSET ?
-    `, [parseInt(limit), parseInt(offset)]);
+    `, paymentParams);
 
     // Ödeme yöntemi istatistikleri
     const [methodStats] = await db.promise().execute(`
@@ -4515,12 +4517,12 @@ app.get('/api/admin/monthly-sales', verifyToken, verifyAdmin, async (req, res) =
     const params = [];
 
     if (year) {
-      whereClause += ' AND YEAR(s.created_at) = ?';
+      whereClause += ' AND YEAR(created_at) = ?';
       params.push(year);
     }
 
     if (month) {
-      whereClause += ' AND MONTH(s.created_at) = ?';
+      whereClause += ' AND MONTH(created_at) = ?';
       params.push(month);
     }
 
@@ -4543,7 +4545,7 @@ app.get('/api/admin/monthly-sales', verifyToken, verifyAdmin, async (req, res) =
       LEFT JOIN users u ON s.seller_id = u.id
       LEFT JOIN products p ON s.product_id = p.id
       ${whereClause}
-      ORDER BY s.created_at DESC
+      ORDER BY created_at DESC
     `, params);
 
     // Ürün bazında istatistikler
@@ -4567,7 +4569,7 @@ app.get('/api/admin/monthly-sales', verifyToken, verifyAdmin, async (req, res) =
         SUM(amount_usd) as total_amount_usd,
         SUM(kkp_earned) as total_kkp,
         AVG(amount_usd) as avg_amount_usd
-      FROM sales
+      FROM sales s
       ${whereClause}
     `, params);
 
