@@ -166,30 +166,228 @@ CREATE TABLE IF NOT EXISTS products (
 
 -- ==================== MEVCUT TABLOLARA KOLON EKLEME ====================
 
--- Users tablosuna yeni kolonlar ekle (sadece yoksa)
-ALTER TABLE users 
-ADD COLUMN IF NOT EXISTS city VARCHAR(100) AFTER full_address,
-ADD COLUMN IF NOT EXISTS district VARCHAR(100) AFTER city,
-ADD COLUMN IF NOT EXISTS full_address TEXT AFTER district,
-ADD COLUMN IF NOT EXISTS registration_type ENUM('individual','corporate') DEFAULT 'individual' AFTER partner_type,
-ADD COLUMN IF NOT EXISTS total_kkp DECIMAL(15,2) DEFAULT 0 AFTER career_level,
-ADD COLUMN IF NOT EXISTS active_partners INT DEFAULT 0 AFTER total_kkp,
-ADD COLUMN IF NOT EXISTS education_deadline DATETIME NULL AFTER education_completed,
-ADD COLUMN IF NOT EXISTS education_started_at DATETIME NULL AFTER education_deadline,
-ADD COLUMN IF NOT EXISTS backoffice_access BOOLEAN DEFAULT FALSE AFTER education_started_at,
-ADD COLUMN IF NOT EXISTS payment_pending BOOLEAN DEFAULT FALSE AFTER backoffice_access,
-ADD COLUMN IF NOT EXISTS payment_blocked BOOLEAN DEFAULT FALSE AFTER payment_pending,
-ADD COLUMN IF NOT EXISTS payment_block_date DATETIME AFTER payment_blocked,
-ADD COLUMN IF NOT EXISTS created_by INT AFTER payment_block_date,
-ADD COLUMN IF NOT EXISTS partner_type ENUM('individual','corporate') DEFAULT 'individual' AFTER created_by,
-ADD COLUMN IF NOT EXISTS tc_no VARCHAR(11) AFTER partner_type,
-ADD COLUMN IF NOT EXISTS delivery_address TEXT AFTER tc_no,
-ADD COLUMN IF NOT EXISTS billing_address TEXT AFTER delivery_address,
-ADD COLUMN IF NOT EXISTS company_name VARCHAR(255) AFTER billing_address,
-ADD COLUMN IF NOT EXISTS tax_office VARCHAR(255) AFTER company_name,
-ADD COLUMN IF NOT EXISTS tax_no VARCHAR(20) AFTER tax_office,
-ADD COLUMN IF NOT EXISTS authorized_person VARCHAR(255) AFTER tax_no,
-ADD COLUMN IF NOT EXISTS referrer_sponsor_id VARCHAR(20) AFTER authorized_person;
+-- Users tablosuna yeni kolonlar ekle (güvenli yöntem)
+-- Her kolonu ayrı ayrı kontrol ederek ekle
+
+-- city kolonu
+SET @sql = (SELECT IF(
+    (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'hoowell_network' AND TABLE_NAME = 'users' AND COLUMN_NAME = 'city') = 0,
+    'ALTER TABLE users ADD COLUMN city VARCHAR(100) AFTER full_address',
+    'SELECT "city kolonu zaten mevcut" as durum'
+));
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- district kolonu
+SET @sql = (SELECT IF(
+    (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'hoowell_network' AND TABLE_NAME = 'users' AND COLUMN_NAME = 'district') = 0,
+    'ALTER TABLE users ADD COLUMN district VARCHAR(100) AFTER city',
+    'SELECT "district kolonu zaten mevcut" as durum'
+));
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- full_address kolonu
+SET @sql = (SELECT IF(
+    (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'hoowell_network' AND TABLE_NAME = 'users' AND COLUMN_NAME = 'full_address') = 0,
+    'ALTER TABLE users ADD COLUMN full_address TEXT AFTER district',
+    'SELECT "full_address kolonu zaten mevcut" as durum'
+));
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- registration_type kolonu
+SET @sql = (SELECT IF(
+    (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'hoowell_network' AND TABLE_NAME = 'users' AND COLUMN_NAME = 'registration_type') = 0,
+    'ALTER TABLE users ADD COLUMN registration_type ENUM(\'individual\',\'corporate\') DEFAULT \'individual\' AFTER partner_type',
+    'SELECT "registration_type kolonu zaten mevcut" as durum'
+));
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- total_kkp kolonu
+SET @sql = (SELECT IF(
+    (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'hoowell_network' AND TABLE_NAME = 'users' AND COLUMN_NAME = 'total_kkp') = 0,
+    'ALTER TABLE users ADD COLUMN total_kkp DECIMAL(15,2) DEFAULT 0 AFTER career_level',
+    'SELECT "total_kkp kolonu zaten mevcut" as durum'
+));
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- active_partners kolonu
+SET @sql = (SELECT IF(
+    (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'hoowell_network' AND TABLE_NAME = 'users' AND COLUMN_NAME = 'active_partners') = 0,
+    'ALTER TABLE users ADD COLUMN active_partners INT DEFAULT 0 AFTER total_kkp',
+    'SELECT "active_partners kolonu zaten mevcut" as durum'
+));
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- education_deadline kolonu
+SET @sql = (SELECT IF(
+    (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'hoowell_network' AND TABLE_NAME = 'users' AND COLUMN_NAME = 'education_deadline') = 0,
+    'ALTER TABLE users ADD COLUMN education_deadline DATETIME NULL AFTER education_completed',
+    'SELECT "education_deadline kolonu zaten mevcut" as durum'
+));
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- education_started_at kolonu
+SET @sql = (SELECT IF(
+    (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'hoowell_network' AND TABLE_NAME = 'users' AND COLUMN_NAME = 'education_started_at') = 0,
+    'ALTER TABLE users ADD COLUMN education_started_at DATETIME NULL AFTER education_deadline',
+    'SELECT "education_started_at kolonu zaten mevcut" as durum'
+));
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- backoffice_access kolonu
+SET @sql = (SELECT IF(
+    (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'hoowell_network' AND TABLE_NAME = 'users' AND COLUMN_NAME = 'backoffice_access') = 0,
+    'ALTER TABLE users ADD COLUMN backoffice_access BOOLEAN DEFAULT FALSE AFTER education_started_at',
+    'SELECT "backoffice_access kolonu zaten mevcut" as durum'
+));
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- payment_pending kolonu
+SET @sql = (SELECT IF(
+    (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'hoowell_network' AND TABLE_NAME = 'users' AND COLUMN_NAME = 'payment_pending') = 0,
+    'ALTER TABLE users ADD COLUMN payment_pending BOOLEAN DEFAULT FALSE AFTER backoffice_access',
+    'SELECT "payment_pending kolonu zaten mevcut" as durum'
+));
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- payment_blocked kolonu
+SET @sql = (SELECT IF(
+    (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'hoowell_network' AND TABLE_NAME = 'users' AND COLUMN_NAME = 'payment_blocked') = 0,
+    'ALTER TABLE users ADD COLUMN payment_blocked BOOLEAN DEFAULT FALSE AFTER payment_pending',
+    'SELECT "payment_blocked kolonu zaten mevcut" as durum'
+));
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- payment_block_date kolonu
+SET @sql = (SELECT IF(
+    (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'hoowell_network' AND TABLE_NAME = 'users' AND COLUMN_NAME = 'payment_block_date') = 0,
+    'ALTER TABLE users ADD COLUMN payment_block_date DATETIME AFTER payment_blocked',
+    'SELECT "payment_block_date kolonu zaten mevcut" as durum'
+));
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- created_by kolonu
+SET @sql = (SELECT IF(
+    (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'hoowell_network' AND TABLE_NAME = 'users' AND COLUMN_NAME = 'created_by') = 0,
+    'ALTER TABLE users ADD COLUMN created_by INT AFTER payment_block_date',
+    'SELECT "created_by kolonu zaten mevcut" as durum'
+));
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- partner_type kolonu
+SET @sql = (SELECT IF(
+    (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'hoowell_network' AND TABLE_NAME = 'users' AND COLUMN_NAME = 'partner_type') = 0,
+    'ALTER TABLE users ADD COLUMN partner_type ENUM(\'individual\',\'corporate\') DEFAULT \'individual\' AFTER created_by',
+    'SELECT "partner_type kolonu zaten mevcut" as durum'
+));
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- tc_no kolonu
+SET @sql = (SELECT IF(
+    (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'hoowell_network' AND TABLE_NAME = 'users' AND COLUMN_NAME = 'tc_no') = 0,
+    'ALTER TABLE users ADD COLUMN tc_no VARCHAR(11) AFTER partner_type',
+    'SELECT "tc_no kolonu zaten mevcut" as durum'
+));
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- delivery_address kolonu
+SET @sql = (SELECT IF(
+    (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'hoowell_network' AND TABLE_NAME = 'users' AND COLUMN_NAME = 'delivery_address') = 0,
+    'ALTER TABLE users ADD COLUMN delivery_address TEXT AFTER tc_no',
+    'SELECT "delivery_address kolonu zaten mevcut" as durum'
+));
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- billing_address kolonu
+SET @sql = (SELECT IF(
+    (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'hoowell_network' AND TABLE_NAME = 'users' AND COLUMN_NAME = 'billing_address') = 0,
+    'ALTER TABLE users ADD COLUMN billing_address TEXT AFTER delivery_address',
+    'SELECT "billing_address kolonu zaten mevcut" as durum'
+));
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- company_name kolonu
+SET @sql = (SELECT IF(
+    (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'hoowell_network' AND TABLE_NAME = 'users' AND COLUMN_NAME = 'company_name') = 0,
+    'ALTER TABLE users ADD COLUMN company_name VARCHAR(255) AFTER billing_address',
+    'SELECT "company_name kolonu zaten mevcut" as durum'
+));
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- tax_office kolonu
+SET @sql = (SELECT IF(
+    (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'hoowell_network' AND TABLE_NAME = 'users' AND COLUMN_NAME = 'tax_office') = 0,
+    'ALTER TABLE users ADD COLUMN tax_office VARCHAR(255) AFTER company_name',
+    'SELECT "tax_office kolonu zaten mevcut" as durum'
+));
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- tax_no kolonu
+SET @sql = (SELECT IF(
+    (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'hoowell_network' AND TABLE_NAME = 'users' AND COLUMN_NAME = 'tax_no') = 0,
+    'ALTER TABLE users ADD COLUMN tax_no VARCHAR(20) AFTER tax_office',
+    'SELECT "tax_no kolonu zaten mevcut" as durum'
+));
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- authorized_person kolonu
+SET @sql = (SELECT IF(
+    (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'hoowell_network' AND TABLE_NAME = 'users' AND COLUMN_NAME = 'authorized_person') = 0,
+    'ALTER TABLE users ADD COLUMN authorized_person VARCHAR(255) AFTER tax_no',
+    'SELECT "authorized_person kolonu zaten mevcut" as durum'
+));
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- referrer_sponsor_id kolonu
+SET @sql = (SELECT IF(
+    (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'hoowell_network' AND TABLE_NAME = 'users' AND COLUMN_NAME = 'referrer_sponsor_id') = 0,
+    'ALTER TABLE users ADD COLUMN referrer_sponsor_id VARCHAR(20) AFTER authorized_person',
+    'SELECT "referrer_sponsor_id kolonu zaten mevcut" as durum'
+));
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
 
 -- ==================== VARSayılan VERİLER EKLEME ====================
 
