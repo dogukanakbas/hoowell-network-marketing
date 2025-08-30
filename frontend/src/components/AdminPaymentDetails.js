@@ -48,14 +48,23 @@ const AdminPaymentDetails = () => {
         params.append('search', searchTerm);
       }
 
+      console.log('Token:', token);
+      console.log('Params:', params);
+      
       const response = await axios.get(`/api/admin/payment-details?${params}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
+      console.log('Response:', response.data);
+      console.log('Payments:', response.data.payments);
+      console.log('Summary:', response.data.summary);
+      console.log('Method Stats:', response.data.method_stats);
+      
       if (response.data.success) {
-        setPaymentData(response.data.data.payments);
-        setPaymentSummary(response.data.data.summary);
-        setMethodStats(response.data.data.methodStats);
+        console.log('Setting payment data:', response.data.payments);
+        setPaymentData(response.data.payments);
+        setPaymentSummary(response.data.summary);
+        setMethodStats(response.data.method_stats);
       }
     } catch (error) {
       console.error('Ödeme verileri yüklenirken hata:', error);
@@ -193,11 +202,11 @@ const AdminPaymentDetails = () => {
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
           style={{
-            padding: '12px 20px',
-            fontSize: '16px',
-            borderRadius: '25px',
-            border: '2px solid #FFD700',
-            backgroundColor: 'white',
+          padding: '12px 20px',
+          fontSize: '16px',
+          borderRadius: '25px',
+          border: '2px solid #FFD700',
+          backgroundColor: 'white',
             width: '150px'
           }}
         >
@@ -255,12 +264,12 @@ const AdminPaymentDetails = () => {
 
       {/* Özet İstatistikler */}
       {Object.keys(paymentSummary).length > 0 && (
-        <div style={{
+      <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '20px',
-          marginBottom: '30px'
-        }}>
+        gap: '20px',
+        marginBottom: '30px'
+      }}>
           <div style={{
             background: 'linear-gradient(135deg, #28a745, #20c997)',
             borderRadius: '15px',
@@ -325,26 +334,26 @@ const AdminPaymentDetails = () => {
           fontSize: '16px'
         }}>
           Ödeme verileri yükleniyor...
-        </div>
+      </div>
       )}
 
       {/* Ödeme Tablosu */}
       {!dataLoading && (
-        <div style={{
-          background: 'linear-gradient(135deg, #1a4040 0%, #2a5555 50%, #1a4040 100%)',
-          borderRadius: '20px',
-          padding: '20px',
-          border: '3px solid #FFD700',
+      <div style={{
+        background: 'linear-gradient(135deg, #1a4040 0%, #2a5555 50%, #1a4040 100%)',
+        borderRadius: '20px',
+        padding: '20px',
+        border: '3px solid #FFD700',
           boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
           marginBottom: '30px'
-        }}>
-          {/* Tablo Header */}
-          <div style={{
-            display: 'grid',
+      }}>
+        {/* Tablo Header */}
+        <div style={{
+          display: 'grid',
             gridTemplateColumns: 'repeat(10, 1fr)',
-            gap: '2px',
-            marginBottom: '10px'
-          }}>
+          gap: '2px',
+          marginBottom: '10px'
+        }}>
             {['ÖDEME ID', 'MÜŞTERİ', 'SPONSOR ID', 'ÜRÜN', 'TUTAR (₺)', 'TUTAR (USD)', 'YÖNTEM', 'DURUM', 'TARİH', 'İŞLEMLER'].map((header, index) => (
               <div key={index} style={{
                 background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)',
@@ -385,7 +394,7 @@ const AdminPaymentDetails = () => {
                   fontSize: '10px',
                   borderRadius: '3px'
                 }}>
-                  {payment.first_name} {payment.last_name}
+                  {payment.user_name}
                 </div>
                 <div style={{
                   backgroundColor: 'rgba(255,255,255,0.9)',
@@ -403,7 +412,9 @@ const AdminPaymentDetails = () => {
                   fontSize: '10px',
                   borderRadius: '3px'
                 }}>
-                  {payment.product_name || 'N/A'}
+                  {payment.payment_type === 'education' ? 'Eğitim' :
+                   payment.payment_type === 'device' ? 'Cihaz' :
+                   payment.payment_type === 'franchise' ? 'Franchise' : 'N/A'}
                 </div>
                 <div style={{
                   backgroundColor: 'rgba(255,255,255,0.9)',
@@ -430,9 +441,9 @@ const AdminPaymentDetails = () => {
                   fontSize: '10px',
                   borderRadius: '3px'
                 }}>
-                  {payment.payment_method === 'credit_card' ? 'Kredi Kartı' :
-                   payment.payment_method === 'bank_transfer' ? 'Banka Transferi' :
-                   payment.payment_method === 'cash' ? 'Nakit' : 'Manuel'}
+                  {payment.payment_type === 'education' ? 'Eğitim' :
+                   payment.payment_type === 'device' ? 'Cihaz' :
+                   payment.payment_type === 'franchise' ? 'Franchise' : 'N/A'}
                 </div>
                 <div style={{
                   backgroundColor: payment.status === 'approved' ? 'rgba(40, 167, 69, 0.9)' :
@@ -562,15 +573,15 @@ const AdminPaymentDetails = () => {
                 {header}
               </div>
             ))}
-          </div>
+        </div>
 
           {methodStats.map((method, index) => (
             <div key={index} style={{
-              display: 'grid',
+            display: 'grid',
               gridTemplateColumns: 'repeat(3, 1fr)',
-              gap: '2px',
-              marginBottom: '2px'
-            }}>
+            gap: '2px',
+            marginBottom: '2px'
+          }}>
               <div style={{
                 backgroundColor: 'rgba(255,255,255,0.9)',
                 padding: '8px 4px',
@@ -600,9 +611,9 @@ const AdminPaymentDetails = () => {
               }}>
                 ₺{method.total_amount}
               </div>
-            </div>
-          ))}
-        </div>
+          </div>
+        ))}
+      </div>
       )}
     </div>
   );

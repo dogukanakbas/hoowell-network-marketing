@@ -309,6 +309,20 @@ const FranchiseNetwork = () => {
               {nodeData.first_name} {nodeData.last_name}
             </div>
             
+            {/* Nickname Display */}
+            {nodeData.nickname && (
+              <div style={{
+                color: isCurrentUser ? '#0e2323' : '#FFD700',
+                fontSize: '10px',
+                fontWeight: 'bold',
+                marginBottom: '4px',
+                fontStyle: 'italic',
+                opacity: 0.8
+              }}>
+                @{nodeData.nickname}
+              </div>
+            )}
+            
             <div style={{
               color: isCurrentUser ? '#0e2323' : '#fff',
               fontSize: '10px',
@@ -910,6 +924,19 @@ const FranchiseNetwork = () => {
               }}>
                 {selectedUser.first_name} {selectedUser.last_name}
               </h3>
+
+              {/* Nickname in Modal */}
+              {selectedUser.nickname && (
+                <div style={{
+                  color: '#FFD700',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  marginBottom: '5px',
+                  fontStyle: 'italic'
+                }}>
+                  @{selectedUser.nickname}
+                </div>
+              )}
 
               <div style={{
                 color: '#fff',

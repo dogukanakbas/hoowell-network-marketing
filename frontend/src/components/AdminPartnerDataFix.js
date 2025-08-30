@@ -51,15 +51,26 @@ const AdminPartnerDataFix = () => {
       params.append('page', currentPage);
       params.append('limit', 20);
 
-      const response = await axios.get(`/api/admin/partners?${params}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      
-      if (response.data.success) {
-        setPartners(response.data.data.partners);
-        setPagination(response.data.data.pagination);
-        setFilters(response.data.data.filters);
-      }
+          const response = await axios.get(`/api/admin/partners?${params}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+
+
+    console.log('API Response:', response.data);
+    console.log('Response success:', response.data.success);
+    console.log('Response data:', response.data.data);
+    console.log('Partners:', response.data.data?.partners);
+    console.log('Partners length:', response.data.data?.partners?.length);
+    
+    if (response.data.success) {
+      console.log('Setting partners:', response.data.data.partners);
+      setPartners(response.data.data.partners);
+      setPagination(response.data.data.pagination);
+      setFilters(response.data.data.filters);
+    } else {
+      console.log('API success is false');
+    }
     } catch (error) {
       console.error('İş ortağı verileri yüklenirken hata:', error);
       setMessage('İş ortağı verileri yüklenirken hata oluştu');
@@ -372,12 +383,12 @@ const AdminPartnerDataFix = () => {
           {/* Tablo Header */}
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(14, 1fr)',
+                            gridTemplateColumns: 'repeat(15, 1fr)',
             gap: '2px',
             marginBottom: '10px',
             minWidth: '1400px'
           }}>
-            {['ID', 'ADI SOYADI', 'EMAIL', 'TELEFON', 'SPONSOR ID', 'KARİYER', 'KKP', 'AKTİF ORTAK', 'DURUM', 'EĞİTİM', 'ŞEHİR', 'TOPLAM SATIŞ', 'TOPLAM GELİR', 'İŞLEMLER'].map((header, index) => (
+            {['ID', 'ADI SOYADI', 'EMAIL', 'TELEFON', 'KAYIT EDEN KİŞİ', 'KAYIT EDEN ID', 'KARİYER', 'KKP', 'AKTİF ORTAK', 'DURUM', 'EĞİTİM', 'ŞEHİR', 'TOPLAM SATIŞ', 'TOPLAM GELİR', 'İŞLEMLER'].map((header, index) => (
               <div key={index} style={{
                 background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)',
                 color: '#000',
@@ -393,11 +404,12 @@ const AdminPartnerDataFix = () => {
           </div>
 
           {/* Tablo Content - Gerçek veriler */}
+          {console.log('Rendering partners:', partners, 'Length:', partners.length)}
           {partners.length > 0 ? (
             partners.map((partner, rowIndex) => (
               <div key={partner.id} style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(14, 1fr)',
+                gridTemplateColumns: 'repeat(15, 1fr)',
                 gap: '2px',
                 marginBottom: '2px',
                 minWidth: '1400px'
@@ -445,7 +457,16 @@ const AdminPartnerDataFix = () => {
                   fontSize: '9px',
                   borderRadius: '3px'
                 }}>
-                  {partner.sponsor_id}
+                  {partner.sponsor_name || 'N/A'}
+                </div>
+                <div style={{
+                  backgroundColor: 'rgba(255,255,255,0.9)',
+                  padding: '8px 4px',
+                  textAlign: 'center',
+                  fontSize: '9px',
+                  borderRadius: '3px'
+                }}>
+                  {partner.sponsor_sponsor_id || 'N/A'}
                 </div>
                 <div style={{
                   backgroundColor: 'rgba(255,255,255,0.9)',
@@ -714,7 +735,7 @@ const AdminPartnerDataFix = () => {
               />
               <input
                 type="text"
-                placeholder="Sponsor ID"
+                placeholder="Sponsor ID (Partner'ın sponsor ID'sini değiştirmek için)"
                 value={editingPartner.sponsor_id || ''}
                 onChange={(e) => setEditingPartner({...editingPartner, sponsor_id: e.target.value})}
                 style={{
@@ -844,5 +865,4 @@ const AdminPartnerDataFix = () => {
     </div>
   );
 };
-
 export default AdminPartnerDataFix;

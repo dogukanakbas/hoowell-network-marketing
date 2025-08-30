@@ -13,6 +13,7 @@ const KisiselYonetim = () => {
   const [profileForm, setProfileForm] = useState({
     first_name: user?.first_name || '',
     last_name: user?.last_name || '',
+    nickname: user?.nickname || '',
     email: user?.email || '',
     phone: user?.phone || '',
     country_code: user?.country_code || '+90',
@@ -62,6 +63,7 @@ const KisiselYonetim = () => {
       setProfileForm({
         first_name: user.first_name || '',
         last_name: user.last_name || '',
+        nickname: user.nickname || '',
         email: user.email || '',
         phone: user.phone || '',
         country_code: user.country_code || '+90',
@@ -93,6 +95,32 @@ const KisiselYonetim = () => {
     } catch (error) {
       console.error('Profile update error:', error);
       setMessage('❌ Profil güncellenirken hata oluştu: ' + (error.response?.data?.message || 'Bilinmeyen hata'));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Takma ad güncelleme
+  const handleNicknameUpdate = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage('');
+    setErrors({});
+
+    try {
+      const response = await axios.put('/api/user/nickname', { nickname: profileForm.nickname }, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      if (response.data.success) {
+        setMessage('✅ Takma ad başarıyla güncellendi!');
+        await refreshUser();
+      }
+    } catch (error) {
+      console.error('Nickname update error:', error);
+      setMessage('❌ Takma ad güncellenirken hata oluştu: ' + (error.response?.data?.message || 'Bilinmeyen hata'));
     } finally {
       setLoading(false);
     }
@@ -425,6 +453,51 @@ const KisiselYonetim = () => {
                   required
                 />
               </div>
+            </div>
+
+            {/* Takma Ad Bölümü */}
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#0e2323' }}>
+                🏷️ Takma Ad
+              </label>
+              <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-end' }}>
+                <input
+                  type="text"
+                  value={profileForm.nickname}
+                  onChange={(e) => setProfileForm({ ...profileForm, nickname: e.target.value })}
+                  placeholder="Takma adınızı girin (3-50 karakter)"
+                  style={{
+                    flex: 1,
+                    padding: '12px',
+                    border: '2px solid #ddd',
+                    borderRadius: '8px',
+                    fontSize: '14px'
+                  }}
+                  minLength="3"
+                  maxLength="50"
+                />
+                <button
+                  type="button"
+                  onClick={handleNicknameUpdate}
+                  disabled={loading || !profileForm.nickname || profileForm.nickname.length < 3}
+                  style={{
+                    padding: '12px 20px',
+                    backgroundColor: loading || !profileForm.nickname || profileForm.nickname.length < 3 ? '#ccc' : '#FFD700',
+                    color: '#0e2323',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    cursor: loading || !profileForm.nickname || profileForm.nickname.length < 3 ? 'not-allowed' : 'pointer',
+                    transition: 'all 0.3s ease'
+                  }}
+                >
+                  {loading ? '⏳ Güncelleniyor...' : '💾 Kaydet'}
+                </button>
+              </div>
+              <small style={{ color: '#666', fontSize: '12px', marginTop: '5px', display: 'block' }}>
+                Takma adınız benzersiz olmalıdır ve diğer kullanıcılar tarafından görülecektir.
+              </small>
             </div>
 
             <div style={{ marginBottom: '20px' }}>

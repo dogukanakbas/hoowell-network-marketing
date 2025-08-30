@@ -196,11 +196,12 @@ app.get('/api/network/tree', verifyToken, async (req, res) => {
       // Prevent infinite recursion
       if (level > maxLevel) return [];
 
-      const [users] = await db.promise().execute(`
+              const [users] = await db.promise().execute(`
         SELECT 
           u.id as user_id,
           u.first_name,
           u.last_name,
+          u.nickname,
           u.sponsor_id,
           u.career_level,
           u.total_kkp,
@@ -214,6 +215,7 @@ app.get('/api/network/tree', verifyToken, async (req, res) => {
           up.is_active_this_month,
           sponsor.first_name as sponsor_first_name,
           sponsor.last_name as sponsor_last_name,
+          sponsor.nickname as sponsor_nickname,
           sponsor.sponsor_id as sponsor_sponsor_id
         FROM users u
         LEFT JOIN user_profiles up ON u.id = up.user_id
@@ -315,6 +317,70 @@ app.get('/api/check-tc/:tcNo', verifyToken, async (req, res) => {
   } catch (error) {
     console.error('TC kontrol hatası:', error);
     res.status(500).json({ error: 'TC kontrol hatası' });
+  }
+});
+
+// Check if nickname exists
+app.get('/api/check-nickname/:nickname', verifyToken, async (req, res) => {
+  try {
+    const { nickname } = req.params;
+    
+    if (!nickname || nickname.length < 3) {
+      return res.json({ exists: false, valid: false });
+    }
+    
+    const [existingUser] = await db.promise().execute(
+      'SELECT id FROM users WHERE nickname = ? AND id != ?',
+      [nickname, req.user.id]
+    );
+    
+    res.json({ 
+      exists: existingUser.length > 0,
+      valid: nickname.length >= 3 && nickname.length <= 50
+    });
+  } catch (error) {
+    console.error('Nickname kontrol hatası:', error);
+    res.status(500).json({ error: 'Nickname kontrol hatası' });
+  }
+});
+
+// Update user nickname
+app.put('/api/user/nickname', verifyToken, async (req, res) => {
+  try {
+    const { nickname } = req.body;
+    
+    if (!nickname || nickname.length < 3 || nickname.length > 50) {
+      return res.status(400).json({ 
+        message: 'Takma ad 3-50 karakter arasında olmalıdır' 
+      });
+    }
+    
+    // Check if nickname already exists
+    const [existingUser] = await db.promise().execute(
+      'SELECT id FROM users WHERE nickname = ? AND id != ?',
+      [nickname, req.user.id]
+    );
+    
+    if (existingUser.length > 0) {
+      return res.status(400).json({ 
+        message: 'Bu takma ad zaten kullanılıyor' 
+      });
+    }
+    
+    // Update nickname
+    await db.promise().execute(
+      'UPDATE users SET nickname = ? WHERE id = ?',
+      [nickname, req.user.id]
+    );
+    
+    res.json({ 
+      success: true, 
+      message: 'Takma ad başarıyla güncellendi',
+      nickname: nickname
+    });
+  } catch (error) {
+    console.error('Nickname update error:', error);
+    res.status(500).json({ message: 'Takma ad güncellenirken hata oluştu' });
   }
 });
 
@@ -1693,7 +1759,7 @@ app.post('/api/auth/login', async (req, res) => {
 app.get('/api/auth/me', verifyToken, async (req, res) => {
   try {
     const [users] = await db.promise().execute(
-      'SELECT id, username, email, first_name, last_name, phone, role, sponsor_id, career_level, total_kkp, active_partners, is_active, payment_confirmed, education_completed, backoffice_access, payment_pending, payment_blocked, education_deadline, education_started_at FROM users WHERE id = ?',
+      'SELECT id, username, email, first_name, last_name, nickname, phone, role, sponsor_id, career_level, total_kkp, active_partners, is_active, payment_confirmed, education_completed, backoffice_access, payment_pending, payment_blocked, education_deadline, education_started_at FROM users WHERE id = ?',
       [req.user.id]
     );
 
@@ -3118,7 +3184,6 @@ app.get('/api/sales/tracker', verifyToken, async (req, res) => {
                   email,
                   phone,
                   billing_address,
-                  shipping_address,
                   created_at
                 FROM users 
                 WHERE role = 'customer' 
@@ -3147,7 +3212,7 @@ app.get('/api/sales/tracker', verifyToken, async (req, res) => {
                 return res.status(403).json({ message: 'Yetkisiz erişim' });
               }
 
-              const { id, first_name, last_name, tc_no, email, phone, billing_address, shipping_address } = req.body;
+              const { id, first_name, last_name, tc_no, email, phone, billing_address } = req.body;
 
               if (!id || !first_name || !last_name) {
                 return res.status(400).json({ message: 'Gerekli alanlar eksik' });
@@ -3162,10 +3227,9 @@ app.get('/api/sales/tracker', verifyToken, async (req, res) => {
                   email = ?,
                   phone = ?,
                   billing_address = ?,
-                  shipping_address = ?,
                   updated_at = NOW()
                 WHERE id = ? AND role = 'customer'
-              `, [first_name, last_name, tc_no, email, phone, billing_address, shipping_address, id]);
+              `, [first_name, last_name, tc_no, email, phone, billing_address, id]);
 
               res.json({ message: 'Müşteri başarıyla güncellendi' });
             } catch (error) {
@@ -3195,7 +3259,6 @@ app.get('/api/sales/tracker', verifyToken, async (req, res) => {
                   email,
                   phone,
                   billing_address,
-                  shipping_address,
                   sponsor_id,
                   created_at
                 FROM users 
@@ -3226,7 +3289,7 @@ app.get('/api/sales/tracker', verifyToken, async (req, res) => {
                 return res.status(403).json({ message: 'Yetkisiz erişim' });
               }
 
-              const { id, sponsor_id, first_name, last_name, tc_no, email, phone, billing_address, shipping_address } = req.body;
+              const { id, sponsor_id, first_name, last_name, tc_no, email, phone, billing_address } = req.body;
 
               if (!id || !first_name || !last_name) {
                 return res.status(400).json({ message: 'Gerekli alanlar eksik' });
@@ -3242,10 +3305,9 @@ app.get('/api/sales/tracker', verifyToken, async (req, res) => {
                   email = ?,
                   phone = ?,
                   billing_address = ?,
-                  shipping_address = ?,
                   updated_at = NOW()
                 WHERE id = ? AND role = 'partner'
-              `, [sponsor_id, first_name, last_name, tc_no, email, phone, billing_address, shipping_address, id]);
+              `, [sponsor_id, first_name, last_name, tc_no, email, phone, billing_address, id]);
 
               res.json({ message: 'İş ortağı başarıyla güncellendi' });
             } catch (error) {
@@ -4416,31 +4478,51 @@ app.get('/api/admin/payment-details', verifyToken, verifyAdmin, async (req, res)
     }
 
     // Toplam kayıt sayısı
-    const [countResult] = await db.promise().execute(`
+    const [countResult] = await db.promise().query(`
       SELECT COUNT(*) as total
       FROM payments p
       LEFT JOIN users u ON p.user_id = u.id
-      ${whereClause}
-    `, params);
+    `);
 
     const totalRecords = countResult[0].total;
     const totalPages = Math.ceil(totalRecords / limit);
 
-    // Ödeme verileri - Filtrelerle birlikte
-    const paymentParams = [...params, parseInt(limit), parseInt(offset)];
-    const [payments] = await db.promise().execute(`
+    // Güvenli parametre oluşturma
+    const safeLimit = parseInt(limit) || 20;
+    const safeOffset = parseInt(offset) || 0;
+
+    // Ödeme verileri - Filtreleme ile
+    let paymentsQuery = `
       SELECT 
         p.*,
-        CONCAT(COALESCE(u.first_name, ''), ' ', COALESCE(u.last_name, '')) as user_name
+        CONCAT(COALESCE(u.first_name, ''), ' ', COALESCE(u.last_name, '')) as user_name,
+        u.sponsor_id,
+        u.email,
+        u.phone
       FROM payments p
       LEFT JOIN users u ON p.user_id = u.id
-      ${whereClause}
-      ORDER BY p.created_at DESC
-      LIMIT ? OFFSET ?
-    `, paymentParams);
+    `;
+    
+    // Filtreleme ekle
+    if (status && status !== 'all') {
+      paymentsQuery += ` WHERE p.status = '${status}'`;
+    }
+    
+    if (method && method !== 'all') {
+      paymentsQuery += status && status !== 'all' ? ` AND p.payment_type = '${method}'` : ` WHERE p.payment_type = '${method}'`;
+    }
+    
+    if (startDate && endDate) {
+      const dateFilter = `DATE(p.created_at) BETWEEN '${startDate}' AND '${endDate}'`;
+      paymentsQuery += paymentsQuery.includes('WHERE') ? ` AND ${dateFilter}` : ` WHERE ${dateFilter}`;
+    }
+    
+    paymentsQuery += ` ORDER BY p.created_at DESC LIMIT ${safeLimit} OFFSET ${safeOffset}`;
+    
+    const [payments] = await db.promise().query(paymentsQuery);
 
     // Ödeme yöntemi istatistikleri
-    const [methodStats] = await db.promise().execute(`
+    const [methodStats] = await db.promise().query(`
       SELECT 
         payment_type,
         COUNT(*) as count,
@@ -4451,7 +4533,7 @@ app.get('/api/admin/payment-details', verifyToken, verifyAdmin, async (req, res)
     `);
 
     // Ödeme özeti
-    const [summary] = await db.promise().execute(`
+    const [summary] = await db.promise().query(`
       SELECT 
         COUNT(*) as total_payments,
         SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending_payments,
@@ -4506,6 +4588,197 @@ app.put('/api/admin/payment-details/:id/status', verifyToken, verifyAdmin, async
   }
 });
 
+// ==================== ADMIN PARTNERS API'LERİ ====================
+
+// İş ortağı verileri listesi
+app.get('/api/admin/partners', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const { page = 1, limit = 20, search, status, career_level, city } = req.query;
+    const offset = (page - 1) * limit;
+
+    let whereClause = 'WHERE u.role = "partner"';
+    const params = [];
+
+    if (search) {
+      whereClause += ` AND (
+        u.first_name LIKE ? OR u.last_name LIKE ? OR u.email LIKE ? OR 
+        u.sponsor_id LIKE ? OR u.phone LIKE ?
+      )`;
+      const searchTerm = `%${search}%`;
+      params.push(searchTerm, searchTerm, searchTerm, searchTerm, searchTerm);
+    }
+
+    if (status && status !== 'all') {
+      whereClause += ' AND u.is_active = ?';
+      params.push(status === 'active' ? 1 : 0);
+    }
+
+    if (career_level && career_level !== 'all') {
+      whereClause += ' AND u.career_level = ?';
+      params.push(career_level);
+    }
+
+    if (city && city !== 'all') {
+      whereClause += ' AND u.city = ?';
+      params.push(city);
+    }
+
+    // Toplam kayıt sayısı
+    const [countResult] = await db.promise().query(`
+      SELECT COUNT(*) as total
+      FROM users u
+      ${whereClause}
+    `, params);
+
+    const totalRecords = countResult[0].total;
+    const totalPages = Math.ceil(totalRecords / limit);
+
+    // İş ortağı verileri
+    const [partners] = await db.promise().query(`
+      SELECT 
+        u.*,
+        CONCAT(COALESCE(sponsor.first_name, ''), ' ', COALESCE(sponsor.last_name, '')) as sponsor_name,
+        COALESCE(sponsor.sponsor_id, 'ADMIN') as sponsor_sponsor_id,
+        u.sponsor_id as current_sponsor_id
+      FROM users u
+      LEFT JOIN users sponsor ON u.created_by = sponsor.id
+      ${whereClause}
+      ORDER BY u.created_at DESC
+      LIMIT ${parseInt(limit)} OFFSET ${parseInt(offset)}
+    `, params);
+
+
+
+    // Filtre seçenekleri
+    const [cities] = await db.promise().query(`
+      SELECT DISTINCT city FROM users 
+      WHERE role = 'partner' AND city IS NOT NULL AND city != ''
+      ORDER BY city
+    `);
+
+    const [careerLevels] = await db.promise().query(`
+      SELECT DISTINCT career_level FROM users 
+      WHERE role = 'partner' AND career_level IS NOT NULL
+      ORDER BY career_level
+    `);
+
+    console.log('Sending response:', {
+      success: true,
+      data: {
+        partners: partners || [],
+        pagination: {
+          current_page: parseInt(page),
+          total_pages: totalPages,
+          total_records: totalRecords,
+          limit: parseInt(limit)
+        },
+        filters: {
+          cities: cities.map(c => c.city),
+          career_levels: careerLevels.map(c => c.career_level)
+        }
+      }
+    });
+
+    const responseData = {
+      success: true,
+      data: {
+        partners: partners || [],
+        pagination: {
+          current_page: parseInt(page),
+          total_pages: totalPages,
+          total_records: totalRecords,
+          limit: parseInt(limit)
+        },
+        filters: {
+          cities: cities.map(c => c.city),
+          career_levels: careerLevels.map(c => c.career_level)
+        }
+      }
+    };
+
+    console.log('Sending response:', JSON.stringify(responseData, null, 2));
+    res.json(responseData);
+
+  } catch (error) {
+    console.error('Partners fetch error:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'İş ortağı verileri yüklenirken hata oluştu' 
+    });
+  }
+});
+
+// İş ortağı güncelle
+app.put('/api/admin/partners/:id', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { first_name, last_name, email, phone, sponsor_id, career_level, is_active, city, district } = req.body;
+
+    // Sponsor ID'yi güncellemek için önce sponsor'ı bul
+    let created_by = null;
+    if (sponsor_id) {
+      const [sponsorResult] = await db.promise().query(
+        'SELECT id FROM users WHERE sponsor_id = ?',
+        [sponsor_id]
+      );
+      
+      if (sponsorResult.length > 0) {
+        created_by = sponsorResult[0].id;
+      }
+    }
+
+    // İş ortağını güncelle
+    await db.promise().query(`
+      UPDATE users SET 
+        first_name = ?, 
+        last_name = ?, 
+        email = ?, 
+        phone = ?, 
+        sponsor_id = ?,
+        career_level = ?,
+        is_active = ?,
+        city = ?,
+        district = ?,
+        created_by = ?
+      WHERE id = ?
+    `, [first_name, last_name, email, phone, sponsor_id, career_level, is_active, city, district, created_by, id]);
+
+    res.json({
+      success: true,
+      message: 'İş ortağı başarıyla güncellendi'
+    });
+  } catch (error) {
+    console.error('Partner update error:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'İş ortağı güncellenirken hata oluştu' 
+    });
+  }
+});
+
+// İş ortağı sil (soft delete)
+app.delete('/api/admin/partners/:id', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    await db.promise().query(
+      'UPDATE users SET is_active = FALSE WHERE id = ?',
+      [id]
+    );
+
+    res.json({
+      success: true,
+      message: 'İş ortağı başarıyla silindi'
+    });
+  } catch (error) {
+    console.error('Partner delete error:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'İş ortağı silinirken hata oluştu' 
+    });
+  }
+});
+
 // ==================== ADMIN MONTHLY SALES API'LERİ ====================
 
 // Aylık satış verileri
@@ -4529,7 +4802,7 @@ app.get('/api/admin/monthly-sales', verifyToken, verifyAdmin, async (req, res) =
     if (search) {
       whereClause += ` AND (
         u.first_name LIKE ? OR u.last_name LIKE ? OR u.email LIKE ? OR
-        p.product_name LIKE ?
+        s.sale_type LIKE ?
       )`;
       const searchTerm = `%${search}%`;
       params.push(searchTerm, searchTerm, searchTerm, searchTerm);
@@ -4540,25 +4813,23 @@ app.get('/api/admin/monthly-sales', verifyToken, verifyAdmin, async (req, res) =
       SELECT 
         s.*,
         CONCAT(COALESCE(u.first_name, ''), ' ', COALESCE(u.last_name, '')) as seller_name,
-        p.product_name
+        s.sale_type as product_name
       FROM sales s
       LEFT JOIN users u ON s.seller_id = u.id
-      LEFT JOIN products p ON s.product_id = p.id
       ${whereClause}
-      ORDER BY created_at DESC
+      ORDER BY s.created_at DESC
     `, params);
 
-    // Ürün bazında istatistikler
+    // Satış tipi bazında istatistikler
     const [productStats] = await db.promise().execute(`
       SELECT 
-        p.product_name,
+        s.sale_type as product_name,
         COUNT(*) as sale_count,
         SUM(s.amount_usd) as total_amount_usd,
         SUM(s.kkp_earned) as total_kkp
       FROM sales s
-      LEFT JOIN products p ON s.product_id = p.id
       ${whereClause}
-      GROUP BY p.id, p.product_name
+      GROUP BY s.sale_type
       ORDER BY total_amount_usd DESC
     `, params);
 

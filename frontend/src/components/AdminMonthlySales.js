@@ -278,35 +278,35 @@ const AdminMonthlySales = () => {
 
             {/* Satış Tablosu */}
             {!dataLoading && (
-                <div style={{
-                    background: 'linear-gradient(135deg, #1a4040 0%, #2a5555 50%, #1a4040 100%)',
-                    borderRadius: '20px',
-                    padding: '20px',
-                    border: '3px solid #FFD700',
+            <div style={{
+                background: 'linear-gradient(135deg, #1a4040 0%, #2a5555 50%, #1a4040 100%)',
+                borderRadius: '20px',
+                padding: '20px',
+                border: '3px solid #FFD700',
                     boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
                     marginBottom: '30px'
-                }}>
-                    {/* Tablo Header */}
-                    <div style={{
-                        display: 'grid',
+            }}>
+                {/* Tablo Header */}
+                <div style={{
+                    display: 'grid',
                         gridTemplateColumns: 'repeat(8, 1fr)',
-                        gap: '2px',
-                        marginBottom: '10px'
-                    }}>
+                    gap: '2px',
+                    marginBottom: '10px'
+                }}>
                         {['SATIŞ ID', 'SATICI', 'SPONSOR ID', 'ÜRÜN', 'MİKTAR', 'TUTAR (USD)', 'KKP', 'TARİH'].map((header, index) => (
-                            <div key={index} style={{
-                                background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)',
-                                color: '#000',
-                                padding: '8px 4px',
-                                textAlign: 'center',
-                                fontSize: '10px',
-                                fontWeight: 'bold',
-                                borderRadius: '5px'
-                            }}>
-                                {header}
-                            </div>
-                        ))}
-                    </div>
+                        <div key={index} style={{
+                            background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)',
+                            color: '#000',
+                            padding: '8px 4px',
+                            textAlign: 'center',
+                            fontSize: '10px',
+                            fontWeight: 'bold',
+                            borderRadius: '5px'
+                        }}>
+                            {header}
+                        </div>
+                    ))}
+                </div>
 
                     {/* Tablo Content - Gerçek veriler */}
                     {salesData.length > 0 ? (
@@ -496,9 +496,9 @@ const AdminMonthlySales = () => {
                             }}>
                                 {product.total_quantity}
                             </div>
-                        </div>
-                    ))}
-                </div>
+                    </div>
+                ))}
+            </div>
             )}
         </div>
     );
