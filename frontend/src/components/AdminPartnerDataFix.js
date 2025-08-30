@@ -57,19 +57,10 @@ const AdminPartnerDataFix = () => {
 
 
 
-    console.log('API Response:', response.data);
-    console.log('Response success:', response.data.success);
-    console.log('Response data:', response.data.data);
-    console.log('Partners:', response.data.data?.partners);
-    console.log('Partners length:', response.data.data?.partners?.length);
-    
     if (response.data.success) {
-      console.log('Setting partners:', response.data.data.partners);
       setPartners(response.data.data.partners);
       setPagination(response.data.data.pagination);
       setFilters(response.data.data.filters);
-    } else {
-      console.log('API success is false');
     }
     } catch (error) {
       console.error('İş ortağı verileri yüklenirken hata:', error);
@@ -404,7 +395,6 @@ const AdminPartnerDataFix = () => {
           </div>
 
           {/* Tablo Content - Gerçek veriler */}
-          {console.log('Rendering partners:', partners, 'Length:', partners.length)}
           {partners.length > 0 ? (
             partners.map((partner, rowIndex) => (
               <div key={partner.id} style={{
