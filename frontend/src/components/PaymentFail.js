@@ -12,7 +12,8 @@ const PaymentFail = () => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: '20px'
+      padding: '20px',
+      width: '100%'
     }}>
       <div style={{
         backgroundColor: 'white',
@@ -20,6 +21,8 @@ const PaymentFail = () => {
         padding: '40px',
         textAlign: 'center',
         maxWidth: '600px',
+        width: '90%',
+        margin: '0 auto',
         boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
       }}>
         <div style={{ fontSize: '80px', marginBottom: '20px' }}>❌</div>
@@ -38,7 +41,11 @@ const PaymentFail = () => {
           borderRadius: '10px',
           marginBottom: '30px',
           color: '#721c24',
-          textAlign: 'center'
+          textAlign: 'center',
+          width: '100%',
+          maxWidth: '500px',
+          marginLeft: 'auto',
+          marginRight: 'auto'
         }}>
           <h4 style={{ marginBottom: '15px' }}>Olası Nedenler:</h4>
           <ul style={{ textAlign: 'left', marginBottom: '0', maxWidth: '400px', margin: '0 auto', listStylePosition: 'inside' }}>

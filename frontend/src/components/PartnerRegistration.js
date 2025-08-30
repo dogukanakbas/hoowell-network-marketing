@@ -933,16 +933,15 @@ const PartnerRegistration = () => {
           }}>
             <div style={{ fontSize: '60px', marginBottom: '20px' }}>🏢</div>
             <h3 style={{ color: 'var(--primary-dark)', marginBottom: '20px', fontSize: '24px' }}>
-              FRANCHISE SATIŞ PAKETİ
+              LİDERLİK KAMPI 3 GÜNLÜK KATILIM BİLETİ
             </h3>
             
             <div style={{ marginBottom: '30px' }}>
               <div style={{ 
-                fontSize: '18px', 
+                fontSize: '24px', 
                 color: 'var(--text-dark)', 
                 marginBottom: '10px',
-                textDecoration: 'line-through',
-                opacity: 0.7
+                fontWeight: 'bold'
               }}>
                 4.000 ₺
               </div>
@@ -1029,7 +1028,7 @@ const PartnerRegistration = () => {
                   Liderlik Kampı 3 Günlük Katılım Bileti
                 </div>
                 <div style={{ fontSize: '14px', color: 'var(--text-light)' }}>
-                  Alkali iyonizer sistemleri franchise hakkı
+                  Liderlik Kampı 3 Günlük Katılım Bileti
                 </div>
               </div>
               <div style={{ textAlign: 'right' }}>

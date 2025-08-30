@@ -226,13 +226,13 @@ const RefundPolicy = () => {
                 </h4>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', fontSize: '14px' }}>
                   <div><strong>📚 Eğitim Paketi:</strong> 4.800 TL</div>
-                  <div><strong>🤝 Franchise Paketi:</strong> 86.400 TL</div>
+                  <div><strong>🤝 Liderlik Kampı 3 Günlük Katılım Bileti:</strong> 4.800 TL</div>
                 </div>
               </div>
               <h4 style={{ color: 'var(--primary-dark)', marginBottom: '10px' }}>İade Koşulları:</h4>
               <ul style={{ paddingLeft: '20px' }}>
                 <li><strong>Eğitim Paketi:</strong> Videolara erişim sağlanmadan önce iade edilebilir</li>
-                <li><strong>Franchise Paketi:</strong> Cihaz teslim alınmadan ve eğitime başlanmadan önce iade edilebilir</li>
+                <li><strong>Liderlik Kampı 3 Günlük Katılım Bileti:</strong> Eğitime başlanmadan önce iade edilebilir</li>
                 <li>İş ortaklığı hakları kullanılmaya başlandıktan sonra iade edilemez</li>
                 <li>Komisyon ödemeleri yapıldıktan sonra iade edilemez</li>
               </ul>

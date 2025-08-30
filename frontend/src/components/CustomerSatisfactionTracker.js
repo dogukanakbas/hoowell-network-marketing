@@ -4,6 +4,10 @@ import axios from 'axios';
 const CustomerSatisfactionTracker = () => {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [showReferencesModal, setShowReferencesModal] = useState(false);
+  const [references, setReferences] = useState([]);
+  const [referencesLoading, setReferencesLoading] = useState(false);
 
   useEffect(() => {
     fetchCustomers();
@@ -30,26 +34,26 @@ const CustomerSatisfactionTracker = () => {
     }
   };
 
-  const addReference = async (customerId, referenceName, referenceSurname, referencePhone) => {
+
+
+  const fetchReferences = async (customerId, customerName) => {
     try {
-      const response = await axios.post('/api/customer-satisfaction/add-reference', {
-        customer_id: customerId,
-        reference_name: referenceName,
-        reference_surname: referenceSurname,
-        reference_phone: referencePhone
-      }, {
+      setReferencesLoading(true);
+      setSelectedCustomer({ id: customerId, name: customerName });
+      
+      const response = await axios.get(`/api/customer-satisfaction/references/${customerId}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
 
-      if (response.data.success) {
-        alert(`Referans başarıyla eklendi! ${response.data.rewardEarned ? `Ödül kazandınız: ${response.data.rewardEarned}` : ''}`);
-        fetchCustomers(); // Verileri yenile
-      }
+      setReferences(response.data);
+      setShowReferencesModal(true);
     } catch (error) {
-      console.error('Add reference error:', error);
-      alert('Referans eklenirken hata oluştu');
+      console.error('Fetch references error:', error);
+      alert('Referanslar yüklenirken hata oluştu');
+    } finally {
+      setReferencesLoading(false);
     }
   };
 
@@ -377,29 +381,23 @@ const CustomerSatisfactionTracker = () => {
                   justifyContent: 'center',
                   fontSize: '12px'
                 }}>
-                  {customer.reference_count || 0}
-                  <button
-                    onClick={() => {
-                      const name = prompt('Referans Adı:');
-                      const surname = prompt('Referans Soyadı:');
-                      const phone = prompt('Referans Telefonu:');
-                      if (name && surname && phone) {
-                        addReference(customer.id, name, surname, phone);
-                      }
-                    }}
-                    style={{
-                      marginLeft: '5px',
-                      padding: '2px 6px',
-                      fontSize: '10px',
-                      backgroundColor: '#28a745',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '3px',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    +
-                  </button>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    <span>{customer.reference_count || 0}</span>
+                    <button
+                      onClick={() => fetchReferences(customer.id, `${customer.first_name} ${customer.last_name}`)}
+                      style={{
+                        padding: '2px 6px',
+                        fontSize: '10px',
+                        backgroundColor: '#007bff',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '3px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      👁️
+                    </button>
+                  </div>
                 </div>,
                 // 1. Hediye
                 <div key={`${rowIndex}-4`} style={{
@@ -593,6 +591,160 @@ const CustomerSatisfactionTracker = () => {
           </div>
         </div>
       </div>
+
+      {/* Referans Listesi Modal */}
+      {showReferencesModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.8)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          backdropFilter: 'blur(5px)'
+        }}>
+          <div style={{
+            background: 'linear-gradient(135deg, #0e2323, #1a4a3a)',
+            borderRadius: '20px',
+            padding: '30px',
+            maxWidth: '600px',
+            width: '90%',
+            maxHeight: '80vh',
+            overflowY: 'auto',
+            border: '2px solid #FFD700',
+            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)',
+            position: 'relative'
+          }}>
+            {/* Close Button */}
+            <button
+              onClick={() => setShowReferencesModal(false)}
+              style={{
+                position: 'absolute',
+                top: '15px',
+                right: '15px',
+                background: 'none',
+                border: 'none',
+                color: '#FFD700',
+                fontSize: '24px',
+                cursor: 'pointer',
+                width: '30px',
+                height: '30px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              ×
+            </button>
+
+            {/* Modal Header */}
+            <div style={{ textAlign: 'center', marginBottom: '25px' }}>
+              <h2 style={{
+                color: '#FFD700',
+                fontSize: '24px',
+                fontWeight: 'bold',
+                marginBottom: '10px'
+              }}>
+                📋 Referans Listesi
+              </h2>
+              <p style={{
+                color: '#fff',
+                fontSize: '16px',
+                marginBottom: '0'
+              }}>
+                {selectedCustomer?.name} - Referansları
+              </p>
+            </div>
+
+            {/* Referans Listesi */}
+            {referencesLoading ? (
+              <div style={{
+                textAlign: 'center',
+                color: '#FFD700',
+                fontSize: '18px',
+                padding: '40px'
+              }}>
+                Referanslar yükleniyor...
+              </div>
+            ) : references.length > 0 ? (
+              <div style={{
+                backgroundColor: 'rgba(255,255,255,0.1)',
+                borderRadius: '15px',
+                padding: '20px',
+                marginBottom: '20px'
+              }}>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr 1fr auto',
+                  gap: '15px',
+                  marginBottom: '15px',
+                  paddingBottom: '10px',
+                  borderBottom: '2px solid #FFD700'
+                }}>
+                  <div style={{ color: '#FFD700', fontWeight: 'bold', fontSize: '14px' }}>Ad</div>
+                  <div style={{ color: '#FFD700', fontWeight: 'bold', fontSize: '14px' }}>Soyad</div>
+                  <div style={{ color: '#FFD700', fontWeight: 'bold', fontSize: '14px' }}>Telefon</div>
+                  <div style={{ color: '#FFD700', fontWeight: 'bold', fontSize: '14px' }}>Tarih</div>
+                </div>
+                
+                {references.map((reference, index) => (
+                  <div key={reference.id} style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr 1fr auto',
+                    gap: '15px',
+                    padding: '10px 0',
+                    borderBottom: '1px solid rgba(255,215,0,0.3)',
+                    fontSize: '14px',
+                    color: '#fff'
+                  }}>
+                    <div>{reference.reference_name}</div>
+                    <div>{reference.reference_surname}</div>
+                    <div>{reference.reference_phone}</div>
+                    <div>{formatDate(reference.created_at)}</div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div style={{
+                textAlign: 'center',
+                color: '#fff',
+                fontSize: '16px',
+                padding: '40px',
+                backgroundColor: 'rgba(255,255,255,0.1)',
+                borderRadius: '15px'
+              }}>
+                Bu müşteri için henüz referans eklenmemiş.
+              </div>
+            )}
+
+            {/* Modal Footer */}
+            <div style={{
+              textAlign: 'center',
+              marginTop: '20px'
+            }}>
+              <button
+                onClick={() => setShowReferencesModal(false)}
+                style={{
+                  backgroundColor: '#FFD700',
+                  color: '#000',
+                  padding: '12px 24px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer'
+                }}
+              >
+                Kapat
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

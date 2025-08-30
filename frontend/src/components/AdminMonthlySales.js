@@ -45,7 +45,8 @@ const AdminMonthlySales = () => {
             minHeight: '100vh',
             background: '#0f2324',
             padding: '20px',
-            margin: '0 -20px'
+            margin: '0 -20px',
+            marginLeft: '-5px'
         }}>
             {/* HOOWELL Logo - Sağ Üst */}
             <div style={{

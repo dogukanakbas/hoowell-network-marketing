@@ -149,13 +149,13 @@ const FranchiseNetwork = () => {
     const getResponsiveValues = () => {
       const width = window.innerWidth;
       if (width <= 480) {
-        return { cardWidth: '140px', cardGap: '20px', fontSize: '11px' };
+        return { cardWidth: '140px', cardGap: '40px', fontSize: '11px' };
       } else if (width <= 768) {
-        return { cardWidth: '160px', cardGap: '30px', fontSize: '12px' };
+        return { cardWidth: '160px', cardGap: '50px', fontSize: '12px' };
       } else if (width <= 992) {
-        return { cardWidth: '170px', cardGap: '40px', fontSize: '13px' };
+        return { cardWidth: '170px', cardGap: '60px', fontSize: '13px' };
       } else {
-        return { cardWidth: '180px', cardGap: '50px', fontSize: '14px' };
+        return { cardWidth: '180px', cardGap: '70px', fontSize: '14px' };
       }
     };
     
@@ -186,7 +186,7 @@ const FranchiseNetwork = () => {
             border: isCurrentUser ? '2px solid #FFD700' : '1px solid rgba(255,255,255,0.1)',
             transition: 'all 0.3s ease',
             position: 'relative',
-            overflow: 'hidden'
+            overflow: 'visible'
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.transform = 'translateY(-3px)';
@@ -302,7 +302,7 @@ const FranchiseNetwork = () => {
               fontWeight: 'bold',
               marginBottom: '4px',
               lineHeight: '1.2',
-              overflow: 'hidden',
+              overflow: 'visible',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap'
             }}>
@@ -387,8 +387,7 @@ const FranchiseNetwork = () => {
                 top: '25px',
                 left: '50%',
                 transform: 'translateX(-50%)',
-                width: `${Math.max(childrenCount * parseInt(cardGap) + childrenCount * parseInt(cardWidth), 400)}px`,
-                maxWidth: `${window.innerWidth - 100}px`,
+                width: `${(childrenCount - 1) * parseInt(cardGap) + childrenCount * parseInt(cardWidth)}px`,
                 borderRadius: '2px',
                 boxShadow: '0 2px 4px rgba(255, 215, 0, 0.3)',
                 zIndex: 1
@@ -405,8 +404,7 @@ const FranchiseNetwork = () => {
               flexWrap: window.innerWidth < 768 ? 'wrap' : 'nowrap',
               position: 'relative',
               width: '100%',
-              minWidth: `${Math.max(childrenCount * parseInt(cardGap) + childrenCount * parseInt(cardWidth), 400)}px`,
-              maxWidth: `${window.innerWidth - 100}px`
+              minWidth: `${(childrenCount - 1) * parseInt(cardGap) + childrenCount * parseInt(cardWidth)}px`
             }}>
               {nodeData.children.map((child, index) => {
                 const totalChildren = nodeData.children.length;
@@ -713,20 +711,22 @@ const FranchiseNetwork = () => {
         borderRadius: '20px',
         padding: '20px',
         boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
-        overflow: 'hidden'
+        overflow: 'visible'
       }}>
         {viewMode === 'tree' ? (
           <div style={{
             width: '100%',
             overflowX: 'auto',
-            overflowY: 'hidden',
-            paddingBottom: '20px'
+            overflowY: 'visible',
+            paddingBottom: '20px',
+            minWidth: '100%'
           }}>
             <div style={{
               display: 'flex',
               justifyContent: 'center',
               minWidth: 'max-content',
-              padding: '20px'
+              padding: '20px',
+              width: '100%'
             }}>
               {networkData ? renderTreeNode(networkData) : (
                 <div style={{

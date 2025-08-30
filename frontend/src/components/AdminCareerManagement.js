@@ -137,7 +137,8 @@ const AdminCareerManagement = () => {
       minHeight: '100vh',
       background: '#0f2324',
       padding: '20px',
-      margin: '0 -20px'
+      margin: '0 -20px',
+      marginLeft: '-5px'
     }}>
       {/* HOOWELL Logo - Sağ Üst */}
       <div style={{
@@ -219,6 +220,77 @@ const AdminCareerManagement = () => {
           KARİYER YÖNETİMİ
         </button>
       </div>
+
+      {/* Ürün Yönetimi Tablosu */}
+      {activeTab === 'urun' && (
+        <div style={{
+          background: 'linear-gradient(135deg, #1a4040 0%, #2a5555 50%, #1a4040 100%)',
+          borderRadius: '20px',
+          padding: '20px',
+          border: '3px solid #FFD700',
+          boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+          marginBottom: '30px'
+        }}>
+          {/* Tablo Container - Hizalama için */}
+          <div style={{
+            display: 'table',
+            width: '100%',
+            borderCollapse: 'collapse'
+          }}>
+            {/* Tablo Header */}
+            <div style={{
+              display: 'table-row'
+            }}>
+              {['ÜRÜNÜN ADI', 'ÜRÜNÜN KODU', 'USD FİYATI', 'KKP PUANI', 'KDV YÜZDESİ', 'SATIŞ FİYATI (₺)', 'KDV FİYATI', 'TOPLAM FİYAT', 'STOK ADEDİ'].map((header, index) => (
+                <div key={index} style={{
+                  display: 'table-cell',
+                  background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)',
+                  color: '#000',
+                  padding: '10px 5px',
+                  textAlign: 'center',
+                  fontSize: '11px',
+                  fontWeight: 'bold',
+                  borderRadius: '5px',
+                  border: '1px solid #FFD700',
+                  verticalAlign: 'middle',
+                  width: '11.11%' // 100% / 9 columns
+                }}>
+                  {header}
+                </div>
+              ))}
+            </div>
+
+            {/* Tablo Content */}
+            <div style={{
+              display: 'table-row'
+            }}>
+              {Array.from({ length: 9 }, (_, colIndex) => (
+                <div key={colIndex} style={{
+                  display: 'table-cell',
+                  padding: '2px',
+                  verticalAlign: 'top',
+                  width: '11.11%' // 100% / 9 columns
+                }}>
+                  <input
+                    type="text"
+                    style={{
+                      backgroundColor: 'white',
+                      border: '1px solid #ddd',
+                      borderRadius: '5px',
+                      padding: '8px',
+                      textAlign: 'center',
+                      fontSize: '12px',
+                      width: '100%',
+                      boxSizing: 'border-box'
+                    }}
+                    placeholder="Değer girin"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Kariyer Yönetimi Tablosu */}
       {activeTab === 'kariyer' && (

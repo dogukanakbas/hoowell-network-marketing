@@ -381,9 +381,9 @@ const Dashboard = () => {
               backgroundRepeat: 'no-repeat',
               backgroundPosition: 'center',
               borderRadius: isMobile ? '12px' : '15px',
-              border: `${isMobile ? '2px' : '3px'} solid #FFD700`,
-              boxShadow: '0 15px 40px rgba(255, 215, 0, 0.3)',
-              backgroundColor: 'rgba(255, 215, 0, 0.1)',
+              border: 'none',
+              boxShadow: '0 15px 40px rgba(0, 0, 0, 0.3)',
+              backgroundColor: 'transparent',
               cursor: 'pointer',
               transition: 'all 0.3s ease',
               position: 'relative'
@@ -391,7 +391,7 @@ const Dashboard = () => {
             onMouseEnter={(e) => {
               if (!isMobile) {
                 e.target.style.transform = 'scale(1.02)';
-                e.target.style.boxShadow = '0 20px 50px rgba(255, 215, 0, 0.4)';
+                e.target.style.boxShadow = '0 20px 50px rgba(0, 0, 0, 0.5)';
                 // Büyütme ikonunu göster
                 const zoomIcon = e.target.querySelector('.zoom-icon');
                 if (zoomIcon) zoomIcon.style.opacity = '1';
@@ -403,7 +403,7 @@ const Dashboard = () => {
             onMouseLeave={(e) => {
               if (!isMobile) {
                 e.target.style.transform = 'scale(1)';
-                e.target.style.boxShadow = '0 15px 40px rgba(255, 215, 0, 0.3)';
+                e.target.style.boxShadow = '0 15px 40px rgba(0, 0, 0, 0.3)';
                 // Büyütme ikonunu gizle
                 const zoomIcon = e.target.querySelector('.zoom-icon');
                 if (zoomIcon) zoomIcon.style.opacity = '0';
@@ -790,7 +790,7 @@ const Dashboard = () => {
               height: isMobile ? '50vh' : '60vh',
               maxWidth: '800px',
               backgroundColor: 'rgba(255, 215, 0, 0.1)',
-              border: '3px solid #FFD700',
+              border: 'none',
               borderRadius: '15px',
               alignItems: 'center',
               justifyContent: 'center',

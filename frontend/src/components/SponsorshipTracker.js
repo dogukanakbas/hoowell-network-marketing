@@ -95,7 +95,7 @@ const SponsorshipTracker = () => {
 
       {/* Ana Container */}
       <div style={{
-        maxWidth: '1400px',
+        width: '100%',
         margin: '0 auto',
         backgroundColor: 'rgba(255, 255, 255, 0.95)',
         borderRadius: '20px',
@@ -105,12 +105,13 @@ const SponsorshipTracker = () => {
       }}>
         
         {/* Tablo */}
-        <div style={{ overflowX: 'auto' }}>
+        <div style={{ width: '100%' }}>
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(10, 1fr)',
-            gap: '2px',
-            fontSize: '12px'
+            gap: '1px',
+            fontSize: '10px',
+            width: '100%'
           }}>
             {/* Başlık Satırı */}
             <div style={{

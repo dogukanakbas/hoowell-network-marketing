@@ -108,13 +108,12 @@ const Layout = () => {
 
   // Admin menü öğeleri
   const adminMenuItems = [
-    { path: '/admin/system-settings', label: 'Sistem Ayarları' },
     { path: '/admin/company-management', label: 'Şirket Yönetimi' },
     { path: '/admin/monthly-sales', label: 'Aylık Satışlar' },
     { path: '/admin/payment-details', label: 'Ödeme Detayları' },
           { path: '/admin/customer-data-fix', label: 'Müşteri Verileri' },
       { path: '/admin/partner-data-fix', label: 'İş Ortağı Verileri' },
-    { path: '/admin/career-management', label: 'Kariyer Yönetimi' },
+    { path: '/admin/career-management', label: 'Sistem Ayarları' },
     { path: '/admin/question-management', label: 'Soru Yönetimi' }
   ];
 
@@ -651,8 +650,8 @@ const Layout = () => {
                     <span style={{ color: '#ccc' }}>4.800 TL (KDV Dahil)</span>
                   </div>
                   <div style={{ fontSize: '13px' }}>
-                    <strong>🤝 Franchise Paketi</strong><br />
-                    <span style={{ color: '#ccc' }}>86.400 TL (Cihaz + Eğitim)</span>
+                    <strong>🤝 Liderlik Kampı 3 Günlük Katılım Bileti</strong><br />
+                    <span style={{ color: '#ccc' }}>4.800 TL (KDV Dahil)</span>
                   </div>
                   <div style={{ fontSize: '13px' }}>
                     <strong>🔧 Yedek Parçalar</strong><br />

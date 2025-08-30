@@ -61,7 +61,8 @@ const PaymentSuccess = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '20px'
+        padding: '20px',
+        width: '100%'
       }}>
         <div style={{
           backgroundColor: 'white',
@@ -69,6 +70,8 @@ const PaymentSuccess = () => {
           padding: '40px',
           textAlign: 'center',
           maxWidth: '500px',
+          width: '90%',
+          margin: '0 auto',
           boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
         }}>
           <div style={{ fontSize: '24px', marginBottom: '20px' }}>⏳</div>
@@ -85,7 +88,8 @@ const PaymentSuccess = () => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: '20px'
+      padding: '20px',
+      width: '100%'
     }}>
       <div style={{
         backgroundColor: 'white',
@@ -93,6 +97,8 @@ const PaymentSuccess = () => {
         padding: '40px',
         textAlign: 'center',
         maxWidth: '600px',
+        width: '90%',
+        margin: '0 auto',
         boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
       }}>
 
@@ -113,7 +119,11 @@ const PaymentSuccess = () => {
                 padding: '20px',
                 borderRadius: '10px',
                 marginBottom: '30px',
-                textAlign: 'center'
+                textAlign: 'center',
+                width: '100%',
+                maxWidth: '500px',
+                marginLeft: 'auto',
+                marginRight: 'auto'
               }}>
                 <h4 style={{ marginBottom: '15px' }}>Ödeme Detayları:</h4>
                 <div style={{ display: 'grid', gap: '10px', textAlign: 'left', maxWidth: '300px', margin: '0 auto' }}>
