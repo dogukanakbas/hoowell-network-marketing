@@ -4,6 +4,11 @@ import axios from 'axios';
 const AdminCareerManagement = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('urun');
+  const [products, setProducts] = useState([]);
+  const [productsLoading, setProductsLoading] = useState(false);
+  const [saveLoading, setSaveLoading] = useState(false);
+  const [message, setMessage] = useState('');
+  const [messageType, setMessageType] = useState('');
   
   const careerLevels = [
     {
@@ -114,7 +119,81 @@ const AdminCareerManagement = () => {
 
   useEffect(() => {
     setLoading(false);
-  }, []);
+    if (activeTab === 'urun') {
+      fetchProducts();
+    }
+  }, [activeTab]);
+
+  // Ürünleri getir
+  const fetchProducts = async () => {
+    setProductsLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get('/api/admin/products', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      if (response.data.success) {
+        setProducts(response.data.products);
+      }
+    } catch (error) {
+      console.error('Ürünler yüklenirken hata:', error);
+      setMessage('Ürünler yüklenirken hata oluştu');
+      setMessageType('error');
+    } finally {
+      setProductsLoading(false);
+    }
+  };
+
+  // Ürün kaydet/güncelle
+  const saveProduct = async (productData, isNew = false) => {
+    setSaveLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const url = isNew ? '/api/admin/products' : `/api/admin/products/${productData.id}`;
+      const method = isNew ? 'post' : 'put';
+      
+      const response = await axios[method](url, productData, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      if (response.data.success) {
+        setMessage(response.data.message);
+        setMessageType('success');
+        fetchProducts(); // Listeyi yenile
+      }
+    } catch (error) {
+      console.error('Ürün kaydedilirken hata:', error);
+      setMessage(error.response?.data?.message || 'Ürün kaydedilirken hata oluştu');
+      setMessageType('error');
+    } finally {
+      setSaveLoading(false);
+    }
+  };
+
+  // Ürün sil
+  const deleteProduct = async (productId) => {
+    if (!window.confirm('Bu ürünü silmek istediğinizden emin misiniz?')) {
+      return;
+    }
+    
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.delete(`/api/admin/products/${productId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      if (response.data.success) {
+        setMessage(response.data.message);
+        setMessageType('success');
+        fetchProducts(); // Listeyi yenile
+      }
+    } catch (error) {
+      console.error('Ürün silinirken hata:', error);
+      setMessage(error.response?.data?.message || 'Ürün silinirken hata oluştu');
+      setMessageType('error');
+    }
+  };
 
   if (loading) {
     return (
@@ -221,6 +300,22 @@ const AdminCareerManagement = () => {
         </button>
       </div>
 
+      {/* Mesaj Gösterimi */}
+      {message && (
+        <div style={{
+          padding: '10px 20px',
+          margin: '20px auto',
+          borderRadius: '10px',
+          textAlign: 'center',
+          maxWidth: '500px',
+          backgroundColor: messageType === 'success' ? '#d4edda' : '#f8d7da',
+          color: messageType === 'success' ? '#155724' : '#721c24',
+          border: `1px solid ${messageType === 'success' ? '#c3e6cb' : '#f5c6cb'}`
+        }}>
+          {message}
+        </div>
+      )}
+
       {/* Ürün Yönetimi Tablosu */}
       {activeTab === 'urun' && (
         <div style={{
@@ -231,64 +326,410 @@ const AdminCareerManagement = () => {
           boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
           marginBottom: '30px'
         }}>
-          {/* Tablo Container - Hizalama için */}
+          {/* Yeni Ürün Ekleme Butonu */}
           <div style={{
-            display: 'table',
-            width: '100%',
-            borderCollapse: 'collapse'
+            textAlign: 'right',
+            marginBottom: '20px'
           }}>
-            {/* Tablo Header */}
-            <div style={{
-              display: 'table-row'
-            }}>
-              {['ÜRÜNÜN ADI', 'ÜRÜNÜN KODU', 'USD FİYATI', 'KKP PUANI', 'KDV YÜZDESİ', 'SATIŞ FİYATI (₺)', 'KDV FİYATI', 'TOPLAM FİYAT', 'STOK ADEDİ'].map((header, index) => (
-                <div key={index} style={{
-                  display: 'table-cell',
-                  background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)',
-                  color: '#000',
-                  padding: '10px 5px',
-                  textAlign: 'center',
-                  fontSize: '11px',
-                  fontWeight: 'bold',
-                  borderRadius: '5px',
-                  border: '1px solid #FFD700',
-                  verticalAlign: 'middle',
-                  width: '11.11%' // 100% / 9 columns
-                }}>
-                  {header}
-                </div>
-              ))}
-            </div>
-
-            {/* Tablo Content */}
-            <div style={{
-              display: 'table-row'
-            }}>
-              {Array.from({ length: 9 }, (_, colIndex) => (
-                <div key={colIndex} style={{
-                  display: 'table-cell',
-                  padding: '2px',
-                  verticalAlign: 'top',
-                  width: '11.11%' // 100% / 9 columns
-                }}>
-                  <input
-                    type="text"
-                    style={{
-                      backgroundColor: 'white',
-                      border: '1px solid #ddd',
-                      borderRadius: '5px',
-                      padding: '8px',
-                      textAlign: 'center',
-                      fontSize: '12px',
-                      width: '100%',
-                      boxSizing: 'border-box'
-                    }}
-                    placeholder="Değer girin"
-                  />
-                </div>
-              ))}
-            </div>
+            <button
+              onClick={() => setProducts([...products, {
+                id: `new_${Date.now()}`,
+                product_name: '',
+                product_code: '',
+                usd_price: '',
+                kkp_points: '',
+                vat_percentage: '20',
+                sale_price_try: '',
+                vat_price: '',
+                total_price: '',
+                stock_quantity: ''
+              }])}
+              style={{
+                background: 'linear-gradient(135deg, #28a745, #20c997)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '10px',
+                padding: '10px 20px',
+                fontSize: '14px',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
+              }}
+            >
+              + Yeni Ürün Ekle
+            </button>
           </div>
+
+          {/* Loading Durumu */}
+          {productsLoading && (
+            <div style={{
+              textAlign: 'center',
+              padding: '20px',
+              color: '#FFD700',
+              fontSize: '16px'
+            }}>
+              Ürünler yükleniyor...
+            </div>
+          )}
+
+          {/* Ürünler Tablosu */}
+          {!productsLoading && (
+            <div style={{
+              display: 'table',
+              width: '100%',
+              borderCollapse: 'collapse'
+            }}>
+              {/* Tablo Header */}
+              <div style={{
+                display: 'table-row'
+              }}>
+                {['ÜRÜNÜN ADI', 'ÜRÜNÜN KODU', 'USD FİYATI', 'KKP PUANI', 'KDV YÜZDESİ', 'SATIŞ FİYATI (₺)', 'KDV FİYATI', 'TOPLAM FİYAT', 'STOK ADEDİ', 'İŞLEMLER'].map((header, index) => (
+                  <div key={index} style={{
+                    display: 'table-cell',
+                    background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)',
+                    color: '#000',
+                    padding: '10px 5px',
+                    textAlign: 'center',
+                    fontSize: '10px',
+                    fontWeight: 'bold',
+                    borderRadius: '5px',
+                    border: '1px solid #FFD700',
+                    verticalAlign: 'middle',
+                    width: index === 9 ? '8%' : '10.22%' // Son sütun daha dar
+                  }}>
+                    {header}
+                  </div>
+                ))}
+              </div>
+
+              {/* Ürün Satırları */}
+              {products.map((product, rowIndex) => (
+                <div key={product.id} style={{
+                  display: 'table-row'
+                }}>
+                  {/* Ürün Adı */}
+                  <div style={{
+                    display: 'table-cell',
+                    padding: '2px',
+                    verticalAlign: 'top',
+                    width: '10.22%'
+                  }}>
+                    <input
+                      type="text"
+                      value={product.product_name || ''}
+                      onChange={(e) => {
+                        const newProducts = [...products];
+                        newProducts[rowIndex].product_name = e.target.value;
+                        setProducts(newProducts);
+                      }}
+                      style={{
+                        backgroundColor: 'white',
+                        border: '1px solid #ddd',
+                        borderRadius: '5px',
+                        padding: '6px',
+                        textAlign: 'center',
+                        fontSize: '10px',
+                        width: '100%',
+                        boxSizing: 'border-box'
+                      }}
+                      placeholder="Ürün adı"
+                    />
+                  </div>
+
+                  {/* Ürün Kodu */}
+                  <div style={{
+                    display: 'table-cell',
+                    padding: '2px',
+                    verticalAlign: 'top',
+                    width: '10.22%'
+                  }}>
+                    <input
+                      type="text"
+                      value={product.product_code || ''}
+                      onChange={(e) => {
+                        const newProducts = [...products];
+                        newProducts[rowIndex].product_code = e.target.value;
+                        setProducts(newProducts);
+                      }}
+                      style={{
+                        backgroundColor: 'white',
+                        border: '1px solid #ddd',
+                        borderRadius: '5px',
+                        padding: '6px',
+                        textAlign: 'center',
+                        fontSize: '10px',
+                        width: '100%',
+                        boxSizing: 'border-box'
+                      }}
+                      placeholder="Ürün kodu"
+                    />
+                  </div>
+
+                  {/* USD Fiyatı */}
+                  <div style={{
+                    display: 'table-cell',
+                    padding: '2px',
+                    verticalAlign: 'top',
+                    width: '10.22%'
+                  }}>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={product.usd_price || ''}
+                      onChange={(e) => {
+                        const newProducts = [...products];
+                        newProducts[rowIndex].usd_price = e.target.value;
+                        setProducts(newProducts);
+                      }}
+                      style={{
+                        backgroundColor: 'white',
+                        border: '1px solid #ddd',
+                        borderRadius: '5px',
+                        padding: '6px',
+                        textAlign: 'center',
+                        fontSize: '10px',
+                        width: '100%',
+                        boxSizing: 'border-box'
+                      }}
+                      placeholder="USD"
+                    />
+                  </div>
+
+                  {/* KKP Puanı */}
+                  <div style={{
+                    display: 'table-cell',
+                    padding: '2px',
+                    verticalAlign: 'top',
+                    width: '10.22%'
+                  }}>
+                    <input
+                      type="number"
+                      value={product.kkp_points || ''}
+                      onChange={(e) => {
+                        const newProducts = [...products];
+                        newProducts[rowIndex].kkp_points = e.target.value;
+                        setProducts(newProducts);
+                      }}
+                      style={{
+                        backgroundColor: 'white',
+                        border: '1px solid #ddd',
+                        borderRadius: '5px',
+                        padding: '6px',
+                        textAlign: 'center',
+                        fontSize: '10px',
+                        width: '100%',
+                        boxSizing: 'border-box'
+                      }}
+                      placeholder="KKP"
+                    />
+                  </div>
+
+                  {/* KDV Yüzdesi */}
+                  <div style={{
+                    display: 'table-cell',
+                    padding: '2px',
+                    verticalAlign: 'top',
+                    width: '10.22%'
+                  }}>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={product.vat_percentage || ''}
+                      onChange={(e) => {
+                        const newProducts = [...products];
+                        newProducts[rowIndex].vat_percentage = e.target.value;
+                        setProducts(newProducts);
+                      }}
+                      style={{
+                        backgroundColor: 'white',
+                        border: '1px solid #ddd',
+                        borderRadius: '5px',
+                        padding: '6px',
+                        textAlign: 'center',
+                        fontSize: '10px',
+                        width: '100%',
+                        boxSizing: 'border-box'
+                      }}
+                      placeholder="%"
+                    />
+                  </div>
+
+                  {/* Satış Fiyatı (₺) */}
+                  <div style={{
+                    display: 'table-cell',
+                    padding: '2px',
+                    verticalAlign: 'top',
+                    width: '10.22%'
+                  }}>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={product.sale_price_try || ''}
+                      onChange={(e) => {
+                        const newProducts = [...products];
+                        newProducts[rowIndex].sale_price_try = e.target.value;
+                        setProducts(newProducts);
+                      }}
+                      style={{
+                        backgroundColor: 'white',
+                        border: '1px solid #ddd',
+                        borderRadius: '5px',
+                        padding: '6px',
+                        textAlign: 'center',
+                        fontSize: '10px',
+                        width: '100%',
+                        boxSizing: 'border-box'
+                      }}
+                      placeholder="₺"
+                    />
+                  </div>
+
+                  {/* KDV Fiyatı */}
+                  <div style={{
+                    display: 'table-cell',
+                    padding: '2px',
+                    verticalAlign: 'top',
+                    width: '10.22%'
+                  }}>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={product.vat_price || ''}
+                      onChange={(e) => {
+                        const newProducts = [...products];
+                        newProducts[rowIndex].vat_price = e.target.value;
+                        setProducts(newProducts);
+                      }}
+                      style={{
+                        backgroundColor: 'white',
+                        border: '1px solid #ddd',
+                        borderRadius: '5px',
+                        padding: '6px',
+                        textAlign: 'center',
+                        fontSize: '10px',
+                        width: '100%',
+                        boxSizing: 'border-box'
+                      }}
+                      placeholder="₺"
+                    />
+                  </div>
+
+                  {/* Toplam Fiyat */}
+                  <div style={{
+                    display: 'table-cell',
+                    padding: '2px',
+                    verticalAlign: 'top',
+                    width: '10.22%'
+                  }}>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={product.total_price || ''}
+                      onChange={(e) => {
+                        const newProducts = [...products];
+                        newProducts[rowIndex].total_price = e.target.value;
+                        setProducts(newProducts);
+                      }}
+                      style={{
+                        backgroundColor: 'white',
+                        border: '1px solid #ddd',
+                        borderRadius: '5px',
+                        padding: '6px',
+                        textAlign: 'center',
+                        fontSize: '10px',
+                        width: '100%',
+                        boxSizing: 'border-box'
+                      }}
+                      placeholder="₺"
+                    />
+                  </div>
+
+                  {/* Stok Adedi */}
+                  <div style={{
+                    display: 'table-cell',
+                    padding: '2px',
+                    verticalAlign: 'top',
+                    width: '10.22%'
+                  }}>
+                    <input
+                      type="number"
+                      value={product.stock_quantity || ''}
+                      onChange={(e) => {
+                        const newProducts = [...products];
+                        newProducts[rowIndex].stock_quantity = e.target.value;
+                        setProducts(newProducts);
+                      }}
+                      style={{
+                        backgroundColor: 'white',
+                        border: '1px solid #ddd',
+                        borderRadius: '5px',
+                        padding: '6px',
+                        textAlign: 'center',
+                        fontSize: '10px',
+                        width: '100%',
+                        boxSizing: 'border-box'
+                      }}
+                      placeholder="Adet"
+                    />
+                  </div>
+
+                  {/* İşlemler */}
+                  <div style={{
+                    display: 'table-cell',
+                    padding: '2px',
+                    verticalAlign: 'top',
+                    width: '8%',
+                    textAlign: 'center'
+                  }}>
+                    <div style={{
+                      display: 'flex',
+                      gap: '5px',
+                      justifyContent: 'center'
+                    }}>
+                      {/* Kaydet Butonu */}
+                      <button
+                        onClick={() => {
+                          const isNew = product.id.toString().startsWith('new_');
+                          saveProduct(product, isNew);
+                        }}
+                        disabled={saveLoading}
+                        style={{
+                          background: 'linear-gradient(135deg, #28a745, #20c997)',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '5px',
+                          padding: '4px 8px',
+                          fontSize: '9px',
+                          cursor: 'pointer',
+                          opacity: saveLoading ? 0.6 : 1
+                        }}
+                      >
+                        {saveLoading ? '...' : '💾'}
+                      </button>
+
+                      {/* Sil Butonu */}
+                      {!product.id.toString().startsWith('new_') && (
+                        <button
+                          onClick={() => deleteProduct(product.id)}
+                          style={{
+                            background: 'linear-gradient(135deg, #dc3545, #c82333)',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '5px',
+                            padding: '4px 8px',
+                            fontSize: '9px',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          🗑️
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 

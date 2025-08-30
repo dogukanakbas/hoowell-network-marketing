@@ -32,6 +32,33 @@ INSERT INTO system_settings (setting_key, setting_value) VALUES
 ('presidents_team_partners_required', '25'),
 ('country_distributor_partners_required', '30');
 
+-- Products Table
+CREATE TABLE products (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    product_name VARCHAR(255) NOT NULL,
+    product_code VARCHAR(50) UNIQUE NOT NULL,
+    usd_price DECIMAL(10,2) NOT NULL,
+    kkp_points INT DEFAULT 0,
+    vat_percentage DECIMAL(5,2) DEFAULT 20.00,
+    sale_price_try DECIMAL(10,2),
+    vat_price DECIMAL(10,2),
+    total_price DECIMAL(10,2),
+    stock_quantity INT DEFAULT 0,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_product_code (product_code),
+    INDEX idx_is_active (is_active)
+);
+
+-- Insert default products
+INSERT INTO products (product_name, product_code, usd_price, kkp_points, vat_percentage, sale_price_try, vat_price, total_price, stock_quantity) VALUES
+('Eğitim Paketi', 'EDU001', 100.00, 100, 20.00, 4000.00, 800.00, 4800.00, 999),
+('Cihaz Paketi', 'DEV001', 1800.00, 1800, 20.00, 72000.00, 14400.00, 86400.00, 50),
+('Bronze Paketi', 'BRONZE001', 500.00, 500, 20.00, 20000.00, 4000.00, 24000.00, 100),
+('Silver Paketi', 'SILVER001', 1000.00, 1000, 20.00, 40000.00, 8000.00, 48000.00, 75),
+('Gold Paketi', 'GOLD001', 2000.00, 2000, 20.00, 80000.00, 16000.00, 96000.00, 25);
+
 -- Users Table
 CREATE TABLE users (
     id INT PRIMARY KEY AUTO_INCREMENT,

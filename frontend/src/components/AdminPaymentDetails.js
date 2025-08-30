@@ -3,22 +3,91 @@ import axios from 'axios';
 
 const AdminPaymentDetails = () => {
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('gunluk');
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedMonth, setSelectedMonth] = useState('AY SEÇİN');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [methodFilter, setMethodFilter] = useState('all');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [paymentData, setPaymentData] = useState([]);
+  const [paymentSummary, setPaymentSummary] = useState({});
+  const [methodStats, setMethodStats] = useState([]);
+  const [dataLoading, setDataLoading] = useState(false);
+  const [updateLoading, setUpdateLoading] = useState(false);
+  const [message, setMessage] = useState('');
+  const [messageType, setMessageType] = useState('');
 
   useEffect(() => {
+    setLoading(false);
     fetchPaymentData();
   }, []);
 
+  useEffect(() => {
+    fetchPaymentData();
+  }, [statusFilter, methodFilter, startDate, endDate, searchTerm]);
+
   const fetchPaymentData = async () => {
+    setDataLoading(true);
     try {
-      // API'den ödeme verilerini çek
-      setLoading(false);
+      const token = localStorage.getItem('token');
+      const params = new URLSearchParams();
+      
+      if (statusFilter !== 'all') {
+        params.append('status', statusFilter);
+      }
+      
+      if (methodFilter !== 'all') {
+        params.append('payment_method', methodFilter);
+      }
+      
+      if (startDate && endDate) {
+        params.append('start_date', startDate);
+        params.append('end_date', endDate);
+      }
+      
+      if (searchTerm) {
+        params.append('search', searchTerm);
+      }
+
+      const response = await axios.get(`/api/admin/payment-details?${params}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      if (response.data.success) {
+        setPaymentData(response.data.data.payments);
+        setPaymentSummary(response.data.data.summary);
+        setMethodStats(response.data.data.methodStats);
+      }
     } catch (error) {
       console.error('Ödeme verileri yüklenirken hata:', error);
-      setLoading(false);
+      setMessage('Ödeme verileri yüklenirken hata oluştu');
+      setMessageType('error');
+    } finally {
+      setDataLoading(false);
+    }
+  };
+
+  const updatePaymentStatus = async (paymentId, newStatus, notes = '') => {
+    setUpdateLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.put(`/api/admin/payment-details/${paymentId}/status`, {
+        status: newStatus,
+        notes: notes
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      if (response.data.success) {
+        setMessage(response.data.message);
+        setMessageType('success');
+        fetchPaymentData(); // Listeyi yenile
+      }
+    } catch (error) {
+      console.error('Ödeme durumu güncellenirken hata:', error);
+      setMessage(error.response?.data?.message || 'Ödeme durumu güncellenirken hata oluştu');
+      setMessageType('error');
+    } finally {
+      setUpdateLoading(false);
     }
   };
 
@@ -82,16 +151,33 @@ const AdminPaymentDetails = () => {
         </h1>
       </div>
 
+      {/* Mesaj Gösterimi */}
+      {message && (
+        <div style={{
+          padding: '10px 20px',
+          margin: '20px auto',
+          borderRadius: '10px',
+          textAlign: 'center',
+          maxWidth: '500px',
+          backgroundColor: messageType === 'success' ? '#d4edda' : '#f8d7da',
+          color: messageType === 'success' ? '#155724' : '#721c24',
+          border: `1px solid ${messageType === 'success' ? '#c3e6cb' : '#f5c6cb'}`
+        }}>
+          {message}
+        </div>
+      )}
+
       {/* Filtre Alanları */}
       <div style={{
         display: 'flex',
         justifyContent: 'center',
         gap: '20px',
-        marginBottom: '30px'
+        marginBottom: '30px',
+        flexWrap: 'wrap'
       }}>
         <input
           type="text"
-          placeholder="Ara..."
+          placeholder="Müşteri adı, transaction ID ara..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           style={{
@@ -103,19 +189,9 @@ const AdminPaymentDetails = () => {
             width: '200px'
           }}
         />
-        <button style={{
-          padding: '12px 20px',
-          fontSize: '16px',
-          borderRadius: '25px',
-          border: '2px solid #FFD700',
-          backgroundColor: 'white',
-          cursor: 'pointer'
-        }}>
-          GÜN SEÇİN
-        </button>
         <select
-          value={selectedMonth}
-          onChange={(e) => setSelectedMonth(e.target.value)}
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
           style={{
             padding: '12px 20px',
             fontSize: '16px',
@@ -125,141 +201,409 @@ const AdminPaymentDetails = () => {
             width: '150px'
           }}
         >
-          <option value="AY SEÇİN">AY SEÇİN</option>
-          <option value="OCAK">OCAK</option>
-          <option value="ŞUBAT">ŞUBAT</option>
-          <option value="MART">MART</option>
-          <option value="NİSAN">NİSAN</option>
-          <option value="MAYIS">MAYIS</option>
-          <option value="HAZİRAN">HAZİRAN</option>
-          <option value="TEMMUZ">TEMMUZ</option>
-          <option value="AĞUSTOS">AĞUSTOS</option>
-          <option value="EYLÜL">EYLÜL</option>
-          <option value="EKİM">EKİM</option>
-          <option value="KASIM">KASIM</option>
-          <option value="ARALIK">ARALIK</option>
+          <option value="all">Tüm Durumlar</option>
+          <option value="pending">Beklemede</option>
+          <option value="approved">Onaylandı</option>
+          <option value="rejected">Reddedildi</option>
+          <option value="verified">Doğrulandı</option>
         </select>
-      </div>
-
-      {/* Tab Butonları */}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        gap: '20px',
-        marginBottom: '30px'
-      }}>
-        <button
-          onClick={() => setActiveTab('gunluk')}
+        <select
+          value={methodFilter}
+          onChange={(e) => setMethodFilter(e.target.value)}
           style={{
-            background: activeTab === 'gunluk' 
-              ? 'linear-gradient(135deg, #FFD700, #FFA500)' 
-              : 'linear-gradient(135deg, #2a2a2a, #404040)',
-            color: activeTab === 'gunluk' ? '#000' : '#FFD700',
-            border: '2px solid #FFD700',
-            borderRadius: '15px',
-            padding: '12px 30px',
+            padding: '12px 20px',
             fontSize: '16px',
-            fontWeight: 'bold',
-            cursor: 'pointer',
-            boxShadow: '0 5px 15px rgba(0,0,0,0.3)'
+            borderRadius: '25px',
+            border: '2px solid #FFD700',
+            backgroundColor: 'white',
+            width: '150px'
           }}
         >
-          FRANCHİSE SATIŞI
-        </button>
-        <button
-          onClick={() => setActiveTab('aylik')}
+          <option value="all">Tüm Yöntemler</option>
+          <option value="credit_card">Kredi Kartı</option>
+          <option value="bank_transfer">Banka Transferi</option>
+          <option value="cash">Nakit</option>
+          <option value="manual">Manuel</option>
+        </select>
+        <input
+          type="date"
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
           style={{
-            background: activeTab === 'aylik' 
-              ? 'linear-gradient(135deg, #FFD700, #FFA500)' 
-              : 'linear-gradient(135deg, #2a2a2a, #404040)',
-            color: activeTab === 'aylik' ? '#000' : '#FFD700',
-            border: '2px solid #FFD700',
-            borderRadius: '15px',
-            padding: '12px 30px',
+            padding: '12px 20px',
             fontSize: '16px',
-            fontWeight: 'bold',
-            cursor: 'pointer',
-            boxShadow: '0 5px 15px rgba(0,0,0,0.3)'
+            borderRadius: '25px',
+            border: '2px solid #FFD700',
+            backgroundColor: 'white',
+            width: '150px'
           }}
-        >
-          CİHAZ SATIŞI
-        </button>
+        />
+        <input
+          type="date"
+          value={endDate}
+          onChange={(e) => setEndDate(e.target.value)}
+          style={{
+            padding: '12px 20px',
+            fontSize: '16px',
+            borderRadius: '25px',
+            border: '2px solid #FFD700',
+            backgroundColor: 'white',
+            width: '150px'
+          }}
+        />
       </div>
 
-      {/* Ödeme Tablosu */}
-      <div style={{
-        background: 'linear-gradient(135deg, #1a4040 0%, #2a5555 50%, #1a4040 100%)',
-        borderRadius: '20px',
-        padding: '20px',
-        border: '3px solid #FFD700',
-        boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
-      }}>
-        {/* Tablo Header */}
+      {/* Özet İstatistikler */}
+      {Object.keys(paymentSummary).length > 0 && (
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(8, 1fr)',
-          gap: '2px',
-          marginBottom: '10px'
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: '20px',
+          marginBottom: '30px'
         }}>
-          {activeTab === 'gunluk' ? 
-            ['ID NUMARASI', 'ADI SOYADI', 'TELEFON NUMARASI', 'Email Adresi', 'YAŞADIĞI ŞEHİR', 'ÖDEME KREDİ KARTI', 'ÖDEME BANKA EFT', 'BANKA ONAYI'].map((header, index) => (
-              <div key={index} style={{
-                background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)',
-                color: '#000',
-                padding: '8px 4px',
-                textAlign: 'center',
-                fontSize: '10px',
-                fontWeight: 'bold',
-                borderRadius: '5px',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis'
-              }}>
-                {header}
-              </div>
-            )) :
-            ['ID NUMARASI', 'ADI SOYADI', 'TELEFON NUMARASI', 'SPONSOR ID', 'SPONSOR ADI', 'ÖDEME KREDİ KARTI', 'ÖDEME BANKA EFT', 'BANKA ONAYI'].map((header, index) => (
-              <div key={index} style={{
-                background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)',
-                color: '#000',
-                padding: '8px 4px',
-                textAlign: 'center',
-                fontSize: '10px',
-                fontWeight: 'bold',
-                borderRadius: '5px',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis'
-              }}>
-                {header}
-              </div>
-            ))
-          }
-        </div>
-
-        {/* Tablo Content - Boş satırlar */}
-        {Array.from({ length: 8 }, (_, rowIndex) => (
-          <div key={rowIndex} style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(8, 1fr)',
-            gap: '2px',
-            marginBottom: '2px'
+          <div style={{
+            background: 'linear-gradient(135deg, #28a745, #20c997)',
+            borderRadius: '15px',
+            padding: '20px',
+            textAlign: 'center',
+            color: 'white',
+            boxShadow: '0 5px 15px rgba(0,0,0,0.3)'
           }}>
-            {Array.from({ length: 8 }, (_, colIndex) => (
-              <div key={colIndex} style={{
-                backgroundColor: rowIndex % 2 === 0 ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.7)',
+            <h3 style={{ margin: '0 0 10px 0', fontSize: '18px' }}>Toplam Ödeme</h3>
+            <p style={{ margin: '0', fontSize: '24px', fontWeight: 'bold' }}>
+              {paymentSummary.total_payments || 0}
+            </p>
+          </div>
+          <div style={{
+            background: 'linear-gradient(135deg, #007bff, #0056b3)',
+            borderRadius: '15px',
+            padding: '20px',
+            textAlign: 'center',
+            color: 'white',
+            boxShadow: '0 5px 15px rgba(0,0,0,0.3)'
+          }}>
+            <h3 style={{ margin: '0 0 10px 0', fontSize: '18px' }}>Toplam Tutar (₺)</h3>
+            <p style={{ margin: '0', fontSize: '24px', fontWeight: 'bold' }}>
+              ₺{paymentSummary.total_amount_try || 0}
+            </p>
+          </div>
+          <div style={{
+            background: 'linear-gradient(135deg, #ffc107, #e0a800)',
+            borderRadius: '15px',
+            padding: '20px',
+            textAlign: 'center',
+            color: 'white',
+            boxShadow: '0 5px 15px rgba(0,0,0,0.3)'
+          }}>
+            <h3 style={{ margin: '0 0 10px 0', fontSize: '18px' }}>Onaylanan</h3>
+            <p style={{ margin: '0', fontSize: '24px', fontWeight: 'bold' }}>
+              {paymentSummary.approved_count || 0}
+            </p>
+          </div>
+          <div style={{
+            background: 'linear-gradient(135deg, #dc3545, #c82333)',
+            borderRadius: '15px',
+            padding: '20px',
+            textAlign: 'center',
+            color: 'white',
+            boxShadow: '0 5px 15px rgba(0,0,0,0.3)'
+          }}>
+            <h3 style={{ margin: '0 0 10px 0', fontSize: '18px' }}>Bekleyen</h3>
+            <p style={{ margin: '0', fontSize: '24px', fontWeight: 'bold' }}>
+              {paymentSummary.pending_count || 0}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Loading Durumu */}
+      {dataLoading && (
+        <div style={{
+          textAlign: 'center',
+          padding: '20px',
+          color: '#FFD700',
+          fontSize: '16px'
+        }}>
+          Ödeme verileri yükleniyor...
+        </div>
+      )}
+
+      {/* Ödeme Tablosu */}
+      {!dataLoading && (
+        <div style={{
+          background: 'linear-gradient(135deg, #1a4040 0%, #2a5555 50%, #1a4040 100%)',
+          borderRadius: '20px',
+          padding: '20px',
+          border: '3px solid #FFD700',
+          boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+          marginBottom: '30px'
+        }}>
+          {/* Tablo Header */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(10, 1fr)',
+            gap: '2px',
+            marginBottom: '10px'
+          }}>
+            {['ÖDEME ID', 'MÜŞTERİ', 'SPONSOR ID', 'ÜRÜN', 'TUTAR (₺)', 'TUTAR (USD)', 'YÖNTEM', 'DURUM', 'TARİH', 'İŞLEMLER'].map((header, index) => (
+              <div key={index} style={{
+                background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)',
+                color: '#000',
                 padding: '8px 4px',
                 textAlign: 'center',
-                fontSize: '11px',
-                borderRadius: '3px',
-                minHeight: '20px'
+                fontSize: '10px',
+                fontWeight: 'bold',
+                borderRadius: '5px'
               }}>
-                {/* Boş hücre */}
+                {header}
               </div>
             ))}
           </div>
-        ))}
-      </div>
+
+          {/* Tablo Content - Gerçek veriler */}
+          {paymentData.length > 0 ? (
+            paymentData.map((payment, rowIndex) => (
+              <div key={payment.id} style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(10, 1fr)',
+                gap: '2px',
+                marginBottom: '2px'
+              }}>
+                <div style={{
+                  backgroundColor: 'rgba(255,255,255,0.9)',
+                  padding: '8px 4px',
+                  textAlign: 'center',
+                  fontSize: '10px',
+                  borderRadius: '3px'
+                }}>
+                  {payment.id}
+                </div>
+                <div style={{
+                  backgroundColor: 'rgba(255,255,255,0.9)',
+                  padding: '8px 4px',
+                  textAlign: 'center',
+                  fontSize: '10px',
+                  borderRadius: '3px'
+                }}>
+                  {payment.first_name} {payment.last_name}
+                </div>
+                <div style={{
+                  backgroundColor: 'rgba(255,255,255,0.9)',
+                  padding: '8px 4px',
+                  textAlign: 'center',
+                  fontSize: '10px',
+                  borderRadius: '3px'
+                }}>
+                  {payment.sponsor_id}
+                </div>
+                <div style={{
+                  backgroundColor: 'rgba(255,255,255,0.9)',
+                  padding: '8px 4px',
+                  textAlign: 'center',
+                  fontSize: '10px',
+                  borderRadius: '3px'
+                }}>
+                  {payment.product_name || 'N/A'}
+                </div>
+                <div style={{
+                  backgroundColor: 'rgba(255,255,255,0.9)',
+                  padding: '8px 4px',
+                  textAlign: 'center',
+                  fontSize: '10px',
+                  borderRadius: '3px'
+                }}>
+                  ₺{payment.total_amount}
+                </div>
+                <div style={{
+                  backgroundColor: 'rgba(255,255,255,0.9)',
+                  padding: '8px 4px',
+                  textAlign: 'center',
+                  fontSize: '10px',
+                  borderRadius: '3px'
+                }}>
+                  ${payment.amount_usd}
+                </div>
+                <div style={{
+                  backgroundColor: 'rgba(255,255,255,0.9)',
+                  padding: '8px 4px',
+                  textAlign: 'center',
+                  fontSize: '10px',
+                  borderRadius: '3px'
+                }}>
+                  {payment.payment_method === 'credit_card' ? 'Kredi Kartı' :
+                   payment.payment_method === 'bank_transfer' ? 'Banka Transferi' :
+                   payment.payment_method === 'cash' ? 'Nakit' : 'Manuel'}
+                </div>
+                <div style={{
+                  backgroundColor: payment.status === 'approved' ? 'rgba(40, 167, 69, 0.9)' :
+                                  payment.status === 'pending' ? 'rgba(255, 193, 7, 0.9)' :
+                                  payment.status === 'rejected' ? 'rgba(220, 53, 69, 0.9)' :
+                                  'rgba(255,255,255,0.9)',
+                  padding: '8px 4px',
+                  textAlign: 'center',
+                  fontSize: '10px',
+                  borderRadius: '3px',
+                  color: payment.status === 'approved' ? 'white' : 'black'
+                }}>
+                  {payment.status === 'approved' ? 'Onaylandı' :
+                   payment.status === 'pending' ? 'Beklemede' :
+                   payment.status === 'rejected' ? 'Reddedildi' :
+                   payment.status === 'verified' ? 'Doğrulandı' : payment.status}
+                </div>
+                <div style={{
+                  backgroundColor: 'rgba(255,255,255,0.9)',
+                  padding: '8px 4px',
+                  textAlign: 'center',
+                  fontSize: '10px',
+                  borderRadius: '3px'
+                }}>
+                  {new Date(payment.created_at).toLocaleDateString('tr-TR')}
+                </div>
+                <div style={{
+                  backgroundColor: 'rgba(255,255,255,0.9)',
+                  padding: '8px 4px',
+                  textAlign: 'center',
+                  fontSize: '10px',
+                  borderRadius: '3px'
+                }}>
+                  <div style={{
+                    display: 'flex',
+                    gap: '5px',
+                    justifyContent: 'center'
+                  }}>
+                    {payment.status === 'pending' && (
+                      <>
+                        <button
+                          onClick={() => updatePaymentStatus(payment.id, 'approved')}
+                          disabled={updateLoading}
+                          style={{
+                            background: 'linear-gradient(135deg, #28a745, #20c997)',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '3px',
+                            padding: '2px 6px',
+                            fontSize: '8px',
+                            cursor: 'pointer',
+                            opacity: updateLoading ? 0.6 : 1
+                          }}
+                        >
+                          ✓
+                        </button>
+                        <button
+                          onClick={() => updatePaymentStatus(payment.id, 'rejected')}
+                          disabled={updateLoading}
+                          style={{
+                            background: 'linear-gradient(135deg, #dc3545, #c82333)',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '3px',
+                            padding: '2px 6px',
+                            fontSize: '8px',
+                            cursor: 'pointer',
+                            opacity: updateLoading ? 0.6 : 1
+                          }}
+                        >
+                          ✗
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div style={{
+              textAlign: 'center',
+              padding: '20px',
+              color: '#FFD700',
+              fontSize: '16px'
+            }}>
+              Ödeme verisi bulunamadı
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Ödeme Yöntemi İstatistikleri */}
+      {methodStats.length > 0 && (
+        <div style={{
+          background: 'linear-gradient(135deg, #1a4040 0%, #2a5555 50%, #1a4040 100%)',
+          borderRadius: '20px',
+          padding: '20px',
+          border: '3px solid #FFD700',
+          boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
+        }}>
+          <h3 style={{
+            color: '#FFD700',
+            textAlign: 'center',
+            marginBottom: '20px',
+            fontSize: '20px'
+          }}>
+            Ödeme Yöntemi İstatistikleri
+          </h3>
+          
+          {/* Yöntem İstatistikleri Tablosu */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(3, 1fr)',
+            gap: '2px',
+            marginBottom: '10px'
+          }}>
+            {['ÖDEME YÖNTEMİ', 'ÖDEME ADEDİ', 'TOPLAM TUTAR'].map((header, index) => (
+              <div key={index} style={{
+                background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)',
+                color: '#000',
+                padding: '8px 4px',
+                textAlign: 'center',
+                fontSize: '10px',
+                fontWeight: 'bold',
+                borderRadius: '5px'
+              }}>
+                {header}
+              </div>
+            ))}
+          </div>
+
+          {methodStats.map((method, index) => (
+            <div key={index} style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: '2px',
+              marginBottom: '2px'
+            }}>
+              <div style={{
+                backgroundColor: 'rgba(255,255,255,0.9)',
+                padding: '8px 4px',
+                textAlign: 'center',
+                fontSize: '10px',
+                borderRadius: '3px'
+              }}>
+                {method.payment_method === 'credit_card' ? 'Kredi Kartı' :
+                 method.payment_method === 'bank_transfer' ? 'Banka Transferi' :
+                 method.payment_method === 'cash' ? 'Nakit' : 'Manuel'}
+              </div>
+              <div style={{
+                backgroundColor: 'rgba(255,255,255,0.9)',
+                padding: '8px 4px',
+                textAlign: 'center',
+                fontSize: '10px',
+                borderRadius: '3px'
+              }}>
+                {method.payment_count}
+              </div>
+              <div style={{
+                backgroundColor: 'rgba(255,255,255,0.9)',
+                padding: '8px 4px',
+                textAlign: 'center',
+                fontSize: '10px',
+                borderRadius: '3px'
+              }}>
+                ₺{method.total_amount}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

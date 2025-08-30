@@ -4258,3 +4258,362 @@ app.post('/api/admin/accounting/approve/:id', verifyToken, verifyAdmin, async (r
     res.status(500).json({ message: 'Sunucu hatası' });
   }
 });
+
+// ==================== ADMIN PRODUCT MANAGEMENT API'LERİ ====================
+
+// Ürün listesi getir
+app.get('/api/admin/products', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const [products] = await db.promise().execute(`
+      SELECT * FROM products WHERE is_active = TRUE ORDER BY product_name
+    `);
+
+    res.json({
+      success: true,
+      products: products || []
+    });
+  } catch (error) {
+    console.error('Products fetch error:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Ürünler yüklenirken hata oluştu' 
+    });
+  }
+});
+
+// Yeni ürün ekle
+app.post('/api/admin/products', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const {
+      product_name,
+      product_code,
+      usd_price,
+      kkp_points,
+      vat_percentage,
+      sale_price_try,
+      vat_price,
+      total_price,
+      stock_quantity
+    } = req.body;
+
+    const [result] = await db.promise().execute(`
+      INSERT INTO products (
+        product_name, product_code, usd_price, kkp_points, vat_percentage,
+        sale_price_try, vat_price, total_price, stock_quantity, is_active
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, TRUE)
+    `, [product_name, product_code, usd_price, kkp_points, vat_percentage, sale_price_try, vat_price, total_price, stock_quantity]);
+
+    res.json({
+      success: true,
+      message: 'Ürün başarıyla eklendi',
+      product_id: result.insertId
+    });
+  } catch (error) {
+    console.error('Product creation error:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Ürün eklenirken hata oluştu' 
+    });
+  }
+});
+
+// Ürün güncelle
+app.put('/api/admin/products/:id', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      product_name,
+      product_code,
+      usd_price,
+      kkp_points,
+      vat_percentage,
+      sale_price_try,
+      vat_price,
+      total_price,
+      stock_quantity
+    } = req.body;
+
+    await db.promise().execute(`
+      UPDATE products SET
+        product_name = ?, product_code = ?, usd_price = ?, kkp_points = ?,
+        vat_percentage = ?, sale_price_try = ?, vat_price = ?, total_price = ?,
+        stock_quantity = ?, updated_at = NOW()
+      WHERE id = ?
+    `, [product_name, product_code, usd_price, kkp_points, vat_percentage, sale_price_try, vat_price, total_price, stock_quantity, id]);
+
+    res.json({
+      success: true,
+      message: 'Ürün başarıyla güncellendi'
+    });
+  } catch (error) {
+    console.error('Product update error:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Ürün güncellenirken hata oluştu' 
+    });
+  }
+});
+
+// Ürün sil (soft delete)
+app.delete('/api/admin/products/:id', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    await db.promise().execute(`
+      UPDATE products SET is_active = FALSE, updated_at = NOW() WHERE id = ?
+    `, [id]);
+
+    res.json({
+      success: true,
+      message: 'Ürün başarıyla silindi'
+    });
+  } catch (error) {
+    console.error('Product deletion error:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Ürün silinirken hata oluştu' 
+    });
+  }
+});
+
+// ==================== ADMIN PAYMENT DETAILS API'LERİ ====================
+
+// Ödeme detayları listesi
+app.get('/api/admin/payment-details', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const { page = 1, limit = 20, status, method, startDate, endDate, search } = req.query;
+    const offset = (page - 1) * limit;
+
+    let whereClause = 'WHERE 1=1';
+    const params = [];
+
+    if (status) {
+      whereClause += ' AND p.status = ?';
+      params.push(status);
+    }
+
+    if (method) {
+      whereClause += ' AND p.payment_type = ?';
+      params.push(method);
+    }
+
+    if (startDate) {
+      whereClause += ' AND DATE(p.created_at) >= ?';
+      params.push(startDate);
+    }
+
+    if (endDate) {
+      whereClause += ' AND DATE(p.created_at) <= ?';
+      params.push(endDate);
+    }
+
+    if (search) {
+      whereClause += ` AND (
+        u.first_name LIKE ? OR u.last_name LIKE ? OR u.email LIKE ?
+      )`;
+      const searchTerm = `%${search}%`;
+      params.push(searchTerm, searchTerm, searchTerm);
+    }
+
+    // Toplam kayıt sayısı
+    const [countResult] = await db.promise().execute(`
+      SELECT COUNT(*) as total
+      FROM payments p
+      LEFT JOIN users u ON p.user_id = u.id
+      ${whereClause}
+    `, params);
+
+    const totalRecords = countResult[0].total;
+    const totalPages = Math.ceil(totalRecords / limit);
+
+    // Ödeme verileri - Basit sorgu ile
+    const [payments] = await db.promise().execute(`
+      SELECT 
+        p.*,
+        CONCAT(COALESCE(u.first_name, ''), ' ', COALESCE(u.last_name, '')) as user_name
+      FROM payments p
+      LEFT JOIN users u ON p.user_id = u.id
+      ORDER BY p.created_at DESC
+      LIMIT ? OFFSET ?
+    `, [parseInt(limit), parseInt(offset)]);
+
+    // Ödeme yöntemi istatistikleri
+    const [methodStats] = await db.promise().execute(`
+      SELECT 
+        payment_type,
+        COUNT(*) as count,
+        SUM(total_amount) as total_amount
+      FROM payments
+      WHERE status = 'approved'
+      GROUP BY payment_type
+    `);
+
+    // Ödeme özeti
+    const [summary] = await db.promise().execute(`
+      SELECT 
+        COUNT(*) as total_payments,
+        SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending_payments,
+        SUM(CASE WHEN status = 'approved' THEN 1 ELSE 0 END) as approved_payments,
+        SUM(CASE WHEN status = 'rejected' THEN 1 ELSE 0 END) as rejected_payments,
+        SUM(CASE WHEN status = 'approved' THEN total_amount ELSE 0 END) as total_approved_amount
+      FROM payments
+    `);
+
+    res.json({
+      success: true,
+      payments: payments || [],
+      pagination: {
+        current_page: parseInt(page),
+        total_pages: totalPages,
+        total_records: totalRecords,
+        limit: parseInt(limit)
+      },
+      summary: summary[0] || {},
+      method_stats: methodStats || []
+    });
+
+  } catch (error) {
+    console.error('Payment details fetch error:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Ödeme verileri yüklenirken hata oluştu' 
+    });
+  }
+});
+
+// Ödeme durumu güncelle
+app.put('/api/admin/payment-details/:id/status', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status, notes } = req.body;
+
+    await db.promise().execute(`
+      UPDATE payments SET status = ? WHERE id = ?
+    `, [status, id]);
+
+    res.json({
+      success: true,
+      message: 'Ödeme durumu başarıyla güncellendi'
+    });
+  } catch (error) {
+    console.error('Payment status update error:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Ödeme durumu güncellenirken hata oluştu' 
+    });
+  }
+});
+
+// ==================== ADMIN MONTHLY SALES API'LERİ ====================
+
+// Aylık satış verileri
+app.get('/api/admin/monthly-sales', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const { year = new Date().getFullYear(), month, search } = req.query;
+
+    let whereClause = 'WHERE 1=1';
+    const params = [];
+
+    if (year) {
+      whereClause += ' AND YEAR(s.created_at) = ?';
+      params.push(year);
+    }
+
+    if (month) {
+      whereClause += ' AND MONTH(s.created_at) = ?';
+      params.push(month);
+    }
+
+    if (search) {
+      whereClause += ` AND (
+        u.first_name LIKE ? OR u.last_name LIKE ? OR u.email LIKE ? OR
+        p.product_name LIKE ?
+      )`;
+      const searchTerm = `%${search}%`;
+      params.push(searchTerm, searchTerm, searchTerm, searchTerm);
+    }
+
+    // Satış verileri
+    const [sales] = await db.promise().execute(`
+      SELECT 
+        s.*,
+        CONCAT(COALESCE(u.first_name, ''), ' ', COALESCE(u.last_name, '')) as seller_name,
+        p.product_name
+      FROM sales s
+      LEFT JOIN users u ON s.seller_id = u.id
+      LEFT JOIN products p ON s.product_id = p.id
+      ${whereClause}
+      ORDER BY s.created_at DESC
+    `, params);
+
+    // Ürün bazında istatistikler
+    const [productStats] = await db.promise().execute(`
+      SELECT 
+        p.product_name,
+        COUNT(*) as sale_count,
+        SUM(s.amount_usd) as total_amount_usd,
+        SUM(s.kkp_earned) as total_kkp
+      FROM sales s
+      LEFT JOIN products p ON s.product_id = p.id
+      ${whereClause}
+      GROUP BY p.id, p.product_name
+      ORDER BY total_amount_usd DESC
+    `, params);
+
+    // Aylık özet
+    const [monthlySummary] = await db.promise().execute(`
+      SELECT 
+        COUNT(*) as total_sales,
+        SUM(amount_usd) as total_amount_usd,
+        SUM(kkp_earned) as total_kkp,
+        AVG(amount_usd) as avg_amount_usd
+      FROM sales
+      ${whereClause}
+    `, params);
+
+    res.json({
+      success: true,
+      sales: sales || [],
+      product_stats: productStats || [],
+      monthly_summary: monthlySummary[0] || {}
+    });
+
+  } catch (error) {
+    console.error('Monthly sales fetch error:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Aylık satış verileri yüklenirken hata oluştu' 
+    });
+  }
+});
+
+// Satış özeti
+app.get('/api/admin/sales-summary', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const { year = new Date().getFullYear() } = req.query;
+
+    const [summary] = await db.promise().execute(`
+      SELECT 
+        MONTH(created_at) as month,
+        COUNT(*) as total_sales,
+        SUM(amount_usd) as total_amount_usd,
+        AVG(amount_usd) as avg_amount_usd
+      FROM sales
+      WHERE YEAR(created_at) = ?
+      GROUP BY MONTH(created_at)
+      ORDER BY month
+    `, [year]);
+
+    res.json({
+      success: true,
+      summary: summary || []
+    });
+
+  } catch (error) {
+    console.error('Sales summary fetch error:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Satış özeti yüklenirken hata oluştu' 
+    });
+  }
+});
