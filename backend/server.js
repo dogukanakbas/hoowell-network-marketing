@@ -2418,7 +2418,7 @@ app.post('/api/partner/register', verifyToken, async (req, res) => {
           email: userData.email
         });
 
-        console.log(`✅ Welcome emails sent to: ${userData.email} and ${sponsor[0].email}`);
+        console.log(`✅ Welcome emails sent to: ${userData.email} (new partner) and ${sponsor[0].email} (sponsor)`);
       }
     } catch (emailError) {
       console.error('❌ Email send error:', emailError);
@@ -2616,7 +2616,7 @@ app.post('/api/partner/register-new', verifyToken, async (req, res) => {
           email: userData.email
         });
 
-        console.log(`✅ Welcome emails sent to: ${userData.email} and ${sponsor[0].email}`);
+        console.log(`✅ Welcome emails sent to: ${userData.email} (new partner) and ${sponsor[0].email} (sponsor)`);
       }
     } catch (emailError) {
       console.error('❌ Email send error:', emailError);
