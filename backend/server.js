@@ -5,7 +5,6 @@ const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
-const { sendNewRegistrationEmail } = require('./emailService');
 const { 
   sendCustomerWelcomeEmail, 
   sendSellerNotificationEmail, 
@@ -2384,16 +2383,46 @@ app.post('/api/partner/register', verifyToken, async (req, res) => {
     // Update sponsor's activity status
     await updateUserActivityStatus(req.user.id);
 
-    // Send registration email
+    // Send welcome emails
     try {
-      await sendNewRegistrationEmail(userData.email, {
-        first_name: userData.first_name,
-        last_name: userData.last_name,
-        sponsor_id: newSponsorId,
-        password: randomPassword
-      });
+      // Get sponsor information
+      const [sponsor] = await db.promise().execute(
+        'SELECT email, first_name, last_name, sponsor_id, phone FROM users WHERE id = ?',
+        [req.user.id]
+      );
+
+      if (sponsor[0]) {
+        // 1. Send welcome email to new partner
+        await sendPartnerWelcomeEmail({
+          email: userData.email,
+          first_name: userData.first_name,
+          last_name: userData.last_name,
+          sponsor_id: newSponsorId,
+          temp_password: randomPassword
+        }, {
+          first_name: sponsor[0].first_name,
+          last_name: sponsor[0].last_name,
+          sponsor_id: sponsor[0].sponsor_id,
+          phone: sponsor[0].phone
+        });
+
+        // 2. Send notification email to sponsor
+        await sendSponsorNotificationEmail({
+          email: sponsor[0].email,
+          first_name: sponsor[0].first_name
+        }, {
+          first_name: userData.first_name,
+          last_name: userData.last_name,
+          sponsor_id: newSponsorId,
+          phone: userData.phone,
+          email: userData.email
+        });
+
+        console.log(`✅ Welcome emails sent to: ${userData.email} and ${sponsor[0].email}`);
+      }
     } catch (emailError) {
-      console.error('Email send error:', emailError);
+      console.error('❌ Email send error:', emailError);
+      // Don't fail the registration if email fails
     }
 
     res.json({
