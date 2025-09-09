@@ -6,6 +6,13 @@ const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const { sendNewRegistrationEmail } = require('./emailService');
+const { 
+  sendCustomerWelcomeEmail, 
+  sendSellerNotificationEmail, 
+  sendPartnerWelcomeEmail, 
+  sendSponsorNotificationEmail,
+  sendAccountingReportEmail
+} = require('./services/mailService');
 require('dotenv').config();
 
 const app = express();
@@ -2545,17 +2552,45 @@ app.post('/api/partner/register-new', verifyToken, async (req, res) => {
       ]
     );
 
-    // Send welcome email
+    // Send welcome emails
     try {
-      const emailData = {
-        ...userData,
-        sponsor_id: newSponsorId,
-        username: userData.username
-      };
-      await sendNewRegistrationEmail(emailData, randomPassword);
-      console.log(`Welcome email sent to: ${userData.email}`);
+      // Get sponsor information
+      const [sponsor] = await db.promise().execute(
+        'SELECT email, first_name, last_name, sponsor_id, phone FROM users WHERE id = ?',
+        [req.user.id]
+      );
+
+      if (sponsor[0]) {
+        // 1. Send welcome email to new partner
+        await sendPartnerWelcomeEmail({
+          email: userData.email,
+          first_name: userData.first_name,
+          last_name: userData.last_name,
+          sponsor_id: userData.sponsor_id,
+          temp_password: randomPassword
+        }, {
+          first_name: sponsor[0].first_name,
+          last_name: sponsor[0].last_name,
+          sponsor_id: sponsor[0].sponsor_id,
+          phone: sponsor[0].phone
+        });
+
+        // 2. Send notification email to sponsor
+        await sendSponsorNotificationEmail({
+          email: sponsor[0].email,
+          first_name: sponsor[0].first_name
+        }, {
+          first_name: userData.first_name,
+          last_name: userData.last_name,
+          sponsor_id: userData.sponsor_id,
+          phone: userData.phone,
+          email: userData.email
+        });
+
+        console.log(`✅ Welcome emails sent to: ${userData.email} and ${sponsor[0].email}`);
+      }
     } catch (emailError) {
-      console.error('Email send error:', emailError);
+      console.error('❌ Email send error:', emailError);
       // Don't fail the registration if email fails
     }
 
@@ -2752,6 +2787,50 @@ app.post('/api/customer/register', verifyToken, verifyAdmin, async (req, res) =>
 
     // Create sales tracking record
     await createSalesTrackingRecord(req.user.id, customerId, 'product_sale', customerData.selected_product, customerData.total_amount);
+
+    // Send welcome emails
+    try {
+      // Get seller information
+      const [seller] = await db.promise().execute(
+        'SELECT email, first_name, last_name, sponsor_id, phone FROM users WHERE id = ?',
+        [req.user.id]
+      );
+
+      if (seller[0]) {
+        // 1. Send welcome email to customer
+        await sendCustomerWelcomeEmail({
+          email: customerData.email,
+          product_name: customerData.selected_product,
+          sale_date: new Date().toLocaleDateString('tr-TR'),
+          total_amount: customerData.total_amount
+        }, {
+          first_name: seller[0].first_name,
+          last_name: seller[0].last_name,
+          sponsor_id: seller[0].sponsor_id,
+          phone: seller[0].phone
+        });
+
+        // 2. Send notification email to seller
+        await sendSellerNotificationEmail({
+          email: seller[0].email,
+          first_name: seller[0].first_name
+        }, {
+          first_name: customerData.first_name || customerData.authorized_person,
+          last_name: customerData.last_name || '',
+          phone: customerData.phone,
+          email: customerData.email,
+          address: customerData.delivery_address,
+          product_name: customerData.selected_product,
+          total_amount: customerData.total_amount,
+          kkp_points: Math.floor(customerData.total_amount / 40) // 1 USD = 40 TL = 1 KKP
+        });
+
+        console.log(`✅ Customer welcome emails sent to: ${customerData.email} and ${seller[0].email}`);
+      }
+    } catch (emailError) {
+      console.error('❌ Email send error:', emailError);
+      // Don't fail the registration if email fails
+    }
 
     // Log the registration
     console.log(`New customer registered: ${customerData.email} (${customerData.customer_id})`);

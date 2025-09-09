@@ -1,0 +1,256 @@
+BU 2 EMAİL EŞ ZAMANLI GİDECEK. BİRİ MÜŞTERİYE, DİĞERİ SATAN KİŞİYE
+CİHAZ SATIN ALAN MÜŞTERİYE GİDECEK EMAİL ÖRNEĞİ
+HOOWELL Ailesine Hoş Geldiniz.
+Sizi aramızda görmekten çok mutluyuz.
+Sizi ailemize kazandıran iş ortağı ************ ( P 2025 *** *** )’ın telefon numarası *** *** ** ** ‘dir.
+HESAP BİLGİLERİNİZ
+ADI: Murat 
+SOYADI : Soylu
+MÜŞTERİ NUMARANIZ : C 2025 000 999
+ŞİFRENİZ : Murat2025
+SATIN ALINAN CİHAZ : **********************************
+HOOWELL MÜŞTERİ HİZMETLERİNE ULAŞIN
+mhizmetleri@hoowell.net      Telefon : *** *** ** **
+MÜŞTERİ HESABINIZA GİRİŞ YAPIN
+MÜŞTERİ HESABINA GİRİŞ YAPINCA
+	•	AİLEMİZE HOŞGELDİNİZ YAZISI
+	•	MÜŞTERİ HEDİYE PROGRAMININ AÇIKLAMASI
+	•	REFERANS LİSTESİ
+	•	ALIŞVERİŞ İÇİN CİHAZ VE FİYATLARIN LİSTESİ
+------------------------------------------------------------------------------------------------------------------------
+
+CİHAZ SATAN İŞ ORTAĞINA GİDECEK EMAİL ÖRNEĞİ
+Sizi yaptığınız satış için tebrik ediyoruz. 
+Yeni müşterinizin bilgileri aşağıdaki gibidir.
+ADI: Murat 
+SOYADI : Soylu
+MÜŞTERİ NUMARASI : C 2025 000 999
+TELEFON : 0545 678 93 45
+SATIN ALINAN CİHAZ : HİBRİT ALKALİ İYONİZER CİHAZI
+
+-------------------------------------------------------------------------------------------------------------------------
+BU 2 EMAİL EŞ ZAMANLI GİDECEK. BİRİ YENİ İŞ ORTAĞINA, DİĞERİ SPONSORA 
+KAYIT OLAN YENİ  İŞ ORTAĞINA GİDECEK EMAİL ÖRNEĞİ
+HOOWELL Ailesine Hoş Geldiniz.
+Sizi kararınızdan dolayı tebrik ediyoruz.
+SPONSOR BİLGİLERİNİZ
+ADI : ********
+SOYADI : **********
+İŞ ORTAĞI NUMARASI :  P 2025 *** ***
+TELEFON : +90 *** *** ** **
+HESAP BİLGİLERİNİZ
+ADI: Ayşe
+SOYADI : Şenyurt
+İŞ ORTAĞI NUMARANIZ :  P 2025 000 045
+GEÇİCİ ŞİFRENİZ : Ayşe2025
+HESABINIZA VE TEMEL EĞİTİMLERİNİZE BURADAN ULAŞIN
+HOOWELL MÜŞTERİ HİZMETLERİNE ULAŞIN
+mhizmetleri@hoowell.net      Telefon : *** *** ** **
+
+-------------------------------------------------------------------------------------------------------------------------
+
+KAYIT OLAN YENİ  İŞ ORTAĞININ SPONSORUNA GİDECEK EMAİL ÖRNEĞİ
+Sizi işinizi büyüttüğünüz için tebrik ediyoruz.
+YENİ İŞ ORTAĞINIZIN HESAP BİLGİLERİ
+ADI: Ayşe 
+SOYADI : Şenyurt
+İŞ ORTAĞI  NUMARASI : P 2025 000 045
+TELEFONU :0545 234 56 78
+------------------------------------------------------------------------------------------------------------------------
+
+SATIŞLAR SONRASINDA MUHASEBEYE GİDECEK MAİL
+ŞAHIS ALIŞVERİŞİ
+SATIŞ TARİHİ
+…../……./……
+
+MÜŞTERİNİN ID NUMARASI
+
+İŞ ORTAĞININ ID NUMARASI
+
+
+SATIN ALAN KİŞİ
+ADI
+SOYADI
+
+
+
+
+TELEFON
+
+EMAİL
+
+ADRESİ
+
+İLÇE
+
+İL
+
+
+ÜRÜN
+KKP DEĞERİ
+FİYATI
+KDV
+SATIŞ BEDELİ
+MİKTAR
+TOPLAM BEDEL
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+TOPLAM KKP
+
+
+
+
+
+
+
+ÖDEME ŞEKLİ
+BANKA
+SONUÇ
+BANKA HAVALESİ
+
+
+KREDİ KARTI
+
+
+KREDİ KARTI (TAKSİT)
+
+
+İHTİYAÇ KREDİSİ
+
+
+
+SATICININ ADI SOYADI
+SATICININ ID NUMARASI
+
+
+SATICININ SPONSORU
+SPONSORUNUN ID NUMARASI
+
+
+
+
+
+SATIŞLAR SONRASINDA MUHASEBEYE GİDECEK MAİL
+ŞİRKET ALIŞVERİŞİ
+SATIŞ TARİHİ
+…../……./……
+
+MÜŞTERİNİN ID NUMARASI
+
+İŞ ORTAĞININ ID NUMARASI
+
+
+ŞİRKETİN ÜNVANI
+
+SORUMLU KİŞİ
+
+TELEFON
+
+EMAİL
+
+ADRESİ
+
+İLÇE
+
+İL
+
+VERGİ DAİRESİ
+
+VERGİ NO
+
+
+ÜRÜN
+KKP DEĞERİ
+FİYATI
+KDV
+SATIŞ BEDELİ
+MİKTAR
+TOPLAM BEDEL
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+TOPLAM KKP
+
+
+
+
+
+
+
+ÖDEME ŞEKLİ
+BANKA
+SONUÇ
+BANKA HAVALESİ
+
+
+KREDİ KARTI
+
+
+KREDİ KARTI (TAKSİT)
+
+
+İHTİYAÇ KREDİSİ
+
+
+
+SATICININ ADI SOYADI
+SATICININ ID NUMARASI
+
+
+SATICININ SPONSORU
+SPONSORUNUN ID NUMARASI
+
+
+
+

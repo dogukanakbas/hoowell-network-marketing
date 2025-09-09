@@ -74,6 +74,15 @@ const KisiselYonetim = () => {
     }
   }, [user]);
 
+  // Nickname input'u için özel handler
+  const handleNicknameChange = (e) => {
+    const value = e.target.value;
+    setProfileForm(prev => ({
+      ...prev,
+      nickname: value
+    }));
+  };
+
   // Profil güncelleme
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
@@ -463,8 +472,8 @@ const KisiselYonetim = () => {
               <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-end' }}>
                 <input
                   type="text"
-                  value={profileForm.nickname}
-                  onChange={(e) => setProfileForm({ ...profileForm, nickname: e.target.value })}
+                  value={profileForm.nickname || ''}
+                  onChange={handleNicknameChange}
                   placeholder="Takma adınızı girin (3-50 karakter)"
                   style={{
                     flex: 1,
@@ -475,7 +484,26 @@ const KisiselYonetim = () => {
                   }}
                   minLength="3"
                   maxLength="50"
+                  autoComplete="off"
                 />
+                <button
+                  type="button"
+                  onClick={() => setProfileForm(prev => ({ ...prev, nickname: '' }))}
+                  style={{
+                    padding: '12px 15px',
+                    backgroundColor: '#ff6b6b',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease'
+                  }}
+                  title="Temizle"
+                >
+                  🗑️
+                </button>
                 <button
                   type="button"
                   onClick={handleNicknameUpdate}
