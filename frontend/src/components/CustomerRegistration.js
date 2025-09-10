@@ -1850,8 +1850,9 @@ const CustomerRegistration = () => {
                       });
 
                       if (response.data.success) {
-                        // TREPS iframe URL'ine doğrudan yönlendir
-                        window.location.href = response.data.url;
+                        // TREPS iframe URL'ini yeni sekmede aç
+                        window.open(response.data.url, '_blank');
+                        alert('✅ TREPS ödeme sayfası yeni sekmede açıldı. Ödeme tamamlandıktan sonra bu sayfaya dönebilirsiniz.');
                       } else {
                         alert('TREPS ödeme oluşturulamadı: ' + response.data.error);
                       }
@@ -2011,8 +2012,9 @@ const CustomerRegistration = () => {
                     });
 
                     if (response.data.success) {
-                      // TREPS Hosted Page'e yönlendir (Direct Payment)
-                      window.location.href = response.data.url;
+                      // TREPS Hosted Page'i yeni sekmede aç
+                      window.open(response.data.url, '_blank');
+                      alert('✅ TREPS ödeme sayfası yeni sekmede açıldı. Ödeme tamamlandıktan sonra bu sayfaya dönebilirsiniz.');
                     } else {
                       alert('TREPS ödeme oluşturulamadı: ' + response.data.error);
                     }
