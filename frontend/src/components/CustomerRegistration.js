@@ -2004,7 +2004,13 @@ const CustomerRegistration = () => {
                     const response = await axios.post('/api/treps/create-payment', {
                       amount: selectedProduct?.total || 0,
                       orderId: `CUST_${Date.now()}`,
-                      description: `HOOWELL Müşteri Kaydı - ${formData.first_name} ${formData.last_name}`
+                      description: `HOOWELL Müşteri Kaydı - ${formData.first_name} ${formData.last_name}`,
+                      customerName: `${formData.first_name} ${formData.last_name}`,
+                      customerEmail: formData.email,
+                      customerPhone: formData.phone,
+                      customerCity: formData.delivery_city,
+                      customerAddress: formData.delivery_address,
+                      customerZipCode: '34000'
                     }, {
                       headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
